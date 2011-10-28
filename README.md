@@ -12,10 +12,13 @@ The idea is to:
 The bundle override the translator service and provide a DatabaseLoader.
 Database translations content is loaded last so it override content from xliff, yml and php translations files.
 
-___________________
-
-
 Documentation
 =============
 
 For installation and configuration refer to *Resources/doc/index.md*
+
+___________________
+
+Here a little screen shot of the edition page :)
+
+![edition page screen](https://github.com/lexik/LexikTranslationBundle/tree/master/Resources/doc/screen/grid.jpg)
