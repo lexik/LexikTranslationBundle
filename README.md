@@ -21,4 +21,4 @@ ___________________
 
 Here a little screen shot of the edition page :)
 
-![edition page screen](https://github.com/lexik/LexikTranslationBundle/tree/master/Resources/doc/screen/grid.jpg)
+![edition page screen](https://github.com/lexik/LexikTranslationBundle/raw/master/Resources/doc/screen/grid.jpg)
