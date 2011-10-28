@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+    
+        <service id="lexik_translation.translator" class="%lexik_translation.translator.class%">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="translator.selector" />
+            <argument type="collection" /> <!-- translation loaders -->
+            <argument type="collection">
+                <argument key="cache_dir">%kernel.cache_dir%/translations</argument>
+                <argument key="debug">%kernel.debug%</argument>
+            </argument>
+            <argument type="service" id="session" on-invalid="ignore" />
+            <call method="setForceLowerCase">
+                <argument>%lexik_translation.force_lower_case%</argument>
+            </call>
+        </service>
+    
+        <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%lexik_translation.trans_unit.class%</argument>
+            <argument>%lexik_translation.force_lower_case%</argument>
+            <tag name="translation.loader" alias="database" />
+        </service>
+        
+        <service id="lexik_translation.trans_unit.manager" class="Lexik\Bundle\TranslationBundle\Translation\TransUnitManager">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+        
+        <service id="lexik_translation.trans_unit.subscriber" class="Lexik\Bundle\TranslationBundle\EventListener\TransUnitSubscriber" public="false">
+            <argument>%lexik_translation.force_lower_case%</argument>
+            <tag name="doctrine.event_subscriber" connection="default" />
+        </service>
+        
+    </services>
+</container>

@@ -1,0 +1,94 @@
+{% extends layout %}
+
+{% block title %}{{ 'translations.title-page'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets filter="?yui_css" output='css/optimized-jqgrid.css'
+        '@LexikTranslationBundle/Resources/public/lib/jqGrid/css/ui.jqgrid.css' %}
+        <link rel="stylesheet" href="{{ asset_url }}">
+    {% endstylesheets %}
+{% endblock %}
+
+{% block content %}
+{% if app.session.hasFlash('sucess') %}
+<span>{{ app.session.getFlash('sucess') }}</span>
+{% endif %}
+
+<div>
+    <a href="{{ path('lexik_translation_new') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+        <span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>
+        <span class="ui-button-text">{{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}</span>
+    </a>
+    <a href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+        <span class="ui-button-icon-primary ui-icon ui-icon-trash"></span>
+        <span class="ui-button-text">{{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}</span>
+    </a>
+</div>
+
+<br />
+
+<table id="trans-grid"></table>
+<div id="grid-nav"></div>
+{% endblock %}
+
+{% block javascript_footer %}
+    {{ parent() }}
+    {% javascripts filter="?yui_js" output='js/optimized-translator-1.js'
+        '@LexikTranslationBundle/Resources/public/lib/jqGrid/js/i18n/grid.locale-en.js'
+        '@LexikTranslationBundle/Resources/public/lib/jqGrid/js/jquery.jqGrid.min.js' %}
+        <script src="{{ asset_url }}" type="text/javascript"></script>
+    {% endjavascripts %}
+<script type="text/javascript">
+<!--
+$(document).ready(function() {
+    var columnNames = [
+        "id"
+        ,'{{ 'translations.domain'|trans({}, 'LexikTranslationBundle') }}'
+        ,'{{ 'translations.key'|trans({}, 'LexikTranslationBundle') }}'
+{% for locale in locales %}
+        ,'{{ locale }}'
+{% endfor %}
+    ];
+
+    var columnModel = [
+        { name: "id", index: "id", width: 40, sortable: true, editable: false, search: false }
+        ,{ name:"{{ 'translations.domain'|trans({}, 'LexikTranslationBundle') }}", index: "domain", width: 100, sortable: true, editable: false }
+        ,{ name:"{{ 'translations.key'|trans({}, 'LexikTranslationBundle') }}", index: "key", width: 150, sortable: true, editable: false }
+{% for locale in locales %}
+        ,{ name: "{{ locale }}", index: "{{ locale }}", width: 160, sortable: false, editable:true, search: true }
+{% endfor %}
+    ];
+
+    var lastsel;
+
+    jQuery("#trans-grid").jqGrid({
+        url: "{{ path('lexik_translation_list') }}",
+        datatype: "json",
+        colNames: columnNames,
+        colModel: columnModel,
+        rowNum: 20,
+        rowList: [20, 40, 60],
+        pager: "#grid-nav",
+        sortname: "id",
+        viewrecords: true,
+        sortorder: "asc",
+        onSelectRow: function(id) {
+            if(id && id !== lastsel) {
+                jQuery('#trans-grid').jqGrid("restoreRow", lastsel);
+                jQuery('#trans-grid').jqGrid("editRow", id, true);
+                lastsel = id;
+            }
+        },
+        editurl: "{{ path('lexik_translation_update') }}",
+        caption: "{{ 'translations.grid_caption'|trans({}, 'LexikTranslationBundle') }}"
+    });
+
+    jQuery("#trans-grid").setGridWidth(960);
+    jQuery("#trans-grid").setGridHeight(400);
+    jQuery("#trans-grid").jqGrid("navGrid", "#grid-nav", { edit:false, add:false, del:false, search: false });
+    jQuery("#trans-grid").jqGrid("filterToolbar", { defaultSearch: "cn" });
+});
+//-->
+</script>
+{% endblock %}
