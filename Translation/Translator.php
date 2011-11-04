@@ -47,11 +47,34 @@ class Translator extends BaseTranslator
      */
     public function trans($id, array $parameters = array(), $domain = 'messages', $locale = null)
     {
+        $id = $this->changeIdCase($id);
+
+        return parent::trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Symfony\Component\Translation.Translator::transChoice()
+     */
+    public function transChoice($id, $number, array $parameters = array(), $domain = 'messages', $locale = null)
+    {
+        $id = $this->changeIdCase($id);
+
+        return parent::transChoice($id, $number, $parameters, $domain, $locale);
+    }
+
+    /**
+     * Change id to lowercase if necessary.
+     *
+     * @param string $id
+     */
+    protected function changeIdCase($id)
+    {
         if ($this->forceLowerCase) {
             $id = mb_strtolower($id, 'UTF-8');
         }
 
-        return parent::trans($id, $parameters, $domain, $locale);
+        return $id;
     }
 
     /**
