@@ -6,7 +6,7 @@ Update your `deps` and `deps.lock` files:
     // deps
     ...
     [LexikTranslationBundle]
-        git=https://github.com/lexik/TranslationBundle.git
+        git=https://github.com/lexik/LexikTranslationBundle.git
         target=/bundles/Lexik/Bundle/TranslationBundle
 
     // deps.lock
