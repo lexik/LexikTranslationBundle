@@ -66,6 +66,7 @@ To use the translation edition page, add the routing file to you application:
 The translations edition page will be available here: /my-prefix/translation/grid
 
 Note: The grid will be empty until you import translations in database and use [jqGrid 4.2.0](http://www.trirand.com/blog/).
+If the grid does not appear, please check your base template has a block named `javascript_footer`.
 
 ___________________
 
