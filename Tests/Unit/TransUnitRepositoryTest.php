@@ -15,7 +15,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Model\TransUnit');
+        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
 
         $results = $repository->getAllDomainsByLocale();
         $expected = array(
@@ -35,7 +35,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Model\TransUnit');
+        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
 
         $results = $repository->getAllDomains();
         $expected = array('messages', 'superTranslations');
@@ -49,7 +49,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Model\TransUnit');
+        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
 
         $results = $repository->getAllByLocaleAndDomain('de', 'messages');
         $expected = array();
@@ -76,7 +76,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Model\TransUnit');
+        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
 
         $this->assertEquals(3, $repository->count(array('fr', 'de', 'en'), array()));
         $this->assertEquals(3, $repository->count(array('fr', 'it'), array()));
@@ -93,7 +93,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Model\TransUnit');
+        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'ASC'));
         $expected = array(

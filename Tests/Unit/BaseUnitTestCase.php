@@ -60,10 +60,20 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
 
         $reader = new AnnotationReader($cache);
         //$reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
-        $mappingDriver = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array(
+        $annotationDriver = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array(
             __DIR__.'/../../vendor/doctrine/lib',
             __DIR__.'/../../Entity',
         ));
+
+        $prefixes = array(
+            'Lexik\Bundle\TranslationBundle\Entity' => __DIR__.'/../../Resources/config/doctrine'
+        );
+        $xmlDriver = new \Symfony\Bridge\Doctrine\Mapping\Driver\XmlDriver(array_values($prefixes));
+        $xmlDriver->setNamespacePrefixes(array_flip($prefixes));
+
+        $drivers = new \Doctrine\ORM\Mapping\Driver\DriverChain();
+        $drivers->addDriver($annotationDriver, 'Lexik\Bundle\TranslationBundle\Entity');
+        $drivers->addDriver($xmlDriver, 'Lexik\Bundle\TranslationBundle\Entity');
 
         $config = $this->getMock('Doctrine\ORM\Configuration');
         $config->expects($this->any())
@@ -83,7 +93,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $config->expects($this->any())
             ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($mappingDriver));
+            ->will($this->returnValue($drivers));
         $config->expects($this->any())
             ->method('getClassMetadataFactoryName')
             ->will($this->returnValue('Doctrine\ORM\Mapping\ClassMetadataFactory'));

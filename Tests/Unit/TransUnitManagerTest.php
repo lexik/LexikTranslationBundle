@@ -12,6 +12,9 @@ use Lexik\Bundle\TranslationBundle\Translation\TransUnitManager;
  */
 class TransUnitManagerTest extends BaseUnitTestCase
 {
+    const TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
+    const TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';
+
     private $em;
 
     public function setUp()
@@ -22,7 +25,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
 
     public function testCreate()
     {
-        $manager = new TransUnitManager($this->em);
+        $manager = new TransUnitManager($this->em, self::TRANS_UNIT_CLASS, self::TRANSLATION_CLASS);
 
         $transUnit = $manager->create('chuck.norris', 'badass');
         $this->assertEquals(UnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($transUnit));
@@ -37,7 +40,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
 
     public function testAddTranslation()
     {
-        $manager = new TransUnitManager($this->em);
+        $manager = new TransUnitManager($this->em, self::TRANS_UNIT_CLASS, self::TRANSLATION_CLASS);
         $class = 'Lexik\Bundle\TranslationBundle\Model\TransUnit';
         $transUnit = $manager->create('bwah', 'messages', true);
 
@@ -60,7 +63,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
 
     public function testUpdateTranslation()
     {
-        $manager = new TransUnitManager($this->em);
+        $manager = new TransUnitManager($this->em, self::TRANS_UNIT_CLASS, self::TRANSLATION_CLASS);
         $transUnit = $manager->create('bwah', 'messages', true);
         $manager->addTranslation($transUnit, 'en', 'hello');
         $manager->addTranslation($transUnit, 'fr', 'salut');
@@ -77,7 +80,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
 
     public function testNewInstance()
     {
-        $manager = new TransUnitManager($this->em);
+        $manager = new TransUnitManager($this->em, self::TRANS_UNIT_CLASS, self::TRANSLATION_CLASS);
         $transUnit = $manager->newInstance();
         $this->assertEquals(UnitOfWork::STATE_NEW, $this->em->getUnitOfWork()->getEntityState($transUnit));
         $this->assertEquals(0, $transUnit->getTranslations()->count());

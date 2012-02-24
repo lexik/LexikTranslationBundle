@@ -2,10 +2,11 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Fixtures;
 
-use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Tests fixtures class.
@@ -18,7 +19,7 @@ class TransUnitData implements FixtureInterface
      * (non-PHPdoc)
      * @see Doctrine\Common\DataFixtures.FixtureInterface::load()
      */
-    public function load($manager)
+    public function load(ObjectManager $manager)
     {
         // key.say_hello
         $transUnit = new TransUnit();
