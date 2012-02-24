@@ -11,8 +11,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
-use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
+use Lexik\Bundle\TranslationBundle\Model\Translation;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 
 /**
  * Imports translation files content in the database.
@@ -134,7 +134,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $serviceId = sprintf('translation.loader.%s', $extention);
 
         if ($this->getContainer()->has($serviceId)) {
-            $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+            $entityManager = $this->getContainer()->get('lexik_translation.storage_manager');
             $repository = $entityManager->getRepository($this->getContainer()->getParameter('lexik_translation.trans_unit.class'));
             $transUnitManager = $this->getContainer()->get('lexik_translation.trans_unit.manager');
 

@@ -88,7 +88,7 @@ class Translator extends BaseTranslator
         $cache = new ConfigCache($file, $this->options['debug']);
 
         if (!$cache->isFresh()) {
-            $resources = $this->container->get('doctrine.orm.entity_manager')
+            $resources = $this->container->get('lexik_translation.storage_manager')
                 ->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'))
                 ->getAllDomainsByLocale();
 
@@ -117,7 +117,7 @@ class Translator extends BaseTranslator
     public function updateTransUnitFromRequest(Request $request, $removeCache = false)
     {
         $locales = $this->container->getParameter('lexik_translation.managed_locales');
-        $repository = $this->container->get('doctrine.orm.entity_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
+        $repository = $this->container->get('lexik_translation.storage_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
         $transUnitManager = $this->container->get('lexik_translation.trans_unit.manager');
 
         $transUnit = $repository->findOneById($request->request->get('id'));
@@ -137,7 +137,7 @@ class Translator extends BaseTranslator
             }
         }
 
-        $this->container->get('doctrine.orm.entity_manager')->flush();
+        $this->container->get('lexik_translation.storage_manager')->flush();
     }
 
     /**

@@ -38,7 +38,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
     public function testAddTranslation()
     {
         $manager = new TransUnitManager($this->em);
-        $class = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
+        $class = 'Lexik\Bundle\TranslationBundle\Model\TransUnit';
         $transUnit = $manager->create('bwah', 'messages', true);
 
         $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh');

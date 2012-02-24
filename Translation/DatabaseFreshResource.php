@@ -47,7 +47,7 @@ class DatabaseFreshResource implements ResourceInterface
      */
     public function isFresh($timestamp)
     {
-        return true; // Consider that a resource comming from the database is always fresh
+        return true; // Consider a resource comming from the database is always fresh
     }
 
     /**

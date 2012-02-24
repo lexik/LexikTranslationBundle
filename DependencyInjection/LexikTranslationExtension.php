@@ -30,15 +30,28 @@ class LexikTranslationExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
+        if ($config['storage'] == 'orm') {
+            $type = 'Entity';
+            $container->setAlias('lexik_translation.storage_manager', 'doctrine.orm.entity_manager');
+            $container->getDefinition('lexik_translation.trans_unit.subscriber')->addTag('doctrine.event_subscriber');
+        } else if ($config['storage'] == 'mongodb') {
+            $type = 'Document';
+            $container->setAlias('lexik_translation.storage_manager', 'doctrine.odm.mongodb.document_manager');
+            $container->getDefinition('lexik_translation.trans_unit.subscriber')->addTag('doctrine.common.event_subscriber');
+        } else {
+            throw new \RuntimeException(sprintf('Unsupported storage "%s".', $config['storage']));
+        }
+
         // set parameters
         sort($config['managed_locales']);
         $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.force_lower_case', $config['force_lower_case']);
-        $container->setParameter('lexik_translation.translator.class', $config['translator']['class']);
-        $container->setParameter('lexik_translation.loader.database.class', $config['loader']['database']['class']);
-        $container->setParameter('lexik_translation.trans_unit.class', $config['trans_unit']['class']);
+        $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
+        $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
+        $container->setParameter('lexik_translation.trans_unit.class', sprintf('Lexik\Bundle\TranslationBundle\%s\TransUnit', $type));
+        $container->setParameter('lexik_translation.translation.class', sprintf('Lexik\Bundle\TranslationBundle\%s\Translation', $type));
 
         $this->registerTranslatorConfiguration($config, $container);
     }

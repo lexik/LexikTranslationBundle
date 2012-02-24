@@ -7,7 +7,7 @@ use Doctrine\ORM\Events;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 
 /**
  * Listen events on TransUnit entity.

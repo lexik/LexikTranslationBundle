@@ -26,7 +26,7 @@ class EditionController extends Controller
     public function listAction()
     {
         $locales = $this->getManagedLocales();
-        $repository = $this->get('doctrine.orm.entity_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
+        $repository = $this->get('lexik_translation.storage_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
 
         $transUnits = $repository->getTransUnitList(
             $locales,
@@ -103,7 +103,7 @@ class EditionController extends Controller
      */
     public function newAction()
     {
-        $em = $this->get('doctrine.orm.entity_manager');
+        $em = $this->get('lexik_translation.storage_manager');
         $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
         $domains = $em->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains();
 
@@ -114,13 +114,9 @@ class EditionController extends Controller
 
             if ($form->isValid()) {
                 $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
-                // reset collection to don't get an exception because Translation id is composed of transUnit id, and flush
-                $transUnit->setTranslations(new ArrayCollection());
-                $em->persist($transUnit);
-                $em->flush();
 
                 $transUnit->setTranslations($translations);
-                $em->persist($transUnit); // cascade persist for translations
+                $em->persist($transUnit);
                 $em->flush();
 
                 return $this->redirect($this->generateUrl('lexik_translation_grid'));

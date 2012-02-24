@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 
-use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 
 /**
  * Repository for TransUnit entity.
@@ -23,12 +23,12 @@ class TransUnitRepository extends EntityRepository
      */
     public function getAllDomainsByLocale()
     {
-        $dql = 'SELECT te.locale, tu.domain'
-            .' FROM %s tu LEFT JOIN tu.translations te'
-            .' GROUP BY te.locale, tu.domain';
-
-        return $this->getEntityManager()
-            ->createQuery(sprintf($dql, $this->getEntityName()))
+        return $this->createQueryBuilder('tu')
+            ->select('te.locale, tu.domain')
+            ->leftJoin('tu.translations', 'te')
+            ->addGroupBy('te.locale')
+            ->addGroupBy('tu.domain')
+            ->getQuery()
             ->getArrayResult();
     }
 
@@ -41,14 +41,14 @@ class TransUnitRepository extends EntityRepository
      */
     public function getAllByLocaleAndDomain($locale, $domain)
     {
-        $dql = 'SELECT tu, te'
-            .' FROM %s tu LEFT JOIN tu.translations te'
-            .' WHERE tu.domain = :domain AND te.locale = :locale';
-
-        return $this->getEntityManager()
-            ->createQuery(sprintf($dql, $this->getEntityName()))
+        return $this->createQueryBuilder('tu')
+            ->select('tu, te')
+            ->leftJoin('tu.translations', 'te')
+            ->where('tu.domain = :domain')
+            ->andWhere('te.locale = :locale')
             ->setParameter('domain', $domain)
             ->setParameter('locale', $locale)
+            ->getQuery()
             ->getArrayResult();
     }
 
@@ -61,12 +61,10 @@ class TransUnitRepository extends EntityRepository
     {
         $this->loadCustomHydrator();
 
-        $dql = 'SELECT DISTINCT tu.domain'
-            .' FROM %s tu'
-            .' ORDER BY tu.domain ASC';
-
-        return $this->getEntityManager()
-            ->createQuery(sprintf($dql, $this->getEntityName()))
+        return $this->createQueryBuilder('tu')
+            ->select('DISTINCT tu.domain')
+            ->orderBy('tu.domain', 'ASC')
+            ->getQuery()
             ->getResult('SingleColumnArrayHydrator');
     }
 
@@ -101,11 +99,12 @@ class TransUnitRepository extends EntityRepository
         $transUnits = array();
 
         if (count($ids) > 0) {
-            $transUnits = $this->createQueryBuilder('tu')
-                ->select('tu, te')
+            $qb = $this->createQueryBuilder('tu');
+
+            $transUnits = $qb->select('tu, te')
                 ->leftJoin('tu.translations', 'te')
-                ->andWhere(sprintf('tu.id IN (%s)', implode(', ', $ids)))
-                ->andWhere(sprintf('te.locale IN (\'%s\')', implode('\', \'', $locales)))
+                ->andWhere($qb->expr()->in('tu.id', $ids))
+                ->andWhere($qb->expr()->in('te.locale', $locales))
                 ->orderBy(sprintf('tu.%s', $sortColumn), $order)
                 ->getQuery()
                 ->getArrayResult();
@@ -146,12 +145,12 @@ class TransUnitRepository extends EntityRepository
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
-                $builder->andWhere('tu.domain LIKE :domain')
+                $builder->andWhere($builder->expr()->like('tu.domain', ':domain'))
                     ->setParameter('domain', sprintf('%%%s%%', $filters['domain']));
             }
 
             if (!empty($filters['key'])) {
-                $builder->andWhere('tu.key LIKE :key')
+                $builder->andWhere($builder->expr()->like('tu.key', ':key'))
                     ->setParameter('key', sprintf('%%%s%%', $filters['key']));
             }
         }
@@ -167,26 +166,22 @@ class TransUnitRepository extends EntityRepository
     protected function addTranslationFilter(QueryBuilder $builder, array $locales = null,  array $filters = null)
     {
         if (null != $locales) {
-            $sql = sprintf('SELECT DISTINCT t.trans_unit_id FROM %s t WHERE t.locale IN (\'%s\')',
-                $this->getEntityManager()->getClassMetadata('Lexik\Bundle\TranslationBundle\Entity\Translation')->getTableName(),
-                implode('\', \'', $locales)
-            );
+            $qb = $this->createQueryBuilder('tu');
+            $qb->select('DISTINCT tu.id')
+                ->leftJoin('tu.translations', 't')
+                ->where($qb->expr()->in('t.locale', $locales));
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
-                    $sql .= sprintf(' AND (t.content LIKE \'%%%s%%\' AND t.locale = \'%s\')', $filters[$locale], $locale);
+                    $qb->andWhere($qb->expr()->like('t.content', sprintf("'%%%s%%'", $filters[$locale])));
+                    $qb->andWhere($qb->expr()->eq('t.locale', sprintf("'%s'", $locale)));
                 }
             }
 
-            $rsm = new ResultSetMapping();
-            $rsm->addScalarResult('trans_unit_id', 'transUnit');
-
-            $ids = $this->getEntityManager()
-                ->createNativeQuery($sql, $rsm)
-                ->getResult('SingleColumnArrayHydrator');
+            $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
 
             if (count($ids) > 0) {
-                $builder->andWhere(sprintf('tu.id IN (%s)', implode(', ', $ids)));
+                $builder->andWhere($builder->expr()->in('tu.id', $ids));
             }
         }
     }

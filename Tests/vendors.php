@@ -13,11 +13,11 @@ if (!is_dir($vendorDir)) {
 }
 
 $deps = array(
-    array('symfony', 'http://github.com/symfony/symfony.git'),
-    array('doctrine-common', 'http://github.com/doctrine/common.git'),
-    array('doctrine-dbal', 'http://github.com/doctrine/dbal.git'),
-    array('doctrine', 'http://github.com/doctrine/doctrine2.git'),
-    array('doctrine-fixtures', 'http://github.com/doctrine/data-fixtures.git'),
+    array('symfony', 'https://github.com/symfony/symfony.git'),
+    array('doctrine-common', 'https://github.com/doctrine/common.git'),
+    array('doctrine-dbal', 'https://github.com/doctrine/dbal.git'),
+    array('doctrine', 'https://github.com/doctrine/doctrine2.git'),
+    array('doctrine-fixtures', 'https://github.com/doctrine/data-fixtures.git'),
 );
 
 $revs = array(
@@ -26,6 +26,13 @@ $revs = array(
         'doctrine-common' => '2.1.4',
         'doctrine-dbal' => '2.1.5',
         'doctrine' => '2.1.5',
+        'doctrine-fixtures' => 'origin/master'
+    ),
+    'v2.0.10' => array(
+        'symfony' => 'v2.0.10',
+        'doctrine-common' => '2.1.4',
+        'doctrine-dbal' => '2.1.6',
+        'doctrine' => '2.1.6',
         'doctrine-fixtures' => 'origin/master'
     ),
 );

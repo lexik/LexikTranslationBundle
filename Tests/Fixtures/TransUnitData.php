@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Fixtures;
 
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
-use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
+use Lexik\Bundle\TranslationBundle\Model\Translation;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 

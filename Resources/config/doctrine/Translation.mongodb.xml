@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+                  
+    <document name="Lexik\Bundle\TranslationBundle\Document\Translation" 
+              collection="lexik_trans_unit_translations">
+    
+        <indexes>
+            <index>
+                <option name="unique" value="true" />
+                <option name="safe" value="true" />
+                <key name="trans_unit_id" order="asc" />
+                <key name="locale" order="asc" />
+            </index>
+        </indexes>
+        
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="prePersist" />
+            <lifecycle-callback type="preUpdate" method="preUpdate" />
+        </lifecycle-callbacks>
+    
+        <field name="id" fieldName="id" id="true" strategy="AUTO" />
+        
+        <field name="locale" fieldName="locale" type="string" />
+        
+        <field name="content" fieldName="content" type="string" />
+        
+        <field name="createdAt" fieldName="created_at" type="timestamp" />
+        
+        <field name="updatedAt" fieldName="updated_at" type="timestamp" />
+        
+        <reference-one field="transUnit" target-document="Lexik\Bundle\TranslationBundle\Document\TransUnit" />
+    
+    </document>
+</doctrine-mongo-mapping>

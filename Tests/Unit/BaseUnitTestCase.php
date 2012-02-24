@@ -59,7 +59,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $cache = new \Doctrine\Common\Cache\ArrayCache();
 
         $reader = new AnnotationReader($cache);
-        $reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
+        //$reader->setDefaultAnnotationNamespace('Doctrine\ORM\Mapping\\');
         $mappingDriver = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array(
             __DIR__.'/../../vendor/doctrine/lib',
             __DIR__.'/../../Entity',

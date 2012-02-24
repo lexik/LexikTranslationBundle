@@ -23,18 +23,20 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('lexik_translation');
 
+        $storages = array('orm', 'mongodb');
+
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('base_layout')
                     ->cannotBeEmpty()
                     ->defaultValue('LexikTranslationBundle::layout.html.twig')
-                 ->end()
+                ->end()
 
-                 ->scalarNode('fallback_locale')
-                     ->cannotBeEmpty()
-                     ->defaultValue('en')
-                 ->end()
+                ->scalarNode('fallback_locale')
+                    ->cannotBeEmpty()
+                    ->defaultValue('en')
+                ->end()
 
                 ->variableNode('managed_locales')
                     ->cannotBeEmpty()
@@ -45,40 +47,29 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
 
-                ->arrayNode('translator')
+                ->scalarNode('storage')
+                    ->cannotBeEmpty()
+                    ->defaultValue('orm')
+                    ->validate()
+                        ->ifNotInArray($storages)
+                        ->thenInvalid('The storage "%s" is not supported. Please use one of the following storage: '.implode(', ', $storages))
+                    ->end()
+                ->end()
+
+                ->arrayNode('classes')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('class')
+                        ->scalarNode('translator')
                             ->cannotBeEmpty()
                             ->defaultValue('Lexik\Bundle\TranslationBundle\Translation\Translator')
                         ->end()
-                    ->end()
-                ->end()
-
-                ->arrayNode('loader')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('database')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('class')
-                                    ->cannotBeEmpty()
-                                    ->defaultValue('Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader')
-                                 ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-
-                ->arrayNode('trans_unit')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('class')
+                        ->scalarNode('database_loader')
                             ->cannotBeEmpty()
-                            ->defaultValue('Lexik\Bundle\TranslationBundle\Entity\TransUnit')
+                            ->defaultValue('Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader')
                         ->end()
                     ->end()
                 ->end()
+
             ->end()
         ;
 

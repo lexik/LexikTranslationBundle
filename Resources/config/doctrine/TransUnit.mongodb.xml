@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <document name="Lexik\Bundle\TranslationBundle\Document\TransUnit"
+              collection="lexik_trans_unit">
+    
+        <indexes>
+            <index>
+                <option name="unique" value="true" />
+                <option name="safe" value="true" />
+                <key name="key_name" order="asc" />
+                <key name="domain" order="asc" />
+            </index>
+        </indexes>
+        
+        <lifecycle-callbacks>
+            <lifecycle-callback type="prePersist" method="prePersist" />
+            <lifecycle-callback type="preUpdate" method="preUpdate" />
+        </lifecycle-callbacks>
+    
+        <field name="id" fieldName="id" id="true" strategy="AUTO" />
+        
+        <field name="key" fieldName="key_name" type="string" />
+        
+        <field name="domain" fieldName="domain" type="string" />
+        
+        <field name="createdAt" fieldName="created_at" type="timestamp" />
+        
+        <field name="updatedAt" fieldName="updated_at" type="timestamp" />
+        
+        <reference-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation">
+            <cascade>
+                <all/>
+            </cascade>
+        </reference-many>
+    
+    </document>
+</doctrine-mongo-mapping>

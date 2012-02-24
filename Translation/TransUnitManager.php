@@ -4,11 +4,11 @@ namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Doctrine\ORM\EntityManager;
 
-use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
+use Lexik\Bundle\TranslationBundle\Model\Translation;
 
 /**
- * Class to manage TransUnit entities.
+ * Class to manage TransUnit entities or documents.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
@@ -20,25 +20,39 @@ class TransUnitManager
     private $entityManager;
 
     /**
+     * @var string
+     */
+    private $transUnitclass;
+
+    /**
+     * @var string
+     */
+    private $translationClass;
+
+    /**
      * @param EntityManager $entityManager
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, $transUnitclass, $translationClass)
     {
         $this->entityManager = $entityManager;
+        $this->transUnitclass = $transUnitclass;
+        $this->translationClass = $translationClass;
     }
 
     /**
      * Returns a new TransUnit instance with new translations for each $locales.
      *
      * @param array $locales
-     * @return Lexik\Bundle\TranslationBundle\Entity\TransUnit
+     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
      */
     public function newInstance($locales = array())
     {
-        $transUnit = new TransUnit();
+        $class = $this->transUnitclass;
+        $transUnit = new $class();
 
         foreach ($locales as $locale) {
-            $translation = new Translation();
+            $class = $this->translationClass;
+            $translation = new $class();
             $translation->setLocale($locale);
 
             $transUnit->addTranslation($translation);
@@ -53,11 +67,11 @@ class TransUnitManager
      * @param string $keyName
      * @param string $domainName
      * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Entity\TransUnit
+     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
      */
     public function create($keyName, $domainName, $flush = false)
     {
-        $transUnit = new TransUnit();
+        $transUnit = $this->newInstance();
         $transUnit->setKey($keyName);
         $transUnit->setDomain($domainName);
 
@@ -73,18 +87,20 @@ class TransUnitManager
     /**
      * Add a new translation to the given trans unit.
      *
-     * @param Lexik\Bundle\TranslationBundle\Entity\TransUnit $transUnit
+     * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
      * @param string $locale
      * @param string $content
      * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Entity\Translation
+     * @return Lexik\Bundle\TranslationBundle\Model\Translation
      */
     public function addTranslation(TransUnit $transUnit, $locale, $content, $flush = false)
     {
         $translation = null;
 
         if(!$transUnit->hasTranslation($locale)) {
-            $translation = new Translation();
+            $class = $this->translationClass;
+
+            $translation = new $class();
             $translation->setTransUnit($transUnit);
             $translation->setLocale($locale);
             $translation->setContent($content);
@@ -104,11 +120,11 @@ class TransUnitManager
     /**
      * Update the translated content of a trans unit for the given locale.
      *
-     * @param Lexik\Bundle\TranslationBundle\Entity\TransUnit $transUnit
+     * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
      * @param string $locale
      * @param string $content
      * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Entity\Translation
+     * @return Lexik\Bundle\TranslationBundle\Model\Translation
      */
     public function updateTranslation(TransUnit $transUnit, $locale, $content, $flush = false)
     {

@@ -42,7 +42,7 @@ class TranslationType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Lexik\Bundle\TranslationBundle\Entity\Translation',
+            'data_class' => 'Lexik\Bundle\TranslationBundle\Model\Translation',
         );
     }
 

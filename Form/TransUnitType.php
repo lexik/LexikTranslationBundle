@@ -50,7 +50,7 @@ class TransUnitType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         return array(
-            'data_class' => 'Lexik\Bundle\TranslationBundle\Entity\TransUnit',
+            'data_class' => 'Lexik\Bundle\TranslationBundle\Model\TransUnit',
         );
     }
 
