@@ -17,7 +17,7 @@ Database translations content is loaded last so it override content from xliff, 
 Documentation
 =============
 
-For installation and configuration refer to *Resources/doc/index.md*
+For installation and configuration refer to [Resources/doc/index.md](https://github.com/lexik/LexikTranslationBundle/blob/master/Resources/doc/index.md)
 
 ___________________
 

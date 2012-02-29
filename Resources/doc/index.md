@@ -43,14 +43,13 @@ This is the full configuration tree with default values:
         base_layout:      "LexikTranslationBundle::layout.html.twig"   # layout used with the translation edition template
         fallback_locale:  en                                           # default locale to use
         managed_locales:  [en]                                         # locales that the bundle have to manage
+        storage:          orm                                          # where to store translations: "orm" or "mongodb"
         force_lower_case: false                                        # force lower case for TransUnit key field.
-        trans_unit:
-            class: Lexik\Bundle\TranslationBundle\Entity\TransUnit     # entity class used by default to map translation units
-        translator:
-            class: Lexik\Bundle\TranslationBundle\Translation\Translator  # translator service class
-        loader:
-            database:
-                class: Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader  # database loader class
+        classes:
+            translator:      "Lexik\Bundle\TranslationBundle\Translation\Translator"             # translator service class
+            database_loader: "Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader"  # database loader class
+
+Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.
 
 A litle more about the `force_lower_case` option:
 You can turn this option to true if you use a case insensitive charset such as `utf8_general_ci` for MySQL.

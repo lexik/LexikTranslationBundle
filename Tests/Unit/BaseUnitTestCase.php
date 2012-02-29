@@ -177,7 +177,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('$'));
 
         $options = array('connect' => true);
-        $conn = new \Doctrine\MongoDB\Connection('mongodb://localhost:27017', $options, $config);
+        $conn = new \Doctrine\MongoDB\Connection(null, $options, $config);
 
         $dm = \Doctrine\ODM\MongoDB\DocumentManager::create($conn, $config);
 
