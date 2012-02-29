@@ -15,16 +15,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 abstract class Translation
 {
     /**
-     * @var int
-     */
-    protected $id;
-
-    /**
-     * @var Lexik\Bundle\TranslationBundle\Model\TransUnit
-     */
-    protected $transUnit;
-
-    /**
      * @var string
      *
      * @Assert\NotBlank()
@@ -47,6 +37,16 @@ abstract class Translation
      * @var \DateTime
      */
     protected $updatedAt;
+
+    /**
+     * Things to do on prePersist
+     */
+    abstract public function prePersist();
+
+    /**
+     * Things to do on preUpdate
+     */
+    abstract public function preUpdate();
 
     /**
      * Set locale
@@ -90,26 +90,6 @@ abstract class Translation
     }
 
     /**
-     * Set transUnit
-     *
-     * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
-     */
-    public function setTransUnit(\Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit)
-    {
-        $this->transUnit = $transUnit;
-    }
-
-    /**
-     * Get transUnit
-     *
-     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
-     */
-    public function getTransUnit()
-    {
-        return $this->transUnit;
-    }
-
-    /**
      * Get createdAt
      *
      * @return datetime $createdAt
@@ -127,22 +107,5 @@ abstract class Translation
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-    }
-
-    /**
-     * Things to do on prePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime("now");
-        $this->updatedAt = new \DateTime("now");
-    }
-
-    /**
-     * Things to do on preUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime("now");
     }
 }

@@ -6,7 +6,7 @@
 
     <entity name="Lexik\Bundle\TranslationBundle\Entity\TransUnit" 
             table="lexik_trans_unit" 
-            repository-class="Lexik\Bundle\TranslationBundle\Repository\TransUnitRepository">
+            repository-class="Lexik\Bundle\TranslationBundle\Repository\Entity\TransUnitRepository">
             
         <unique-constraints>
             <unique-constraint name="key_domain_idx" columns="key_name,domain" />

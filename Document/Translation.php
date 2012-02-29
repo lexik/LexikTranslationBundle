@@ -2,15 +2,33 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Doctrine\ODM\MongoDB\Mapping\Annotations as MongoDB;
-
-use Lexik\Bundle\TranslationBundle\Model\Translation as BaseTranslation;
+use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 
 /**
- * @MongoDB\Document
- *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translation extends BaseTranslation
+class Translation extends TranslationModel
 {
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Model.Translation::prePersist()
+     */
+    public function prePersist()
+    {
+        $now = new \DateTime("now");
+
+        $this->createdAt = $now->format('U');
+        $this->updatedAt = $now->format('U');
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Model.Translation::preUpdate()
+     */
+    public function preUpdate()
+    {
+        $now = new \DateTime("now");
+
+        $this->updatedAt = $now->format('U');
+    }
 }

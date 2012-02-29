@@ -13,21 +13,6 @@ use Symfony\Component\Form\FormBuilder;
 class TransUnitType extends AbstractType
 {
     /**
-     * @var array
-     */
-    protected $domains;
-
-    /**
-     * Construct.
-     *
-     * @param array $domains
-     */
-    public function __construct(array $domains = null)
-    {
-        $this->domains = (null != $domains) ? $domains : array('messages');
-    }
-
-    /**
      * (non-PHPdoc)
      * @see Symfony\Component\Form.AbstractType::buildForm()
      */
@@ -35,7 +20,7 @@ class TransUnitType extends AbstractType
     {
         $builder->add('key');
         $builder->add('domain', 'choice', array(
-            'choices' => array_combine($this->domains, $this->domains),
+            'choices' => array_combine($options['domains'], $options['domains']),
         ));
         $builder->add('translations', 'collection', array(
             'type' => new TranslationType(),
@@ -49,9 +34,12 @@ class TransUnitType extends AbstractType
      */
     public function getDefaultOptions(array $options)
     {
-        return array(
-            'data_class' => 'Lexik\Bundle\TranslationBundle\Model\TransUnit',
+        $defaults = array(
+            'data_class' => null,
+            'domains'    => array('messages'),
         );
+
+        return array_merge($defaults, $options);
     }
 
     /**

@@ -1,25 +1,24 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Repository;
+namespace Lexik\Bundle\TranslationBundle\Repository\Entity;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
+use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
 
 /**
  * Repository for TransUnit entity.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepository extends EntityRepository
+class TransUnitRepository extends EntityRepository implements TransUnitRepositoryInterface
 {
     /**
-     * Returns all trans unit domains for each locale.
-     *
-     * @return array
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomainsByLocale()
      */
     public function getAllDomainsByLocale()
     {
@@ -33,11 +32,8 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
-     * Returns all trans unit with translations for the given domain and locale.
-     *
-     * @param string $locale
-     * @param string $domain
-     * @return array
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllByLocaleAndDomain()
      */
     public function getAllByLocaleAndDomain($locale, $domain)
     {
@@ -53,9 +49,8 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
-     * Return all domain available in database.
-     *
-     * @return array
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomains()
      */
     public function getAllDomains()
     {
@@ -69,13 +64,8 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
-     * Returns some trans units with their translations.
-     *
-     * @param array $locales
-     * @param int $rows
-     * @param int $page
-     * @param array $filters
-     * @return array
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTransUnitList()
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
     {
@@ -114,11 +104,8 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
-     * Count the number of transunit.
-     *
-     * @param array $locales
-     * @param array $filters
-     * @return int
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::count()
      */
     public function count(array $locales = null,  array $filters = null)
     {

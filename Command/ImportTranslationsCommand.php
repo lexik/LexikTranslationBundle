@@ -134,8 +134,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $serviceId = sprintf('translation.loader.%s', $extention);
 
         if ($this->getContainer()->has($serviceId)) {
-            $entityManager = $this->getContainer()->get('lexik_translation.storage_manager');
-            $repository = $entityManager->getRepository($this->getContainer()->getParameter('lexik_translation.trans_unit.class'));
+            $objectManager = $this->getContainer()->get('lexik_translation.storage_manager');
+            $repository = $objectManager->getRepository($this->getContainer()->getParameter('lexik_translation.trans_unit.class'));
             $transUnitManager = $this->getContainer()->get('lexik_translation.trans_unit.manager');
 
             $loader = $this->getContainer()->get($serviceId);
@@ -148,7 +148,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
                     if (!($transUnit instanceof TransUnit)) {
                         $transUnit = $transUnitManager->create($key, $domainName, true);
                     } else {
-                        $entityManager->refresh($transUnit);
+                        $objectManager->refresh($transUnit);
                     }
 
                     $translation = $transUnitManager->addTranslation($transUnit, $locale, $content);
@@ -156,7 +156,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
                         $imported++;
                     }
 
-                    $entityManager->flush();
+                    $objectManager->flush();
                 }
             }
         }

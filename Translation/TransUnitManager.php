@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
@@ -15,9 +15,9 @@ use Lexik\Bundle\TranslationBundle\Model\Translation;
 class TransUnitManager
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var Doctrine\Common\Persistence\ObjectManager
      */
-    private $entityManager;
+    private $objectManager;
 
     /**
      * @var string
@@ -30,11 +30,11 @@ class TransUnitManager
     private $translationClass;
 
     /**
-     * @param EntityManager $entityManager
+     * @param ObjectManager $objectManager
      */
-    public function __construct(EntityManager $entityManager, $transUnitclass, $translationClass)
+    public function __construct(ObjectManager $objectManager, $transUnitclass, $translationClass)
     {
-        $this->entityManager = $entityManager;
+        $this->objectManager = $objectManager;
         $this->transUnitclass = $transUnitclass;
         $this->translationClass = $translationClass;
     }
@@ -75,10 +75,10 @@ class TransUnitManager
         $transUnit->setKey($keyName);
         $transUnit->setDomain($domainName);
 
-        $this->entityManager->persist($transUnit);
+        $this->objectManager->persist($transUnit);
 
         if ($flush) {
-            $this->entityManager->flush();
+            $this->objectManager->flush();
         }
 
         return $transUnit;
@@ -101,16 +101,15 @@ class TransUnitManager
             $class = $this->translationClass;
 
             $translation = new $class();
-            $translation->setTransUnit($transUnit);
             $translation->setLocale($locale);
             $translation->setContent($content);
 
             $transUnit->addTranslation($translation);
 
-            $this->entityManager->persist($translation);
+            $this->objectManager->persist($translation);
 
             if ($flush) {
-                $this->entityManager->flush();
+                $this->objectManager->flush();
             }
         }
 
@@ -144,7 +143,7 @@ class TransUnitManager
         }
 
         if ($flush) {
-            $this->entityManager->flush();
+            $this->objectManager->flush();
         }
 
         return $translation;

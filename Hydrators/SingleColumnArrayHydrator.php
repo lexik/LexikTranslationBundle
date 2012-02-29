@@ -12,8 +12,7 @@ use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 class SingleColumnArrayHydrator extends AbstractHydrator
 {
     /**
-     * (non-PHPdoc)
-     * @see Doctrine\ORM\Internal\Hydration.AbstractHydrator::_hydrateAll()
+     * Hydrates all rows from the current statement instance at once.
      */
     protected function _hydrateAll()
     {
@@ -34,5 +33,14 @@ class SingleColumnArrayHydrator extends AbstractHydrator
         }
 
         return $result;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Doctrine\ORM\Internal\Hydration.AbstractHydrator::hydrateAllData()
+     */
+    protected function hydrateAllData()
+    {
+        return $this->_hydrateAll();
     }
 }

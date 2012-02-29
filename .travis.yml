@@ -4,8 +4,7 @@ php:
   - 5.3
   
 env:
-#  - SYMFONY_VERSION=v2.0.9
-  - SYMFONY_VERSION=v2.0.10
+  - SYMFONY_VERSION=v2.0.11
 
 before_script: php Tests/vendors.php
 script: phpunit

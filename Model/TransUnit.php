@@ -59,6 +59,16 @@ abstract class TransUnit
     }
 
     /**
+     * Things to do on prePersist
+     */
+    abstract public function prePersist();
+
+    /**
+     * Things to do on preUpdate
+     */
+    abstract public function preUpdate();
+
+    /**
      * Get id
      *
      * @return integer
@@ -115,8 +125,6 @@ abstract class TransUnit
      */
     public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
     {
-        $translation->setTransUnit($this);
-
         $this->translations[] = $translation;
     }
 
@@ -157,7 +165,11 @@ abstract class TransUnit
      */
     public function setTranslations(Collection $collection)
     {
-        $this->translations = $collection;
+        $this->translations = new ArrayCollection();
+
+        foreach ($collection as $translation) {
+            $this->addTranslation($translation);
+        }
     }
 
     /**
@@ -191,22 +203,5 @@ abstract class TransUnit
     public function getUpdatedAt()
     {
         return $this->updatedAt;
-    }
-
-    /**
-     * Things to do on prePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime("now");
-        $this->updatedAt = new \DateTime("now");
-    }
-
-    /**
-     * Things to do on preUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime("now");
     }
 }

@@ -105,9 +105,13 @@ class EditionController extends Controller
     {
         $em = $this->get('lexik_translation.storage_manager');
         $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
-        $domains = $em->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains();
 
-        $form = $this->createForm(new TransUnitType($domains), $transUnit);
+        $options = array(
+            'domains'    => $em->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains(),
+            'data_class' => $this->container->getParameter('lexik_translation.trans_unit.class'),
+        );
+
+        $form = $this->createForm(new TransUnitType(), $transUnit, $options);
 
         if ($this->get('request')->getMethod() == 'POST') {
             $form->bindRequest($this->get('request'));

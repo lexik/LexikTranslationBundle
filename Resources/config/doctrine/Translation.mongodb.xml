@@ -4,9 +4,8 @@
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
                   
-    <document name="Lexik\Bundle\TranslationBundle\Document\Translation" 
-              collection="lexik_trans_unit_translations">
-    
+    <embedded-document name="Lexik\Bundle\TranslationBundle\Document\Translation">
+
         <indexes>
             <index>
                 <option name="unique" value="true" />
@@ -15,23 +14,19 @@
                 <key name="locale" order="asc" />
             </index>
         </indexes>
-        
+
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
-    
-        <field name="id" fieldName="id" id="true" strategy="AUTO" />
-        
-        <field name="locale" fieldName="locale" type="string" />
-        
-        <field name="content" fieldName="content" type="string" />
-        
-        <field name="createdAt" fieldName="created_at" type="timestamp" />
-        
-        <field name="updatedAt" fieldName="updated_at" type="timestamp" />
-        
-        <reference-one field="transUnit" target-document="Lexik\Bundle\TranslationBundle\Document\TransUnit" />
-    
-    </document>
+
+        <field fieldName="locale" name="locale" type="string" />
+
+        <field fieldName="content" name="content" type="string" />
+
+        <field fieldName="createdAt" name="created_at" type="timestamp" />
+
+        <field fieldName="updatedAt" name="updated_at" type="timestamp" />
+
+    </embedded-document>
 </doctrine-mongo-mapping>

@@ -3,19 +3,16 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
 /**
- * Unit test for TransUnitRepository class.
+ * Unit test for TransUnit document's repository class.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepositoryTest extends BaseUnitTestCase
+class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
 {
     public function testGetAllDomainsByLocale()
     {
-        $em = $this->getMockSqliteEntityManager();
-        $this->createSchema($em);
-        $this->loadFixtures($em);
-
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $dm = $this->loadDatabase();
+        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
 
         $results = $repository->getAllDomainsByLocale();
         $expected = array(
@@ -31,11 +28,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
     public function testGetAllDomains()
     {
-        $em = $this->getMockSqliteEntityManager(true);
-        $this->createSchema($em);
-        $this->loadFixtures($em);
-
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $dm = $this->loadDatabase(true);
+        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
 
         $results = $repository->getAllDomains();
         $expected = array('messages', 'superTranslations');
@@ -45,11 +39,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
     public function testGetAllByLocaleAndDomain()
     {
-        $em = $this->getMockSqliteEntityManager();
-        $this->createSchema($em);
-        $this->loadFixtures($em);
-
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $dm = $this->loadDatabase();
+        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
 
         $results = $repository->getAllByLocaleAndDomain('de', 'messages');
         $expected = array();
@@ -58,26 +49,24 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $results = $repository->getAllByLocaleAndDomain('de', 'superTranslations');
         $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(array('locale' => 'de', 'content' => 'heil'))),
+            array('key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(array('locale' => 'de', 'content' => 'heil'))),
         );
         $this->assertSameTransUnit($expected, $results);
 
         $results = $repository->getAllByLocaleAndDomain('en', 'messages');
         $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'goodbye'))),
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'what the fuck !?!'))),
+            array('key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'goodbye'))),
+            array('key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'what the fuck !?!'))),
         );
         $this->assertSameTransUnit($expected, $results);
     }
 
     public function testCount()
     {
-        $em = $this->getMockSqliteEntityManager(true);
-        $this->createSchema($em);
-        $this->loadFixtures($em);
+        $dm = $this->loadDatabase(true);
+        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
 
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
-
+        $this->assertEquals(3, $repository->count(null, array()));
         $this->assertEquals(3, $repository->count(array('fr', 'de', 'en'), array()));
         $this->assertEquals(3, $repository->count(array('fr', 'it'), array()));
         $this->assertEquals(3, $repository->count(array('fr', 'de'), array('_search' => false, 'key' => 'good')));
@@ -89,22 +78,19 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
     public function testGetTransUnitList()
     {
-        $em = $this->getMockSqliteEntityManager(true);
-        $this->createSchema($em);
-        $this->loadFixtures($em);
-
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $dm = $this->loadDatabase(true);
+        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'ASC'));
         $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'au revoir'),
             )),
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
+            array('key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
                 array('locale' => 'de', 'content' => 'heil'),
                 array('locale' => 'fr', 'content' => 'salut'),
             )),
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
             )),
         );
@@ -112,10 +98,10 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess'));
         $expected = array(
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
             )),
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'au revoir'),
             )),
         );
@@ -123,7 +109,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess', 'key' => 'oo'));
         $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'au revoir'),
             )),
         );
@@ -131,7 +117,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->getTransUnitList(array('fr', 'en'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu'));
         $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
+            array('key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
                 array('locale' => 'en', 'content' => 'hello'),
                 array('locale' => 'fr', 'content' => 'salut'),
             )),
@@ -140,7 +126,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 1, array('sidx' => 'domain', 'sord' => 'ASC'));
         $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
+            array('key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'en', 'content' => 'goodbye'),
                 array('locale' => 'fr', 'content' => 'au revoir'),
             )),
@@ -153,7 +139,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 2, array('sidx' => 'domain', 'sord' => 'ASC'));
         $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
+            array('key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
                 array('locale' => 'de', 'content' => 'heil'),
                 array('locale' => 'en', 'content' => 'hello'),
                 array('locale' => 'fr', 'content' => 'salut'),
@@ -167,7 +153,6 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->assertEquals(count($expected), count($result));
 
         foreach ($expected as $i => $transUnit) {
-            $this->assertEquals($transUnit['id'], $result[$i]['id']);
             $this->assertEquals($transUnit['key'], $result[$i]['key']);
             $this->assertEquals($transUnit['domain'], $result[$i]['domain']);
 
@@ -178,5 +163,14 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
                 $this->assertEquals($translation['content'], $result[$i]['translations'][$j]['content']);
             }
         }
+    }
+
+    protected function loadDatabase()
+    {
+        $dm = $this->getMockMongoDbDocumentManager();
+        $this->createSchema($dm);
+        $this->loadFixtures($dm);
+
+        return $dm;
     }
 }

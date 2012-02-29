@@ -2,15 +2,41 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
-use Lexik\Bundle\TranslationBundle\Model\TransUnit as BaseTransUnit;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 
 /**
- * @ORM\Entity
- *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnit extends BaseTransUnit
+class TransUnit extends TransUnitModel
 {
+    /**
+     * Add translations
+     *
+     * @param Lexik\Bundle\TranslationBundle\Entity\Translation $translations
+     */
+    public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
+    {
+        $translation->setTransUnit($this);
+
+        $this->translations[] = $translation;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Model.TransUnit::prePersist()
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime("now");
+        $this->updatedAt = new \DateTime("now");
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Model.TransUnit::preUpdate()
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime("now");
+    }
 }

@@ -13,27 +13,26 @@ if (!is_dir($vendorDir)) {
 }
 
 $deps = array(
-    array('symfony', 'https://github.com/symfony/symfony.git'),
-    array('doctrine-common', 'https://github.com/doctrine/common.git'),
-    array('doctrine-dbal', 'https://github.com/doctrine/dbal.git'),
-    array('doctrine', 'https://github.com/doctrine/doctrine2.git'),
-    array('doctrine-fixtures', 'https://github.com/doctrine/data-fixtures.git'),
+    array('symfony',               'https://github.com/symfony/symfony.git'),
+    array('doctrine-common',       'https://github.com/doctrine/common.git'),
+    array('doctrine-dbal',         'https://github.com/doctrine/dbal.git'),
+    array('doctrine',              'https://github.com/doctrine/doctrine2.git'),
+    array('doctrine-fixtures',     'https://github.com/doctrine/data-fixtures.git'),
+    array('doctrine-mongodb',      'https://github.com/doctrine/mongodb.git'),
+    array('doctrine-mongodb-odm',  'https://github.com/doctrine/mongodb-odm.git'),
+    array('DoctrineMongoDBBundle', 'https://github.com/symfony/DoctrineMongoDBBundle.git')
 );
 
 $revs = array(
-    'v2.0.9' => array(
-        'symfony' => 'v2.0.9',
-        'doctrine-common' => '2.1.4',
-        'doctrine-dbal' => '2.1.5',
-        'doctrine' => '2.1.5',
-        'doctrine-fixtures' => 'origin/master'
-    ),
-    'v2.0.10' => array(
-        'symfony' => 'v2.0.10',
-        'doctrine-common' => '2.1.4',
-        'doctrine-dbal' => '2.1.6',
-        'doctrine' => '2.1.6',
-        'doctrine-fixtures' => 'origin/master'
+    'v2.0.11' => array(
+        'symfony'               => 'v2.0.11',
+        'doctrine-common'       => '2.1.4',
+        'doctrine-dbal'         => '2.1.6',
+        'doctrine'              => '2.1.6',
+        'doctrine-fixtures'     => 'origin/master',
+        'doctrine-mongodb'      => 'origin/master',
+        'doctrine-mongodb-odm'  => 'origin/master',
+        'DoctrineMongoDBBundle' => 'origin/master',
     ),
 );
 
@@ -45,7 +44,7 @@ foreach ($deps as $index => $dep) {
     list($name, $url) = $dep;
     $rev = isset($revs[$_SERVER['SYMFONY_VERSION']][$name]) ? $revs[$_SERVER['SYMFONY_VERSION']][$name] : 'origin/master';
 
-    $installDir = $vendorDir.'/'.$name;
+    $installDir = (substr($name, -6) == 'Bundle') ? $vendorDir.'/bundles/Symfony/Bundle/'.$name : $vendorDir.'/'.$name;
     if (!is_dir($installDir)) {
         echo sprintf("> Installing %s\n", $name);
 
