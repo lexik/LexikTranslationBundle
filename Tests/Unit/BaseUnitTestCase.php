@@ -176,7 +176,11 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             ->method('getMongoCmd')
             ->will($this->returnValue('$'));
 
-        $options = array('connect' => true);
+        $options = array(
+            'connect'  => true,
+            'username' => 'travis',
+            'password' => 'lexik',
+        );
         $conn = new \Doctrine\MongoDB\Connection(null, $options, $config);
 
         $dm = \Doctrine\ODM\MongoDB\DocumentManager::create($conn, $config);
