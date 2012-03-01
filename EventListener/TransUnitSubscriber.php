@@ -3,8 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\EventListener;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Events;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Common\EventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
@@ -17,6 +16,11 @@ use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 class TransUnitSubscriber implements EventSubscriber
 {
     /**
+     * @var string
+     */
+    private $storage;
+
+    /**
      * @var boolean
      */
     private $forceLowerCase;
@@ -24,10 +28,12 @@ class TransUnitSubscriber implements EventSubscriber
     /**
      * Construct.
      *
+     * @param string $storage
      * @param boolean $forceLowerCase
      */
-    public function __construct($forceLowerCase)
+    public function __construct($storage, $forceLowerCase)
     {
+        $this->storage = $storage;
         $this->forceLowerCase = $forceLowerCase;
     }
 
@@ -37,10 +43,22 @@ class TransUnitSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(
-            Events::prePersist,
-            Events::preUpdate,
-        );
+        $events = array();
+
+        if ($this->storage == 'orm') {
+            $events = array(
+                \Doctrine\ORM\Events::prePersist,
+                \Doctrine\ORM\Events::preUpdate,
+            );
+        }
+        else if ($this->storage == 'mongodb') {
+            $events = array(
+                \Doctrine\ODM\MongoDB\Events::prePersist,
+                \Doctrine\ODM\MongoDB\Events::preUpdate,
+            );
+        }
+
+        return $events;
     }
 
     /**
@@ -48,9 +66,9 @@ class TransUnitSubscriber implements EventSubscriber
      *
      * @param LifecycleEventArgs $args
      */
-    public function prePersist(LifecycleEventArgs $args)
+    public function prePersist(EventArgs $args)
     {
-        $this->convertKeyToLowerCase($args->getEntity());
+        $this->convertKeyToLowerCase($args);
     }
 
     /**
@@ -58,20 +76,29 @@ class TransUnitSubscriber implements EventSubscriber
      *
      * @param PreUpdateEventArgs $args
      */
-    public function preUpdate(PreUpdateEventArgs $args)
+    public function preUpdate(EventArgs $args)
     {
-        $this->convertKeyToLowerCase($args->getEntity());
+        $this->convertKeyToLowerCase($args);
     }
 
     /**
      * Convert trans unit key to lower case.
      *
-     * @param TransUnit $entity
+     * @param TransUnit $object
      */
-    protected function convertKeyToLowerCase($entity)
+    protected function convertKeyToLowerCase(EventArgs $args)
     {
-        if ($entity instanceof TransUnit && $this->forceLowerCase) {
-            $entity->setKey(mb_strtolower($entity->getKey(), 'UTF-8'));
+        $object = null;
+
+        if ($this->storage == 'orm') {
+            $object = $args->getEntity();
+        }
+        else if ($this->storage == 'mongodb') {
+            $object = $args->getDocument();
+        }
+
+        if ($object instanceof TransUnit && $this->forceLowerCase) {
+            $object->setKey(mb_strtolower($object->getKey(), 'UTF-8'));
         }
     }
 }

@@ -37,6 +37,11 @@
             <argument>%lexik_translation.force_lower_case%</argument>
         </service>
         
+        <service id="lexik_translation.trans_unit.subscriber" class="Lexik\Bundle\TranslationBundle\EventListener\TransUnitSubscriber" public="false">
+            <argument>%lexik_translation.storage%</argument>
+            <argument>%lexik_translation.force_lower_case%</argument>
+        </service>
+        
         <service id="lexik_translation.importer.file_importer" class="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter">
             <argument type="collection" /> <!-- translation loaders -->
             <argument type="service" id="lexik_translation.storage_manager" />

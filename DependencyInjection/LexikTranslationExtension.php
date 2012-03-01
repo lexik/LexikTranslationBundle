@@ -46,6 +46,7 @@ class LexikTranslationExtension extends Extension
         sort($config['managed_locales']);
         $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
+        $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.force_lower_case', $config['force_lower_case']);
         $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
