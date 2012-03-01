@@ -6,10 +6,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * @UniqueEntity(fields={"key", "domain"})
+ * This class represent a trans unit which contain translations for a given domain and key.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */

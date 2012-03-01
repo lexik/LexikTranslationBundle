@@ -103,12 +103,13 @@ class EditionController extends Controller
      */
     public function newAction()
     {
-        $em = $this->get('lexik_translation.storage_manager');
+        $om = $this->get('lexik_translation.storage_manager');
         $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
 
         $options = array(
-            'domains'    => $em->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains(),
-            'data_class' => $this->container->getParameter('lexik_translation.trans_unit.class'),
+            'domains'           => $om->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains(),
+            'data_class'        => $this->container->getParameter('lexik_translation.trans_unit.class'),
+            'translation_class' => $this->container->getParameter('lexik_translation.translation.class'),
         );
 
         $form = $this->createForm(new TransUnitType(), $transUnit, $options);
@@ -120,8 +121,8 @@ class EditionController extends Controller
                 $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
 
                 $transUnit->setTranslations($translations);
-                $em->persist($transUnit);
-                $em->flush();
+                $om->persist($transUnit);
+                $om->flush();
 
                 return $this->redirect($this->generateUrl('lexik_translation_grid'));
             }

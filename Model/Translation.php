@@ -3,12 +3,9 @@
 namespace Lexik\Bundle\TranslationBundle\Model;
 
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * This class represent a translation for a given locale of a TransUnit object.
- *
- * @UniqueEntity(fields={"transUnit", "locale"})
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */

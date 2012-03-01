@@ -2,9 +2,13 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 
 /**
+ * @UniqueEntity(fields={"key", "domain"})
+ *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
 class TransUnit extends TransUnitModel

@@ -25,6 +25,9 @@ class TransUnitType extends AbstractType
         $builder->add('translations', 'collection', array(
             'type' => new TranslationType(),
             'required' => false,
+            'options' => array(
+                'data_class' => $options['translation_class'],
+            )
         ));
     }
 
@@ -35,8 +38,9 @@ class TransUnitType extends AbstractType
     public function getDefaultOptions(array $options)
     {
         $defaults = array(
-            'data_class' => null,
-            'domains'    => array('messages'),
+            'data_class'        => null,
+            'domains'           => array('messages'),
+            'translation_class' => null,
         );
 
         return array_merge($defaults, $options);
