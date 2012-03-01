@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
+
 use Lexik\Bundle\TranslationBundle\Translation\TransUnitManager;
 
 /**
@@ -38,6 +39,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->createSchema($this->dm);
     }
 
+    /**
+     * @group orm
+     */
     public function testORMCreate()
     {
         $manager = new TransUnitManager($this->em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
@@ -53,6 +57,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals('rambo', $transUnit->getKey());
     }
 
+    /**
+     * @group odm
+     */
     public function testODMCreate()
     {
         $manager = new TransUnitManager($this->dm, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
@@ -68,6 +75,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals('rambo', $transUnit->getKey());
     }
 
+    /**
+     * @group orm
+     */
     public function testORMAddTranslation()
     {
         $manager = new TransUnitManager($this->em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
@@ -92,6 +102,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals('fr', $translation->getLocale());
     }
 
+    /**
+     * @group odm
+     */
     public function testODMAddTranslation()
     {
         $manager = new TransUnitManager($this->dm, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
@@ -113,6 +126,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals('fr', $translation->getLocale());
     }
 
+    /**
+     * @group orm
+     */
     public function testORMUpdateTranslation()
     {
         $manager = new TransUnitManager($this->em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
@@ -131,6 +147,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals(2, $transUnit->getTranslations()->count());
     }
 
+    /**
+     * @group odm
+     */
     public function testODMUpdateTranslation()
     {
         $manager = new TransUnitManager($this->dm, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
@@ -149,6 +168,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals(2, $transUnit->getTranslations()->count());
     }
 
+    /**
+     * @group orm
+     */
     public function testORMNewInstance()
     {
         $manager = new TransUnitManager($this->em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
@@ -163,6 +185,9 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals('en', $transUnit->getTranslations()->get(1)->getLocale());
     }
 
+    /**
+     * @group odm
+     */
     public function testODMNewInstance()
     {
         $manager = new TransUnitManager($this->dm, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);

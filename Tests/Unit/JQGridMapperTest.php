@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class JQGridMapperTest extends BaseUnitTestCase
 {
+    /**
+     * @group util
+     */
     public function testGenerate()
     {
         $datas = array(

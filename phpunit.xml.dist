@@ -26,6 +26,16 @@
             </exclude>
         </whitelist>
     </filter>
+    
+    <groups>
+	  <include>
+	    <group>util</group>
+	    <group>orm</group>
+	  </include>
+	  <exclude>
+	    <group>odm</group> <!-- mongodb php driver is not installed on travis -->
+	  </exclude>
+	</groups>
 
     <php>
         <server name="ROOT_DIR" value="../../../../.." />

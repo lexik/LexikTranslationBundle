@@ -9,6 +9,9 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
  */
 class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
 {
+    /**
+     * @group odm
+     */
     public function testGetAllDomainsByLocale()
     {
         $dm = $this->loadDatabase();
@@ -26,6 +29,9 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
         $this->assertSame($expected, $results);
     }
 
+    /**
+     * @group odm
+     */
     public function testGetAllDomains()
     {
         $dm = $this->loadDatabase(true);
@@ -37,6 +43,9 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
         $this->assertSame($expected, $results);
     }
 
+    /**
+     * @group odm
+     */
     public function testGetAllByLocaleAndDomain()
     {
         $dm = $this->loadDatabase();
@@ -61,6 +70,9 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
         $this->assertSameTransUnit($expected, $results);
     }
 
+    /**
+     * @group odm
+     */
     public function testCount()
     {
         $dm = $this->loadDatabase(true);
@@ -76,6 +88,9 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
         $this->assertEquals(2, $repository->count(array('en', 'de'), array('_search' => true, 'key' => 'say', 'domain' => 'ssa')));
     }
 
+    /**
+     * @group odm
+     */
     public function testGetTransUnitList()
     {
         $dm = $this->loadDatabase(true);
