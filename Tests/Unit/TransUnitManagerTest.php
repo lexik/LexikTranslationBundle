@@ -35,8 +35,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->em = $this->getMockSqliteEntityManager();
         $this->createSchema($this->em);
 
-        $this->dm = $this->getMockMongoDbDocumentManager();
-        $this->createSchema($this->dm);
+        //$this->dm = $this->getMockMongoDbDocumentManager();
+        //$this->createSchema($this->dm);
     }
 
     /**
