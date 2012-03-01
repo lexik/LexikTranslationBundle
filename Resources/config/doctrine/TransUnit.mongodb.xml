@@ -12,7 +12,7 @@
             <index>
                 <option name="unique" value="true" />
                 <option name="safe" value="true" />
-                <key name="key_name" order="asc" />
+                <key name="key" order="asc" />
                 <key name="domain" order="asc" />
             </index>
         </indexes>

@@ -6,15 +6,6 @@
                   
     <embedded-document name="Lexik\Bundle\TranslationBundle\Document\Translation">
 
-        <indexes>
-            <index>
-                <option name="unique" value="true" />
-                <option name="safe" value="true" />
-                <key name="trans_unit_id" order="asc" />
-                <key name="locale" order="asc" />
-            </index>
-        </indexes>
-
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />

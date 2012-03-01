@@ -59,9 +59,11 @@ class Mapper
         }
 
         foreach ($this->datas as $transUnit) {
+            $id = isset($transUnit['_id']) ? $transUnit['_id']->{'$id'} : $transUnit['id'];
+
             $tmp = array();
-            $tmp['id'] = $transUnit['id'];
-            $tmp['cell'] = array($transUnit['id'], $transUnit['domain'], $transUnit['key']) + $defaultTranslations;
+            $tmp['id'] = $id;
+            $tmp['cell'] = array($id, $transUnit['domain'], $transUnit['key']) + $defaultTranslations;
 
             sort($transUnit['translations']);
             foreach ($transUnit['translations'] as $translation) {
