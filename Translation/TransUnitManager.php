@@ -148,4 +148,14 @@ class TransUnitManager
 
         return $translation;
     }
+
+    /**
+     * Return the TransUnit repository.
+     *
+     * @return ObjectRepository
+     */
+    public function getTransUnitRepository()
+    {
+        return $this->objectManager->getRepository($this->transUnitclass);
+    }
 }

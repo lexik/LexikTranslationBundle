@@ -11,9 +11,6 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 
-use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-
 /**
  * Imports translation files content in the database.
  * Only imports files for locales defined in lexik_translation.managed_locales.
@@ -59,7 +56,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param OutputInterface $output
      */
-    public function importAppTranslationFiles(OutputInterface $output, array $locales)
+    protected function importAppTranslationFiles(OutputInterface $output, array $locales)
     {
         $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales);
         $this->importTranslationFiles($finder, $output);
@@ -70,7 +67,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param OutputInterface $output
      */
-    public function importBundlesTranslationFiles(OutputInterface $output, array $locales)
+    protected function importBundlesTranslationFiles(OutputInterface $output, array $locales)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
@@ -90,9 +87,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     protected function importTranslationFiles($finder, OutputInterface $output)
     {
         if ($finder instanceof Finder) {
+            $importer = $this->getContainer()->get('lexik_translation.importer.file_importer');
+
             foreach ($finder as $file)  {
                 $output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
-                $number = $this->importFile($file);
+                $number = $importer->import($file);
                 $output->writeln(sprintf('<comment>%d translations</comment>', $number));
             }
         } else {
@@ -119,49 +118,6 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         }
 
         return $finder;
-    }
-
-    /**
-     * Import a translation file into the database and return the number of translations added.
-     *
-     * @param Symfony\Component\Finder\SplFileInfo $file
-     * @return int
-     */
-    protected function importFile(\Symfony\Component\Finder\SplFileInfo $file)
-    {
-        $imported = 0;
-        list($domain, $locale, $extention) = explode('.', $file->getFilename());
-        $serviceId = sprintf('translation.loader.%s', $extention);
-
-        if ($this->getContainer()->has($serviceId)) {
-            $objectManager = $this->getContainer()->get('lexik_translation.storage_manager');
-            $repository = $objectManager->getRepository($this->getContainer()->getParameter('lexik_translation.trans_unit.class'));
-            $transUnitManager = $this->getContainer()->get('lexik_translation.trans_unit.manager');
-
-            $loader = $this->getContainer()->get($serviceId);
-            $messageCatalogue = $loader->load($file->getPathname(), $locale, $domain);
-
-            foreach ($messageCatalogue->all() as $domainName => $messages) {
-                foreach ($messages as $key => $content) {
-                    $transUnit = $repository->findOneBy(array('key' => $key, 'domain' => $domainName));
-
-                    if (!($transUnit instanceof TransUnit)) {
-                        $transUnit = $transUnitManager->create($key, $domainName, true);
-                    } else {
-                        $objectManager->refresh($transUnit);
-                    }
-
-                    $translation = $transUnitManager->addTranslation($transUnit, $locale, $content);
-                    if ($translation instanceof Translation) {
-                        $imported++;
-                    }
-
-                    $objectManager->flush();
-                }
-            }
-        }
-
-        return $imported;
     }
 
     /**

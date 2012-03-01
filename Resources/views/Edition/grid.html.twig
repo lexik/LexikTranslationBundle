@@ -1,6 +1,6 @@
 {% extends layout %}
 
-{% block title %}{{ 'translations.title-page'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
+{% block title %}{{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -20,10 +20,16 @@
         <span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>
         <span class="ui-button-text">{{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}</span>
     </a>
+    &nbsp;
     <a href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
         <span class="ui-button-icon-primary ui-icon ui-icon-trash"></span>
         <span class="ui-button-text">{{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}</span>
     </a>
+    &nbsp;
+    <button id="select-colunms" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+        <span class="ui-button-icon-primary ui-icon ui-icon-flag"></span>
+        <span class="ui-button-text">{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}</span>
+    </button>
 </div>
 
 <br />
@@ -88,6 +94,11 @@ $(document).ready(function() {
     jQuery("#trans-grid").setGridHeight(400);
     jQuery("#trans-grid").jqGrid("navGrid", "#grid-nav", { edit:false, add:false, del:false, search: false });
     jQuery("#trans-grid").jqGrid("filterToolbar", { defaultSearch: "cn" });
+
+    jQuery("#select-colunms").click(function() {
+        jQuery("#trans-grid").jqGrid("columnChooser", {});
+        return false;
+    });
 });
 //-->
 </script>
