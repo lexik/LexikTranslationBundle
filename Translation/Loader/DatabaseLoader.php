@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Loader;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -16,9 +16,9 @@ use Symfony\Component\Config\Resource\FileResource;
 class DatabaseLoader implements LoaderInterface
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var Doctrine\Common\Persistence\ObjectManager
      */
-    private $entityManager;
+    private $objectManager;
 
     /**
      * TransUnit entity class.
@@ -34,13 +34,13 @@ class DatabaseLoader implements LoaderInterface
     /**
      * Construct.
      *
-     * @param Doctrine\ORM\EntityManager $entityManager
+     * @param Doctrine\Common\Persistence\ObjectManager $objectManager
      * @param string $class
      * @param boolean $forceLowerCase
      */
-    public function __construct(EntityManager $entityManager, $class, $forceLowerCase)
+    public function __construct(ObjectManager $objectManager, $class, $forceLowerCase)
     {
-        $this->entityManager = $entityManager;
+        $this->objectManager = $objectManager;
         $this->class = $class;
         $this->forceLowerCase = $forceLowerCase;
     }
@@ -53,7 +53,7 @@ class DatabaseLoader implements LoaderInterface
     {
         $catalogue = new MessageCatalogue($locale);
 
-        $transUnits = $this->entityManager->getRepository($this->class)->getAllByLocaleAndDomain($locale, $domain);
+        $transUnits = $this->objectManager->getRepository($this->class)->getAllByLocaleAndDomain($locale, $domain);
 
         foreach ($transUnits as $transUnit) {
             foreach ($transUnit['translations'] as $translation) {

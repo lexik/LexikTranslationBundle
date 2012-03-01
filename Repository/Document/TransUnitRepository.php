@@ -65,15 +65,19 @@ FCT;
             ->getQuery()
             ->execute();
 
-        $couples = $results['retval'][0]['couples'];
+        $couples = array();
 
-        usort($couples, function($a, $b) { // @todo remove usort()
-            $result = strcmp($a['locale'], $b['locale']);
-            if (0 === $result) {
-                $result = strcmp($a['domain'], $b['domain']);
-            }
-            return $result;
-        });
+        if (isset($results['retval'][0], $results['retval'][0]['couples'])) {
+            $couples = $results['retval'][0]['couples'];
+
+            usort($couples, function($a, $b) { // @todo remove usort()
+                $result = strcmp($a['locale'], $b['locale']);
+                if (0 === $result) {
+                    $result = strcmp($a['domain'], $b['domain']);
+                }
+                return $result;
+            });
+        }
 
         return $couples;
     }
