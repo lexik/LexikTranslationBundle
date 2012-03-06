@@ -10,6 +10,16 @@ use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 class Translation extends TranslationModel
 {
     /**
+     * Convert all MongoTimestamp object to time.
+     *
+     */
+    public function convertMongoTimestamp()
+    {
+        $this->createdAt = ($this->createdAt instanceof \MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;;
+        $this->updatedAt = ($this->updatedAt instanceof \MongoTimestamp) ? $this->updatedAt->sec : $this->updatedAt;
+    }
+
+    /**
      * (non-PHPdoc)
      * @see Lexik\Bundle\TranslationBundle\Model.Translation::prePersist()
      */

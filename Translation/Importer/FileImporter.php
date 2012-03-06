@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Translation\TransUnitManager;
@@ -73,6 +74,12 @@ class FileImporter
                     $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content);
                     if ($translation instanceof Translation) {
                         $imported++;
+                    }
+
+                    // convert MongoTimestamp objects to time to don't get an error in:
+                    // Doctrine\ODM\MongoDB\Mapping\Types\TimestampType::convertToDatabaseValue()
+                    if ($transUnit instanceof TransUnitDocument) {
+                        $transUnit->convertMongoTimestamp();
                     }
                 }
 
