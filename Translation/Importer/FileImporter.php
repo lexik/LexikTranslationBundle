@@ -68,18 +68,15 @@ class FileImporter
 
                     if (!($transUnit instanceof TransUnit)) {
                         $transUnit = $this->transUnitManager->create($key, $domainName);
-                    } else {
-                        $this->om->refresh($transUnit);
                     }
 
                     $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content);
                     if ($translation instanceof Translation) {
                         $imported++;
                     }
-
-                    $this->om->flush();
                 }
 
+                $this->om->flush();
                 $this->om->clear();
             }
         }
