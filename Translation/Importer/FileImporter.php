@@ -2,12 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
+
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Translation\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager;
 
 /**
  * Import a translation file into the database.
@@ -27,9 +30,14 @@ class FileImporter
     private $om;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Translation\TransUnitManager
+     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager
      */
     private $transUnitManager;
+
+    /**
+     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager
+     */
+    private $fileManager;
 
     /**
      * Construct.
@@ -37,12 +45,14 @@ class FileImporter
      * @param array $loaders
      * @param ObjectManager $om
      * @param TransUnitManager $transUnitManager
+     * @param FileManager $fileManager
      */
-    public function __construct(array $loaders, ObjectManager $om, TransUnitManager $transUnitManager)
+    public function __construct(array $loaders, ObjectManager $om, TransUnitManager $transUnitManager, FileManager $fileManager)
     {
         $this->loaders = $loaders;
         $this->om = $om;
         $this->transUnitManager = $transUnitManager;
+        $this->fileManager = $fileManager;
     }
 
     /**
@@ -58,21 +68,22 @@ class FileImporter
         $serviceId = sprintf('translation.loader.%s', $extention);
 
         if (isset($this->loaders[$serviceId])) {
-            $repository = $this->transUnitManager->getTransUnitRepository();
-
             $loader = $this->loaders[$serviceId];
             $messageCatalogue = $loader->load($file->getPathname(), $locale, $domain);
 
-            foreach ($messageCatalogue->all() as $domainName => $messages) {
+            $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
+
+            foreach ($messageCatalogue->all() as $domain => $messages) {
                 foreach ($messages as $key => $content) {
-                    $transUnit = $repository->findOneBy(array('key' => $key, 'domain' => $domainName));
+                    $transUnit = $this->transUnitManager->findOneByKeyAndDomain($key, $domain);
 
                     if (!($transUnit instanceof TransUnit)) {
-                        $transUnit = $this->transUnitManager->create($key, $domainName);
+                        $transUnit = $this->transUnitManager->create($key, $domain);
                     }
 
                     $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content);
                     if ($translation instanceof Translation) {
+                        $translation->setFile($translationFile);
                         $imported++;
                     }
 

@@ -18,6 +18,12 @@
         <field fieldName="createdAt" name="created_at" type="timestamp" />
 
         <field fieldName="updatedAt" name="updated_at" type="timestamp" />
+        
+        <reference-one field="file" target-document="Lexik\Bundle\TranslationBundle\Document\File" inversed-by="translations">
+            <cascade>
+                <persist/>
+            </cascade>
+        </reference-one>
 
     </embedded-document>
 </doctrine-mongo-mapping>

@@ -5,7 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 
-use Lexik\Bundle\TranslationBundle\Translation\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager;
 
 /**
  * Unit test for TransUnitManager.

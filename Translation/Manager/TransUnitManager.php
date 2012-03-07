@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Translation;
+namespace Lexik\Bundle\TranslationBundle\Translation\Manager;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -30,7 +30,11 @@ class TransUnitManager
     private $translationClass;
 
     /**
+     * Csontruct.
+     *
      * @param ObjectManager $objectManager
+     * @param string $transUnitclass
+     * @param string $translationClass
      */
     public function __construct(ObjectManager $objectManager, $transUnitclass, $translationClass)
     {
@@ -82,6 +86,23 @@ class TransUnitManager
         }
 
         return $transUnit;
+    }
+
+    /**
+     * Returns a TransUnit by its key and domain.
+     *
+     * @param string $key
+     * @param string $domainName
+     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
+     */
+    public function findOneByKeyAndDomain($key, $domainName)
+    {
+        $fields = array(
+            'key' => $key,
+            'domain' => $domainName,
+        );
+
+        return $this->getTransUnitRepository()->findOneBy($fields);
     }
 
     /**

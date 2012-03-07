@@ -53,6 +53,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
         $container->setParameter('lexik_translation.trans_unit.class', sprintf('Lexik\Bundle\TranslationBundle\%s\TransUnit', $type));
         $container->setParameter('lexik_translation.translation.class', sprintf('Lexik\Bundle\TranslationBundle\%s\Translation', $type));
+        $container->setParameter('lexik_translation.file.class', sprintf('Lexik\Bundle\TranslationBundle\%s\File', $type));
 
         $this->registerTranslatorConfiguration($config, $container);
     }
