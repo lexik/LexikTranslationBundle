@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Repository;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
+
 /**
  * Defines all method document and entity repositories have to implement.
  *
@@ -51,4 +53,13 @@ interface TransUnitRepositoryInterface
      * @return int
      */
     public function count(array $locales = null,  array $filters = null);
+
+    /**
+     * Returns all translations for the given file.
+     *
+     * @param File $file
+     * @param boolean $onlyUpdated
+     * @return array
+     */
+    public function getTranslationsForFile(File $file, $onlyUpdated);
 }

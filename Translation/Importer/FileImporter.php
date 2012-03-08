@@ -2,8 +2,6 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
-
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;

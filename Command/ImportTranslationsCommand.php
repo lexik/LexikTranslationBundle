@@ -47,7 +47,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         if ($input->getOption('cache-clear')) {
             $output->writeln('<info>Removing translations cache files ...</info>');
-            $this->removetranslationCache();
+            $this->removeTranslationCache();
         }
     }
 
@@ -72,7 +72,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $output->writeln(sprintf('<info># %s :</info>', $bundle->getName()));
+            $output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
             $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
             $this->importTranslationFiles($finder, $output);
         }
@@ -87,7 +87,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     protected function importTranslationFiles($finder, OutputInterface $output)
     {
         if ($finder instanceof Finder) {
-            $importer = $this->getContainer()->get('lexik_translation.importer.file_importer');
+            $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
                 $output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
@@ -124,7 +124,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Remove translation cache files managed locales.
      *
      */
-    public function removetranslationCache()
+    public function removeTranslationCache()
     {
         $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);

@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
 
 /**
@@ -119,6 +120,33 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
 
         return (int) $builder->getQuery()
             ->getResult(Query::HYDRATE_SINGLE_SCALAR);
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTranslationsForFile()
+     */
+    public function getTranslationsForFile(File $file, $onlyUpdated)
+    {
+        $builder = $this->createQueryBuilder('tu')
+            ->select('tu.key, te.content')
+            ->leftJoin('tu.translations', 'te')
+            ->where('te.file = :file')
+            ->setParameter('file', $file->getId())
+            ->orderBy('te.id', 'asc');
+
+        if ($onlyUpdated) {
+            $builder->andWhere($builder->expr()->gt('te.updatedAt', 'te.createdAt'));
+        }
+
+        $results = $builder->getQuery()->getArrayResult();
+
+        $trabnslations = array();
+        foreach ($results as $result) {
+            $trabnslations[$result['key']] = $result['content'];
+        }
+
+        return $trabnslations;
     }
 
     /**

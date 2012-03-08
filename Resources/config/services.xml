@@ -20,6 +20,7 @@
             </call>
         </service>
     
+        <!-- Loader -->
         <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument>%lexik_translation.trans_unit.class%</argument>
@@ -43,16 +44,24 @@
         <!-- events/listensers -->
         <service id="lexik_translation.trans_unit.subscriber" class="Lexik\Bundle\TranslationBundle\EventListener\TransUnitSubscriber" public="false">
             <argument>%lexik_translation.storage%</argument>
+            <argument>%lexik_translation.file.class%</argument>
             <argument>%lexik_translation.force_lower_case%</argument>
         </service>
         
         <!-- Importer -->
-        <service id="lexik_translation.importer.file_importer" class="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter">
+        <service id="lexik_translation.importer.file" class="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter">
             <argument type="collection" /> <!-- translation loaders -->
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
         </service>
+        
+        <!-- Exporter -->
+        <service id="lexik_translation.exporter.xliff" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter" />
+        
+        <service id="lexik_translation.exporter.yml" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter" />
+        
+        <service id="lexik_translation.exporter.php" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter" />
         
     </services>
 </container>

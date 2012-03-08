@@ -99,4 +99,14 @@ class FileManager
     {
         return md5($relativePath.'/'.$name);
     }
+
+    /**
+     * Return the File repository for the current storage.
+     *
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    public function getFileRepository()
+    {
+        return $this->objectManager->getRepository($this->fileclass);
+    }
 }

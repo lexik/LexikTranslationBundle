@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Repository\Document;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
 
 /**
@@ -38,9 +39,9 @@ class TransUnitRepository extends DocumentRepository implements TransUnitReposit
     }
 
     /**
-    * (non-PHPdoc)
-    * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomainsByLocale()
-    */
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomainsByLocale()
+     */
     public function getAllDomainsByLocale()
     {
         $reduce = <<<FCT
@@ -182,6 +183,44 @@ FCT;
             ->execute();
 
         return $count;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTranslationsForFile()
+     */
+    public function getTranslationsForFile(File $file, $onlyUpdated)
+    {
+        $builder = $this->createQueryBuilder()
+            ->hydrate(false)
+            ->select('key', 'translations')
+            ->field('translations.file.$id')->equals(new \MongoId($file->getId()))
+            ->sort('translations.created_at', 'asc');
+
+        $results = $builder->getQuery()->execute();
+
+        $translations = array();
+        foreach ($results as $result) {
+            $content = null;
+            $i = 0;
+            while ($i<count($result['translations']) && null == $content) {
+                if ($file->getLocale() == $result['translations'][$i]['locale']) {
+                    if ($onlyUpdated) {
+                        $updated = ($result['translations'][$i]['created_at']->sec < $result['translations'][$i]['updated_at']->sec);
+                        $content = $updated ? $result['translations'][$i]['content'] : null;
+                    } else {
+                        $content = $result['translations'][$i]['content'];
+                    }
+                }
+                $i++;
+            }
+
+            if (null != $content) {
+                $translations[$result['key']] = $content;
+            }
+        }
+
+        return $translations;
     }
 
     /**

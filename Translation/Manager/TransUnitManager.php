@@ -171,7 +171,7 @@ class TransUnitManager
     }
 
     /**
-     * Return the TransUnit repository.
+     * Return the TransUnit repository for the current storage.
      *
      * @return ObjectRepository
      */
