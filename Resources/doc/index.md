@@ -49,7 +49,7 @@ This is the full configuration tree with default values:
             translator:      "Lexik\Bundle\TranslationBundle\Translation\Translator"             # translator service class
             database_loader: "Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader"  # database loader class
 
-Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.
+*Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
 
 A litle more about the `force_lower_case` option:
 You can turn this option to true if you use a case insensitive charset such as `utf8_general_ci` for MySQL.
@@ -78,3 +78,16 @@ To import translations files content into your database just run the following c
 
 This command will import all application and bundles translations files according to the "managed_locales" defined in configuration.
 You can use the `--cache-clear` (or `-c`) option to remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
+
+Export translations
+===================
+
+To export translations from the database in to files run the following command:
+
+    ./app/console lexik:translations:export
+
+This command will export all translations from the database in to files. A translation is exported in the same file (and format) it was imported in,
+except for vendors files which are exported in `app/Resources/translations/` and in this case the command will only export translations that changed.
+
+*Note that it's not required to export translations to make them appear on your website, the DatabaseLoader will load them.*
+

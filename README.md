@@ -13,6 +13,7 @@ The idea is to:
 
 The bundle override the translator service and provide a DatabaseLoader.
 Database translations content is loaded last so it override content from xliff, yml and php translations files.
+You can also export translations from the database in to files in case of you need to get translations files with the same content as the database.
 
 Documentation
 =============
@@ -24,3 +25,10 @@ ___________________
 Here a little screen shot of the edition page :)
 
 ![edition page screen](https://github.com/lexik/LexikTranslationBundle/raw/master/Resources/doc/screen/grid.jpg)
+
+TODO
+====
+
+* Add --locale and --domain options on export command.
+* Automatically link a Translation added from the edition page to a File object.
+* Improve queries in Repository\Document\TransUnitRepository.
