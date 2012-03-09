@@ -127,7 +127,10 @@ class TransUnitManager
             $translation = new $class();
             $translation->setLocale($locale);
             $translation->setContent($content);
-            $translation->setFile(($file != null) ? $file : null);
+
+            if ($file != null) {
+                $translation->setFile($file);
+            }
 
             $transUnit->addTranslation($translation);
 
