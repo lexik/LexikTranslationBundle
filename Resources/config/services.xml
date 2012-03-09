@@ -15,16 +15,12 @@
                 <argument key="debug">%kernel.debug%</argument>
             </argument>
             <argument type="service" id="session" on-invalid="ignore" />
-            <call method="setForceLowerCase">
-                <argument>%lexik_translation.force_lower_case%</argument>
-            </call>
         </service>
     
         <!-- Loader -->
         <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument>%lexik_translation.trans_unit.class%</argument>
-            <argument>%lexik_translation.force_lower_case%</argument>
             <tag name="translation.loader" alias="database" />
         </service>
         
@@ -39,13 +35,6 @@
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument>%lexik_translation.file.class%</argument>
             <argument>%kernel.root_dir%</argument>
-        </service>
-        
-        <!-- events/listensers -->
-        <service id="lexik_translation.trans_unit.subscriber" class="Lexik\Bundle\TranslationBundle\EventListener\TransUnitSubscriber" public="false">
-            <argument>%lexik_translation.storage%</argument>
-            <argument>%lexik_translation.file.class%</argument>
-            <argument>%lexik_translation.force_lower_case%</argument>
         </service>
         
         <!-- Importer -->

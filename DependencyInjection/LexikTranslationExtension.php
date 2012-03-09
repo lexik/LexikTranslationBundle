@@ -33,11 +33,9 @@ class LexikTranslationExtension extends Extension
         if ($config['storage'] == 'orm') {
             $type = 'Entity';
             $container->setAlias('lexik_translation.storage_manager', 'doctrine.orm.entity_manager');
-            $container->getDefinition('lexik_translation.trans_unit.subscriber')->addTag('doctrine.event_subscriber');
         } else if ($config['storage'] == 'mongodb') {
             $type = 'Document';
             $container->setAlias('lexik_translation.storage_manager', 'doctrine.odm.mongodb.document_manager');
-            $container->getDefinition('lexik_translation.trans_unit.subscriber')->addTag('doctrine.common.event_subscriber');
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $config['storage']));
         }
@@ -48,7 +46,6 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
-        $container->setParameter('lexik_translation.force_lower_case', $config['force_lower_case']);
         $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
         $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
         $container->setParameter('lexik_translation.trans_unit.class', sprintf('Lexik\Bundle\TranslationBundle\%s\TransUnit', $type));

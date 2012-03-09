@@ -43,10 +43,6 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(array('en'))
                 ->end()
 
-                ->scalarNode('force_lower_case')
-                    ->defaultFalse()
-                ->end()
-
                 ->scalarNode('storage')
                     ->cannotBeEmpty()
                     ->defaultValue('orm')

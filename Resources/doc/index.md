@@ -44,16 +44,11 @@ This is the full configuration tree with default values:
         fallback_locale:  en                                           # default locale to use
         managed_locales:  [en]                                         # locales that the bundle have to manage
         storage:          orm                                          # where to store translations: "orm" or "mongodb"
-        force_lower_case: false                                        # force lower case for TransUnit key field.
         classes:
             translator:      "Lexik\Bundle\TranslationBundle\Translation\Translator"             # translator service class
             database_loader: "Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader"  # database loader class
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
-
-A litle more about the `force_lower_case` option:
-You can turn this option to true if you use a case insensitive charset such as `utf8_general_ci` for MySQL.
-Turnning this option to true will make the bundle to force lower case for the translation's key.
 
 To use the translation edition page, add the routing file to you application:
 

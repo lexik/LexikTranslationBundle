@@ -15,7 +15,7 @@ use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepository extends EntityRepository// implements TransUnitRepositoryInterface
+class TransUnitRepository extends EntityRepository implements TransUnitRepositoryInterface
 {
     /**
      * (non-PHPdoc)

@@ -27,22 +27,15 @@ class DatabaseLoader implements LoaderInterface
     private $class;
 
     /**
-     * @var boolean
-     */
-    private $forceLowerCase;
-
-    /**
      * Construct.
      *
      * @param Doctrine\Common\Persistence\ObjectManager $objectManager
      * @param string $class
-     * @param boolean $forceLowerCase
      */
-    public function __construct(ObjectManager $objectManager, $class, $forceLowerCase)
+    public function __construct(ObjectManager $objectManager, $class)
     {
         $this->objectManager = $objectManager;
         $this->class = $class;
-        $this->forceLowerCase = $forceLowerCase;
     }
 
     /**
@@ -58,8 +51,7 @@ class DatabaseLoader implements LoaderInterface
         foreach ($transUnits as $transUnit) {
             foreach ($transUnit['translations'] as $translation) {
                 if($translation['locale'] == $locale) {
-                    $key = $this->forceLowerCase ? mb_strtolower($transUnit['key'], 'UTF-8') : $transUnit['key'];
-                    $catalogue->set($key, $translation['content'], $domain);
+                    $catalogue->set($transUnit['key'], $translation['content'], $domain);
                 }
             }
         }
