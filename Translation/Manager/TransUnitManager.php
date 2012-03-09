@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Manager;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
+
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
@@ -95,11 +97,11 @@ class TransUnitManager
      * @param string $domainName
      * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
      */
-    public function findOneByKeyAndDomain($key, $domainName)
+    public function findOneByKeyAndDomain($key, $domain)
     {
         $fields = array(
             'key' => $key,
-            'domain' => $domainName,
+            'domain' => $domain,
         );
 
         return $this->getTransUnitRepository()->findOneBy($fields);
@@ -111,10 +113,11 @@ class TransUnitManager
      * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
      * @param string $locale
      * @param string $content
+     * @param Lexik\Bundle\TranslationBundle\Model\File $file
      * @param boolean $flush
      * @return Lexik\Bundle\TranslationBundle\Model\Translation
      */
-    public function addTranslation(TransUnit $transUnit, $locale, $content, $flush = false)
+    public function addTranslation(TransUnit $transUnit, $locale, $content, File $file = null, $flush = false)
     {
         $translation = null;
 
@@ -124,6 +127,7 @@ class TransUnitManager
             $translation = new $class();
             $translation->setLocale($locale);
             $translation->setContent($content);
+            $translation->setFile(($file != null) ? $file : null);
 
             $transUnit->addTranslation($translation);
 

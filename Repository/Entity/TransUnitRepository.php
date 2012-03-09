@@ -15,7 +15,7 @@ use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepository extends EntityRepository implements TransUnitRepositoryInterface
+class TransUnitRepository extends EntityRepository// implements TransUnitRepositoryInterface
 {
     /**
      * (non-PHPdoc)
@@ -141,12 +141,12 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
 
         $results = $builder->getQuery()->getArrayResult();
 
-        $trabnslations = array();
+        $translations = array();
         foreach ($results as $result) {
-            $trabnslations[$result['key']] = $result['content'];
+            $translations[$result['key']] = $result['content'];
         }
 
-        return $trabnslations;
+        return $translations;
     }
 
     /**

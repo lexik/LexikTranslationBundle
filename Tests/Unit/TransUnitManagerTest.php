@@ -85,17 +85,17 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $class = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
         $transUnit = $manager->create('bwah', 'messages', true);
 
-        $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh', true);
+        $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh', null, true);
         $this->assertInstanceOf($class, $translation->getTransUnit());
         $this->assertEquals(1, $transUnit->getTranslations()->count());
         $this->assertEquals('bwaaaAaAahhHHh', $translation->getContent());
         $this->assertEquals('en', $translation->getLocale());
 
-        $translation = $manager->addTranslation($transUnit, 'en', 'blebleble', true);
+        $translation = $manager->addTranslation($transUnit, 'en', 'blebleble', null, true);
         $this->assertEquals(1, $transUnit->getTranslations()->count());
         $this->assertNull($translation);
 
-        $translation = $manager->addTranslation($transUnit, 'fr', 'bwoOoOohH', true);
+        $translation = $manager->addTranslation($transUnit, 'fr', 'bwoOoOohH', null, true);
         $this->assertInstanceOf($class, $translation->getTransUnit());
         $this->assertEquals(2, $transUnit->getTranslations()->count());
         $this->assertEquals('bwoOoOohH', $translation->getContent());
@@ -111,16 +111,16 @@ class TransUnitManagerTest extends BaseUnitTestCase
 
         $transUnit = $manager->create('bwah', 'messages', true);
 
-        $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh', true);
+        $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh', null, true);
         $this->assertEquals(1, $transUnit->getTranslations()->count());
         $this->assertEquals('bwaaaAaAahhHHh', $translation->getContent());
         $this->assertEquals('en', $translation->getLocale());
 
-        $translation = $manager->addTranslation($transUnit, 'en', 'blebleble', true);
+        $translation = $manager->addTranslation($transUnit, 'en', 'blebleble', null, true);
         $this->assertEquals(1, $transUnit->getTranslations()->count());
         $this->assertNull($translation);
 
-        $translation = $manager->addTranslation($transUnit, 'fr', 'bwoOoOohH', true);
+        $translation = $manager->addTranslation($transUnit, 'fr', 'bwoOoOohH', null, true);
         $this->assertEquals(2, $transUnit->getTranslations()->count());
         $this->assertEquals('bwoOoOohH', $translation->getContent());
         $this->assertEquals('fr', $translation->getLocale());

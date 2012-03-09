@@ -66,35 +66,31 @@ class FileImporter
         $serviceId = sprintf('translation.loader.%s', $extention);
 
         if (isset($this->loaders[$serviceId])) {
-            $loader = $this->loaders[$serviceId];
-            $messageCatalogue = $loader->load($file->getPathname(), $locale, $domain);
+            $messageCatalogue = $this->loaders[$serviceId]->load($file->getPathname(), $locale, $domain);
 
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
-            foreach ($messageCatalogue->all() as $domain => $messages) {
-                foreach ($messages as $key => $content) {
-                    $transUnit = $this->transUnitManager->findOneByKeyAndDomain($key, $domain);
+            foreach ($messageCatalogue->all($domain) as $key => $content) {
+                $transUnit = $this->transUnitManager->findOneByKeyAndDomain($key, $domain);
 
-                    if (!($transUnit instanceof TransUnit)) {
-                        $transUnit = $this->transUnitManager->create($key, $domain);
-                    }
-
-                    $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content);
-                    if ($translation instanceof Translation) {
-                        $translation->setFile($translationFile);
-                        $imported++;
-                    }
-
-                    // convert MongoTimestamp objects to time to don't get an error in:
-                    // Doctrine\ODM\MongoDB\Mapping\Types\TimestampType::convertToDatabaseValue()
-                    if ($transUnit instanceof TransUnitDocument) {
-                        $transUnit->convertMongoTimestamp();
-                    }
+                if (!($transUnit instanceof TransUnit)) {
+                    $transUnit = $this->transUnitManager->create($key, $domain);
                 }
 
-                $this->om->flush();
-                $this->om->clear();
+                $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
+                if ($translation instanceof Translation) {
+                    $imported++;
+                }
+
+                // convert MongoTimestamp objects to time to don't get an error in:
+                // Doctrine\ODM\MongoDB\Mapping\Types\TimestampType::convertToDatabaseValue()
+                if ($transUnit instanceof TransUnitDocument) {
+                    $transUnit->convertMongoTimestamp();
+                }
             }
+
+            $this->om->flush();
+            $this->om->clear();
         }
 
         return $imported;
