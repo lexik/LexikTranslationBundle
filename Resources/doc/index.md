@@ -41,9 +41,12 @@ This is the full configuration tree with default values:
     # app/config/config.yml
     lexik_translation:
         base_layout:      "LexikTranslationBundle::layout.html.twig"   # layout used with the translation edition template
-        fallback_locale:  en                                           # default locale to use
-        managed_locales:  [en]                                         # locales that the bundle have to manage
+        fallback_locale:  en                                           # (required) default locale to use
+        managed_locales:  [en]                                         # (required) locales that the bundle have to manage
         storage:          orm                                          # where to store translations: "orm" or "mongodb"
+        resources_registration:
+            type:                 all                                  # resources type to register: "all", "files" or "database"
+            managed_locales_only: true                                 # only load resources for managed locales
         classes:
             translator:      "Lexik\Bundle\TranslationBundle\Translation\Translator"             # translator service class
             database_loader: "Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader"  # database loader class

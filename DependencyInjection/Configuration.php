@@ -24,6 +24,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('lexik_translation');
 
         $storages = array('orm', 'mongodb');
+        $registrationTypes = array('all', 'files', 'database');
 
         $rootNode
             ->addDefaultsIfNotSet()
@@ -34,13 +35,14 @@ class Configuration implements ConfigurationInterface
                 ->end()
 
                 ->scalarNode('fallback_locale')
+                    ->isRequired()
                     ->cannotBeEmpty()
-                    ->defaultValue('en')
                 ->end()
 
-                ->variableNode('managed_locales')
+                ->arrayNode('managed_locales')
+                    ->isRequired()
                     ->cannotBeEmpty()
-                    ->defaultValue(array('en'))
+                    ->prototype('scalar')->end()
                 ->end()
 
                 ->scalarNode('storage')
@@ -49,6 +51,23 @@ class Configuration implements ConfigurationInterface
                     ->validate()
                         ->ifNotInArray($storages)
                         ->thenInvalid('The storage "%s" is not supported. Please use one of the following storage: '.implode(', ', $storages))
+                    ->end()
+                ->end()
+
+                ->arrayNode('resources_registration')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('type')
+                            ->cannotBeEmpty()
+                            ->defaultValue('all')
+                            ->validate()
+                                ->ifNotInArray($registrationTypes)
+                                ->thenInvalid('Invalid registration type "%s". Please use one of the following types: '.implode(', ', $registrationTypes))
+                            ->end()
+                        ->end()
+                        ->booleanNode('managed_locales_only')
+                            ->defaultTrue()
+                        ->end()
                     ->end()
                 ->end()
 

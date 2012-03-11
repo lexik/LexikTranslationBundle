@@ -46,6 +46,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
+
         $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
         $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
         $container->setParameter('lexik_translation.trans_unit.class', sprintf('Lexik\Bundle\TranslationBundle\%s\TransUnit', $type));
@@ -69,37 +70,49 @@ class LexikTranslationExtension extends Extension
         $translator = $container->findDefinition('lexik_translation.translator');
         $translator->addMethodCall('setFallbackLocale', array($config['fallback_locale']));
 
-        // Discover translation directories
-        $dirs = array();
-        foreach ($container->getParameter('kernel.bundles') as $bundle) {
-            $reflection = new \ReflectionClass($bundle);
-            if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
+        $registration = $config['resources_registration'];
+
+        if ('all' == $registration['type'] || 'files' == $registration['type']) {
+            // Discover translation directories
+            $dirs = array();
+            foreach ($container->getParameter('kernel.bundles') as $bundle) {
+                $reflection = new \ReflectionClass($bundle);
+                if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
+                    $dirs[] = $dir;
+                }
+            }
+
+            if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
                 $dirs[] = $dir;
             }
-        }
 
-        if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
-            $dirs[] = $dir;
-        }
+            // Register translation resources
+            if (count($dirs) > 0) {
+                $finder = new \Symfony\Component\Finder\Finder();
+                $finder->files();
 
-        // Register translation resources
-        if ($dirs) {
-            $finder = new \Symfony\Component\Finder\Finder();
-            $finder->files()
-                ->filter(function (\SplFileInfo $file) {
-                    return 2 === substr_count($file->getBasename(), '.');
-                })
-                ->in($dirs);
+                if (true === $registration['managed_locales_only']) {
+                    $finder->name(sprintf('/(.*\.(%s)\..*)/', implode('|', $config['managed_locales'])));
+                } else {
+                    $finder->filter(function (\SplFileInfo $file) {
+                        return 2 === substr_count($file->getBasename(), '.');
+                    });
+                }
 
-            foreach ($finder as $file) {
-                // filename is domain.locale.format
-                list($domain, $locale, $format) = explode('.', $file->getBasename());
+                $finder->in($dirs);
 
-                $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
+                foreach ($finder as $file) {
+                    // filename is domain.locale.format
+                    list($domain, $locale, $format) = explode('.', $file->getBasename());
+
+                    $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
+                }
             }
         }
 
-        // add ressources from database
-        $translator->addMethodCall('addDatabaseResources', array());
+        if ('all' == $registration['type'] || 'database' == $registration['type']) {
+            // add ressources from database
+            $translator->addMethodCall('addDatabaseResources', array());
+        }
     }
 }
