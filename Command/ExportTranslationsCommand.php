@@ -49,7 +49,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     }
 
     /**
-     * Export translations into a file.
+     * Get translations to export and export translations into a file.
      *
      * @param File $file
      * @param OutputInterface $output
@@ -76,21 +76,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         if (count($translations) > 0) {
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
-
-            $output->writeln(sprintf('<comment>Output file: %s</comment>', $outputFile));
-            $output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
-
-            $exporterId = sprintf('lexik_translation.exporter.%s', $file->getExtention());
-
-            if ($this->getContainer()->has($exporterId)) {
-                $exported = $this->getContainer()
-                    ->get($exporterId)
-                    ->export($outputFile, $translations);
-
-                $output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
-            } else {
-                $output->writeln(sprintf('<error>No exporter found for "%s" extention</error>', $file->getExtention()));
-            }
+            $this->doExport($outputFile, $translations, $file->getExtention());
         } else {
             $output->writeln('<comment>No translations to export.</comment>');
         }
@@ -114,5 +100,29 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         }
 
         return $translations;
+    }
+
+    /**
+     * Export translations.
+     *
+     * @param string $outputFile
+     * @param array $translations
+     * @param string $format
+     */
+    protected function doExport($outputFile, $translations, $format)
+    {
+        $output->writeln(sprintf('<comment>Output file: %s</comment>', $outputFile));
+        $output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
+
+        $exporterId = sprintf('lexik_translation.exporter.%s', $format);
+
+        if ($this->getContainer()->has($exporterId)) {
+            $exporter = $this->getContainer()->get($exporterId);
+            $exported = $exporter->export($outputFile, $translations);
+
+            $output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
+        } else {
+            $output->writeln(sprintf('<error>No exporter found for "%s" extention</error>', $format));
+        }
     }
 }

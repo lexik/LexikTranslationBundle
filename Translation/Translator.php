@@ -48,38 +48,6 @@ class Translator extends BaseTranslator
     }
 
     /**
-     * Update a trans unit element form the given request.
-     *
-     * @param Request $request
-     * @param boolean $removeCache
-     */
-    public function updateTransUnitFromRequest(Request $request, $removeCache = false)
-    {
-        $locales = $this->container->getParameter('lexik_translation.managed_locales');
-        $repository = $this->container->get('lexik_translation.storage_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
-        $transUnitManager = $this->container->get('lexik_translation.trans_unit.manager');
-
-        $transUnit = $repository->findOneById($request->request->get('id'));
-
-        foreach ($locales as $locale) {
-            $value = $request->request->get($locale);
-            if (!empty($value)) {
-                if ($transUnit->hasTranslation($locale)) {
-                    $transUnitManager->updateTranslation($transUnit, $locale, $value);
-                } else {
-                    $transUnitManager->addTranslation($transUnit, $locale, $value);
-                }
-
-                if ($removeCache) {
-                    $this->removeCacheFile($locale);
-                }
-            }
-        }
-
-        $this->container->get('lexik_translation.storage_manager')->flush();
-    }
-
-    /**
      * Remove the cache file corresponding to the given locale.
      *
      * @param string $locale

@@ -2,10 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Manager;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
-
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
 
@@ -175,6 +174,30 @@ class TransUnitManager
         }
 
         return $translation;
+    }
+
+    /**
+     * Update the content of each translations for the given trans unit.
+     *
+     * @param TransUnit $transUnit
+     * @param array $translations
+     * @param boolean $flush
+     */
+    public function updateTranslationsContent(TransUnit $transUnit, array $translations, $flush = false)
+    {
+        foreach ($translations as $locale => $content) {
+            if (!empty($content)) {
+                if ($transUnit->hasTranslation($locale)) {
+                    $this->updateTranslation($transUnit, $locale, $content);
+                } else {
+                    $this->addTranslation($transUnit, $locale, $content);
+                }
+            }
+        }
+
+        if ($flush) {
+            $this->objectManager->flush();
+        }
     }
 
     /**

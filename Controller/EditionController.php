@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Form\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Util\JQGrid\Mapper;
 
@@ -72,7 +73,22 @@ class EditionController extends Controller
             $result = array();
 
             if ('edit' == $request->request->get('oper')) {
-                $this->get('translator')->updateTransUnitFromRequest($this->get('request'));
+                $transUnitManager = $this->get('lexik_translation.trans_unit.manager');
+                $transUnit = $transUnitManager->getTransUnitRepository()->findOneById($request->request->get('id'));
+
+                if (!($transUnit instanceof TransUnit)) {
+                    throw new NotFoundHttpException();
+                }
+
+                $translationsContent = array();
+                foreach ($this->getManagedLocales() as $locale) {
+                    $translationsContent[$locale] = $request->request->get($locale);
+                }
+
+                $transUnitManager->updateTranslationsContent($transUnit, $translationsContent);
+
+                $this->get('lexik_translation.storage_manager')->flush();
+
                 $result['success'] = true;
             }
 
