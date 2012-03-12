@@ -18,6 +18,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExportTranslationsCommand extends ContainerAwareCommand
 {
     /**
+     * @var Symfony\Component\Console\Input\InputInterface
+     */
+    private $input;
+
+    /**
      * @var Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
@@ -30,6 +35,10 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     {
         $this->setName('lexik:translations:export');
         $this->setDescription('Export translations from the database to files.');
+
+        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
+        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
+        $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
     }
 
     /**
@@ -38,21 +47,35 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
         $this->output = $output;
 
-        $repository = $this->getContainer()
-            ->get('lexik_translation.file.manager')
-            ->getFileRepository();
+        $filesToExport = $this->getFilesToExport();
 
-        $fileToExport = $repository->findAll();
-
-        if (count($fileToExport) > 0) {
-            foreach ($fileToExport as $file) {
+        if (count($filesToExport) > 0) {
+            foreach ($filesToExport as $file) {
                 $this->exportFile($file);
             }
         } else {
             $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
         }
+    }
+
+    /**
+     * Returns all file to export.
+     *
+     * @return array
+     */
+    protected function getFilesToExport()
+    {
+        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
+        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
+
+        $repository = $this->getContainer()
+            ->get('lexik_translation.file.manager')
+            ->getFileRepository();
+
+        return $repository->findForLoalesAndDomains($locales, $domains);
     }
 
     /**
@@ -64,16 +87,10 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     {
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
 
-        $outputFile = sprintf('%s/../%s/%s', $rootDir, $file->getPath(), $file->getName());
-        $onlyUpdated = false;
-
-        // we don't write vendors file, translations will be exported in app/Resources/translations
-        if (substr($file->getPath(), 0, 6) == 'vendor') {
-            $outputFile = sprintf('%s/Resources/translations/%s', $rootDir, $file->getName());
-            $onlyUpdated = true;
-        }
-
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
+
+        // we only export updated translations in case of the file is located in vendor/
+        $onlyUpdated = (substr($file->getPath(), 0, 6) == 'vendor');
 
         $translations = $this->getContainer()
             ->get('lexik_translation.trans_unit.manager')
@@ -81,9 +98,14 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             ->getTranslationsForFile($file, $onlyUpdated);
 
         if (count($translations) > 0) {
-            $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
+            $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
-            $this->doExport($outputFile, $translations, $file->getExtention());
+            // we don't write vendors file, translations will be exported in app/Resources/translations
+            $outputPath = (substr($file->getPath(), 0, 6) == 'vendor') ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/../%s', $rootDir, $file->getPath());
+            $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
+
+            $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
+            $this->doExport($outputFile, $translations, $format);
         } else {
             $this->output->writeln('<comment>No translations to export.</comment>');
         }

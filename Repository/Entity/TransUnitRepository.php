@@ -4,7 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Repository\Entity;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\EntityRepository;
 
 use Lexik\Bundle\TranslationBundle\Model\File;

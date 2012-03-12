@@ -5,7 +5,8 @@
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
                   
     <document name="Lexik\Bundle\TranslationBundle\Document\File"
-              collection="lexik_translation_file">
+              collection="lexik_translation_file"
+              repository-class="Lexik\Bundle\TranslationBundle\Repository\Document\FileRepository">
 
         <indexes>
             <index>
