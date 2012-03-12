@@ -18,6 +18,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ExportTranslationsCommand extends ContainerAwareCommand
 {
     /**
+     * @var Symfony\Component\Console\Output\OutputInterface
+     */
+    private $output;
+
+    /**
      * (non-PHPdoc)
      * @see Symfony\Component\Console\Command.Command::configure()
      */
@@ -33,6 +38,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->output = $output;
+
         $repository = $this->getContainer()
             ->get('lexik_translation.file.manager')
             ->getFileRepository();
@@ -41,10 +48,10 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         if (count($fileToExport) > 0) {
             foreach ($fileToExport as $file) {
-                $this->exportFile($file, $output);
+                $this->exportFile($file);
             }
         } else {
-            $output->writeln('<comment>No translation\'s files in the database.</comment>');
+            $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
         }
     }
 
@@ -52,9 +59,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      * Get translations to export and export translations into a file.
      *
      * @param File $file
-     * @param OutputInterface $output
      */
-    protected function exportFile(File $file, OutputInterface $output)
+    protected function exportFile(File $file)
     {
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
 
@@ -67,7 +73,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $onlyUpdated = true;
         }
 
-        $output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
+        $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
 
         $translations = $this->getContainer()
             ->get('lexik_translation.trans_unit.manager')
@@ -76,9 +82,10 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         if (count($translations) > 0) {
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
+
             $this->doExport($outputFile, $translations, $file->getExtention());
         } else {
-            $output->writeln('<comment>No translations to export.</comment>');
+            $this->output->writeln('<comment>No translations to export.</comment>');
         }
     }
 
@@ -111,8 +118,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function doExport($outputFile, $translations, $format)
     {
-        $output->writeln(sprintf('<comment>Output file: %s</comment>', $outputFile));
-        $output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
+        $this->output->writeln(sprintf('<comment>Output file: %s</comment>', $outputFile));
+        $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
         $exporterId = sprintf('lexik_translation.exporter.%s', $format);
 
@@ -120,9 +127,9 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $exporter = $this->getContainer()->get($exporterId);
             $exported = $exporter->export($outputFile, $translations);
 
-            $output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
+            $this->output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
         } else {
-            $output->writeln(sprintf('<error>No exporter found for "%s" extention</error>', $format));
+            $this->output->writeln(sprintf('<error>No exporter found for "%s" extention</error>', $format));
         }
     }
 }

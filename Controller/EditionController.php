@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
+use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Form\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Util\JQGrid\Mapper;
@@ -86,6 +87,10 @@ class EditionController extends Controller
                 }
 
                 $transUnitManager->updateTranslationsContent($transUnit, $translationsContent);
+
+                if ($transUnit instanceof TransUnitDocument) {
+                    $transUnit->convertMongoTimestamp();
+                }
 
                 $this->get('lexik_translation.storage_manager')->flush();
 
