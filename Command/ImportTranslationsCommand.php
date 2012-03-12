@@ -20,6 +20,16 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
     /**
+     * @var Symfony\Component\Console\Input\InputInterface
+     */
+    private $input;
+
+    /**
+     * @var Symfony\Component\Console\Output\OutputInterface
+     */
+    private $output;
+
+    /**
      * (non-PHPdoc)
      * @see Symfony\Component\Console\Command.Command::configure()
      */
@@ -37,16 +47,19 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
+        $this->output = $output;
+
         $managedLocales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
 
-        $output->writeln('<info>*** Importing application translation files ***</info>');
-        $this->importAppTranslationFiles($output, $managedLocales);
+        $this->output->writeln('<info>*** Importing application translation files ***</info>');
+        $this->importAppTranslationFiles($managedLocales);
 
-        $output->writeln('<info>*** Importing bundles translation files ***</info>');
-        $this->importBundlesTranslationFiles($output, $managedLocales);
+        $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+        $this->importBundlesTranslationFiles($managedLocales);
 
-        if ($input->getOption('cache-clear')) {
-            $output->writeln('<info>Removing translations cache files ...</info>');
+        if ($this->input->getOption('cache-clear')) {
+            $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->removeTranslationCache();
         }
     }
@@ -54,27 +67,27 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     /**
      * Imports application translation files.
      *
-     * @param OutputInterface $output
+     * @param array $locales
      */
-    protected function importAppTranslationFiles(OutputInterface $output, array $locales)
+    protected function importAppTranslationFiles(array $locales)
     {
         $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales);
-        $this->importTranslationFiles($finder, $output);
+        $this->importTranslationFiles($finder);
     }
 
     /**
      * Imports translation files form all bundles.
      *
-     * @param OutputInterface $output
+     * @param array $locales
      */
-    protected function importBundlesTranslationFiles(OutputInterface $output, array $locales)
+    protected function importBundlesTranslationFiles(array $locales)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
+            $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
             $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
-            $this->importTranslationFiles($finder, $output);
+            $this->importTranslationFiles($finder);
         }
     }
 
@@ -82,20 +95,19 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Imports some translations files.
      *
      * @param Finder $finder
-     * @param OutputInterface $output
      */
-    protected function importTranslationFiles($finder, OutputInterface $output)
+    protected function importTranslationFiles($finder)
     {
         if ($finder instanceof Finder) {
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
-                $output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
+                $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
                 $number = $importer->import($file);
-                $output->writeln(sprintf('<comment>%d translations</comment>', $number));
+                $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
             }
         } else {
-            $output->writeln('<comment>No file to import for managed locales.</comment>');
+            $this->output->writeln('<comment>No file to import for managed locales.</comment>');
         }
     }
 
