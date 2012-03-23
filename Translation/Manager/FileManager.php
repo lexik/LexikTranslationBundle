@@ -14,8 +14,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 class FileManager
 {
     /**
-    * @var Doctrine\Common\Persistence\ObjectManager
-    */
+     * @var Doctrine\Common\Persistence\ObjectManager
+     */
     private $objectManager;
 
     /**

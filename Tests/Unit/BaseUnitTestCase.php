@@ -77,10 +77,6 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $xmlDriver = new \Symfony\Bridge\Doctrine\Mapping\Driver\XmlDriver(array_values($prefixes));
         $xmlDriver->setNamespacePrefixes(array_flip($prefixes));
 
-        $drivers = new \Doctrine\ORM\Mapping\Driver\DriverChain();
-        //$drivers->addDriver($annotationDriver, 'Lexik\Bundle\TranslationBundle\Entity');
-        $drivers->addDriver($xmlDriver, 'Lexik\Bundle\TranslationBundle\Entity');
-
         // configuration mock
         $config = $this->getMock('Doctrine\ORM\Configuration');
         $config->expects($this->any())
@@ -100,7 +96,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $config->expects($this->any())
             ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($drivers));
+            ->will($this->returnValue($xmlDriver));
         $config->expects($this->any())
             ->method('getClassMetadataFactoryName')
             ->will($this->returnValue('Doctrine\ORM\Mapping\ClassMetadataFactory'));
@@ -129,9 +125,11 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMockMongoDbDocumentManager()
     {
-        $driver = new \Symfony\Bundle\DoctrineMongoDBBundle\Mapping\Driver\XmlDriver(array_flip(array(
+        $prefixes = array(
             'Lexik\Bundle\TranslationBundle\Document' => __DIR__.'/../../Resources/config/doctrine'
-        )));
+        );
+        $xmlDriver = new \Symfony\Bundle\DoctrineMongoDBBundle\Mapping\Driver\XmlDriver(array_values($prefixes));
+        $xmlDriver->setNamespacePrefixes(array_flip($prefixes));
 
         $cache = new \Doctrine\Common\Cache\ArrayCache();
 
@@ -153,7 +151,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(true));
         $config->expects($this->any())
             ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($driver));
+            ->will($this->returnValue($xmlDriver));
         $config->expects($this->any())
             ->method('getClassMetadataFactoryName')
             ->will($this->returnValue('Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory'));

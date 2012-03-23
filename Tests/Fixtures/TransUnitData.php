@@ -18,7 +18,30 @@ class TransUnitData implements FixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        // key.say_hello
+        // add files
+        $files = array();
+        $domains = array(
+            'superTranslations' => array('fr', 'en', 'de'),
+            'messages' => array('fr', 'en'),
+        );
+
+        foreach ($domains as $name => $locales) {
+            foreach ($locales as $locale) {
+                $file = $this->createFileInstance($manager);
+                $file->setDomain($name);
+                $file->setLocale($locale);
+                $file->setExtention('yml');
+                $file->setPath('app/Resources/translations');
+                $file->setHash(md5(sprintf('app/Resources/translations/%s.%s.yml', $name, $locale)));
+
+                $manager->persist($file);
+                $files[$name][$locale] = $file;
+            }
+        }
+
+        $manager->flush();
+
+        // add translations for "key.say_hello"
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_hello');
         $transUnit->setDomain('superTranslations');
@@ -33,6 +56,7 @@ class TransUnitData implements FixtureInterface
             $translation = $this->createTranslationInstance($manager);
             $translation->setLocale($locale);
             $translation->setContent($content);
+            $translation->setFile($files['superTranslations'][$locale]);
 
             $transUnit->addTranslation($translation);
         }
@@ -41,7 +65,7 @@ class TransUnitData implements FixtureInterface
         $manager->flush();
 
 
-        // key.say_goodbye
+        // add translations for "key.say_goodbye"
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_goodbye');
 
@@ -54,6 +78,7 @@ class TransUnitData implements FixtureInterface
             $translation = $this->createTranslationInstance($manager);
             $translation->setLocale($locale);
             $translation->setContent($content);
+            $translation->setFile($files['messages'][$locale]);
 
             $transUnit->addTranslation($translation);
         }
@@ -62,7 +87,7 @@ class TransUnitData implements FixtureInterface
         $manager->flush();
 
 
-        // key.say_wtf
+        // add translations for "key.say_wtf"
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_wtf');
 
@@ -75,6 +100,7 @@ class TransUnitData implements FixtureInterface
             $translation = $this->createTranslationInstance($manager);
             $translation->setLocale($locale);
             $translation->setContent($content);
+            $translation->setFile($files['messages'][$locale]);
 
             $transUnit->addTranslation($translation);
         }
@@ -88,7 +114,7 @@ class TransUnitData implements FixtureInterface
      *
      * @param ObjectManager $manager
      */
-    protected function createTransUnitInstance($manager)
+    protected function createTransUnitInstance(ObjectManager $manager)
     {
         $instance = null;
 
@@ -106,7 +132,7 @@ class TransUnitData implements FixtureInterface
      *
      * @param ObjectManager $manager
      */
-    protected function createTranslationInstance($manager)
+    protected function createTranslationInstance(ObjectManager $manager)
     {
         $instance = null;
 
@@ -114,6 +140,24 @@ class TransUnitData implements FixtureInterface
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\Translation();
         } else if ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\Translation();
+        }
+
+        return $instance;
+    }
+
+    /**
+     * Create the right File instance.
+     *
+     * @param ObjectManager $manager
+     */
+    protected function createFileInstance(ObjectManager $manager)
+    {
+        $instance = null;
+
+        if ($manager instanceof \Doctrine\ORM\EntityManager) {
+            $instance = new \Lexik\Bundle\TranslationBundle\Entity\File();
+        } else if ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+            $instance = new \Lexik\Bundle\TranslationBundle\Document\File();
         }
 
         return $instance;

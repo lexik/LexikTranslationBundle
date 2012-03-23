@@ -32,7 +32,17 @@ $revs = array(
         'doctrine-fixtures'     => 'origin/master',
         'doctrine-mongodb'      => 'origin/master',
         'doctrine-mongodb-odm'  => 'origin/master',
-        'DoctrineMongoDBBundle' => 'origin/master',
+        'DoctrineMongoDBBundle' => 'v2.0.1',
+    ),
+    'v2.0.12' => array(
+        'symfony'               => 'v2.0.12',
+        'doctrine-common'       => '2.1.4',
+        'doctrine-dbal'         => '2.1.6',
+        'doctrine'              => '2.1.6',
+        'doctrine-fixtures'     => 'origin/master',
+        'doctrine-mongodb'      => 'origin/master',
+        'doctrine-mongodb-odm'  => 'origin/master',
+        'DoctrineMongoDBBundle' => 'v2.0.1',
     ),
 );
 

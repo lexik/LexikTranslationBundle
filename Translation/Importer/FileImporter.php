@@ -23,7 +23,7 @@ class FileImporter
     private $loaders;
 
     /**
-     * @var octrine\Common\Persistence\ObjectManager
+     * @var Doctrine\Common\Persistence\ObjectManager
      */
     private $om;
 

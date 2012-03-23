@@ -29,5 +29,4 @@ Here a little screen shot of the edition page :)
 TODO
 ====
 
-* Automatically link a Translation added from the edition page to a File object.
 * Improve queries in Repository\Document\TransUnitRepository.
