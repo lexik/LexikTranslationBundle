@@ -9,6 +9,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
+use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Form\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Util\JQGrid\Mapper;
@@ -140,6 +141,20 @@ class EditionController extends Controller
 
             if ($form->isValid()) {
                 $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
+
+                // link new translations to a file to be able to export them.
+                foreach ($translations as $translation) {
+                    if (!$translation->getFile()) {
+                        $file = $this->get('lexik_translation.file.manager')->getFor(
+                            sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),
+                            $this->container->getParameter('kernel.root_dir').'/Resources/translations'
+                        );
+
+                        if ($file instanceof File) {
+                            $translation->setFile($file);
+                        }
+                    }
+                }
 
                 $transUnit->setTranslations($translations);
                 $om->persist($transUnit);
