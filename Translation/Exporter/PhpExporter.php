@@ -15,12 +15,7 @@ class PhpExporter implements ExporterInterface
      */
     public function export($file, $translations)
     {
-        $rows = array();
-        foreach ($translations as $key => $content) {
-            $rows[] = sprintf("'%s' => '%s',", $key, str_replace("'", "\'", $content));
-        }
-
-        $phpContent = sprintf("<?php\nreturn array(\n    %s\n);", implode("\n    ", $rows));
+        $phpContent = sprintf("<?php\nreturn %s;", var_export($translations, true));
 
         $bytes = file_put_contents($file, $phpContent);
 

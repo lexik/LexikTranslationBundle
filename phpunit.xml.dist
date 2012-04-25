@@ -31,6 +31,7 @@
 	  <include>
 	    <group>util</group>
 	    <group>orm</group>
+	    <group>exporter</group>
 	  </include>
 	  <exclude>
 	    <group>odm</group> <!-- mongodb php driver is not installed on travis -->
