@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
+namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Repository;
 
 /**
  * Unit test for TransUnit document's repository class.

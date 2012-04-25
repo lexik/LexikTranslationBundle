@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
+namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;;
 
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
