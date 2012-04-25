@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Repository;
 
+use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
+
 /**
  * Unit test for TransUnit document's repository class.
  *

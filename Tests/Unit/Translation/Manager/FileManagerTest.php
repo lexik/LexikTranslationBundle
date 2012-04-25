@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 
 use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 /**
  * Unit test for FileManager.
