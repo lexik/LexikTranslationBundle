@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Config\Resource\FileResource;
 
 /**
  * Loader to load translations from the database.
