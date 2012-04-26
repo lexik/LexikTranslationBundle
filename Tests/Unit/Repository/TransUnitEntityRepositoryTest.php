@@ -17,7 +17,7 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
     public function testGetAllDomainsByLocale()
     {
         $em = $this->loadDatabase();
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomainsByLocale();
         $expected = array(
@@ -37,7 +37,7 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
     public function testGetAllDomains()
     {
         $em = $this->loadDatabase(true);
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomains();
         $expected = array('messages', 'superTranslations');
@@ -51,7 +51,7 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
     public function testGetAllByLocaleAndDomain()
     {
         $em = $this->loadDatabase();
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllByLocaleAndDomain('de', 'messages');
         $expected = array();
@@ -78,7 +78,7 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
     public function testCount()
     {
         $em = $this->loadDatabase(true);
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $this->assertEquals(3, $repository->count(array('fr', 'de', 'en'), array()));
         $this->assertEquals(3, $repository->count(array('fr', 'it'), array()));
@@ -95,7 +95,7 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
     public function testGetTransUnitList()
     {
         $em = $this->loadDatabase(true);
-        $repository = $em->getRepository('Lexik\Bundle\TranslationBundle\Entity\TransUnit');
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'ASC'));
         $expected = array(
@@ -162,6 +162,49 @@ class TransUnitEntityRepositoryTest extends BaseUnitTestCase
             )),
         );
         $this->assertSameTransUnit($expected, $result);
+    }
+
+    /**
+     * @group orm
+     */
+    public function testGetTranslationsForFile()
+    {
+        $em = $this->loadDatabase();
+        $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
+
+        $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(array(
+            'domain' => 'messages',
+            'locale' => 'fr',
+            'extention' => 'yml',
+         ));
+        $this->assertInstanceOf(self::ENTITY_FILE_CLASS, $file);
+
+        $result = $repository->getTranslationsForFile($file, false);
+        $expected = array(
+            'key.say_goodbye' => 'au revoir',
+            'key.say_wtf' => 'c\'est quoi ce bordel !?!',
+        );
+        $this->assertEquals($expected, $result);
+
+        // update a translation and then get translations with onlyUpdated = true
+        $now = new \DateTime('now');
+        $now->modify('+2 days');
+
+        $em->createQueryBuilder()
+            ->update(self::ENTITY_TRANSLATION_CLASS, 't')
+            ->set('t.updatedAt', ':date')
+            ->where('t.locale = :locale AND t.content = :content')
+            ->setParameter('locale', 'fr')
+            ->setParameter('content', 'au revoir')
+            ->setParameter('date', $now->format('Y-m-d H:i:s'))
+            ->getQuery()
+            ->execute();
+
+        $result = $repository->getTranslationsForFile($file, true);
+        $expected = array(
+            'key.say_goodbye' => 'au revoir',
+        );
+        $this->assertEquals($expected, $result);
     }
 
     protected function assertSameTransUnit($expected, $result)

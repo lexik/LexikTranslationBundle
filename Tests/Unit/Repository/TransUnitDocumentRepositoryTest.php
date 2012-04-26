@@ -17,7 +17,7 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
     public function testGetAllDomainsByLocale()
     {
         $dm = $this->loadDatabase();
-        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomainsByLocale();
         $expected = array(
@@ -37,7 +37,7 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
     public function testGetAllDomains()
     {
         $dm = $this->loadDatabase(true);
-        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomains();
         $expected = array('messages', 'superTranslations');
@@ -51,7 +51,7 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
     public function testGetAllByLocaleAndDomain()
     {
         $dm = $this->loadDatabase();
-        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllByLocaleAndDomain('de', 'messages');
         $expected = array();
@@ -78,7 +78,7 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
     public function testCount()
     {
         $dm = $this->loadDatabase(true);
-        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $this->assertEquals(3, $repository->count(null, array()));
         $this->assertEquals(3, $repository->count(array('fr', 'de', 'en'), array()));
@@ -96,7 +96,7 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
     public function testGetTransUnitList()
     {
         $dm = $this->loadDatabase(true);
-        $repository = $dm->getRepository('Lexik\Bundle\TranslationBundle\Document\TransUnit');
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'ASC'));
         $expected = array(
@@ -163,6 +163,47 @@ class TransUnitDocumentRepositoryTest extends BaseUnitTestCase
             )),
         );
         $this->assertSameTransUnit($expected, $result);
+    }
+
+    /**
+     * @group odm
+     */
+    public function testGetTranslationsForFile()
+    {
+        $dm = $this->loadDatabase();
+        $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
+
+        $file = $dm->getRepository(self::DOCUMENT_FILE_CLASS)->findOneBy(array(
+            'domain' => 'messages',
+            'locale' => 'fr',
+            'extention' => 'yml',
+        ));
+        $this->assertInstanceOf(self::DOCUMENT_FILE_CLASS, $file);
+
+        $result = $repository->getTranslationsForFile($file, false);
+        $expected = array(
+            'key.say_goodbye' => 'au revoir',
+            'key.say_wtf' => 'c\'est quoi ce bordel !?!',
+        );
+        $this->assertEquals($expected, $result);
+
+        // update a translation and then get translations with onlyUpdated = true
+        $now = new \DateTime('now');
+        $now->modify('+2 days');
+
+        $cursor = $dm->createQueryBuilder(self::DOCUMENT_TRANS_UNIT_CLASS)
+            ->update()
+            ->field('translations.updated_at')->set($now->format('U'))
+            ->field('key')->equals('key.say_goodbye')
+            ->field('domain')->equals('messages')
+            ->getQuery()
+            ->execute();
+
+        $result = $repository->getTranslationsForFile($file, true);
+        $expected = array(
+            'key.say_goodbye' => 'au revoir',
+        );
+        $this->assertEquals($expected, $result);
     }
 
     protected function assertSameTransUnit($expected, $result)
