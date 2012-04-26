@@ -15,12 +15,6 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
  */
 class TransUnitManagerTest extends BaseUnitTestCase
 {
-    const ENTITY_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
-    const ENTITY_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';
-
-    const DOCUMENT_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
-    const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
-
     /**
      * @var Doctrine\ORM\EntityManager
      */

@@ -15,9 +15,6 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
  */
 class FileManagerTest extends BaseUnitTestCase
 {
-    const ENTITY_FILE_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\File';
-    const DOCUMENT_FILE_CLASS = 'Lexik\Bundle\TranslationBundle\Document\File';
-
     /**
      * @var Doctrine\ORM\EntityManager
      */

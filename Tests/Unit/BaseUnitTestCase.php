@@ -18,6 +18,14 @@ use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitData;
  */
 abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
 {
+    const ENTITY_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
+    const ENTITY_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';
+    const ENTITY_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Entity\File';
+
+    const DOCUMENT_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
+    const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
+    const DOCUMENT_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Document\File';
+
     /**
      * Create the database schema.
      *
