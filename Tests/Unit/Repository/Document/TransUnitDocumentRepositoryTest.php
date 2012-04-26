@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Repository;
+namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Repository\Document;
 
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
