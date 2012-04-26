@@ -9,7 +9,7 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitEntityRepositoryTest extends BaseUnitTestCase
+class TransUnitRepositoryTest extends BaseUnitTestCase
 {
     /**
      * @group orm
