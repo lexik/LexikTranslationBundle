@@ -13,7 +13,7 @@ interface FileRepositoryInterface
 {
 
     /**
-     * Returns all files mathing a given locale and a given domains.
+     * Returns all files matching a given locale and a given domains.
      *
      * @param array $locales
      * @param array $domains
