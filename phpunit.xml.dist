@@ -34,6 +34,7 @@
 	    <group>exporter</group>
 	    <group>loader</group>
 	    <group>importer</group>
+	    <group>translator</group>
 	  </include>
 	  <exclude>
 	    <group>odm</group> <!-- mongodb php driver is not installed on travis -->
