@@ -30,3 +30,4 @@ TODO
 ====
 
 * Improve queries in Repository\Document\TransUnitRepository.
+* Allow line breaks in translation editor (with JQGrid), using <textarea> instead of <input> fields
