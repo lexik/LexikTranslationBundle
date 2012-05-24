@@ -48,8 +48,8 @@ This is the full configuration tree with default values:
             type:                 all                                  # resources type to register: "all", "files" or "database"
             managed_locales_only: true                                 # only load resources for managed locales
         classes:
-            translator:      "Lexik\Bundle\TranslationBundle\Translation\Translator"             # translator service class
-            database_loader: "Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader"  # database loader class
+            translator:      Lexik\Bundle\TranslationBundle\Translation\Translator             # translator service class
+            database_loader: Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader  # database loader class
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
 
