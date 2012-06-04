@@ -30,6 +30,12 @@
         <span class="ui-button-icon-primary ui-icon ui-icon-flag"></span>
         <span class="ui-button-text">{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}</span>
     </button>
+    {% if inputType == 'textarea'  %}
+    <button id="save-row" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+        <span class="ui-button-icon-primary ui-icon ui-icon-check"></span>
+        <span class="ui-button-text">{{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}</span>
+    </button>
+    {% endif %}
 </div>
 
 <br />
@@ -62,11 +68,11 @@ $(document).ready(function() {
         ,{ name:"{{ 'translations.domain'|trans({}, 'LexikTranslationBundle') }}", index: "domain", width: 100, sortable: true, editable: false }
         ,{ name:"{{ 'translations.key'|trans({}, 'LexikTranslationBundle') }}", index: "key", width: 150, sortable: true, editable: false }
 {% for locale in locales %}
-        ,{ name: "{{ locale }}", index: "{{ locale }}", width: 160, sortable: false, editable:true, search: true }
+        ,{ name: "{{ locale }}", index: "{{ locale }}", width: 160, sortable: false, editable:true, {{ inputType == 'textarea' ? 'edittype: "textarea", ' : '' }}search: true }
 {% endfor %}
     ];
 
-    var lastsel;
+    var lastSelected, lastSaved;
 
     jQuery("#trans-grid").jqGrid({
         url: "{{ path('lexik_translation_list') }}",
@@ -80,10 +86,10 @@ $(document).ready(function() {
         viewrecords: true,
         sortorder: "asc",
         onSelectRow: function(id) {
-            if(id && id !== lastsel) {
-                jQuery('#trans-grid').jqGrid("restoreRow", lastsel);
+            if(id && id !== lastSelected) {
+                jQuery('#trans-grid').jqGrid("restoreRow", lastSelected);
                 jQuery('#trans-grid').jqGrid("editRow", id, true);
-                lastsel = id;
+                lastSelected = id;
             }
         },
         editurl: "{{ path('lexik_translation_update') }}",
@@ -99,6 +105,15 @@ $(document).ready(function() {
         jQuery("#trans-grid").jqGrid("columnChooser", {});
         return false;
     });
+
+    {% if inputType == 'textarea'  %}
+    jQuery("#save-row").click(function() {
+        if (lastSelected && lastSaved != lastSelected) {
+            jQuery('#trans-grid').saveRow(lastSelected);
+            lastSaved = lastSelected;
+        }
+    });
+	{% endif %}
 });
 //-->
 </script>

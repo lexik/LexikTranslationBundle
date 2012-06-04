@@ -58,8 +58,9 @@ class EditionController extends Controller
     public function gridAction()
     {
         return $this->render('LexikTranslationBundle:Edition:grid.html.twig', array(
-            'layout' => $this->container->getParameter('lexik_translation.base_layout'),
-            'locales' => $this->getManagedLocales(),
+            'layout'    => $this->container->getParameter('lexik_translation.base_layout'),
+            'inputType' => $this->container->getParameter('lexik_translation.grid_input_type'),
+            'locales'   => $this->getManagedLocales(),
         ));
     }
 

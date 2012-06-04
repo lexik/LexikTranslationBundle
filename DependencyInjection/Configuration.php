@@ -25,6 +25,7 @@ class Configuration implements ConfigurationInterface
 
         $storages = array('orm', 'mongodb');
         $registrationTypes = array('all', 'files', 'database');
+        $inputTypes = array('text', 'textarea');
 
         $rootNode
             ->addDefaultsIfNotSet()
@@ -43,6 +44,15 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                     ->prototype('scalar')->end()
+                ->end()
+
+                ->scalarNode('grid_input_type')
+                    ->cannotBeEmpty()
+                    ->defaultValue('text')
+                    ->validate()
+                        ->ifNotInArray($inputTypes)
+                        ->thenInvalid('The input type "%s" is not supported. Please use one of the following types: '.implode(', ', $inputTypes))
+                    ->end()
                 ->end()
 
                 ->scalarNode('storage')

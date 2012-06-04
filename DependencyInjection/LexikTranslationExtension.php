@@ -46,6 +46,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
+        $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
 
         $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
         $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
