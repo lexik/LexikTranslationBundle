@@ -24,25 +24,15 @@ $deps = array(
 );
 
 $revs = array(
-    'v2.0.11' => array(
-        'symfony'               => 'v2.0.11',
+    'v2.0.16' => array(
+        'symfony'               => 'v2.0.16',
         'doctrine-common'       => '2.1.4',
-        'doctrine-dbal'         => '2.1.6',
-        'doctrine'              => '2.1.6',
+        'doctrine-dbal'         => '2.1.7',
+        'doctrine'              => '2.1.7',
         'doctrine-fixtures'     => 'origin/master',
-        'doctrine-mongodb'      => 'origin/master',
-        'doctrine-mongodb-odm'  => 'origin/master',
-        'DoctrineMongoDBBundle' => 'v2.0.1',
-    ),
-    'v2.0.12' => array(
-        'symfony'               => 'v2.0.12',
-        'doctrine-common'       => '2.1.4',
-        'doctrine-dbal'         => '2.1.6',
-        'doctrine'              => '2.1.6',
-        'doctrine-fixtures'     => 'origin/master',
-        'doctrine-mongodb'      => 'origin/master',
-        'doctrine-mongodb-odm'  => 'origin/master',
-        'DoctrineMongoDBBundle' => 'v2.0.1',
+        'doctrine-mongodb'      => '1.0.0-BETA1',
+        'doctrine-mongodb-odm'  => '1.0.0-BETA5',
+        'DoctrineMongoDBBundle' => 'v2.2.1',
     ),
 );
 
