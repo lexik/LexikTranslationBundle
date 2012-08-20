@@ -63,10 +63,9 @@ class FileImporter
     {
         $imported = 0;
         list($domain, $locale, $extention) = explode('.', $file->getFilename());
-        $serviceId = sprintf('translation.loader.%s', $extention);
 
-        if (isset($this->loaders[$serviceId])) {
-            $messageCatalogue = $this->loaders[$serviceId]->load($file->getPathname(), $locale, $domain);
+        if (isset($this->loaders[$extention])) {
+            $messageCatalogue = $this->loaders[$extention]->load($file->getPathname(), $locale, $domain);
 
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
@@ -91,6 +90,8 @@ class FileImporter
 
             $this->om->flush();
             $this->om->clear();
+        } else {
+            throw new \RuntimeException(sprintf('No load found for "%s" format.', $serviceId));
         }
 
         return $imported;

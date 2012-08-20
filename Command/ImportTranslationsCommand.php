@@ -123,9 +123,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $dir = $path.'/Resources/translations';
 
         if (is_dir($dir)) {
+            $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
+
             $finder = new Finder();
             $finder->files()
-                ->name(sprintf('/(.*(%s)\.(xliff|yml|php))/', implode('|', $locales)))
+                ->name(sprintf('/(.*(%s)\.(%s))/', implode('|', $locales), implode('|', $formats)))
                 ->in($dir);
         }
 

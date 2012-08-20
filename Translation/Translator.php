@@ -92,4 +92,24 @@ class Translator extends BaseTranslator
             unlink($metadata);
         }
     }
+
+    /**
+     * Returns all translations file formats.
+     *
+     * @return array
+     */
+    public function getFormats()
+    {
+        $allFormats = array();
+
+        foreach ($this->loaderIds as $id => $formats) {
+            foreach ($formats as $format) {
+                if ('database' !== $format) {
+                    $allFormats[] = $format;
+                }
+            }
+        }
+
+        return $allFormats;
+    }
 }
