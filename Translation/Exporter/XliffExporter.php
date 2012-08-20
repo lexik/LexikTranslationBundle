@@ -10,8 +10,7 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 class XliffExporter implements ExporterInterface
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Translation\Exporter.ExporterInterface::export()
+     * {@inheritdoc}
      */
     public function export($file, $translations)
     {
@@ -30,11 +29,19 @@ class XliffExporter implements ExporterInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function support($format)
+    {
+        return ('xlf' == $format || 'xliff' == $format);
+    }
+
+    /**
      * Create a new xml document.
      *
      * @return \DOMDocument
      */
-    public function createXmlDocument()
+    protected function createXmlDocument()
     {
         $dom = new \DOMDocument('1.0');
         $dom->formatOutput = true;
@@ -48,7 +55,7 @@ class XliffExporter implements ExporterInterface
      * @param \DOMDocument $dom
      * @return \DOMElement
      */
-    public function addRootNodes(\DOMDocument $dom)
+    protected function addRootNodes(\DOMDocument $dom)
     {
         $xliff = $dom->appendChild($dom->createElement('xliff'));
         $xliff->appendChild(new \DOMAttr('version', '1.2'));
@@ -73,7 +80,7 @@ class XliffExporter implements ExporterInterface
      * @param string $value
      * @return \DOMElement
      */
-    public function createTranslationNode(\DOMDocument $dom, $id, $key, $value)
+    protected function createTranslationNode(\DOMDocument $dom, $id, $key, $value)
     {
         $translationNode = $dom->createElement('trans-unit');
         $translationNode->appendChild(new \DOMAttr('id', $id));

@@ -15,6 +15,7 @@ class TranslatorPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
+        // loaders
         $loaders = array();
         $loadersReferences = array();
 
@@ -34,6 +35,13 @@ class TranslatorPass implements CompilerPassInterface
 
         if ($container->hasDefinition('lexik_translation.importer.file')) {
             $container->findDefinition('lexik_translation.importer.file')->replaceArgument(0, $loadersReferences);
+        }
+
+        // exporters
+        if ($container->hasDefinition('lexik_translation.exporter_collector')) {
+            foreach ($container->findTaggedServiceIds('lexik_translation.exporter') as $id => $attributes) {
+                $container->getDefinition('lexik_translation.exporter_collector')->addMethodCall('addExporter', array($id, new Reference($id)));
+            }
         }
     }
 }

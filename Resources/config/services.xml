@@ -46,11 +46,19 @@
         </service>
         
         <!-- Exporter -->
-        <service id="lexik_translation.exporter.xliff" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter" />
+        <service id="lexik_translation.exporter_collector" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" />
         
-        <service id="lexik_translation.exporter.yml" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter" />
+        <service id="lexik_translation.exporter.xliff" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter">
+            <tag name="lexik_translation.exporter" alias="xlf" />
+        </service>
         
-        <service id="lexik_translation.exporter.php" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter" />
+        <service id="lexik_translation.exporter.yml" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter">
+            <tag name="lexik_translation.exporter" alias="yml" />
+        </service>
+        
+        <service id="lexik_translation.exporter.php" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter">
+            <tag name="lexik_translation.exporter" alias="php" />
+        </service>
         
     </services>
 </container>

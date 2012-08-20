@@ -122,7 +122,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     protected function mergeExistingTranslations($file, $outputFile, $translations)
     {
         if (file_exists($outputFile)) {
-            $loader = $this->getContainer()->get(sprintf('translation.loader.%s', $file->getExtention()));
+            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($file->getExtention());
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);
@@ -143,15 +143,13 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->output->writeln(sprintf('<comment>Output file: %s</comment>', $outputFile));
         $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
-        $exporterId = sprintf('lexik_translation.exporter.%s', $format);
-
-        if ($this->getContainer()->has($exporterId)) {
-            $exporter = $this->getContainer()->get($exporterId);
+        try {
+            $exporter = $this->getContainer()->get('lexik_translation.exporter_collector')->getByFormat($format);
             $exported = $exporter->export($outputFile, $translations);
 
             $this->output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
-        } else {
-            $this->output->writeln(sprintf('<error>No exporter found for "%s" extention</error>', $format));
+        } catch (\Exception $e) {
+            $this->output->writeln(sprintf('<error>"%s"</error>', $e->getMessage()));
         }
     }
 }

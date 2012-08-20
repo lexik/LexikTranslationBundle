@@ -10,8 +10,7 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 class PhpExporter implements ExporterInterface
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Translation\Exporter.ExporterInterface::export()
+     * {@inheritdoc}
      */
     public function export($file, $translations)
     {
@@ -20,5 +19,13 @@ class PhpExporter implements ExporterInterface
         $bytes = file_put_contents($file, $phpContent);
 
         return ($bytes !== false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function support($format)
+    {
+        return ('php' == $format);
     }
 }

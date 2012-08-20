@@ -17,4 +17,12 @@ interface ExporterInterface
      * @return boolean
      */
     public function export($file, $translations);
+
+    /**
+     * Returns true if this exporter support the given format.
+     *
+     * @param string $format
+     * @return boolean
+     */
+    public function support($format);
 }

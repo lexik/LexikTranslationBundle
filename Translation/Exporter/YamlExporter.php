@@ -12,8 +12,7 @@ use Symfony\Component\Yaml\Dumper;
 class YamlExporter implements ExporterInterface
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Translation\Exporter.ExporterInterface::export()
+     * {@inheritdoc}
      */
     public function export($file, $translations)
     {
@@ -23,5 +22,13 @@ class YamlExporter implements ExporterInterface
         $bytes = file_put_contents($file, $ymlContent);
 
         return ($bytes !== false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function support($format)
+    {
+        return ('yml' == $format);
     }
 }

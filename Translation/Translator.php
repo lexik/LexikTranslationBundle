@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Session;
 use Symfony\Component\HttpFoundation\Request;
@@ -111,5 +112,31 @@ class Translator extends BaseTranslator
         }
 
         return $allFormats;
+    }
+
+    /**
+     * Returns a loader according to the given format.
+     *
+     * @param string $format
+     * @return LoaderInterface
+     */
+    public function getLoader($format)
+    {
+        $loader = null;
+        $i = 0;
+        $ids = array_keys($this->loaderIds);
+
+        while($i<count($ids) && null === $loader) {
+            if (in_array($format, $this->loaderIds[$ids[$i]])) {
+                $loader = $this->container->get($ids[$i]);
+            }
+            $i++;
+        }
+
+        if ( !($loader instanceof LoaderInterface) ) {
+            throw new \RuntimeException(sprintf('No loader found for "%s" format.', $format));
+        }
+
+        return $loader;
     }
 }
