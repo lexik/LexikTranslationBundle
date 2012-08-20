@@ -16,19 +16,23 @@ class TranslatorPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $loaders = array();
-        $loadersIds = array();
+        $loadersReferences = array();
 
         foreach ($container->findTaggedServiceIds('translation.loader') as $id => $attributes) {
-            $loaders[$id] = new Reference($id);
-            $loadersIds[$id] = $attributes[0]['alias'];
+            $loadersReferences[$id] = new Reference($id);
+
+            $loaders[$id][] = $attributes[0]['alias'];
+            if (isset($attributes[0]['legacy-alias'])) {
+                $loaders[$id][] = $attributes[0]['legacy-alias'];
+            }
         }
 
         if ($container->hasDefinition('lexik_translation.translator')) {
-            $container->findDefinition('lexik_translation.translator')->replaceArgument(2, $loadersIds);
+            $container->findDefinition('lexik_translation.translator')->replaceArgument(2, $loaders);
         }
 
         if ($container->hasDefinition('lexik_translation.importer.file')) {
-            $container->findDefinition('lexik_translation.importer.file')->replaceArgument(0, $loaders);
+            $container->findDefinition('lexik_translation.importer.file')->replaceArgument(0, $loadersReferences);
         }
     }
 }

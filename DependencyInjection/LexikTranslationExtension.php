@@ -4,9 +4,11 @@ namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\Finder\Finder;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -18,8 +20,7 @@ use Symfony\Component\DependencyInjection\Loader;
 class LexikTranslationExtension extends Extension
 {
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\DependencyInjection\Extension.ExtensionInterface::load()
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -76,27 +77,45 @@ class LexikTranslationExtension extends Extension
         if ('all' == $registration['type'] || 'files' == $registration['type']) {
             // Discover translation directories
             $dirs = array();
-            foreach ($container->getParameter('kernel.bundles') as $bundle) {
-                $reflection = new \ReflectionClass($bundle);
+            if (class_exists('Symfony\Component\Validator\Validator')) {
+                $r = new \ReflectionClass('Symfony\Component\Validator\Validator');
+
+                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
+            }
+            if (class_exists('Symfony\Component\Form\Form')) {
+                $r = new \ReflectionClass('Symfony\Component\Form\Form');
+
+                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
+            }
+            $overridePath = $container->getParameter('kernel.root_dir').'/Resources/%s/translations';
+            foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
+                $reflection = new \ReflectionClass($class);
                 if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
                     $dirs[] = $dir;
                 }
+                if (is_dir($dir = sprintf($overridePath, $bundle))) {
+                    $dirs[] = $dir;
+                }
             }
-
             if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
                 $dirs[] = $dir;
             }
 
             // Register translation resources
             if (count($dirs) > 0) {
-                $finder = new \Symfony\Component\Finder\Finder();
+                foreach ($dirs as $dir) {
+                    $container->addResource(new DirectoryResource($dir));
+                }
+
+                $finder = Finder::create();
                 $finder->files();
 
                 if (true === $registration['managed_locales_only']) {
+                    // only look for managed locales
                     $finder->name(sprintf('/(.*\.(%s)\..*)/', implode('|', $config['managed_locales'])));
                 } else {
                     $finder->filter(function (\SplFileInfo $file) {
-                        return 2 === substr_count($file->getBasename(), '.');
+                        return 2 === substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename());
                     });
                 }
 
@@ -105,7 +124,6 @@ class LexikTranslationExtension extends Extension
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
                     list($domain, $locale, $format) = explode('.', $file->getBasename());
-
                     $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
                 }
             }
