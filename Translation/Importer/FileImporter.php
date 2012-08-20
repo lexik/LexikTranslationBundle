@@ -91,7 +91,7 @@ class FileImporter
             $this->om->flush();
             $this->om->clear();
         } else {
-            throw new \RuntimeException(sprintf('No load found for "%s" format.', $serviceId));
+            throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
         }
 
         return $imported;

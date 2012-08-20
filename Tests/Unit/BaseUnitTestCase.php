@@ -79,11 +79,9 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         ));
 
         // xml driver
-        $prefixes = array(
-            'Lexik\Bundle\TranslationBundle\Entity' => __DIR__.'/../../Resources/config/doctrine'
-        );
-        $xmlDriver = new \Symfony\Bridge\Doctrine\Mapping\Driver\XmlDriver(array_values($prefixes));
-        $xmlDriver->setNamespacePrefixes(array_flip($prefixes));
+        $xmlDriver = new \Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver(array(
+            __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Entity',
+        ));
 
         // configuration mock
         $config = $this->getMock('Doctrine\ORM\Configuration');
@@ -108,6 +106,9 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $config->expects($this->any())
             ->method('getClassMetadataFactoryName')
             ->will($this->returnValue('Doctrine\ORM\Mapping\ClassMetadataFactory'));
+        $config->expects($this->any())
+            ->method('getDefaultRepositoryClassName')
+            ->will($this->returnValue('Doctrine\\ORM\\EntityRepository'));
 
         if ($mockCustomHydrator) {
             $config->expects($this->any())

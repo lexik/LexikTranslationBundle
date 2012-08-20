@@ -27,8 +27,8 @@ class FileImporterTest extends BaseUnitTestCase
         $this->createSchema($em);
 
         $loaders = array(
-            'translation.loader.yml' => new YamlFileLoader(),
-            'translation.loader.php' => new PhpFileLoader(),
+            'yml' => new YamlFileLoader(),
+            'php' => new PhpFileLoader(),
         );
 
         $transUnitManager = new TransUnitManager($em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);

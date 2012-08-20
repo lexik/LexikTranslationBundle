@@ -20,29 +20,19 @@ $deps = array(
     array('doctrine-fixtures',     'https://github.com/doctrine/data-fixtures.git'),
     array('doctrine-mongodb',      'https://github.com/doctrine/mongodb.git'),
     array('doctrine-mongodb-odm',  'https://github.com/doctrine/mongodb-odm.git'),
-    array('DoctrineMongoDBBundle', 'https://github.com/symfony/DoctrineMongoDBBundle.git')
+    array('DoctrineMongoDBBundle', 'https://github.com/doctrine/DoctrineMongoDBBundle.git')
 );
 
 $revs = array(
-    'v2.0.11' => array(
-        'symfony'               => 'v2.0.11',
-        'doctrine-common'       => '2.1.4',
-        'doctrine-dbal'         => '2.1.6',
-        'doctrine'              => '2.1.6',
+    'v2.1' => array(
+        'symfony'               => 'v2.1.0-RC1',
+        'doctrine-common'       => '2.2.3',
+        'doctrine-dbal'         => '2.2.3',
+        'doctrine'              => '2.2.3',
         'doctrine-fixtures'     => 'origin/master',
-        'doctrine-mongodb'      => 'origin/master',
-        'doctrine-mongodb-odm'  => 'origin/master',
-        'DoctrineMongoDBBundle' => 'v2.0.1',
-    ),
-    'v2.0.12' => array(
-        'symfony'               => 'v2.0.12',
-        'doctrine-common'       => '2.1.4',
-        'doctrine-dbal'         => '2.1.6',
-        'doctrine'              => '2.1.6',
-        'doctrine-fixtures'     => 'origin/master',
-        'doctrine-mongodb'      => 'origin/master',
-        'doctrine-mongodb-odm'  => 'origin/master',
-        'DoctrineMongoDBBundle' => 'v2.0.1',
+        'mongodb'               => '1.0.0-BETA1',
+        'mongodb-odm'           => '1.0.0-BETA5',
+        'DoctrineMongoDBBundle' => 'v3.0.0-BETA2',
     ),
 );
 
