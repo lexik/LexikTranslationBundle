@@ -3,7 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * TransUnit form type.
@@ -13,10 +14,9 @@ use Symfony\Component\Form\FormBuilder;
 class TransUnitType extends AbstractType
 {
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Form.AbstractType::buildForm()
+     * {@inheritdoc}
      */
-    public function buildForm(FormBuilder $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('key');
         $builder->add('domain', 'choice', array(
@@ -32,23 +32,21 @@ class TransUnitType extends AbstractType
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Form.AbstractType::getDefaultOptions()
+     * {@inheritdoc}
      */
-    public function getDefaultOptions(array $options)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $defaults = array(
+        parent::setDefaultOptions($resolver);
+
+        $resolver->setDefaults(array(
             'data_class'        => null,
             'domains'           => array('messages'),
             'translation_class' => null,
-        );
-
-        return array_merge($defaults, $options);
+        ));
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Form.FormTypeInterface::getName()
+     * {@inheritdoc}
      */
     public function getName()
     {
