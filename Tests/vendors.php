@@ -25,9 +25,9 @@ $deps = array(
 
 $revs = array(
     'v2.1' => array(
-        'symfony'               => 'v2.1.0-RC1',
+        'symfony'               => 'v2.1.0-RC2',
         'doctrine-common'       => '2.2.3',
-        'doctrine-dbal'         => '2.2.3',
+        'doctrine-dbal'         => '2.2.2',
         'doctrine'              => '2.2.3',
         'doctrine-fixtures'     => 'origin/master',
         'mongodb'               => '1.0.0-BETA1',
