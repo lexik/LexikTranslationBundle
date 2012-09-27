@@ -62,7 +62,10 @@ class FileImporter
     public function import(\Symfony\Component\Finder\SplFileInfo $file)
     {
         $imported = 0;
-        list($domain, $locale, $extention) = explode('.', $file->getFilename());
+        $tmp       = explode('.', $file->getFilename());
+        $extention = array_pop($tmp);
+        $locale    = array_pop($tmp);
+        $domain    = implode('.', $tmp);
 
         if (isset($this->loaders[$extention])) {
             $messageCatalogue = $this->loaders[$extention]->load($file->getPathname(), $locale, $domain);
