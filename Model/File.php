@@ -172,7 +172,10 @@ abstract class File
      */
     public function setName($name)
     {
-        list($domain, $locale, $extention) = explode('.', $name);
+        $tmp       = explode('.', $name);
+        $extention = array_pop($tmp);
+        $locale    = array_pop($tmp);
+        $domain    = implode('.', $tmp);
 
         $this->domain = $domain;
         $this->locale = $locale;
