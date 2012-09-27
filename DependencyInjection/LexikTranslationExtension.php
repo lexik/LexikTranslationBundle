@@ -123,7 +123,10 @@ class LexikTranslationExtension extends Extension
 
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
-                    list($domain, $locale, $format) = explode('.', $file->getBasename());
+                    $tmp       = explode('.', $file->getBasename());
+                    $format    = array_pop($tmp);
+                    $locale    = array_pop($tmp);
+                    $domain    = implode('.', $tmp);
                     $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
                 }
             }
