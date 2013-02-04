@@ -98,6 +98,7 @@ class TransUnitManager
      */
     public function findOneByKeyAndDomain($key, $domain)
     {
+        $key = substr($key, 0, 255);
         $fields = array(
             'key' => $key,
             'domain' => $domain,
