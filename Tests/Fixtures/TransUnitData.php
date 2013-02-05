@@ -31,8 +31,8 @@ class TransUnitData implements FixtureInterface
                 $file->setDomain($name);
                 $file->setLocale($locale);
                 $file->setExtention('yml');
-                $file->setPath('app/Resources/translations');
-                $file->setHash(md5(sprintf('app/Resources/translations/%s.%s.yml', $name, $locale)));
+                $file->setPath('Resources/translations');
+                $file->setHash(md5(sprintf('Resources/translations/%s.%s.yml', $name, $locale)));
 
                 $manager->persist($file);
                 $files[$name][$locale] = $file;

@@ -20,11 +20,11 @@ $deps = array(
     array('doctrine-fixtures',     'https://github.com/doctrine/data-fixtures.git'),
     array('doctrine-mongodb',      'https://github.com/doctrine/mongodb.git'),
     array('doctrine-mongodb-odm',  'https://github.com/doctrine/mongodb-odm.git'),
-    array('DoctrineMongoDBBundle', 'https://github.com/symfony/DoctrineMongoDBBundle.git')
+    array('DoctrineMongoDBBundle', 'https://github.com/doctrine/DoctrineMongoDBBundle.git')
 );
 
 $revs = array(
-    'v2.0.16' => array(
+    'v2.0' => array(
         'symfony'               => 'v2.0.16',
         'doctrine-common'       => '2.1.4',
         'doctrine-dbal'         => '2.1.7',

@@ -49,7 +49,7 @@ class FileManagerTest extends BaseUnitTestCase
         $this->assertEquals('en', $file->getLocale());
         $this->assertEquals('yml', $file->getExtention());
         $this->assertEquals('myDomain.en.yml', $file->getName());
-        $this->assertEquals('src/Project/CoolBundle/Resources/translations', $file->getPath());
+        $this->assertEquals('../src/Project/CoolBundle/Resources/translations', $file->getPath());
 
         $file = $manager->create('messages.fr.xliff', '/test/root/dir/app/Resources/translations', true);
         $this->assertEquals(ORMUnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($file));
@@ -57,7 +57,7 @@ class FileManagerTest extends BaseUnitTestCase
         $this->assertEquals('fr', $file->getLocale());
         $this->assertEquals('xliff', $file->getExtention());
         $this->assertEquals('messages.fr.xliff', $file->getName());
-        $this->assertEquals('app/Resources/translations', $file->getPath());
+        $this->assertEquals('Resources/translations', $file->getPath());
     }
 
     /**
@@ -73,7 +73,7 @@ class FileManagerTest extends BaseUnitTestCase
         $this->assertEquals('en', $file->getLocale());
         $this->assertEquals('yml', $file->getExtention());
         $this->assertEquals('myDomain.en.yml', $file->getName());
-        $this->assertEquals('src/Project/CoolBundle/Resources/translations', $file->getPath());
+        $this->assertEquals('../src/Project/CoolBundle/Resources/translations', $file->getPath());
 
         $file = $manager->create('messages.fr.xliff', '/test/root/dir/app/Resources/translations', true);
         $this->assertEquals(ODMUnitOfWork::STATE_MANAGED, $this->dm->getUnitOfWork()->getDocumentState($file));
@@ -81,7 +81,7 @@ class FileManagerTest extends BaseUnitTestCase
         $this->assertEquals('fr', $file->getLocale());
         $this->assertEquals('xliff', $file->getExtention());
         $this->assertEquals('messages.fr.xliff', $file->getName());
-        $this->assertEquals('app/Resources/translations', $file->getPath());
+        $this->assertEquals('Resources/translations', $file->getPath());
     }
 
     /**
