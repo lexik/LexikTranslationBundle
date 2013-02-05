@@ -39,6 +39,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
 
         $this->addOption('cache-clear', 'c', InputOption::VALUE_NONE, 'Remove translations cache files for managed locales.', null);
+        $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.', null);
+        
+        $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
 
     /**
@@ -52,11 +55,19 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $managedLocales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
 
-        $this->output->writeln('<info>*** Importing application translation files ***</info>');
-        $this->importAppTranslationFiles($managedLocales);
+        $bundleName = $this->input->getArgument('bundle');
+        if($bundleName) {
+            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+            $this->importBundleTranslationFiles($bundle, $managedLocales);
+            return;
+        }
+        else {
+            $this->output->writeln('<info>*** Importing application translation files ***</info>');
+            $this->importAppTranslationFiles($managedLocales);
 
-        $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-        $this->importBundlesTranslationFiles($managedLocales);
+            $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+            $this->importBundlesTranslationFiles($managedLocales);
+        }
 
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
@@ -83,12 +94,23 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     protected function importBundlesTranslationFiles(array $locales)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
-
+        
         foreach ($bundles as $bundle) {
-            $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-            $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
-            $this->importTranslationFiles($finder);
+            $this->importBundleTranslationFiles($bundle, $locales);
         }
+    }
+    
+    /**
+     * Imports translation files form a bundle.
+     *
+     * @param BundleInterface $bundle Bundle
+     * @param array $locales
+     */
+    protected function importBundleTranslationFiles(BundleInterface $bundle, array $locales)
+    {
+        $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
+        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
+        $this->importTranslationFiles($finder);
     }
 
     /**
@@ -103,7 +125,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
-                $number = $importer->import($file);
+                $number = $importer->import($file, $this->input->getOption('force'));
                 $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
             }
         } else {

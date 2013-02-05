@@ -57,9 +57,10 @@ class FileImporter
      * Impoort the given file and return the number of inserted translations.
      *
      * @param \Symfony\Component\Finder\SplFileInfo $file
+     * @param boolean $forceUpdate force update of the translations
      * @return int
      */
-    public function import(\Symfony\Component\Finder\SplFileInfo $file)
+    public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false)
     {
         $imported = 0;
         list($domain, $locale, $extention) = explode('.', $file->getFilename());
@@ -78,6 +79,10 @@ class FileImporter
 
                 $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
                 if ($translation instanceof Translation) {
+                    $imported++;
+                }
+                else if($forceUpdate) {
+                    $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                     $imported++;
                 }
 
