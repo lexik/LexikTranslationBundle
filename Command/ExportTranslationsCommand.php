@@ -100,8 +100,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         if (count($translations) > 0) {
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
-            // we don't write vendors file, translations will be exported in app/Resources/translations
-            $outputPath = (substr($file->getPath(), 0, 6) == 'vendor') ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/../%s', $rootDir, $file->getPath());
+            // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
+            $outputPath = preg_match('~^([./]*vendor)~', $file->getPath()) ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/%s', $rootDir, $file->getPath());
             $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
 
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
