@@ -39,7 +39,7 @@ class FileManager
     {
         $this->objectManager = $objectManager;
         $this->fileclass = $fileclass;
-        $this->rootDir = str_replace('/app', '', $rootDir);
+        $this->rootDir = $rootDir;
     }
 
     /**
@@ -51,7 +51,7 @@ class FileManager
      */
     public function getFor($name, $path)
     {
-        $hash = $this->generateHash($name, str_replace($this->rootDir.'/', '', $path));
+        $hash = $this->generateHash($name, $this->getFileRelativePath($path));
         $file = $this->objectManager->getRepository($this->fileclass)->findOneBy(array('hash' => $hash));
 
         if (!($file instanceof File)) {
@@ -70,7 +70,7 @@ class FileManager
      */
     public function create($name, $path, $flush = false)
     {
-        $path = str_replace($this->rootDir.'/', '', $path);
+        $path = $this->getFileRelativePath($path);
 
         $class = $this->fileclass;
 
@@ -108,5 +108,34 @@ class FileManager
     public function getFileRepository()
     {
         return $this->objectManager->getRepository($this->fileclass);
+    }
+
+    /**
+     * Returns the relative according to the kernel.root_dir value.
+     *
+     * @param string $filePath
+     * @return string
+     */
+    protected function getFileRelativePath($filePath)
+    {
+        $commonParts = array();
+        $rootDirParts = explode('/', $this->rootDir);
+        $filePathParts = explode('/', $filePath);
+
+        $i = 0;
+        while ($i < count($rootDirParts)) {
+            if ( isset($rootDirParts[$i], $filePathParts[$i]) && $rootDirParts[$i] == $filePathParts[$i] ) {
+                $commonParts[] = $rootDirParts[$i];
+            }
+            $i++;
+        }
+
+        $filePath = str_replace(implode('/', $commonParts).'/', '', $filePath);
+
+        for ($i=count($commonParts); $i<count($rootDirParts); $i++) {
+            $filePath = '../'.$filePath;
+        }
+
+        return $filePath;
     }
 }
