@@ -102,7 +102,6 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
-                var_dump($file);
                 $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
                 $number = $importer->import($file);
                 $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
