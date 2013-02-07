@@ -40,7 +40,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $this->addOption('cache-clear', 'c', InputOption::VALUE_NONE, 'Remove translations cache files for managed locales.', null);
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.', null);
-        
+
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
 
@@ -59,9 +59,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         if($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $managedLocales);
-            return;
-        }
-        else {
+        } else {
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
             $this->importAppTranslationFiles($managedLocales);
 
@@ -94,12 +92,12 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     protected function importBundlesTranslationFiles(array $locales)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
-        
+
         foreach ($bundles as $bundle) {
             $this->importBundleTranslationFiles($bundle, $locales);
         }
     }
-    
+
     /**
      * Imports translation files form a bundle.
      *
