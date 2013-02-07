@@ -98,6 +98,8 @@ class TransUnitManager
      */
     public function findOneByKeyAndDomain($key, $domain)
     {
+        $key = mb_substr($key, 0, 255, 'UTF-8');
+
         $fields = array(
             'key' => $key,
             'domain' => $domain,
