@@ -25,7 +25,7 @@ $deps = array(
 
 $revs = array(
     'v2.1' => array(
-        'symfony'               => 'v2.1.0',
+        'symfony'               => 'v2.1.7',
         'doctrine-common'       => '2.2.3',
         'doctrine-dbal'         => '2.2.2',
         'doctrine'              => '2.2.3',
@@ -46,11 +46,11 @@ foreach ($deps as $index => $dep) {
 
     $installDir = (substr($name, -6) == 'Bundle') ? $vendorDir.'/bundles/Symfony/Bundle/'.$name : $vendorDir.'/'.$name;
     if (!is_dir($installDir)) {
-        echo sprintf("> Installing %s\n", $name);
+        echo sprintf("\n> Installing %s\n", $name);
 
         system(sprintf('git clone %s %s', escapeshellarg($url), escapeshellarg($installDir)));
     } else {
-        echo sprintf("> Updating %s\n", $name);
+        echo sprintf("\n> Updating %s\n", $name);
     }
 
     system(sprintf('cd %s && git fetch origin && git reset --hard %s', escapeshellarg($installDir), escapeshellarg($rev)));

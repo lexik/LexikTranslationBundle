@@ -24,31 +24,31 @@ class FileRepositoryTest extends BaseUnitTestCase
 
         $result = $repository->findForLoalesAndDomains(array('de'), array());
         $expected = array(
-            'app/Resources/translations/superTranslations.de.yml',
+            'Resources/translations/superTranslations.de.yml',
         );
         $this->assertEquals(1, count($result));
         $this->assertFilesPath($expected, $result);
 
         $result = $repository->findForLoalesAndDomains(array('fr'), array());
         $expected = array(
-            'app/Resources/translations/superTranslations.fr.yml',
-            'app/Resources/translations/messages.fr.yml',
+            'Resources/translations/superTranslations.fr.yml',
+            'Resources/translations/messages.fr.yml',
         );
         $this->assertEquals(2, count($result));
         $this->assertFilesPath($expected, $result);
 
         $result = $repository->findForLoalesAndDomains(array(), array('messages'));
         $expected = array(
-            'app/Resources/translations/messages.fr.yml',
-            'app/Resources/translations/messages.en.yml',
+            'Resources/translations/messages.fr.yml',
+            'Resources/translations/messages.en.yml',
         );
         $this->assertEquals(2, count($result));
 
         $result = $repository->findForLoalesAndDomains(array('en', 'de'), array('messages', 'superTranslations'));
         $expected = array(
-            'app/Resources/translations/superTranslations.en.yml',
-            'app/Resources/translations/superTranslations.de.yml',
-            'app/Resources/translations/messages.en.yml',
+            'Resources/translations/superTranslations.en.yml',
+            'Resources/translations/superTranslations.de.yml',
+            'Resources/translations/messages.en.yml',
         );
         $this->assertEquals(3, count($result));
         $this->assertFilesPath($expected, $result);
