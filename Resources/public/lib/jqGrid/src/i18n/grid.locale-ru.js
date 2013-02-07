@@ -7,7 +7,8 @@
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
 **/
-$.jgrid = {
+$.jgrid = $.jgrid || {};
+$.extend($.jgrid,{
 	defaults : {
 		recordtext: "Просмотр {0} - {1} из {2}",
 	  emptyrecords: "Нет записей для просмотра",
@@ -41,11 +42,11 @@ $.jgrid = {
         email: "некорректное значение e-mail",
         integer: "Пожалуйста, введите целое число",
         date: "Пожалуйста, введите правильную дату",
-        url: "неверная ссылка. Необходимо ввести префикс ('http://' or 'https://')",
-		nodefined : " is not defined!",
-		novalue : " return value is required!",
-		customarray : "Custom function should return array!",
-		customfcheck : "Custom function should be present in case of custom checking!"
+        url: "неверная ссылка. Необходимо ввести префикс ('http://' или 'https://')",
+		nodefined : " не определено!",
+		novalue : " возвращаемое значение обязательно!",
+		customarray : "Пользовательская функция должна возвращать массив!",
+		customfcheck : "Пользовательская функция должна присутствовать в случаи пользовательской проверки!"
 		}
 	},
 	view : {
@@ -123,5 +124,5 @@ $.jgrid = {
 	  checkbox : {disabled:true},
 		idName : 'id'
 	}
-};
+});
 })(jQuery);
