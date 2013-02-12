@@ -71,11 +71,9 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
         $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
 
-        $repository = $this->getContainer()
+        return $this->getContainer()
             ->get('lexik_translation.file.manager')
-            ->getFileRepository();
-
-        return $repository->findForLoalesAndDomains($locales, $domains);
+            ->getByLoalesAndDomains($locales, $domains);
     }
 
     /**

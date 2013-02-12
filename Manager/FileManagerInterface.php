@@ -26,4 +26,13 @@ interface FileManagerInterface
      * @return File
      */
     public function getFor($name, $path);
+
+    /**
+     * Returns all translations files for given locales and doamins.
+     *
+     * @param array $locales
+     * @param array $domains
+     * @return array
+     */
+    public function getByLoalesAndDomains(array $locales, array $domains);
 }

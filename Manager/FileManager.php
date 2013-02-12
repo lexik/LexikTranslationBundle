@@ -81,6 +81,16 @@ class FileManager implements FileManagerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getByLoalesAndDomains(array $locales, array $domains)
+    {
+        return $this->objectManager
+            ->getRepository($this->fileclass)
+            ->findForLoalesAndDomains($locales, $domains);
+    }
+
+    /**
      * Returns the has for the given file.
      *
      * @param string $name
@@ -90,18 +100,6 @@ class FileManager implements FileManagerInterface
     protected function generateHash($name, $relativePath)
     {
         return md5($relativePath.'/'.$name);
-    }
-
-    /**
-     * Return the File repository for the current storage.
-     *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     *
-     * @todo remove
-     */
-    public function getFileRepository()
-    {
-        return $this->objectManager->getRepository($this->fileclass);
     }
 
     /**
