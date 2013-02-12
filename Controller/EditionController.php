@@ -130,7 +130,7 @@ class EditionController extends Controller
         $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
 
         $options = array(
-            'domains'           => $om->getRepository('LexikTranslationBundle:TransUnit')->getAllDomains(),
+            'domains'           => $om->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'))->getAllDomains(),
             'data_class'        => $this->container->getParameter('lexik_translation.trans_unit.class'),
             'translation_class' => $this->container->getParameter('lexik_translation.translation.class'),
         );
