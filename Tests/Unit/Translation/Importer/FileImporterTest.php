@@ -3,8 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Importer;
 
 use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 use Symfony\Component\Translation\Loader\YamlFileLoader;

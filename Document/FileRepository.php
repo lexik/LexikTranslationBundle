@@ -1,21 +1,22 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Repository\Document;
+namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
-
-use Lexik\Bundle\TranslationBundle\Repository\FileRepositoryInterface;
 
 /**
  * Repository for TransUnit document.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class FileRepository extends DocumentRepository implements FileRepositoryInterface
+class FileRepository extends DocumentRepository
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.FileRepositoryInterface::findForLoalesAndDomains()
+     * Returns all available domain/locale couples.
+     *
+     * @param array $locales
+     * @param array $domains
+     * @return array
      */
     public function findForLoalesAndDomains(array $locales, array $domains)
     {

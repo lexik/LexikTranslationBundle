@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Translation\Manager;
+namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Doctrine\Common\Persistence\ObjectManager;
 

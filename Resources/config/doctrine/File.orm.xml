@@ -6,7 +6,7 @@
 
     <entity name="Lexik\Bundle\TranslationBundle\Entity\File" 
             table="lexik_translation_file"
-            repository-class="Lexik\Bundle\TranslationBundle\Repository\Entity\FileRepository">
+            repository-class="Lexik\Bundle\TranslationBundle\Entity\FileRepository">
             
         <unique-constraints>
             <unique-constraint name="hash_idx" columns="hash" />

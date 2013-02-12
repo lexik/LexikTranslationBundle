@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 
 /**
  * Import a translation file into the database.

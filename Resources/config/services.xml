@@ -25,13 +25,13 @@
         </service>
         
         <!-- Managers -->
-        <service id="lexik_translation.trans_unit.manager" class="Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager">
+        <service id="lexik_translation.trans_unit.manager" class="Lexik\Bundle\TranslationBundle\Manager\TransUnitManager">
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument>%lexik_translation.trans_unit.class%</argument>
             <argument>%lexik_translation.translation.class%</argument>
         </service>
         
-        <service id="lexik_translation.file.manager" class="Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager">
+        <service id="lexik_translation.file.manager" class="Lexik\Bundle\TranslationBundle\Manager\FileManager">
             <argument type="service" id="lexik_translation.storage_manager" />
             <argument>%lexik_translation.file.class%</argument>
             <argument>%kernel.root_dir%</argument>

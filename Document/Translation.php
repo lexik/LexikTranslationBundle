@@ -11,7 +11,6 @@ class Translation extends TranslationModel
 {
     /**
      * Convert all MongoTimestamp object to time.
-     *
      */
     public function convertMongoTimestamp()
     {
@@ -20,8 +19,7 @@ class Translation extends TranslationModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.Translation::prePersist()
+     * {@inheritdoc}
      */
     public function prePersist()
     {
@@ -32,8 +30,7 @@ class Translation extends TranslationModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.Translation::preUpdate()
+     * {@inheritdoc}
      */
     public function preUpdate()
     {
