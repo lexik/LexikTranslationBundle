@@ -11,10 +11,10 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class FileManager
+class FileManager implements FileManagerInterface
 {
     /**
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     private $objectManager;
 
@@ -32,8 +32,8 @@ class FileManager
      * Construct.
      *
      * @param ObjectManager $objectManager
-     * @param string $fileclass
-     * @param string $rootDir
+     * @param string        $fileclass
+     * @param string        $rootDir
      */
     public function __construct(ObjectManager $objectManager, $fileclass, $rootDir)
     {
@@ -43,11 +43,7 @@ class FileManager
     }
 
     /**
-     * Returns a translation file according to the given name and path.
-     *
-     * @param string $name
-     * @param string $path
-     * @return Lexik\Bundle\TranslationBundle\Model\File
+     * {@inheritdoc}
      */
     public function getFor($name, $path)
     {
@@ -62,11 +58,7 @@ class FileManager
     }
 
     /**
-     * Create a new file.
-     *
-     * @param string $name
-     * @param string $path
-     * @return Lexik\Bundle\TranslationBundle\Model\File
+     * {@inheritdoc}
      */
     public function create($name, $path, $flush = false)
     {
@@ -95,7 +87,7 @@ class FileManager
      * @param string $relativePath
      * @return string
      */
-    public function generateHash($name, $relativePath)
+    protected function generateHash($name, $relativePath)
     {
         return md5($relativePath.'/'.$name);
     }
@@ -104,6 +96,8 @@ class FileManager
      * Return the File repository for the current storage.
      *
      * @return \Doctrine\Common\Persistence\ObjectRepository
+     *
+     * @todo remove
      */
     public function getFileRepository()
     {

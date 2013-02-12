@@ -13,10 +13,10 @@ use Lexik\Bundle\TranslationBundle\Model\Translation;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitManager
+class TransUnitManager implements TransUnitManagerInterface
 {
     /**
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     private $objectManager;
 
@@ -45,10 +45,7 @@ class TransUnitManager
     }
 
     /**
-     * Returns a new TransUnit instance with new translations for each $locales.
-     *
-     * @param array $locales
-     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
+     * {@inheritdoc}
      */
     public function newInstance($locales = array())
     {
@@ -67,12 +64,7 @@ class TransUnitManager
     }
 
     /**
-     * Create a new trans unit.
-     *
-     * @param string $keyName
-     * @param string $domainName
-     * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
+     * {@inheritdoc}
      */
     public function create($keyName, $domainName, $flush = false)
     {
@@ -90,11 +82,7 @@ class TransUnitManager
     }
 
     /**
-     * Returns a TransUnit by its key and domain.
-     *
-     * @param string $key
-     * @param string $domainName
-     * @return Lexik\Bundle\TranslationBundle\Model\TransUnit
+     * {@inheritdoc}
      */
     public function findOneByKeyAndDomain($key, $domain)
     {
@@ -109,14 +97,7 @@ class TransUnitManager
     }
 
     /**
-     * Add a new translation to the given trans unit.
-     *
-     * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
-     * @param string $locale
-     * @param string $content
-     * @param Lexik\Bundle\TranslationBundle\Model\File $file
-     * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Model\Translation
+     * {@inheritdoc}
      */
     public function addTranslation(TransUnit $transUnit, $locale, $content, File $file = null, $flush = false)
     {
@@ -146,13 +127,7 @@ class TransUnitManager
     }
 
     /**
-     * Update the translated content of a trans unit for the given locale.
-     *
-     * @param Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit
-     * @param string $locale
-     * @param string $content
-     * @param boolean $flush
-     * @return Lexik\Bundle\TranslationBundle\Model\Translation
+     * {@inheritdoc}
      */
     public function updateTranslation(TransUnit $transUnit, $locale, $content, $flush = false)
     {
@@ -179,11 +154,7 @@ class TransUnitManager
     }
 
     /**
-     * Update the content of each translations for the given trans unit.
-     *
-     * @param TransUnit $transUnit
-     * @param array $translations
-     * @param boolean $flush
+     * {@inheritdoc}
      */
     public function updateTranslationsContent(TransUnit $transUnit, array $translations, $flush = false)
     {
@@ -206,6 +177,8 @@ class TransUnitManager
      * Return the TransUnit repository for the current storage.
      *
      * @return ObjectRepository
+     *
+     * @todo remove
      */
     public function getTransUnitRepository()
     {

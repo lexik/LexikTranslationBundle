@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Manager\FileManager;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 
 /**
  * Import a translation file into the database.
@@ -23,29 +23,29 @@ class FileImporter
     private $loaders;
 
     /**
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var ObjectManager
      */
     private $om;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager
+     * @var TransUnitManagerInterface
      */
     private $transUnitManager;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager
+     * @var FileManagerInterface
      */
     private $fileManager;
 
     /**
      * Construct.
      *
-     * @param array $loaders
-     * @param ObjectManager $om
-     * @param TransUnitManager $transUnitManager
-     * @param FileManager $fileManager
+     * @param array                     $loaders
+     * @param ObjectManager             $om
+     * @param TransUnitManagerInterface $transUnitManager
+     * @param FileManagerInterface      $fileManager
      */
-    public function __construct(array $loaders, ObjectManager $om, TransUnitManager $transUnitManager, FileManager $fileManager)
+    public function __construct(array $loaders, ObjectManager $om, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager)
     {
         $this->loaders = $loaders;
         $this->om = $om;
@@ -57,7 +57,7 @@ class FileImporter
      * Impoort the given file and return the number of inserted translations.
      *
      * @param \Symfony\Component\Finder\SplFileInfo $file
-     * @param boolean $forceUpdate force update of the translations
+     * @param boolean                               $forceUpdate  force update of the translations
      * @return int
      */
     public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false)
