@@ -77,7 +77,7 @@ class EditionController extends Controller
 
             if ('edit' == $request->request->get('oper')) {
                 $transUnitManager = $this->get('lexik_translation.trans_unit.manager');
-                $transUnit = $transUnitManager->getTransUnitRepository()->findOneById($request->request->get('id'));
+                $transUnit = $transUnitManager->getById($request->request->get('id'));
 
                 if (!($transUnit instanceof TransUnit)) {
                     throw new NotFoundHttpException();

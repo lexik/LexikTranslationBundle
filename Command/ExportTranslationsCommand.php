@@ -92,8 +92,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         $translations = $this->getContainer()
             ->get('lexik_translation.trans_unit.manager')
-            ->getTransUnitRepository()
-            ->getTranslationsForFile($file, $onlyUpdated);
+            ->getTranslationsFromFile($file, $onlyUpdated);
 
         if (count($translations) > 0) {
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();

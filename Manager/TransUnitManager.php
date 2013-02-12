@@ -89,11 +89,13 @@ class TransUnitManager implements TransUnitManagerInterface
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
         $fields = array(
-            'key' => $key,
+            'key'    => $key,
             'domain' => $domain,
         );
 
-        return $this->getTransUnitRepository()->findOneBy($fields);
+        return $this->objectManager
+            ->getRepository($this->transUnitclass)
+            ->findOneBy($fields);
     }
 
     /**
@@ -174,14 +176,22 @@ class TransUnitManager implements TransUnitManagerInterface
     }
 
     /**
-     * Return the TransUnit repository for the current storage.
-     *
-     * @return ObjectRepository
-     *
-     * @todo remove
+     * {@inheritdoc}
      */
-    public function getTransUnitRepository()
+    public function getTranslationsFromFile(File $file, $onlyUpdated)
     {
-        return $this->objectManager->getRepository($this->transUnitclass);
+        return $this->objectManager
+            ->getRepository($this->transUnitclass)
+            ->getTranslationsForFile($file, $onlyUpdated);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getById($id)
+    {
+        return $this->objectManager
+            ->getRepository($this->transUnitclass)
+            ->findOneById($id);
     }
 }

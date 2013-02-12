@@ -71,4 +71,21 @@ interface TransUnitManagerInterface
      * @param boolean   $flush
      */
     public function updateTranslationsContent(TransUnit $transUnit, array $translations, $flush = false);
+
+    /**
+     * Returns all translations for the given file.
+     *
+     * @param File    $file
+     * @param boolean $onlyUpdated
+     * @return array
+     */
+    public function getTranslationsFromFile(File $file, $onlyUpdated);
+
+    /**
+     * Get a TransUnit by its id.
+     *
+     * @param int $id
+     * @return TransUnit
+     */
+    public function getById($id);
 }
