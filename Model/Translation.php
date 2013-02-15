@@ -41,16 +41,6 @@ abstract class Translation
     protected $updatedAt;
 
     /**
-     * Things to do on prePersist
-     */
-    abstract public function prePersist();
-
-    /**
-     * Things to do on preUpdate
-     */
-    abstract public function preUpdate();
-
-    /**
      * Set locale
      *
      * @param string $locale
