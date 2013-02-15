@@ -28,8 +28,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     private $output;
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Console\Command.Command::configure()
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -42,8 +41,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Console\Command.Command::execute()
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -72,8 +70,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
 
         return $this->getContainer()
-            ->get('lexik_translation.file.manager')
-            ->getByLoalesAndDomains($locales, $domains);
+            ->get('lexik_translation.translation_storage')
+            ->getFilesByLoalesAndDomains($locales, $domains);
     }
 
     /**
@@ -91,7 +89,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $onlyUpdated = (substr($file->getPath(), 0, 6) == 'vendor');
 
         $translations = $this->getContainer()
-            ->get('lexik_translation.trans_unit.manager')
+            ->get('lexik_translation.translation_storage')
             ->getTranslationsFromFile($file, $onlyUpdated);
 
         if (count($translations) > 0) {

@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Model\File;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,14 +15,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 class FileManager implements FileManagerInterface
 {
     /**
-     * @var ObjectManager
+     * @var StorageInterface
      */
-    private $objectManager;
-
-    /**
-     * @var string
-     */
-    private $fileclass;
+    private $storage;
 
     /**
      * @var string
@@ -31,14 +27,12 @@ class FileManager implements FileManagerInterface
     /**
      * Construct.
      *
-     * @param ObjectManager $objectManager
-     * @param string        $fileclass
-     * @param string        $rootDir
+     * @param StorageInterface $storage
+     * @param string           $rootDir
      */
-    public function __construct(ObjectManager $objectManager, $fileclass, $rootDir)
+    public function __construct(StorageInterface $storage, $rootDir)
     {
-        $this->objectManager = $objectManager;
-        $this->fileclass = $fileclass;
+        $this->storage = $storage;
         $this->rootDir = $rootDir;
     }
 
@@ -48,7 +42,7 @@ class FileManager implements FileManagerInterface
     public function getFor($name, $path)
     {
         $hash = $this->generateHash($name, $this->getFileRelativePath($path));
-        $file = $this->objectManager->getRepository($this->fileclass)->findOneBy(array('hash' => $hash));
+        $file = $this->storage->getFileByHash($hash);
 
         if (!($file instanceof File)) {
             $file = $this->create($name, $path);
@@ -64,30 +58,20 @@ class FileManager implements FileManagerInterface
     {
         $path = $this->getFileRelativePath($path);
 
-        $class = $this->fileclass;
+        $class = $this->storage->getModelClass('file');
 
         $file = new $class();
         $file->setName($name);
         $file->setPath($path);
         $file->setHash($this->generateHash($name, $path));
 
-        $this->objectManager->persist($file);
+        $this->storage->persist($file);
 
         if ($flush) {
-            $this->objectManager->flush();
+            $this->storage->flush();
         }
 
         return $file;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getByLoalesAndDomains(array $locales, array $domains)
-    {
-        return $this->objectManager
-            ->getRepository($this->fileclass)
-            ->findForLoalesAndDomains($locales, $domains);
     }
 
     /**

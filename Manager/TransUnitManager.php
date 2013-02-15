@@ -2,8 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
@@ -16,32 +15,18 @@ use Lexik\Bundle\TranslationBundle\Model\Translation;
 class TransUnitManager implements TransUnitManagerInterface
 {
     /**
-     * @var ObjectManager
+     * @var StorageInterface
      */
-    private $objectManager;
-
-    /**
-     * @var string
-     */
-    private $transUnitclass;
-
-    /**
-     * @var string
-     */
-    private $translationClass;
+    private $storage;
 
     /**
      * Csontruct.
      *
-     * @param ObjectManager $objectManager
-     * @param string $transUnitclass
-     * @param string $translationClass
+     * @param StorageInterface $storage
      */
-    public function __construct(ObjectManager $objectManager, $transUnitclass, $translationClass)
+    public function __construct(StorageInterface $storage)
     {
-        $this->objectManager = $objectManager;
-        $this->transUnitclass = $transUnitclass;
-        $this->translationClass = $translationClass;
+        $this->storage = $storage;
     }
 
     /**
@@ -49,12 +34,13 @@ class TransUnitManager implements TransUnitManagerInterface
      */
     public function newInstance($locales = array())
     {
-        $class = $this->transUnitclass;
-        $transUnit = new $class();
+        $transUnitClass = $this->storage->getModelClass('trans_unit');
+        $translationClass = $this->storage->getModelClass('translation');
+
+        $transUnit = new $transUnitClass();
 
         foreach ($locales as $locale) {
-            $class = $this->translationClass;
-            $translation = new $class();
+            $translation = new $translationClass();
             $translation->setLocale($locale);
 
             $transUnit->addTranslation($translation);
@@ -72,30 +58,13 @@ class TransUnitManager implements TransUnitManagerInterface
         $transUnit->setKey($keyName);
         $transUnit->setDomain($domainName);
 
-        $this->objectManager->persist($transUnit);
+        $this->storage->persist($transUnit);
 
         if ($flush) {
-            $this->objectManager->flush();
+            $this->storage->flush();
         }
 
         return $transUnit;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function findOneByKeyAndDomain($key, $domain)
-    {
-        $key = mb_substr($key, 0, 255, 'UTF-8');
-
-        $fields = array(
-            'key'    => $key,
-            'domain' => $domain,
-        );
-
-        return $this->objectManager
-            ->getRepository($this->transUnitclass)
-            ->findOneBy($fields);
     }
 
     /**
@@ -106,7 +75,7 @@ class TransUnitManager implements TransUnitManagerInterface
         $translation = null;
 
         if(!$transUnit->hasTranslation($locale)) {
-            $class = $this->translationClass;
+            $class = $this->storage->getModelClass('translation');
 
             $translation = new $class();
             $translation->setLocale($locale);
@@ -118,10 +87,10 @@ class TransUnitManager implements TransUnitManagerInterface
 
             $transUnit->addTranslation($translation);
 
-            $this->objectManager->persist($translation);
+            $this->storage->persist($translation);
 
             if ($flush) {
-                $this->objectManager->flush();
+                $this->storage->flush();
             }
         }
 
@@ -149,7 +118,7 @@ class TransUnitManager implements TransUnitManagerInterface
         }
 
         if ($flush) {
-            $this->objectManager->flush();
+            $this->storage->flush();
         }
 
         return $translation;
@@ -171,27 +140,7 @@ class TransUnitManager implements TransUnitManagerInterface
         }
 
         if ($flush) {
-            $this->objectManager->flush();
+            $this->storage->flush();
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getTranslationsFromFile(File $file, $onlyUpdated)
-    {
-        return $this->objectManager
-            ->getRepository($this->transUnitclass)
-            ->getTranslationsForFile($file, $onlyUpdated);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getById($id)
-    {
-        return $this->objectManager
-            ->getRepository($this->transUnitclass)
-            ->findOneById($id);
     }
 }

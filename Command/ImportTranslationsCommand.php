@@ -30,8 +30,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     private $output;
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Console\Command.Command::configure()
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -45,8 +44,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Console\Command.Command::execute()
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

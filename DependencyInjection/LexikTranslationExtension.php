@@ -6,6 +6,9 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Parameter;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\Finder\Finder;
@@ -31,16 +34,6 @@ class LexikTranslationExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        if ($config['storage'] == 'orm') {
-            $type = 'Entity';
-            $container->setAlias('lexik_translation.storage_manager', 'doctrine.orm.entity_manager');
-        } else if ($config['storage'] == 'mongodb') {
-            $type = 'Document';
-            $container->setAlias('lexik_translation.storage_manager', 'doctrine.odm.mongodb.document_manager');
-        } else {
-            throw new \RuntimeException(sprintf('Unsupported storage "%s".', $config['storage']));
-        }
-
         // set parameters
         sort($config['managed_locales']);
         $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);
@@ -49,13 +42,39 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
 
-        $container->setParameter('lexik_translation.translator.class', $config['classes']['translator']);
-        $container->setParameter('lexik_translation.loader.database.class', $config['classes']['database_loader']);
-        $container->setParameter('lexik_translation.trans_unit.class', sprintf('Lexik\Bundle\TranslationBundle\%s\TransUnit', $type));
-        $container->setParameter('lexik_translation.translation.class', sprintf('Lexik\Bundle\TranslationBundle\%s\Translation', $type));
-        $container->setParameter('lexik_translation.file.class', sprintf('Lexik\Bundle\TranslationBundle\%s\File', $type));
+        $this->buildTranslationStorageDefinition($container, $config['storage']);
 
         $this->registerTranslatorConfiguration($config, $container);
+    }
+
+    /**
+     * Build the 'lexik_translation.translation_storage' service definition.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $storage
+     */
+    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage)
+    {
+        if ('orm' == $storage) {
+            $objectManagerReference = new Reference('doctrine.orm.entity_manager');
+        } else if ('mongodb' == $storage) {
+            $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
+        } else {
+            throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
+        }
+
+        $storageDefinition = new Definition();
+        $storageDefinition->setClass(new Parameter(sprintf('lexik_translation.%s.translation_storage.class', $storage)));
+        $storageDefinition->setArguments(array(
+            $objectManagerReference,
+            array(
+                'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+                'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
+                'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage)),
+            ),
+        ));
+
+        $container->setDefinition('lexik_translation.translation_storage', $storageDefinition);
     }
 
     /**

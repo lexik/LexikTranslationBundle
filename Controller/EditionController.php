@@ -29,9 +29,9 @@ class EditionController extends Controller
     public function listAction()
     {
         $locales = $this->getManagedLocales();
-        $repository = $this->get('lexik_translation.storage_manager')->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'));
+        $storage = $this->get('lexik_translation.translation_storage');
 
-        $transUnits = $repository->getTransUnitList(
+        $transUnits = $storage->getTransUnitList(
             $locales,
             $this->get('request')->query->get('rows', 20),
             $this->get('request')->query->get('page', 1),
@@ -41,7 +41,7 @@ class EditionController extends Controller
         $jqGridMapper = new Mapper(
             $this->get('request'),
             $transUnits,
-            $repository->count($locales, $this->get('request')->query->all())
+            $storage->countTransUnits($locales, $this->get('request')->query->all())
         );
 
         $response = new Response($jqGridMapper->generate($locales));
@@ -94,7 +94,7 @@ class EditionController extends Controller
                     $transUnit->convertMongoTimestamp();
                 }
 
-                $this->get('lexik_translation.storage_manager')->flush();
+                $this->get('lexik_translation.translation_storage')->flush();
 
                 $result['success'] = true;
             }
@@ -126,11 +126,11 @@ class EditionController extends Controller
      */
     public function newAction()
     {
-        $om = $this->get('lexik_translation.storage_manager');
+        $storage = $this->get('lexik_translation.translation_storage');
         $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
 
         $options = array(
-            'domains'           => $om->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'))->getAllDomains(),
+            'domains'           => $storage->getTransUnitDomains(),
             'data_class'        => $this->container->getParameter('lexik_translation.trans_unit.class'),
             'translation_class' => $this->container->getParameter('lexik_translation.translation.class'),
         );
@@ -158,8 +158,8 @@ class EditionController extends Controller
                 }
 
                 $transUnit->setTranslations($translations);
-                $om->persist($transUnit);
-                $om->flush();
+                $storage->persist($transUnit);
+                $storage->flush();
 
                 return $this->redirect($this->generateUrl('lexik_translation_grid'));
             }

@@ -32,15 +32,6 @@ interface TransUnitManagerInterface
     public function create($keyName, $domainName, $flush = false);
 
     /**
-     * Returns a TransUnit by its key and domain.
-     *
-     * @param string $key
-     * @param string $domainName
-     * @return TransUnit
-     */
-    public function findOneByKeyAndDomain($key, $domain);
-
-    /**
      * Add a new translation to the given trans unit.
      *
      * @param TransUnit $transUnit
@@ -71,21 +62,4 @@ interface TransUnitManagerInterface
      * @param boolean   $flush
      */
     public function updateTranslationsContent(TransUnit $transUnit, array $translations, $flush = false);
-
-    /**
-     * Returns all translations for the given file.
-     *
-     * @param File    $file
-     * @param boolean $onlyUpdated
-     * @return array
-     */
-    public function getTranslationsFromFile(File $file, $onlyUpdated);
-
-    /**
-     * Get a TransUnit by its id.
-     *
-     * @param int $id
-     * @return TransUnit
-     */
-    public function getById($id);
 }

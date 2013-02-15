@@ -2,8 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
@@ -23,9 +22,9 @@ class FileImporter
     private $loaders;
 
     /**
-     * @var ObjectManager
+     * @var StorageInterface
      */
-    private $om;
+    private $storage;
 
     /**
      * @var TransUnitManagerInterface
@@ -41,14 +40,14 @@ class FileImporter
      * Construct.
      *
      * @param array                     $loaders
-     * @param ObjectManager             $om
+     * @param StorageInterface          $storage
      * @param TransUnitManagerInterface $transUnitManager
      * @param FileManagerInterface      $fileManager
      */
-    public function __construct(array $loaders, ObjectManager $om, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager)
+    public function __construct(array $loaders, StorageInterface $storage, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager)
     {
         $this->loaders = $loaders;
-        $this->om = $om;
+        $this->storage = $storage;
         $this->transUnitManager = $transUnitManager;
         $this->fileManager = $fileManager;
     }
@@ -80,8 +79,7 @@ class FileImporter
                 $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
                 if ($translation instanceof Translation) {
                     $imported++;
-                }
-                else if($forceUpdate) {
+                } else if($forceUpdate) {
                     $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                     $imported++;
                 }
@@ -93,8 +91,8 @@ class FileImporter
                 }
             }
 
-            $this->om->flush();
-            $this->om->clear();
+            $this->storage->flush();
+            $this->storage->clear();
         } else {
             throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
         }
