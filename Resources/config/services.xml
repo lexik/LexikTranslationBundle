@@ -52,7 +52,7 @@
         </service>
         
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
-            <argument type="service" id="lexik_translation.translation_storager" />
+            <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%kernel.root_dir%</argument>
         </service>
         
