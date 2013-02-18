@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\File;
 
 /**
@@ -61,6 +62,14 @@ interface StorageInterface
      * @return array
      */
     public function getTransUnitDomainsByLocale();
+
+    /**
+     * Returns a TransuNit by its id.
+     *
+     * @param int $id
+     * @return TransUnit
+     */
+    public function getTransUnitById($id);
 
     /**
      * Returns all trans unit with translations for the given domain and locale.

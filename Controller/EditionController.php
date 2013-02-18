@@ -76,8 +76,7 @@ class EditionController extends Controller
             $result = array();
 
             if ('edit' == $request->request->get('oper')) {
-                $transUnitManager = $this->get('lexik_translation.trans_unit.manager');
-                $transUnit = $transUnitManager->getById($request->request->get('id'));
+                $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($request->request->get('id'));
 
                 if (!($transUnit instanceof TransUnit)) {
                     throw new NotFoundHttpException();
@@ -88,7 +87,7 @@ class EditionController extends Controller
                     $translationsContent[$locale] = $request->request->get($locale);
                 }
 
-                $transUnitManager->updateTranslationsContent($transUnit, $translationsContent);
+                $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
 
                 if ($transUnit instanceof TransUnitDocument) {
                     $transUnit->convertMongoTimestamp();
