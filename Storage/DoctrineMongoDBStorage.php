@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
+use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Document\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Document\FileRepository;
 
@@ -71,7 +72,7 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFileByHash(string $hash)
+    public function getFileByHash($hash)
     {
         return $this->getFileRepository()->findOneBy(array('hash' => $hash));
     }
@@ -119,7 +120,7 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTranslationsFromFile(ModelFile $file, $onlyUpdated)
+    public function getTranslationsFromFile(File $file, $onlyUpdated)
     {
         return $this->getTransUnitRepository()->getTranslationsForFile($file, $onlyUpdated);
     }
