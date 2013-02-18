@@ -64,6 +64,18 @@ class DoctrineORMStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getModelClass($name)
+    {
+        if ( !isset($this->classes[$name]) ) {
+            throw new \RuntimeException(sprintf('No class defined for name "%s".', $name));
+        }
+
+        return $this->classes[$name];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getFilesByLoalesAndDomains(array $locales, array $domains)
     {
         return $this->getFileRepository()->findForLoalesAndDomains($locales, $domains);

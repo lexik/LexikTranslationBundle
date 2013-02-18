@@ -34,6 +34,13 @@ interface StorageInterface
     public function clear($entityName = null);
 
     /**
+     * Returns the class's namespace according to the given name.
+     *
+     * @param string $name
+     */
+    public function getModelClass($name);
+
+    /**
      * Returns all files matching a given locale and a given domains.
      *
      * @param array $locales
