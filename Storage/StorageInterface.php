@@ -79,6 +79,15 @@ interface StorageInterface
     public function getTransUnitById($id);
 
     /**
+     * Returns a Transunit by its key and domain.
+     *
+     * @param string $key
+     * @param string $domain
+     * @return TransUnit
+     */
+    public function getTransUnitByKeyAndDomain($key, $domain);
+
+    /**
      * Returns all trans unit with translations for the given domain and locale.
      *
      * @param string $locale

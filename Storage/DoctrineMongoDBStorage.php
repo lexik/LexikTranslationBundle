@@ -108,6 +108,21 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getTransUnitByKeyAndDomain($key, $domain)
+    {
+        $key = mb_substr($key, 0, 255, 'UTF-8');
+
+        $fields = array(
+            'key'    => $key,
+            'domain' => $domain,
+        );
+
+        return $this->getTransUnitRepository()->findOneBy($fields);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTransUnitDomainsByLocale()
     {
         return $this->getTransUnitRepository()->getAllDomainsByLocale();
