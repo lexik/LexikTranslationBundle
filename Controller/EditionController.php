@@ -38,11 +38,9 @@ class EditionController extends Controller
             $this->get('request')->query->all()
         );
 
-        $jqGridMapper = new Mapper(
-            $this->get('request'),
-            $transUnits,
-            $storage->countTransUnits($locales, $this->get('request')->query->all())
-        );
+        $count = $storage->countTransUnits($locales, $this->get('request')->query->all());
+
+        $jqGridMapper = new Mapper($this->get('request'), $transUnits, $count);
 
         $response = new Response($jqGridMapper->generate($locales));
         $response->headers->set('Content-Type', 'application/json');
@@ -72,36 +70,38 @@ class EditionController extends Controller
     public function updateAction()
     {
         $request = $this->get('request');
-        if ($request->isXmlHttpRequest()) {
-            $result = array();
 
-            if ('edit' == $request->request->get('oper')) {
-                $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($request->request->get('id'));
-
-                if (!($transUnit instanceof TransUnit)) {
-                    throw new NotFoundHttpException();
-                }
-
-                $translationsContent = array();
-                foreach ($this->getManagedLocales() as $locale) {
-                    $translationsContent[$locale] = $request->request->get($locale);
-                }
-
-                $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
-
-                if ($transUnit instanceof TransUnitDocument) {
-                    $transUnit->convertMongoTimestamp();
-                }
-
-                $this->get('lexik_translation.translation_storage')->flush();
-
-                $result['success'] = true;
-            }
-
-            return new Response(json_encode($result));
-        } else {
+        if ( ! $request->isXmlHttpRequest() ) {
             throw new NotFoundHttpException();
         }
+
+        $response = new Response('', 200, array('Content-type' => 'application/json'));
+
+        if ('edit' == $request->request->get('oper')) {
+            $storage = $this->get('lexik_translation.translation_storage');
+            $transUnit = $storage->getTransUnitById($request->request->get('id'));
+
+            if (!($transUnit instanceof TransUnit)) {
+                throw new NotFoundHttpException();
+            }
+
+            $translationsContent = array();
+            foreach ($this->getManagedLocales() as $locale) {
+                $translationsContent[$locale] = $request->request->get($locale);
+            }
+
+            $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
+
+            if ($transUnit instanceof TransUnitDocument) {
+                $transUnit->convertMongoTimestamp();
+            }
+
+            $storage->flush();
+
+            $response->setContent(json_encode(array('message' => sprintf('TransUnit #%d updated.', $transUnit->getId()))));
+        }
+
+        return $response;
     }
 
     /**
@@ -130,8 +130,8 @@ class EditionController extends Controller
 
         $options = array(
             'domains'           => $storage->getTransUnitDomains(),
-            'data_class'        => $this->container->getParameter('lexik_translation.trans_unit.class'),
-            'translation_class' => $this->container->getParameter('lexik_translation.translation.class'),
+            'data_class'        => $storage->getModelClass('trans_unit'),
+            'translation_class' => $storage->getModelClass('translation'),
         );
 
         $form = $this->createForm(new TransUnitType(), $transUnit, $options);
@@ -146,7 +146,7 @@ class EditionController extends Controller
                 foreach ($translations as $translation) {
                     if (!$translation->getFile()) {
                         $file = $this->get('lexik_translation.file.manager')->getFor(
-                            sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),
+                            sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),  // @todo allow other format
                             $this->container->getParameter('kernel.root_dir').'/Resources/translations'
                         );
 
@@ -166,7 +166,7 @@ class EditionController extends Controller
 
         return $this->render('LexikTranslationBundle:Edition:new.html.twig', array(
             'layout' => $this->container->getParameter('lexik_translation.base_layout'),
-            'form' => $form->createView(),
+            'form'   => $form->createView(),
         ));
     }
 
