@@ -9,6 +9,8 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\Annotations\AnnotationReader;
 
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitData;
 
 /**
@@ -25,6 +27,40 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     const DOCUMENT_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
     const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
     const DOCUMENT_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Document\File';
+
+    /**
+     * Create astorage class form doctrine ORM.
+     *
+     * @param \Doctrine\ORM\EntityManager $em
+     * @return \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
+     */
+    protected function getORMStorage(\Doctrine\ORM\EntityManager $em)
+    {
+        $storage = new DoctrineORMStorage($em, array(
+            'trans_unit'  => self::ENTITY_TRANS_UNIT_CLASS,
+            'translation' => self::ENTITY_TRANSLATION_CLASS,
+            'file'        => self::ENTITY_FILE_CLASS,
+        ));
+
+        return $storage;
+    }
+
+    /**
+     * Create astorage class form doctrine Mongo DB.
+     *
+     * @param \Doctrine\ODM\MongoDB\DocumentManager $dm
+     * @return \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
+     */
+    protected function getMongoDBStorage(\Doctrine\ODM\MongoDB\DocumentManager $dm)
+    {
+        $storage = new DoctrineMongoDBStorage($dm, array(
+            'trans_unit'  => self::DOCUMENT_TRANS_UNIT_CLASS,
+            'translation' => self::DOCUMENT_TRANSLATION_CLASS,
+            'file'        => self::DOCUMENT_FILE_CLASS,
+        ));
+
+        return $storage;
+    }
 
     /**
      * Create the database schema.

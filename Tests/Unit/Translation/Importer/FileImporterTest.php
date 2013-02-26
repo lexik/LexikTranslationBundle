@@ -31,10 +31,12 @@ class FileImporterTest extends BaseUnitTestCase
             'php' => new PhpFileLoader(),
         );
 
-        $transUnitManager = new TransUnitManager($em, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
-        $fileManager = new FileManager($em, self::ENTITY_FILE_CLASS, '/test/root/dir/app');
+        $storage = $this->getORMStorage($em);
 
-        $importer = new FileImporter($loaders, $em, $transUnitManager, $fileManager);
+        $transUnitManager = new TransUnitManager($storage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
+        $fileManager = new FileManager($storage, self::ENTITY_FILE_CLASS, '/test/root/dir/app');
+
+        $importer = new FileImporter($loaders, $storage, $transUnitManager, $fileManager);
 
         $this->assertDatabaseEntries($em, 0);
 
