@@ -21,7 +21,7 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $loader = new DatabaseLoader($em, 'Lexik\\Bundle\\TranslationBundle\\Entity\\TransUnit');
+        $loader = new DatabaseLoader($this->getORMStorage($em), 'Lexik\\Bundle\\TranslationBundle\\Entity\\TransUnit');
 
         $catalogue = $loader->load(null, 'it');
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);

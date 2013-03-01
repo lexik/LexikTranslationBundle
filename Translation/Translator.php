@@ -28,9 +28,7 @@ class Translator extends BaseTranslator
         $cache = new ConfigCache($file, $this->options['debug']);
 
         if (!$cache->isFresh()) {
-            $resources = $this->container->get('lexik_translation.storage_manager')
-                ->getRepository($this->container->getParameter('lexik_translation.trans_unit.class'))
-                ->getAllDomainsByLocale();
+            $resources = $this->container->get('lexik_translation.translation_storage')->getTransUnitDomainsByLocale();
 
             $metadata = array();
             foreach ($resources as $resource) {

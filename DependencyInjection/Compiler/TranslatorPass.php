@@ -13,6 +13,9 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class TranslatorPass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         // loaders

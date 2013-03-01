@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * Base File class.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
@@ -64,16 +65,6 @@ abstract class File
     {
         $this->translations = new ArrayCollection();
     }
-
-    /**
-     * Things to do on prePersist
-     */
-    abstract public function prePersist();
-
-    /**
-     * Things to do on preUpdate
-     */
-    abstract public function preUpdate();
 
     /**
      * Get id

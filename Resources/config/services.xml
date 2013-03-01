@@ -3,9 +3,32 @@
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    
+    <parameters>
+        <parameter key="lexik_translation.translator.class">Lexik\Bundle\TranslationBundle\Translation\Translator</parameter>
+        <parameter key="lexik_translation.loader.database.class">Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader</parameter>
+        <parameter key="lexik_translation.trans_unit.manager.class">Lexik\Bundle\TranslationBundle\Manager\TransUnitManager</parameter>
+        <parameter key="lexik_translation.file.manager.class">Lexik\Bundle\TranslationBundle\Manager\FileManager</parameter>
+        <parameter key="lexik_translation.importer.file.class">Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter</parameter>
+        <parameter key="lexik_translation.exporter_collector.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector</parameter>
+        <parameter key="lexik_translation.exporter.xliff.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter</parameter>
+        <parameter key="lexik_translation.exporter.yml.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter</parameter>
+        <parameter key="lexik_translation.exporter.php.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter</parameter>
+        
+        <parameter key="lexik_translation.orm.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage</parameter>
+        <parameter key="lexik_translation.orm.trans_unit.class">Lexik\Bundle\TranslationBundle\Entity\TransUnit</parameter>
+        <parameter key="lexik_translation.orm.translation.class">Lexik\Bundle\TranslationBundle\Entity\Translation</parameter>
+        <parameter key="lexik_translation.orm.file.class">Lexik\Bundle\TranslationBundle\Entity\File</parameter>
+        
+        <parameter key="lexik_translation.mongodb.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage</parameter>
+        <parameter key="lexik_translation.mongodb.trans_unit.class">Lexik\Bundle\TranslationBundle\Document\TransUnit</parameter>
+        <parameter key="lexik_translation.mongodb.translation.class">Lexik\Bundle\TranslationBundle\Document\Translation</parameter>
+        <parameter key="lexik_translation.mongodb.file.class">Lexik\Bundle\TranslationBundle\Document\File</parameter>
+    </parameters>
 
     <services>
     
+        <!-- Translator -->
         <service id="lexik_translation.translator" class="%lexik_translation.translator.class%">
             <argument type="service" id="service_container" />
             <argument type="service" id="translator.selector" />
@@ -19,44 +42,40 @@
     
         <!-- Loader -->
         <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
-            <argument type="service" id="lexik_translation.storage_manager" />
-            <argument>%lexik_translation.trans_unit.class%</argument>
+            <argument type="service" id="lexik_translation.translation_storage" />
             <tag name="translation.loader" alias="database" />
         </service>
         
         <!-- Managers -->
-        <service id="lexik_translation.trans_unit.manager" class="Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager">
-            <argument type="service" id="lexik_translation.storage_manager" />
-            <argument>%lexik_translation.trans_unit.class%</argument>
-            <argument>%lexik_translation.translation.class%</argument>
+        <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%">
+            <argument type="service" id="lexik_translation.translation_storage" />
         </service>
         
-        <service id="lexik_translation.file.manager" class="Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager">
-            <argument type="service" id="lexik_translation.storage_manager" />
-            <argument>%lexik_translation.file.class%</argument>
+        <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
+            <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%kernel.root_dir%</argument>
         </service>
         
         <!-- Importer -->
-        <service id="lexik_translation.importer.file" class="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter">
+        <service id="lexik_translation.importer.file" class="%lexik_translation.importer.file.class%">
             <argument type="collection" /> <!-- translation loaders -->
-            <argument type="service" id="lexik_translation.storage_manager" />
+            <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
         </service>
         
         <!-- Exporter -->
-        <service id="lexik_translation.exporter_collector" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" />
+        <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" />
         
-        <service id="lexik_translation.exporter.xliff" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter">
+        <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
         </service>
         
-        <service id="lexik_translation.exporter.yml" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter">
+        <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
             <tag name="lexik_translation.exporter" alias="yml" />
         </service>
         
-        <service id="lexik_translation.exporter.php" class="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter">
+        <service id="lexik_translation.exporter.php" class="%lexik_translation.exporter.php.class%">
             <tag name="lexik_translation.exporter" alias="php" />
         </service>
         

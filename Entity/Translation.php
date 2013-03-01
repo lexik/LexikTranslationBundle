@@ -54,8 +54,7 @@ class Translation extends TranslationModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.Translation::prePersist()
+     * {@inheritdoc}
      */
     public function prePersist()
     {
@@ -64,8 +63,7 @@ class Translation extends TranslationModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.Translation::preUpdate()
+     * {@inheritdoc}
      */
     public function preUpdate()
     {

@@ -5,7 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 
-use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 /**
@@ -16,14 +16,24 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 class FileManagerTest extends BaseUnitTestCase
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var \Doctrine\ORM\EntityManager
      */
     private $em;
 
     /**
-     * @var Doctrine\ODM\MongoDB\DocumentManager
+     * @var \Doctrine\ODM\MongoDB\DocumentManager
      */
     private $dm;
+
+    /**
+     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
+     */
+    private $ormStorage;
+
+    /**
+     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage
+     */
+    private $odmStorage;
 
     public function setUp()
     {
@@ -31,9 +41,13 @@ class FileManagerTest extends BaseUnitTestCase
         $this->createSchema($this->em);
         $this->loadFixtures($this->em);
 
+        $this->ormStorage = $this->getORMStorage($this->em);
+
         //$this->dm = $this->getMockMongoDbDocumentManager();
         //$this->createSchema($this->dm);
         //$this->loadFixtures($this->dm);
+
+        //$this->odmStorage = $this->getMongoDBStorage($this->dm);
     }
 
     /**
@@ -41,7 +55,7 @@ class FileManagerTest extends BaseUnitTestCase
      */
     public function testORMCreate()
     {
-        $manager = new FileManager($this->em, self::ENTITY_FILE_CLASS, '/test/root/dir/app');
+        $manager = new FileManager($this->ormStorage, '/test/root/dir/app');
 
         $file = $manager->create('myDomain.en.yml', '/test/root/dir/src/Project/CoolBundle/Resources/translations');
         $this->assertEquals(ORMUnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($file));
@@ -65,7 +79,7 @@ class FileManagerTest extends BaseUnitTestCase
      */
     public function testODMCreate()
     {
-        $manager = new FileManager($this->dm, self::DOCUMENT_FILE_CLASS, '/test/root/dir/app');
+        $manager = new FileManager($this->odmStorage, '/test/root/dir/app');
 
         $file = $manager->create('myDomain.en.yml', '/test/root/dir/src/Project/CoolBundle/Resources/translations');
         $this->assertEquals(ODMUnitOfWork::STATE_MANAGED, $this->dm->getUnitOfWork()->getDocumentState($file));
@@ -90,7 +104,7 @@ class FileManagerTest extends BaseUnitTestCase
     public function testORMGetFor()
     {
         $repository = $this->em->getRepository(self::ENTITY_FILE_CLASS);
-        $manager = new FileManager($this->em, self::ENTITY_FILE_CLASS, '/test/root/dir/app');
+        $manager = new FileManager($this->ormStorage, '/test/root/dir/app');
 
         $total = count($repository->findAll());
         $this->assertEquals(5, $total);
@@ -116,7 +130,7 @@ class FileManagerTest extends BaseUnitTestCase
     public function testODMGetFor()
     {
         $repository = $this->dm->getRepository(self::DOCUMENT_FILE_CLASS);
-        $manager = new FileManager($this->dm, self::DOCUMENT_FILE_CLASS, '/test/root/dir/app');
+        $manager = new FileManager($this->odmStorage, '/test/root/dir/app');
 
         $total = count($repository->findAll());
         $this->assertEquals(5, $total);

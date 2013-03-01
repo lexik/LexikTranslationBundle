@@ -3,7 +3,7 @@ Overview
 
 This Symfony2 bundle allow to import translation files content into the database and provide a GUI to edit translations.
 
-[![Build Status](https://secure.travis-ci.org/lexik/LexikTranslationBundle.png)](http://travis-ci.org/lexik/LexikTranslationBundle)
+[![Build Status](https://travis-ci.org/lexik/LexikTranslationBundle.png?branch=master)](https://travis-ci.org/lexik/LexikTranslationBundle)
 
 The idea is to:
 
@@ -25,8 +25,3 @@ ___________________
 Here a little screen shot of the edition page :)
 
 ![edition page screen](https://github.com/lexik/LexikTranslationBundle/raw/master/Resources/doc/screen/grid.jpg)
-
-TODO
-====
-
-* Improve queries in Repository\Document\TransUnitRepository.

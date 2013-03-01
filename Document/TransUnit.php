@@ -11,7 +11,6 @@ class TransUnit extends TransUnitModel
 {
     /**
      * Convert all MongoTimestamp object to time.
-     *
      */
     public function convertMongoTimestamp()
     {
@@ -23,9 +22,9 @@ class TransUnit extends TransUnitModel
         }
     }
 
+
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.TransUnit::prePersist()
+     * {@inheritdoc}
      */
     public function prePersist()
     {
@@ -36,8 +35,7 @@ class TransUnit extends TransUnitModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.TransUnit::preUpdate()
+     * {@inheritdoc}
      */
     public function preUpdate()
     {

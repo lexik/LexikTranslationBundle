@@ -1,23 +1,23 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Repository\Document;
+namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
-use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
+use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
  * Repository for TransUnit document.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepository extends DocumentRepository implements TransUnitRepositoryInterface
+class TransUnitRepository extends DocumentRepository
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomains()
+     * Returns all domain available in database.
+     *
+     * @return array
      */
     public function getAllDomains()
     {
@@ -39,8 +39,9 @@ class TransUnitRepository extends DocumentRepository implements TransUnitReposit
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomainsByLocale()
+     * Returns all domains for each locale.
+     *
+     * @return array
      */
     public function getAllDomainsByLocale()
     {
@@ -84,8 +85,11 @@ FCT;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllByLocaleAndDomain()
+     * Returns all trans unit with translations for the given domain and locale.
+     *
+     * @param string $locale
+     * @param string $domain
+     * @return array
      */
     public function getAllByLocaleAndDomain($locale, $domain)
     {
@@ -115,8 +119,13 @@ FCT;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTransUnitList()
+     * Returns some trans units with their translations.
+     *
+     * @param array $locales
+     * @param int   $rows
+     * @param int   $page
+     * @param array $filters
+     * @return array
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
     {
@@ -168,8 +177,11 @@ FCT;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::count()
+     * Count the number of trans unit.
+     *
+     * @param array $locales
+     * @param array $filters
+     * @return int
      */
     public function count(array $locales = null,  array $filters = null)
     {
@@ -186,10 +198,13 @@ FCT;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTranslationsForFile()
+     * Returns all translations for the given file.
+     *
+     * @param ModelFile $file
+     * @param boolean   $onlyUpdated
+     * @return array
      */
-    public function getTranslationsForFile(File $file, $onlyUpdated)
+    public function getTranslationsForFile(ModelFile $file, $onlyUpdated)
     {
         $builder = $this->createQueryBuilder()
             ->hydrate(false)
@@ -227,8 +242,8 @@ FCT;
      * Add conditions according to given filters.
      *
      * @param Builder $builder
-     * @param array $locales
-     * @param array $filters
+     * @param array   $locales
+     * @param array   $filters
      */
     protected function addTransUnitFilters(Builder $builder, array $locales = null,  array $filters = null)
     {
@@ -249,8 +264,8 @@ FCT;
      * Add conditions according to given filters.
      *
      * @param Builder $builder
-     * @param array $locales
-     * @param array $filters
+     * @param array   $locales
+     * @param array   $filters
      */
     protected function addTranslationFilter(Builder $builder, array $locales = null,  array $filters = null)
     {
