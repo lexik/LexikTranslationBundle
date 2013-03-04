@@ -6,7 +6,7 @@
 
     <document name="Lexik\Bundle\TranslationBundle\Document\TransUnit"
               collection="lexik_trans_unit"
-              repository-class="Lexik\Bundle\TranslationBundle\Repository\Document\TransUnitRepository">
+              repository-class="Lexik\Bundle\TranslationBundle\Document\TransUnitRepository">
 
         <indexes>
             <index>

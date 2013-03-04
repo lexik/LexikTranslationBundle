@@ -14,8 +14,7 @@ use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
 class File extends FileModel
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.File::prePersist()
+     * {@inheritdoc}
      */
     public function prePersist()
     {
@@ -24,8 +23,7 @@ class File extends FileModel
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Model.File::preUpdate()
+     * {@inheritdoc}
      */
     public function preUpdate()
     {

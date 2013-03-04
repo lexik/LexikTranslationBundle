@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Loader;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -15,37 +15,28 @@ use Symfony\Component\Translation\MessageCatalogue;
 class DatabaseLoader implements LoaderInterface
 {
     /**
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var StorageInterface
      */
-    private $objectManager;
-
-    /**
-     * TransUnit entity class.
-     * @var string
-     */
-    private $class;
+    private $storage;
 
     /**
      * Construct.
      *
-     * @param Doctrine\Common\Persistence\ObjectManager $objectManager
-     * @param string $class
+     * @param StorageInterface $storage
      */
-    public function __construct(ObjectManager $objectManager, $class)
+    public function __construct(StorageInterface $storage)
     {
-        $this->objectManager = $objectManager;
-        $this->class = $class;
+        $this->storage = $storage;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Translation\Loader.LoaderInterface::load()
+     * {@inheritdoc}
      */
     public function load($resource, $locale, $domain = 'messages')
     {
         $catalogue = new MessageCatalogue($locale);
 
-        $transUnits = $this->objectManager->getRepository($this->class)->getAllByLocaleAndDomain($locale, $domain);
+        $transUnits = $this->storage->getTransUnitsByLocaleAndDomain($locale, $domain);
 
         foreach ($transUnits as $transUnit) {
             foreach ($transUnit['translations'] as $translation) {

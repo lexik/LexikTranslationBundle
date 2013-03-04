@@ -96,8 +96,7 @@ class TranslatorTest extends BaseUnitTestCase
     protected function createTranslator($em, $cacheDir)
     {
         $container = new Container();
-        $container->set('lexik_translation.storage_manager', $em);
-        $container->getParameterBag()->set('lexik_translation.trans_unit.class', self::ENTITY_TRANS_UNIT_CLASS);
+        $container->set('lexik_translation.translation_storage', $this->getORMStorage($em));
         $container->compile();
 
         $loaderIds = array();

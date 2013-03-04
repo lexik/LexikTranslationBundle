@@ -1,24 +1,24 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Repository\Entity;
+namespace Lexik\Bundle\TranslationBundle\Entity;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
-use Lexik\Bundle\TranslationBundle\Repository\TransUnitRepositoryInterface;
+use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
  * Repository for TransUnit entity.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnitRepository extends EntityRepository implements TransUnitRepositoryInterface
+class TransUnitRepository extends EntityRepository
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomainsByLocale()
+     * Returns all domain available in database.
+     *
+     * @return array
      */
     public function getAllDomainsByLocale()
     {
@@ -32,8 +32,9 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllByLocaleAndDomain()
+     * Returns all domains for each locale.
+     *
+     * @return array
      */
     public function getAllByLocaleAndDomain($locale, $domain)
     {
@@ -49,8 +50,11 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getAllDomains()
+     * Returns all trans unit with translations for the given domain and locale.
+     *
+     * @param string $locale
+     * @param string $domain
+     * @return array
      */
     public function getAllDomains()
     {
@@ -64,8 +68,13 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTransUnitList()
+     * Returns some trans units with their translations.
+     *
+     * @param array $locales
+     * @param int   $rows
+     * @param int   $page
+     * @param array $filters
+     * @return array
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
     {
@@ -104,8 +113,11 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::count()
+     * Count the number of trans unit.
+     *
+     * @param array $locales
+     * @param array $filters
+     * @return int
      */
     public function count(array $locales = null,  array $filters = null)
     {
@@ -122,10 +134,13 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.TransUnitRepositoryInterface::getTranslationsForFile()
+     * Returns all translations for the given file.
+     *
+     * @param ModelFile $file
+     * @param boolean   $onlyUpdated
+     * @return array
      */
-    public function getTranslationsForFile(File $file, $onlyUpdated)
+    public function getTranslationsForFile(ModelFile $file, $onlyUpdated)
     {
         $builder = $this->createQueryBuilder('tu')
             ->select('tu.key, te.content')
@@ -152,8 +167,8 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
      * Add conditions according to given filters.
      *
      * @param QueryBuilder $builder
-     * @param array $locales
-     * @param array $filters
+     * @param array        $locales
+     * @param array        $filters
      */
     protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null,  array $filters = null)
     {
@@ -174,8 +189,8 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
      * Add conditions according to given filters.
      *
      * @param QueryBuilder $builder
-     * @param array $locales
-     * @param array $filters
+     * @param array        $locales
+     * @param array        $filters
      */
     protected function addTranslationFilter(QueryBuilder $builder, array $locales = null,  array $filters = null)
     {
@@ -202,6 +217,8 @@ class TransUnitRepository extends EntityRepository implements TransUnitRepositor
 
     /**
      * Load custom hydrator.
+     *
+     * @todo to remove, this should be usefull only with sf2.0
      */
     protected function loadCustomHydrator()
     {

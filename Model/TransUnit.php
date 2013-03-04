@@ -58,16 +58,6 @@ abstract class TransUnit
     }
 
     /**
-     * Things to do on prePersist
-     */
-    abstract public function prePersist();
-
-    /**
-     * Things to do on preUpdate
-     */
-    abstract public function preUpdate();
-
-    /**
      * Get id
      *
      * @return integer

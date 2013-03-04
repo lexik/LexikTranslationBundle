@@ -1,21 +1,22 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Repository\Entity;
+namespace Lexik\Bundle\TranslationBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-
-use Lexik\Bundle\TranslationBundle\Repository\FileRepositoryInterface;
 
 /**
  * Repository for TransUnit entity.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class FileRepository extends EntityRepository implements FileRepositoryInterface
+class FileRepository extends EntityRepository
 {
     /**
-     * (non-PHPdoc)
-     * @see Lexik\Bundle\TranslationBundle\Repository.FileRepositoryInterface::findForLoalesAndDomains()
+     * Returns all files matching a given locale and a given domains.
+     *
+     * @param array $locales
+     * @param array $domains
+     * @return array
      */
     public function findForLoalesAndDomains(array $locales, array $domains)
     {

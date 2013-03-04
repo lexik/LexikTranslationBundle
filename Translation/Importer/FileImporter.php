@@ -2,13 +2,12 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager;
-use Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 
 /**
  * Import a translation file into the database.
@@ -23,32 +22,32 @@ class FileImporter
     private $loaders;
 
     /**
-     * @var Doctrine\Common\Persistence\ObjectManager
+     * @var StorageInterface
      */
-    private $om;
+    private $storage;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\TransUnitManager
+     * @var TransUnitManagerInterface
      */
     private $transUnitManager;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Translation\Manager\FileManager
+     * @var FileManagerInterface
      */
     private $fileManager;
 
     /**
      * Construct.
      *
-     * @param array $loaders
-     * @param ObjectManager $om
-     * @param TransUnitManager $transUnitManager
-     * @param FileManager $fileManager
+     * @param array                     $loaders
+     * @param StorageInterface          $storage
+     * @param TransUnitManagerInterface $transUnitManager
+     * @param FileManagerInterface      $fileManager
      */
-    public function __construct(array $loaders, ObjectManager $om, TransUnitManager $transUnitManager, FileManager $fileManager)
+    public function __construct(array $loaders, StorageInterface $storage, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager)
     {
         $this->loaders = $loaders;
-        $this->om = $om;
+        $this->storage = $storage;
         $this->transUnitManager = $transUnitManager;
         $this->fileManager = $fileManager;
     }
@@ -57,7 +56,7 @@ class FileImporter
      * Impoort the given file and return the number of inserted translations.
      *
      * @param \Symfony\Component\Finder\SplFileInfo $file
-     * @param boolean $forceUpdate force update of the translations
+     * @param boolean                               $forceUpdate  force update of the translations
      * @return int
      */
     public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false)
@@ -71,7 +70,7 @@ class FileImporter
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
             foreach ($messageCatalogue->all($domain) as $key => $content) {
-                $transUnit = $this->transUnitManager->findOneByKeyAndDomain($key, $domain);
+                $transUnit = $this->storage->getTransUnitByKeyAndDomain($key, $domain);
 
                 if (!($transUnit instanceof TransUnit)) {
                     $transUnit = $this->transUnitManager->create($key, $domain);
@@ -80,8 +79,7 @@ class FileImporter
                 $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
                 if ($translation instanceof Translation) {
                     $imported++;
-                }
-                else if($forceUpdate) {
+                } else if($forceUpdate) {
                     $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                     $imported++;
                 }
@@ -93,8 +91,8 @@ class FileImporter
                 }
             }
 
-            $this->om->flush();
-            $this->om->clear();
+            $this->storage->flush();
+            $this->storage->clear();
         } else {
             throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
         }

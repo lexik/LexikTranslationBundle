@@ -81,20 +81,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
-                ->arrayNode('classes')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('translator')
-                            ->cannotBeEmpty()
-                            ->defaultValue('Lexik\Bundle\TranslationBundle\Translation\Translator')
-                        ->end()
-                        ->scalarNode('database_loader')
-                            ->cannotBeEmpty()
-                            ->defaultValue('Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader')
-                        ->end()
-                    ->end()
-                ->end()
-
             ->end()
         ;
 
