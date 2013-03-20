@@ -97,7 +97,7 @@ class FileManager
      */
     public function generateHash($name, $relativePath)
     {
-        return md5($relativePath.'/'.$name);
+        return md5($relativePath.DIRECTORY_SEPARATOR.$name);
     }
 
     /**
@@ -119,8 +119,8 @@ class FileManager
     protected function getFileRelativePath($filePath)
     {
         $commonParts = array();
-        $rootDirParts = explode('/', $this->rootDir);
-        $filePathParts = explode('/', $filePath);
+        $rootDirParts = explode(DIRECTORY_SEPARATOR, $this->rootDir);
+        $filePathParts = explode(DIRECTORY_SEPARATOR, $filePath);
 
         $i = 0;
         while ($i < count($rootDirParts)) {
@@ -130,10 +130,10 @@ class FileManager
             $i++;
         }
 
-        $filePath = str_replace(implode('/', $commonParts).'/', '', $filePath);
+        $filePath = str_replace(implode(DIRECTORY_SEPARATOR, $commonParts).DIRECTORY_SEPARATOR, '', $filePath);
 
         for ($i=count($commonParts); $i<count($rootDirParts); $i++) {
-            $filePath = '../'.$filePath;
+            $filePath = '..'.DIRECTORY_SEPARATOR.$filePath;
         }
 
         return $filePath;
