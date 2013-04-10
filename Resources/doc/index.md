@@ -6,7 +6,7 @@ Add the bunde to your `composer.json` file:
 ```javascript
 require: {
     // ...
-    "lexik/translation-bundle": "v1.3.0"
+    "lexik/translation-bundle": "v1.4.0"
 }
 ```
 
