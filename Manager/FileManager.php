@@ -11,6 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Manager for translations files.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
+ * @author Nikola Petkanski <nikola@petkanski.com>
  */
 class FileManager implements FileManagerInterface
 {
@@ -95,8 +96,10 @@ class FileManager implements FileManagerInterface
     protected function getFileRelativePath($filePath)
     {
         $commonParts = array();
-        $rootDirParts = explode(DIRECTORY_SEPARATOR, $this->rootDir);
-        $filePathParts = explode(DIRECTORY_SEPARATOR, $filePath);
+
+        // %kernel.root_dir% is always using "/" as directory separator
+        $rootDirParts = explode('/', $this->rootDir);
+        $filePathParts = explode('/', $filePath);
 
         $i = 0;
         while ($i < count($rootDirParts)) {
@@ -106,10 +109,10 @@ class FileManager implements FileManagerInterface
             $i++;
         }
 
-        $filePath = str_replace(implode(DIRECTORY_SEPARATOR, $commonParts).DIRECTORY_SEPARATOR, '', $filePath);
+        $filePath = str_replace(implode('/', $commonParts).'/', '', $filePath);
 
         for ($i=count($commonParts); $i<count($rootDirParts); $i++) {
-            $filePath = '..'.DIRECTORY_SEPARATOR.$filePath;
+            $filePath = '../'.$filePath;
         }
 
         return $filePath;
