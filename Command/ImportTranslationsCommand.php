@@ -16,6 +16,7 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
  * Only imports files for locales defined in lexik_translation.managed_locales.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
+ * @author Nikola Petkanski <nikola@petkanski.com>
  */
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
@@ -133,11 +134,17 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Return a Finder object if $path has a Resources/translations folder.
      *
      * @param string $path
+     * @param array $locales
      * @return Symfony\Component\Finder\Finder
      */
     protected function findTranslationsFiles($path, array $locales)
     {
         $finder = null;
+
+        if (preg_match('#^win#i', PHP_OS)) {
+            $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
+        }
+
         $dir = $path.'/Resources/translations';
 
         if (is_dir($dir)) {
