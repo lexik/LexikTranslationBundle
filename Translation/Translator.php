@@ -6,8 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Session;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Config\ConfigCache;
 
 /**
@@ -116,6 +114,7 @@ class Translator extends BaseTranslator
      * Returns a loader according to the given format.
      *
      * @param string $format
+     * @throws \RuntimeException
      * @return LoaderInterface
      */
     public function getLoader($format)
