@@ -11,9 +11,10 @@
 {% endblock %}
 
 {% block content %}
-{% if app.session.hasFlash('sucess') %}
-<span>{{ app.session.getFlash('sucess') }}</span>
-{% endif %}
+
+{% for flashMessage in app.session.flashbag.get('success') %}
+	<span>{{ flashMessage }}</span>
+{% endfor %}
 
 <div>
     <a href="{{ path('lexik_translation_new') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">

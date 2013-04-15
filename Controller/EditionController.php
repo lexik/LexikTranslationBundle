@@ -2,9 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -65,6 +64,7 @@ class EditionController extends Controller
     /**
      * Update a trans unit element from the javascript grid.
      *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function updateAction()
@@ -113,7 +113,10 @@ class EditionController extends Controller
     {
         $this->get('translator')->removeLocalesCacheFiles($this->getManagedLocales());
 
-        $this->get('session')->setFlash('success', $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle'));
+        /** @var $session Session */
+        $session = $this->get('session');
+
+        $session->getFlashBag()->set('success', $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle'));
 
         return $this->redirect($this->generateUrl('lexik_translation_grid'));
     }
