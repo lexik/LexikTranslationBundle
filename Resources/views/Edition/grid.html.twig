@@ -11,8 +11,8 @@
 {% endblock %}
 
 {% block content %}
-{% if app.session.hasFlash('sucess') %}
-<span>{{ app.session.getFlash('sucess') }}</span>
+{% if app.session.flashbag.has('sucess') %}
+<span>{{ app.session.flashbag.get('sucess') }}</span>
 {% endif %}
 
 <div>
