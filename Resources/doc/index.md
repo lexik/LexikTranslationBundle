@@ -66,7 +66,7 @@ lexik_translation_edition:
     prefix:   /my-prefix
 ```
 
-The translations edition page will be available here: /my-prefix/translation/grid
+The translations edition page will be available here: /my-prefix/grid
 
 Note: The grid will be empty until you import translations in database and use [jqGrid 4.4.4](http://www.trirand.com/blog/).
 If the grid does not appear, please check your base template has a block named `javascript_footer`.

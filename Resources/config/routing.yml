@@ -1,20 +1,20 @@
 lexik_translation_grid:
-    pattern:  /translation/grid
+    path:     /grid
     defaults: { _controller: "LexikTranslationBundle:Edition:grid" }
 
 lexik_translation_list:
-    pattern:  /translation/list
+    path:     /list
     defaults: { _controller: "LexikTranslationBundle:Edition:list" }
 
 lexik_translation_update:
-    pattern:      /translation/update
+    path:         /update
     defaults:     { _controller: "LexikTranslationBundle:Edition:update" }
     requirements: { _method: POST }
 
 lexik_translation_new:
-    pattern:  /translation/new
+    path:     /new
     defaults: { _controller: "LexikTranslationBundle:Edition:new" }
 
 lexik_translation_invalidate_cache:
-    pattern:  /translation/invalidate-cache
+    path:     /invalidate-cache
     defaults: { _controller: "LexikTranslationBundle:Edition:invalidateCache" }
