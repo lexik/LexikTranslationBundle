@@ -88,7 +88,7 @@ Command arguments:
 Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
 * `--force` (or `-f`): update the translations even if the element already exist in the database.
-* `--globals` (or `-g`): import only from the app/Resources/translations. It will ignore the option if u provide a BundleName to import
+* `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
 
 Export translations
 ===================
