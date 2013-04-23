@@ -42,7 +42,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
 
-        $this->buildTranslationStorageDefinition($container, $config['storage']);
+        $this->buildTranslationStorageDefinition($container, $config['storage']['type'], isset($config['storage']['object_manager'])?$config['storage']['object_manager']:null);
 
         $this->registerTranslatorConfiguration($config, $container);
     }
@@ -53,12 +53,20 @@ class LexikTranslationExtension extends Extension
      * @param ContainerBuilder $container
      * @param string           $storage
      */
-    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage)
+    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager)
     {
         if ('orm' == $storage) {
-            $objectManagerReference = new Reference('doctrine.orm.entity_manager');
+            if(isset($objectManager)){
+                $objectManagerReference = new Reference(sprintf('doctrine.orm.%s_entity_manager', $objectManager));
+            } else {
+                $objectManagerReference = new Reference('doctrine.orm.entity_manager');
+            }
         } else if ('mongodb' == $storage) {
-            $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
+            if(isset($objectManager)){
+                $objectManagerReference = new Reference(sprintf('doctrine.odm.mongodb.%s_document_manager', $objectManager));
+            } else {
+                $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
+            }
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
