@@ -78,7 +78,7 @@ Import translations
 
 To import translations files content into your database just run the following command:
 
-    ./app/console lexik:translations:import [bundleName] [--cache-clear] [--force]
+    ./app/console lexik:translations:import [bundleName] [--cache-clear] [--force] [--globals]
 
 This command will import all application and bundles translations files according to the `managed_locales` defined in configuration.
 
@@ -88,6 +88,7 @@ Command arguments:
 Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
 * `--force` (or `-f`): update the translations even if the element already exist in the database.
+* `--globals` (or `-g`): import only from the app/Resources/translations. It will ignore the option if u provide a BundleName to import
 
 Export translations
 ===================
