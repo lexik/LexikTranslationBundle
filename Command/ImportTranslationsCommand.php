@@ -63,8 +63,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
             $this->importAppTranslationFiles($managedLocales);
 
-            $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
             if (!$this->input->getOption('globals')) {
+                $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
                 $this->importBundlesTranslationFiles($managedLocales);
             }
         }
