@@ -145,6 +145,9 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $config->expects($this->any())
             ->method('getDefaultRepositoryClassName')
             ->will($this->returnValue('Doctrine\\ORM\\EntityRepository'));
+        $config->expects($this->any())
+            ->method('getQuoteStrategy')
+            ->will($this->returnValue(new \Doctrine\ORM\Mapping\DefaultQuoteStrategy()));
 
         if ($mockCustomHydrator) {
             $config->expects($this->any())

@@ -4,7 +4,8 @@ php:
   - 5.3
   
 env:
-  - SYMFONY_VERSION=v2.1
+  - SYMFONY_VERSION=v2.2
+  - SYMFONY_VERSION=v2.3
   
 #services:
 #  - mongodb
