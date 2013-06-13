@@ -140,7 +140,7 @@ class EditionController extends Controller
         $form = $this->createForm(new TransUnitType(), $transUnit, $options);
 
         if ($this->get('request')->getMethod() == 'POST') {
-            $form->bindRequest($this->get('request'));
+            $form->bind($this->get('request'));
 
             if ($form->isValid()) {
                 $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
