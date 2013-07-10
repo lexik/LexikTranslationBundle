@@ -13,16 +13,16 @@
 {% block content %}
 
 {% for flashMessage in app.session.flashbag.get('success') %}
-	<span>{{ flashMessage }}</span>
+	<span class="trans-flash">{{ flashMessage }}</span>
 {% endfor %}
 
-<div>
-    <a href="{{ path('lexik_translation_new') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+<div id="trans-toolbar">
+    <a id="trans-new" href="{{ path('lexik_translation_new') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
         <span class="ui-button-icon-primary ui-icon ui-icon-circle-plus"></span>
         <span class="ui-button-text">{{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}</span>
     </a>
     &nbsp;
-    <a href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
+    <a id="trans-invalidate" href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary">
         <span class="ui-button-icon-primary ui-icon ui-icon-trash"></span>
         <span class="ui-button-text">{{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}</span>
     </a>
