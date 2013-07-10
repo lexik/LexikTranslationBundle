@@ -87,9 +87,18 @@ $(document).ready(function() {
         viewrecords: true,
         sortorder: "asc",
         onSelectRow: function(id) {
-            if(id && id !== lastSelected) {
+            var editParams = {
+                keys: true,
+                successfunc: function() {
+                    lastSelected = null;
+
+                    return true;
+                }
+            };
+
+            if (id && id !== lastSelected) {
                 jQuery('#trans-grid').jqGrid("restoreRow", lastSelected);
-                jQuery('#trans-grid').jqGrid("editRow", id, true);
+                jQuery('#trans-grid').jqGrid("editRow", id, editParams);
                 lastSelected = id;
             }
         },
