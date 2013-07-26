@@ -93,12 +93,17 @@ $(document).ready(function() {
                     lastSelected = null;
 
                     return true;
+                }, 
+                afterrestorefunc: function() {
+                    lastSelected = null;
+
+                    return true;
                 }
             };
 
             if(id && id !== lastSelected) {
                 jQuery('#trans-grid').jqGrid("saveRow", lastSelected);
-                jQuery('#trans-grid').jqGrid("editRow", id, true);
+                jQuery('#trans-grid').jqGrid("editRow", id, editParams);
                 lastSelected = id;
             }
         },
