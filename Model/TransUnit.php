@@ -146,6 +146,27 @@ abstract class TransUnit
 
         return $found;
     }
+    
+    /**
+     * Return the content of translation for the given locale.
+     *
+     * @param string $locale
+     * @return Lexik\Bundle\TranslationBundle\Model\Translation
+     */
+    public function getTranslation($locale)
+    {
+        $i = 0;
+        $end = count($this->getTranslations());
+
+        while ($i<$end) {
+            if ($this->translations[$i]->getLocale() == $locale) {
+                return $this->translations[$i];
+            }
+            $i++;
+        }
+
+        return null;
+    }
 
     /**
      * Set translations collection
