@@ -14,7 +14,7 @@ class FileRepositoryTest extends BaseUnitTestCase
     /**
      * @group orm
      */
-    public function testFindForLoalesAndDomains()
+    public function testFindForLocalesAndDomains()
     {
         $em = $this->getMockSqliteEntityManager();
         $this->createSchema($em);
@@ -22,14 +22,14 @@ class FileRepositoryTest extends BaseUnitTestCase
 
         $repository = $em->getRepository(self::ENTITY_FILE_CLASS);
 
-        $result = $repository->findForLoalesAndDomains(array('de'), array());
+        $result = $repository->findForLocalesAndDomains(array('de'), array());
         $expected = array(
             'Resources/translations/superTranslations.de.yml',
         );
         $this->assertEquals(1, count($result));
         $this->assertFilesPath($expected, $result);
 
-        $result = $repository->findForLoalesAndDomains(array('fr'), array());
+        $result = $repository->findForLocalesAndDomains(array('fr'), array());
         $expected = array(
             'Resources/translations/superTranslations.fr.yml',
             'Resources/translations/messages.fr.yml',
@@ -37,14 +37,14 @@ class FileRepositoryTest extends BaseUnitTestCase
         $this->assertEquals(2, count($result));
         $this->assertFilesPath($expected, $result);
 
-        $result = $repository->findForLoalesAndDomains(array(), array('messages'));
+        $result = $repository->findForLocalesAndDomains(array(), array('messages'));
         $expected = array(
             'Resources/translations/messages.fr.yml',
             'Resources/translations/messages.en.yml',
         );
         $this->assertEquals(2, count($result));
 
-        $result = $repository->findForLoalesAndDomains(array('en', 'de'), array('messages', 'superTranslations'));
+        $result = $repository->findForLocalesAndDomains(array('en', 'de'), array('messages', 'superTranslations'));
         $expected = array(
             'Resources/translations/superTranslations.en.yml',
             'Resources/translations/superTranslations.de.yml',

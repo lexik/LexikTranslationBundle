@@ -47,7 +47,7 @@ interface StorageInterface
      * @param array $domains
      * @return array
      */
-    public function getFilesByLoalesAndDomains(array $locales, array $domains);
+    public function getFilesByLocalesAndDomains(array $locales, array $domains);
 
     /**
      * Retunns a File by its hash.

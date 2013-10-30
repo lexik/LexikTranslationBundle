@@ -18,7 +18,7 @@ class FileRepository extends EntityRepository
      * @param array $domains
      * @return array
      */
-    public function findForLoalesAndDomains(array $locales, array $domains)
+    public function findForLocalesAndDomains(array $locales, array $domains)
     {
         $builder = $this->createQueryBuilder('f');
 

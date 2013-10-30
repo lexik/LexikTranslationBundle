@@ -71,7 +71,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         return $this->getContainer()
             ->get('lexik_translation.translation_storage')
-            ->getFilesByLoalesAndDomains($locales, $domains);
+            ->getFilesByLocalesAndDomains($locales, $domains);
     }
 
     /**
