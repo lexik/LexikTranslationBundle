@@ -135,18 +135,9 @@ abstract class TransUnit
      */
     public function hasTranslation($locale)
     {
-        $i = 0;
-        $end = count($this->getTranslations());
-        $found = false;
-
-        while ($i<$end && !$found) {
-            $found = ($this->translations[$i]->getLocale() == $locale);
-            $i++;
-        }
-
-        return $found;
+        return null !== $this->getTranslation($locale);
     }
-    
+
     /**
      * Return the content of translation for the given locale.
      *
@@ -155,14 +146,12 @@ abstract class TransUnit
      */
     public function getTranslation($locale)
     {
-        $i = 0;
-        $end = count($this->getTranslations());
+        foreach ($this->getTranslations() as $translation) {
 
-        while ($i<$end) {
-            if ($this->translations[$i]->getLocale() == $locale) {
-                return $this->translations[$i];
+            if ($translation->getLocale() == $locale) {
+
+                return $translation;
             }
-            $i++;
         }
 
         return null;
