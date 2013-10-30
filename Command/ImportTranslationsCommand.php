@@ -38,9 +38,10 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->setName('lexik:translations:import');
         $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
 
-        $this->addOption('cache-clear', 'c', InputOption::VALUE_NONE, 'Remove translations cache files for managed locales.', null);
-        $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.', null);
-        $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.', null);
+        $this->addOption('cache-clear', 'c', InputOption::VALUE_NONE, 'Remove translations cache files for managed locales.');
+        $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.');
+        $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
+        $this->addOption('locales', 'l', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Import only for these locales, instead of using the managed locales.');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
@@ -53,19 +54,22 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->input = $input;
         $this->output = $output;
 
-        $managedLocales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
+        $locales = $this->input->getOption('locales');
+        if (empty($locales)) {
+            $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
+        }
 
         $bundleName = $this->input->getArgument('bundle');
-        if($bundleName) {
+        if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-            $this->importBundleTranslationFiles($bundle, $managedLocales);
+            $this->importBundleTranslationFiles($bundle, $locales);
         } else {
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $this->importAppTranslationFiles($managedLocales);
+            $this->importAppTranslationFiles($locales);
 
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $this->importBundlesTranslationFiles($managedLocales);
+                $this->importBundlesTranslationFiles($locales);
             }
         }
 
