@@ -76,9 +76,9 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilesByLoalesAndDomains(array $locales, array $domains)
+    public function getFilesByLocalesAndDomains(array $locales, array $domains)
     {
-        return $this->getFileRepository()->findForLoalesAndDomains($locales, $domains);
+        return $this->getFileRepository()->findForLocalesAndDomains($locales, $domains);
     }
 
     /**
