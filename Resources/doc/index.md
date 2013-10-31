@@ -49,7 +49,7 @@ Additional configuration options (default values are shown here):
 # app/config/config.yml
 lexik_translation:
     base_layout:      "LexikTranslationBundle::layout.html.twig"   # layout used with the translation edition template
-    storage:          
+    storage:
         type: orm                                          # where to store translations: "orm" or "mongodb"
         object_manager: something                          # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
     resources_registration:
@@ -91,6 +91,7 @@ Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
 * `--force` (or `-f`): update the translations even if the element already exist in the database.
 * `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
+* `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. ex: `--locales=fr --locales=en`
 
 Export translations
 ===================
