@@ -49,6 +49,8 @@
         <!-- Managers -->
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
+            <argument type="service" id="lexik_translation.file.manager" />
+            <argument>%kernel.root_dir%</argument>
         </service>
         
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">

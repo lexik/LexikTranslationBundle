@@ -20,13 +20,27 @@ class TransUnitManager implements TransUnitManagerInterface
     private $storage;
 
     /**
+     * @var FileManagerInterface
+     */
+    private $fileManager;
+
+    /**
+     * @var String
+     */
+    private $kernelRootDir;
+
+    /**
      * Csontruct.
      *
      * @param StorageInterface $storage
+     * @param FileManagerInterface $fm
+     * @param String $kernelRootDir
      */
-    public function __construct(StorageInterface $storage)
+    public function __construct(StorageInterface $storage, FileManagerInterface $fm, $kernelRootDir)
     {
         $this->storage = $storage;
+        $this->fileManager = $fm;
+        $this->kernelRootDir = $kernelRootDir;
     }
 
     /**
@@ -134,7 +148,9 @@ class TransUnitManager implements TransUnitManagerInterface
                 if ($transUnit->hasTranslation($locale)) {
                     $this->updateTranslation($transUnit, $locale, $content);
                 } else {
-                    $this->addTranslation($transUnit, $locale, $content);
+                    //We need to get a proper file for this translation
+                    $file = $this->getTranslationFile($transUnit, $locale);
+                    $this->addTranslation($transUnit, $locale, $content, $file);
                 }
             }
         }
@@ -142,5 +158,32 @@ class TransUnitManager implements TransUnitManagerInterface
         if ($flush) {
             $this->storage->flush();
         }
+    }
+
+    /**
+     * Get the proper File for this TransUnit and locale
+     *
+     * @param TransUnit $transUnit
+     * @param string $locale
+     *
+     * @return File|null
+     */
+    protected function getTranslationFile(TransUnit &$transUnit, $locale)
+    {
+        $file=null;
+        foreach ($transUnit->getTranslations() as $translationModel) {
+            if (null !== $file = $translationModel->getFile()) {
+                break;
+            }
+        }
+
+        //if we found a file
+        if ($file!=null) {
+            //make sure we got the correct file for this locale and domain
+            $name = sprintf('%s.%s.%s', $file->getDomain(), $locale, $file->getExtention());
+            $file = $this->fileManager->getFor($name, $this->kernelRootDir.DIRECTORY_SEPARATOR.$file->getPath());
+        }
+
+        return $file;
     }
 }
