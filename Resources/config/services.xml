@@ -74,6 +74,7 @@
         </service>
         
         <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
+            <argument>%lexik_translation.use_yml_tree%</argument>
             <tag name="lexik_translation.exporter" alias="yml" />
         </service>
         

@@ -88,6 +88,10 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
+                ->booleanNode('use_yml_tree')
+                    ->defaultValue(false)
+                ->end()
+
             ->end()
         ;
 
