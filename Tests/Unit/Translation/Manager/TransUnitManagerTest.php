@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 /**
@@ -35,6 +36,11 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     private $odmStorage;
 
+    /**
+     * @var string
+     */
+    private $rootDir = '/test/root/dir/app';
+
     public function setUp()
     {
         $this->em = $this->getMockSqliteEntityManager();
@@ -53,7 +59,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testORMCreate()
     {
-        $manager = new TransUnitManager($this->ormStorage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('chuck.norris', 'badass');
         $this->assertEquals(ORMUnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($transUnit));
@@ -71,7 +78,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testODMCreate()
     {
-        $manager = new TransUnitManager($this->odmStorage, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->odmStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->odmStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('chuck.norris', 'badass');
         $this->assertEquals(ODMUnitOfWork::STATE_MANAGED, $this->dm->getUnitOfWork()->getDocumentState($transUnit));
@@ -89,7 +97,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testORMAddTranslation()
     {
-        $manager = new TransUnitManager($this->ormStorage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
         $class = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
         $transUnit = $manager->create('bwah', 'messages', true);
@@ -116,7 +125,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testODMAddTranslation()
     {
-        $manager = new TransUnitManager($this->odmStorage, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->odmStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->odmStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('bwah', 'messages', true);
 
@@ -140,7 +150,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testORMUpdateTranslation()
     {
-        $manager = new TransUnitManager($this->ormStorage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('bwah', 'messages', true);
         $manager->addTranslation($transUnit, 'en', 'hello');
@@ -161,7 +172,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testODMUpdateTranslation()
     {
-        $manager = new TransUnitManager($this->odmStorage, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->odmStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->odmStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('bwah', 'messages', true);
         $manager->addTranslation($transUnit, 'en', 'hello');
@@ -182,7 +194,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testORMNewInstance()
     {
-        $manager = new TransUnitManager($this->ormStorage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->newInstance();
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->em->getUnitOfWork()->getEntityState($transUnit));
@@ -199,7 +212,8 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testODMNewInstance()
     {
-        $manager = new TransUnitManager($this->odmStorage, self::DOCUMENT_TRANS_UNIT_CLASS, self::DOCUMENT_TRANSLATION_CLASS);
+        $fileManager = new FileManager($this->odmStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $manager = new TransUnitManager($this->odmStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->newInstance();
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->dm->getUnitOfWork()->getDocumentState($transUnit));

@@ -33,8 +33,8 @@ class FileImporterTest extends BaseUnitTestCase
 
         $storage = $this->getORMStorage($em);
 
-        $transUnitManager = new TransUnitManager($storage, self::ENTITY_TRANS_UNIT_CLASS, self::ENTITY_TRANSLATION_CLASS);
         $fileManager = new FileManager($storage, self::ENTITY_FILE_CLASS, '/test/root/dir/app');
+        $transUnitManager = new TransUnitManager($storage, $fileManager, '/test/root/dir/app');
 
         $importer = new FileImporter($loaders, $storage, $transUnitManager, $fileManager);
 
