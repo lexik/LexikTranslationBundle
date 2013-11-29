@@ -55,9 +55,15 @@ class TranslatorTest extends BaseUnitTestCase
         // remove locale 'fr'
         $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php.meta'));
+        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php'));
+        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
+
         $translator->removeCacheFile('fr');
+
         $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php'));
         $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php.meta'));
+        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php'));
+        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
 
         // remove locale 'en'
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
@@ -80,6 +86,8 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertTrue(file_exists($cacheDir.'/database.resources.php.meta'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php.meta'));
+        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php'));
+        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php.meta'));
 
@@ -89,6 +97,8 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertFalse(file_exists($cacheDir.'/database.resources.php.meta'));
         $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php'));
         $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php.meta'));
+        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php'));
+        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
         $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php'));
         $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php.meta'));
     }
@@ -115,6 +125,9 @@ class TranslatorTest extends BaseUnitTestCase
 
         touch($cacheDir.'/catalogue.fr.php');
         touch($cacheDir.'/catalogue.fr.php.meta');
+        
+        touch($cacheDir.'/catalogue.fr_FR.php');
+        touch($cacheDir.'/catalogue.fr_FR.php.meta');
 
         touch($cacheDir.'/catalogue.en.php');
         touch($cacheDir.'/catalogue.en.php.meta');
