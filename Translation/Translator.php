@@ -52,16 +52,19 @@ class Translator extends BaseTranslator
      */
     public function removeCacheFile($locale)
     {
-        $file = sprintf('%s/catalogue.%s.php', $this->options['cache_dir'], $locale);
-        $deleted = false;
+        $localeExploded = explode('_', $locale);
+        $localePattern = sprintf('%s/catalogue.*%s*.php', $this->options['cache_dir'], $localeExploded[0]);
+        $files = glob($localePattern);
 
-        if (file_exists($file)) {
-            $deleted = unlink($file);
-        }
-
-        $metadata = $file.'.meta';
-        if (file_exists($metadata)) {
-            unlink($metadata);
+        $deleted = true;
+        foreach ($files as $file) {
+            if (!unlink($file)) {
+                $deleted = false;
+            }
+            $metadata = $file.'.meta';
+            if (file_exists($metadata)) {
+                unlink($metadata);
+            }
         }
 
         return $deleted;
