@@ -3,7 +3,7 @@ translations:
     domain:                 "Domain"
     key:                    "Key"
     grid_caption:           "Übersetzungen"
-    cache_removed:          "Änderungen wurden erforlgreich angewendet"
+    cache_removed:          "Caches erfolgreich geleert"
     new_translation:        "Neue Übersetzung"
     add_translation:        "Übersetzung hinzufügen"
     add:                    "Hinzufügen"
