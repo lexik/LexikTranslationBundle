@@ -1,0 +1,12 @@
+translations:
+    invalidate_cache:       "Išvalyti greitintuvą"
+    domain:                 "domenas"
+    key:                    "raktas"
+    grid_caption:           "Vertimų sąrašas"
+    cache_removed:          "Greitintuvo failai atnaujinti"
+    new_translation:        "Naujas vertimas"
+    add_translation:        "Sukurti vertimą"
+    add:                    "Pridėti"
+    page_title:             "Vertimai"
+    show_hide_columns:      "Rodomi stulpeliai"
+    save_row:               "Išsaugoti šią eilutę"

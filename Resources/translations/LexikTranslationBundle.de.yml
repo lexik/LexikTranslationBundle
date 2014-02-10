@@ -1,0 +1,12 @@
+translations:
+    invalidate_cache:       "Cache leeren"
+    domain:                 "Domain"
+    key:                    "Key"
+    grid_caption:           "Übersetzungen"
+    cache_removed:          "Caches erfolgreich geleert"
+    new_translation:        "Neue Übersetzung"
+    add_translation:        "Übersetzung hinzufügen"
+    add:                    "Hinzufügen"
+    page_title:             "Übersetzungen"
+    show_hide_columns:      "Spalten anzeigen/verstecken"
+    save_row:               "Zeile speichern"
