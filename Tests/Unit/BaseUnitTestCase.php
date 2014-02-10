@@ -8,6 +8,7 @@ use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\Tools\Setup;
 
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
@@ -107,53 +108,28 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     {
         $cache = new \Doctrine\Common\Cache\ArrayCache();
 
-        // annotation driver
-        $reader = new AnnotationReader($cache);
-        $annotationDriver = new \Doctrine\ORM\Mapping\Driver\AnnotationDriver($reader, array(
-            __DIR__.'/../../vendor/doctrine/lib',
-            __DIR__.'/../../Entity',
-        ));
-
         // xml driver
         $xmlDriver = new \Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver(array(
             __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Entity',
         ));
 
-        // configuration mock
-        $config = $this->getMock('Doctrine\ORM\Configuration');
-        $config->expects($this->any())
-            ->method('getMetadataCacheImpl')
-            ->will($this->returnValue($cache));
-        $config->expects($this->any())
-            ->method('getQueryCacheImpl')
-            ->will($this->returnValue($cache));
-        $config->expects($this->once())
-            ->method('getProxyDir')
-            ->will($this->returnValue(sys_get_temp_dir()));
-        $config->expects($this->once())
-            ->method('getProxyNamespace')
-            ->will($this->returnValue('Proxy'));
-        $config->expects($this->once())
-            ->method('getAutoGenerateProxyClasses')
-            ->will($this->returnValue(true));
-        $config->expects($this->any())
-            ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($xmlDriver));
-        $config->expects($this->any())
-            ->method('getClassMetadataFactoryName')
-            ->will($this->returnValue('Doctrine\ORM\Mapping\ClassMetadataFactory'));
-        $config->expects($this->any())
-            ->method('getDefaultRepositoryClassName')
-            ->will($this->returnValue('Doctrine\\ORM\\EntityRepository'));
-        $config->expects($this->any())
-            ->method('getQuoteStrategy')
-            ->will($this->returnValue(new \Doctrine\ORM\Mapping\DefaultQuoteStrategy()));
+        $config = Setup::createAnnotationMetadataConfiguration(array(
+                __DIR__.'/../../Entity',
+        ), false, null, null, false);
+
+        $config->setMetadataDriverImpl($xmlDriver);
+        $config->setMetadataCacheImpl($cache);
+        $config->setQueryCacheImpl($cache);
+        $config->setProxyDir(sys_get_temp_dir());
+        $config->setProxyNamespace('Proxy');
+        $config->setAutoGenerateProxyClasses(true);
+        $config->setClassMetadataFactoryName('Doctrine\ORM\Mapping\ClassMetadataFactory');
+        $config->setDefaultRepositoryClassName('Doctrine\ORM\EntityRepository');
 
         if ($mockCustomHydrator) {
-            $config->expects($this->any())
-                ->method('getCustomHydrationMode')
-                ->with($this->equalTo('SingleColumnArrayHydrator'))
-                ->will($this->returnValue('Lexik\Bundle\TranslationBundle\Hydrators\SingleColumnArrayHydrator'));
+            $config->setCustomHydrationModes(array(
+                'SingleColumnArrayHydrator' => 'Lexik\Bundle\TranslationBundle\Hydrators\SingleColumnArrayHydrator',
+            ));
         }
 
         $conn = array(

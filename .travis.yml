@@ -3,15 +3,22 @@ language: php
 php:
   - 5.3
   
-env:
-  - SYMFONY_VERSION=v2.2
-  - SYMFONY_VERSION=v2.3
-  
 #services:
 #  - mongodb
 
-before_script: 
+env:
+  - SYMFONY_VERSION=2.3.*
+  - SYMFONY_VERSION=2.4.*
+
+before_script:
 #  - mongo lexik_translation_bundle_test --eval 'db.addUser("travis", "lexik");'
-  - php Tests/vendors.php
+  - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
+  - composer require symfony/validator:${SYMFONY_VERSION} --no-update
+  - composer require symfony/finder:${SYMFONY_VERSION} --no-update
+  - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
+  - composer require doctrine/orm:2.4.* --no-update
+  - composer require doctrine/data-fixtures:1.0.* --no-update
+  - composer require doctrine/mongodb-odm:1.0.0-BETA9 --no-update
+  - composer update --dev
 
 script: phpunit

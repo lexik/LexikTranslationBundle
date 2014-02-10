@@ -1,0 +1,22 @@
+<?php
+
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
+if (!$loader = include __DIR__.'/../vendor/autoload.php') {
+    $nl = PHP_SAPI === 'cli' ? PHP_EOL : '<br />';
+    echo "$nl$nl";
+    die('You must set up the project dependencies.'.$nl.
+        'Run the following commands in '.dirname(__DIR__).':'.$nl.$nl.
+        'curl -s http://getcomposer.org/installer | php'.$nl.
+        'php composer.phar install'.$nl);
+}
+
+AnnotationRegistry::registerAutoloadNamespace(
+    'Symfony\Component\Validator\Constraints',
+    __DIR__.'/../vendor/symfony/validator'
+);
+
+AnnotationRegistry::registerAutoloadNamespace(
+    'Symfony\Bridge\Doctrine\Validator\Constraints',
+    __DIR__.'/../vendor/symfony/doctrine-bridge'
+);
