@@ -69,8 +69,8 @@ FCT;
 
         $couples = array();
 
-        if (isset($results['retval'][0], $results['retval'][0]['couples'])) {
-            $couples = $results['retval'][0]['couples'];
+        if (isset($results[0], $results[0]['couples'])) {
+            $couples = $results[0]['couples'];
 
             usort($couples, function($a, $b) { // @todo remove usort()
                 $result = strcmp($a['locale'], $b['locale']);
@@ -248,14 +248,13 @@ FCT;
     protected function addTransUnitFilters(Builder $builder, array $locales = null,  array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
-            $cmd = $this->getDocumentManager()->getConfiguration()->getMongoCmd();
 
             if (!empty($filters['domain'])) {
-                $builder->addAnd($builder->expr()->field('domain')->operator($cmd.'regex', $filters['domain']));
+                $builder->addAnd($builder->expr()->field('domain')->equals(new \MongoRegex(sprintf('/%s/i', $filters['domain']))));
             }
 
             if (!empty($filters['key'])) {
-                $builder->addAnd($builder->expr()->field('key')->operator($cmd.'regex', $filters['key']));
+                $builder->addAnd($builder->expr()->field('key')->equals(new \MongoRegex(sprintf('/%s/i', $filters['key']))));
             }
         }
     }
@@ -275,13 +274,11 @@ FCT;
                 ->distinct('id')
                 ->field('translations.locale')->in($locales);
 
-            $cmd = $this->getDocumentManager()->getConfiguration()->getMongoCmd();
-
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
                     $builder->addAnd(
                         $builder->expr()
-                            ->field('translations.content')->operator($cmd.'regex', $filters[$locale])
+                            ->field('translations.content')->equals(new \MongoRegex(sprintf('/%s/i', $filters[$locale])))
                             ->field('translations.locale')->equals($locale)
                     );
                 }

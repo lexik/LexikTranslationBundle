@@ -20,6 +20,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomainsByLocale();
+
         $expected = array(
             array('locale' => 'de', 'domain' => 'superTranslations'),
             array('locale' => 'en', 'domain' => 'messages'),
@@ -193,7 +194,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
         $cursor = $dm->createQueryBuilder(self::DOCUMENT_TRANS_UNIT_CLASS)
             ->update()
-            ->field('translations.updated_at')->set($now->format('U'))
+            ->field('translations.0.updated_at')->set(new \MongoTimestamp($now->format('U')))
+            ->field('translations.1.updated_at')->set(new \MongoTimestamp($now->format('U')))
             ->field('key')->equals('key.say_goodbye')
             ->field('domain')->equals('messages')
             ->getQuery()

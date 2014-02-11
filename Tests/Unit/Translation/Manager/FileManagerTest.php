@@ -43,11 +43,11 @@ class FileManagerTest extends BaseUnitTestCase
 
         $this->ormStorage = $this->getORMStorage($this->em);
 
-        //$this->dm = $this->getMockMongoDbDocumentManager();
-        //$this->createSchema($this->dm);
-        //$this->loadFixtures($this->dm);
+        $this->dm = $this->getMockMongoDbDocumentManager();
+        $this->createSchema($this->dm);
+        $this->loadFixtures($this->dm);
 
-        //$this->odmStorage = $this->getMongoDBStorage($this->dm);
+        $this->odmStorage = $this->getMongoDBStorage($this->dm);
     }
 
     /**

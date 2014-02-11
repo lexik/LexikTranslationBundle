@@ -150,53 +150,24 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     protected function getMockMongoDbDocumentManager()
     {
         $prefixes = array(
-            'Lexik\Bundle\TranslationBundle\Document' => __DIR__.'/../../Resources/config/doctrine'
+            __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Document',
         );
-        $xmlDriver = new \Symfony\Bundle\DoctrineMongoDBBundle\Mapping\Driver\XmlDriver(array_values($prefixes));
-        $xmlDriver->setNamespacePrefixes(array_flip($prefixes));
+        $xmlDriver = new \Doctrine\Bundle\MongoDBBundle\Mapping\Driver\XmlDriver($prefixes);
 
         $cache = new \Doctrine\Common\Cache\ArrayCache();
 
-        $config = $this->getMock('Doctrine\ODM\MongoDB\Configuration');
-        $config->expects($this->any())
-            ->method('getMetadataCacheImpl')
-            ->will($this->returnValue($cache));
-        $config->expects($this->any())
-            ->method('getQueryCacheImpl')
-            ->will($this->returnValue($cache));
-        $config->expects($this->once())
-            ->method('getProxyDir')
-            ->will($this->returnValue(sys_get_temp_dir()));
-        $config->expects($this->once())
-            ->method('getProxyNamespace')
-            ->will($this->returnValue('Proxy'));
-        $config->expects($this->once())
-            ->method('getAutoGenerateProxyClasses')
-            ->will($this->returnValue(true));
-        $config->expects($this->any())
-            ->method('getMetadataDriverImpl')
-            ->will($this->returnValue($xmlDriver));
-        $config->expects($this->any())
-            ->method('getClassMetadataFactoryName')
-            ->will($this->returnValue('Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory'));
-        $config->expects($this->any())
-            ->method('getDefaultDB')
-            ->will($this->returnValue('lexik_translation_bundle_test'));
-        $config->expects($this->any())
-            ->method('getHydratorDir')
-            ->will($this->returnValue(sys_get_temp_dir()));
-        $config->expects($this->any())
-            ->method('getHydratorNamespace')
-            ->will($this->returnValue('Doctrine\ODM\MongoDB\Hydrator'));
-        $config->expects($this->any())
-            ->method('getAutoGenerateHydratorClasses')
-            ->will($this->returnValue(true));
-        $config->expects($this->any())
-            ->method('getDefaultCommitOptions')
-            ->will($this->returnValue(array()));
-        $config->expects($this->any())
-            ->method('getMongoCmd')
-            ->will($this->returnValue('$'));
+        $config = new \Doctrine\ODM\MongoDB\Configuration();
+        $config->setMetadataCacheImpl($cache);
+        $config->setMetadataDriverImpl($xmlDriver);
+        $config->setProxyDir(sys_get_temp_dir());
+        $config->setProxyNamespace('Proxy');
+        $config->setAutoGenerateProxyClasses(true);
+        $config->setClassMetadataFactoryName('Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory');
+        $config->setDefaultDB('lexik_translation_bundle_test');
+        $config->setHydratorDir(sys_get_temp_dir());
+        $config->setHydratorNamespace('Doctrine\ODM\MongoDB\Hydrator');
+        $config->setAutoGenerateHydratorClasses(true);
+        $config->setDefaultCommitOptions(array());
 
         $options = array(
             'connect'  => true,

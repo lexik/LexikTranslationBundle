@@ -3,8 +3,8 @@ language: php
 php:
   - 5.3
   
-#services:
-#  - mongodb
+services:
+  - mongodb
 
 env:
   - SYMFONY_VERSION=2.3.*
@@ -12,14 +12,15 @@ env:
 
 before_script:
   - phpenv config-add travis-php.ini
-#  - mongo lexik_translation_bundle_test --eval 'db.addUser("travis", "lexik");'
+  - mongo lexik_translation_bundle_test --eval 'db.addUser("travis", "lexik");'
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
   - composer require doctrine/orm:2.4.* --no-update
   - composer require doctrine/data-fixtures:1.0.* --no-update
-  - composer require doctrine/mongodb-odm-bundle:2.2.* --no-update
+  - composer require doctrine/mongodb-odm:dev-master --no-update
+  - composer require doctrine/mongodb-odm-bundle:dev-master --no-update
   - composer update --dev
 
 script: phpunit
