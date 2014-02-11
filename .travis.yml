@@ -11,6 +11,7 @@ env:
   - SYMFONY_VERSION=2.4.*
 
 before_script:
+  - phpenv config-add travis-php.ini
 #  - mongo lexik_translation_bundle_test --eval 'db.addUser("travis", "lexik");'
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
@@ -18,7 +19,7 @@ before_script:
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
   - composer require doctrine/orm:2.4.* --no-update
   - composer require doctrine/data-fixtures:1.0.* --no-update
-  - composer require doctrine/mongodb-odm:1.0.0-BETA9 --no-update
+  - composer require doctrine/mongodb-odm-bundle:v2.2.* --no-update
   - composer update --dev
 
 script: phpunit
