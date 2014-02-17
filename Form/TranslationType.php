@@ -39,10 +39,9 @@ class TranslationType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        parent::setDefaultOptions($resolver);
-
         $resolver->setDefaults(array(
-            'data_class' => null,
+            'data_class'         => null,
+            'translation_domain' => 'LexikTranslationBundle'
         ));
     }
 

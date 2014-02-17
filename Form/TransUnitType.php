@@ -36,12 +36,11 @@ class TransUnitType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        parent::setDefaultOptions($resolver);
-
         $resolver->setDefaults(array(
-            'data_class'        => null,
-            'domains'           => array('messages'),
-            'translation_class' => null,
+            'data_class'         => null,
+            'domains'            => array('messages'),
+            'translation_class'  => null,
+            'translation_domain' => 'LexikTranslationBundle'
         ));
     }
 

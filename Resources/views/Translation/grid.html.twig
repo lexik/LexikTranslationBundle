@@ -1,0 +1,93 @@
+{% extends layout %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
+{% endblock %}
+
+{% block title %}{{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+        {% for flashMessage in app.session.flashbag.get('success') %}
+        	<div class="col-md-12 trans-flash">{{ flashMessage }}</div>
+        {% endfor %}
+        </div>
+
+        <div id="trans-toolbar" class="row">
+            <div class="col-md-12">
+                <a id="trans-new" href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                    {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+                </a>
+                &nbsp;
+                <a id="trans-invalidate" href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
+                    {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
+                </a>
+                &nbsp;
+                <button id="select-colunms" class="btn btn-default">
+                    {{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}
+                </button>
+                {% if inputType == 'textarea'  %}
+                <button id="save-row" class="btn btn-default">
+                    {{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <br />
+
+        {% raw %}
+        <div ng-app="translationApp" ng-controller="TranslationCtrl" class="row">
+            <div class="col-md-12">
+
+            <table ng-table="tableParams" template-pagination="translation-pager" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th ng-repeat="column in columns">{{ column }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="transUnit in $data">
+                        <td>
+                            {{ transUnit.id }}
+                        </td>
+                        <td >
+                            {{ transUnit.domain }}
+                        </td>
+                        <td>
+                            {{ transUnit.key }}
+                        </td>
+                        <td ng-repeat="translation in transUnit.translations">
+                            {{ translation.content }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <script type="text/ng-template" id="translation-pager">
+            <ul class="pager ng-cloak">
+                <li ng-repeat="page in pages"
+                    ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+                    ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
+
+                    <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
+                    <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+                </li>
+            </ul>
+            </script>
+        </div>
+        {% endraw %}
+    </div>
+{% endblock %}
+
+{% block javascript_footer %}
+    {{ parent() }}
+    <script>
+        var managedLocales = {{ locales|json_encode|raw }};
+        var dataListUrl = '{{ path('lexik_translation_list') }}';
+    </script>
+    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
+{% endblock %}

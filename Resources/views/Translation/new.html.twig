@@ -1,16 +1,20 @@
 {% extends layout %}
 
 {% block content %}
-<div>
+<div class="container">
     <div>{{ 'translations.add_translation'|trans({}, 'LexikTranslationBundle') }}</div>
-    <form action="{{ path('lexik_translation_new') }}" method="post">
+
+    <form action="{{ path('lexik_translation_new') }}" method="post" class="form form-vertical">
         {{ form_row(form.key) }}
         {{ form_row(form.domain) }}
         {% for translation in form.translations %}
             {{ form_row(translation) }}
         {% endfor %}
         {{ form_rest(form) }}
-        <input type="submit" id="trans-unit-submit" name="trans-unit-submit" value="{{ 'translations.add'|trans({}, 'LexikTranslationBundle') }}" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" />
+
+        <button type="submit" id="trans-unit-submit" name="trans-unit-submit" class="btn btn-primary">
+            {{ 'translations.add'|trans({}, 'LexikTranslationBundle') }}
+        </button>
     </form>
 </div>
 {% endblock %}
