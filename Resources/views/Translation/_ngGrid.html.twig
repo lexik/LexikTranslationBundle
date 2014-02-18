@@ -2,28 +2,35 @@
 {% raw %}
 <div ng-app="translationApp" ng-controller="TranslationCtrl" class="row">
     <div class="col-md-12">
-        <table ng-table="tableParams" show-filter="true" template-pagination="translation-pager" class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th ng-repeat="column in columns"
-                        ng-click="sortGrid(tableParams, column)"
-                        ng-class="{
-                          'sort-asc': tableParams.isSortBy(column.field, 'asc'),
-                          'sort-desc': tableParams.isSortBy(column.field, 'desc')
-                        }"
-                        class="text-center sortable">
-                        {{ column.title }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="translation in $data">
-                    <td ng-repeat="column in columns">
-                        {{ translation[column.index] }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <form ng-submit="doFilter()">
+            <table ng-table="tableParams" show-filter="true" template-pagination="translation-pager" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th ng-repeat="column in columns"
+                            ng-click="sortGrid(tableParams, column)"
+                            ng-class="{
+                              'sort-asc': tableParams.isSortBy(column.field, 'asc'),
+                              'sort-desc': tableParams.isSortBy(column.field, 'desc')
+                            }"
+                            class="text-center sortable">
+                            {{ column.title }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <th ng-repeat="column in columns">
+                            <input ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="translation in $data">
+                        <td ng-repeat="column in columns">
+                            {{ translation[column.index] }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
     </div>
 
     <script type="text/ng-template" id="translation-pager">

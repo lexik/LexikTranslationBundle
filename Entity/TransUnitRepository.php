@@ -170,7 +170,7 @@ class TransUnitRepository extends EntityRepository
      * @param array        $locales
      * @param array        $filters
      */
-    protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null,  array $filters = null)
+    protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
@@ -192,7 +192,7 @@ class TransUnitRepository extends EntityRepository
      * @param array        $locales
      * @param array        $filters
      */
-    protected function addTranslationFilter(QueryBuilder $builder, array $locales = null,  array $filters = null)
+    protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
         if (null != $locales) {
             $qb = $this->createQueryBuilder('tu');

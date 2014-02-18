@@ -28,7 +28,12 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                 parameters.push('sord=' + params.sorting()[keys[0]]);
             }
             
-            console.log(parameters);
+            if (Object.keys(params.filter()).length) {
+                parameters.push('_search=true');
+                for (var key in params.filter()) {
+                    parameters.push(key + '=' + params.filter()[key]);
+                }
+            }
             
             var url = translationParams.listUrl + '?' + parameters.join('&');
             
@@ -36,14 +41,14 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                 $timeout(function() {
                     params.total(responseData.total);
                     $defer.resolve(responseData.translations);
-                }, 300);
+                }, 200);
             });
         }
     };
     
-    var options = { page: 1, count: 20, filter: {}, sort: {} };
+    var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
 
-    $scope.tableParams = new ngTableParams(options, tableData);
+    $scope.tableParams = new ngTableParams(defaultOptions, tableData);
     
     $scope.sortGrid = function (tableParams, column) {
         if (column.sortable) {
