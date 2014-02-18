@@ -24,10 +24,7 @@ class RestController extends Controller
 
         $count = $storage->countTransUnits($locales, $this->get('request')->query->all());
 
-        return new JsonResponse(array(
-            'translations' => $transUnits,
-            'count'        => $count,
-        ));
+        return $this->get('lexik_translation.data_grid_formater')->createResponse($transUnits, $count);
     }
 
     public function updateAction()

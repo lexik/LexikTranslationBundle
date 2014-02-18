@@ -3,7 +3,9 @@
 var app = angular.module('translationApp', ['ngTable']);
 
 app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', function($scope, $http, $timeout, ngTableParams) {
+    $scope.locales = managedLocales;
     $scope.columns = ['ID', 'Domain', 'Key'];
+
     for (var key in managedLocales) {
         $scope.columns.push(managedLocales[key].toUpperCase());
     }
@@ -20,11 +22,9 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             
             $http.get(url).success(function (responseData) {
                 $timeout(function() {
-                    // update table params
-                    params.total(responseData.count);
-                    // set new data
+                    params.total(responseData.total);
                     $defer.resolve(responseData.translations);
-                }, 500);
+                }, 300);
             });
         }
     };

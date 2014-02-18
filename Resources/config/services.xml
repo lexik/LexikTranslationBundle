@@ -24,6 +24,8 @@
         <parameter key="lexik_translation.mongodb.trans_unit.class">Lexik\Bundle\TranslationBundle\Document\TransUnit</parameter>
         <parameter key="lexik_translation.mongodb.translation.class">Lexik\Bundle\TranslationBundle\Document\Translation</parameter>
         <parameter key="lexik_translation.mongodb.file.class">Lexik\Bundle\TranslationBundle\Document\File</parameter>
+        
+        <parameter key="lexik_translation.data_grid_formater.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\NgTableGridFormater</parameter>
     </parameters>
 
     <services>
@@ -82,5 +84,9 @@
             <tag name="lexik_translation.exporter" alias="php" />
         </service>
         
+        <!-- Data grid -->
+        <service id="lexik_translation.data_grid_formater" class="%lexik_translation.data_grid_formater.class%">
+            <argument>%lexik_translation.managed_locales%</argument>
+        </service>
     </services>
 </container>

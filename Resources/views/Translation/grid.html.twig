@@ -49,19 +49,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="transUnit in $data">
-                        <td>
-                            {{ transUnit.id }}
-                        </td>
-                        <td >
-                            {{ transUnit.domain }}
-                        </td>
-                        <td>
-                            {{ transUnit.key }}
-                        </td>
-                        <td ng-repeat="translation in transUnit.translations">
-                            {{ translation.content }}
-                        </td>
+                    <tr ng-repeat="translation in $data">
+                        <td>{{ translation.id }}</td>
+                        <td >{{ translation.domain }}</td>
+                        <td>{{ translation.key }}</td>
+                        <td ng-repeat="locale in locales">{{ translation[locale] }}</td>
                     </tr>
                 </tbody>
             </table>

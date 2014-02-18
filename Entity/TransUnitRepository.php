@@ -223,6 +223,6 @@ class TransUnitRepository extends EntityRepository
     protected function loadCustomHydrator()
     {
         $config = $this->getEntityManager()->getConfiguration();
-        $config->addCustomHydrationMode('SingleColumnArrayHydrator', 'Lexik\Bundle\TranslationBundle\Hydrators\SingleColumnArrayHydrator');
+        $config->addCustomHydrationMode('SingleColumnArrayHydrator', 'Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator');
     }
 }
