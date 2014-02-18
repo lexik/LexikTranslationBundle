@@ -128,7 +128,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
 
         if ($mockCustomHydrator) {
             $config->setCustomHydrationModes(array(
-                'SingleColumnArrayHydrator' => 'Lexik\Bundle\TranslationBundle\Hydrators\SingleColumnArrayHydrator',
+                'SingleColumnArrayHydrator' => 'Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator',
             ));
         }
 

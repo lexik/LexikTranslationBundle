@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Hydrators;
+namespace Lexik\Bundle\TranslationBundle\Util\Doctrine;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 
