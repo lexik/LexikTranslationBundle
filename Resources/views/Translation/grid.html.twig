@@ -38,48 +38,17 @@
 
         <br />
 
-        {% raw %}
-        <div ng-app="translationApp" ng-controller="TranslationCtrl" class="row">
-            <div class="col-md-12">
-
-            <table ng-table="tableParams" template-pagination="translation-pager" class="table table-bordered table-striped">
-                <thead>
-                    <tr>
-                        <th ng-repeat="column in columns">{{ column }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="translation in $data">
-                        <td>{{ translation.id }}</td>
-                        <td >{{ translation.domain }}</td>
-                        <td>{{ translation.key }}</td>
-                        <td ng-repeat="locale in locales">{{ translation[locale] }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-
-            <script type="text/ng-template" id="translation-pager">
-            <ul class="pager ng-cloak">
-                <li ng-repeat="page in pages"
-                    ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
-                    ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
-
-                    <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
-                    <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
-                </li>
-            </ul>
-            </script>
-        </div>
-        {% endraw %}
+        {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
     </div>
 {% endblock %}
 
 {% block javascript_footer %}
     {{ parent() }}
     <script>
-        var managedLocales = {{ locales|json_encode|raw }};
-        var dataListUrl = '{{ path('lexik_translation_list') }}';
+        var translationParams = {
+            locales: {{ locales|json_encode|raw }},
+            listUrl: '{{ path('lexik_translation_list') }}'
+        };
     </script>
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
 {% endblock %}

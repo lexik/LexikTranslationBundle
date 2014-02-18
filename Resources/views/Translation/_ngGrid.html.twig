@@ -1,0 +1,42 @@
+{# Raw block to display the AngularJS template #}
+{% raw %}
+<div ng-app="translationApp" ng-controller="TranslationCtrl" class="row">
+    <div class="col-md-12">
+        <table ng-table="tableParams" show-filter="true" template-pagination="translation-pager" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th ng-repeat="column in columns"
+                        ng-click="sortGrid(tableParams, column)"
+                        ng-class="{
+                          'sort-asc': tableParams.isSortBy(column.field, 'asc'),
+                          'sort-desc': tableParams.isSortBy(column.field, 'desc')
+                        }"
+                        class="text-center sortable">
+                        {{ column.title }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="translation in $data">
+                    <td ng-repeat="column in columns">
+                        {{ translation[column.index] }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script type="text/ng-template" id="translation-pager">
+    <ul class="pager ng-cloak">
+        <li ng-repeat="page in pages"
+            ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+            ng-show="page.type == 'prev' || page.type == 'next'"
+            ng-switch="page.type">
+
+            <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
+            <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+       </li>
+    </ul>
+    </script>
+</div>
+{% endraw %}
