@@ -1,5 +1,4 @@
-.gridStyle {
-    border: 1px solid black;
-    width: 80%; 
-    height: 400px;
+.margin-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
