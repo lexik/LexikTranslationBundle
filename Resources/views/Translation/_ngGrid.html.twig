@@ -23,7 +23,7 @@
     <div class="row margin-row">
         <div class="col-md-12">
             <form ng-submit="doFilter()">
-                <table ng-table="tableParams" show-filter="true" template-pagination="translation-pager" class="table table-bordered table-striped">
+                <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th ng-repeat="column in columns"
@@ -44,28 +44,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="translation in $data">
-                            <td ng-repeat="column in columns" ng-show="column.visible">
-                                {{ translation[column.index] }}
-                            </td>
-                        </tr>
+                        <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns"></tr>
                     </tbody>
                 </table>
             </form>
         </div>
     </div>
 
-    <script type="text/ng-template" id="translation-pager">
-    <ul class="pager ng-cloak">
-        <li ng-repeat="page in pages"
-            ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
-            ng-show="page.type == 'prev' || page.type == 'next'"
-            ng-switch="page.type">
+    <script type="text/ng-template" id="pager-template">
+        <ul class="pager ng-cloak">
+            <li ng-repeat="page in pages"
+                ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
+                ng-show="page.type == 'prev' || page.type == 'next'"
+                ng-switch="page.type">
 
-            <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
-            <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
-       </li>
-    </ul>
+                <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
+                <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+            </li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="editable-row-template">
+        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()">
+            <span ng-show="column.index == 'id' || (column.index != 'id' && !edit)">{{ translation[column.index] }}</span>
+            <input ng-if="column.index != 'id'"
+                   ng-show="edit"
+                   ng-model="translation[column.index]"
+                   ng-keydown="save($event)"
+                   type="text"
+                   name="column.index"
+                   class="form-control input-sm"
+                   value="" />
+        </td>
     </script>
 </div>
 {% endraw %}

@@ -9,30 +9,45 @@
 
 {% block content %}
     <div class="container">
-        <div class="row">
-        {% for flashMessage in app.session.flashbag.get('success') %}
-        	<div class="col-md-12 trans-flash">{{ flashMessage }}</div>
-        {% endfor %}
-        </div>
+        {% block flash_messages %}
+            <div class="row">
+                {% set flashes = app.session.flashbag.all() %}
+                {% set css = {'error': 'warning', 'success': 'success'} %}
 
-        <div id="trans-toolbar" class="row margin-row">
-            <div class="col-md-12">
-                <a id="trans-new" href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
-                    {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
-                </a>
-                &nbsp;
-                <a id="trans-invalidate" href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
-                    {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
-                </a>
-                {% if inputType == 'textarea'  %}
-                <button id="save-row" class="btn btn-default">
-                    {{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}
-                </button>
+                {% if flashes | length > 0 %}
+                    {% for type, messages in flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ css[type] }}">
+                                <strong>{{ message }}</strong>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
                 {% endif %}
             </div>
-        </div>
+        {% endblock flash_messages %}
 
-        {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
+        {% block toolbar %}
+            <div id="trans-toolbar" class="row margin-row">
+                <div class="col-md-12">
+                    <a id="trans-new" href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                        {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+                    </a>
+                    &nbsp;
+                    <a id="trans-invalidate" href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
+                        {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
+                    </a>
+                    {% if inputType == 'textarea'  %}
+                    <button id="save-row" class="btn btn-default">
+                        {{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        {% endblock toolbar %}
+
+        {% block data_grid %}
+            {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
+        {% endblock data_grid %}
     </div>
 {% endblock %}
 
@@ -40,8 +55,9 @@
     {{ parent() }}
     <script>
         var translationParams = {
-            locales: {{ locales|json_encode|raw }},
+            locales: {{ locales | json_encode | raw }},
             listUrl: '{{ path('lexik_translation_list') }}',
+            updateUrl: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
             inputType: '{{ inputType }}',
             hideColBtnLabel: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}'
         };

@@ -32,16 +32,16 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                 parameters.push('sidx=' + keys[0]);
                 parameters.push('sord=' + params.sorting()[keys[0]]);
             }
-            
+
             if (Object.keys(params.filter()).length) {
                 parameters.push('_search=true');
                 for (var key in params.filter()) {
                     parameters.push(key + '=' + params.filter()[key]);
                 }
             }
-            
+
             var url = translationParams.listUrl + '?' + parameters.join('&');
-            
+
             $http.get(url).success(function (responseData) {
                 $timeout(function() {
                     params.total(responseData.total);
@@ -50,11 +50,11 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             });
         }
     };
-    
+
     var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
 
     $scope.tableParams = new ngTableParams(defaultOptions, tableData);
-    
+
     // scope function
     $scope.sortGrid = function (tableParams, column) {
         if (column.sortable) {
@@ -62,3 +62,42 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
         }  
     };
 }]);
+
+app.directive('editableRow', function ($http) {
+    return {
+        restrict: 'A',
+        scope: {
+            translation: '=translation',
+            columns: '=columns'
+        },
+        template: $('#editable-row-template').html(),
+        link: function ( $scope, element, attrs ) {
+            $scope.edit = false;
+            
+            $scope.toggleEdit = function () {
+                $scope.edit = !$scope.edit;
+            };
+            
+            $scope.save = function (event) {
+                if (event.which == 13) { // return key
+                    var url = translationParams.updateUrl.replace('-id-', $scope.translation.id);
+                    
+                    var parameters = [];
+                    for (var name in $scope.translation) {
+                        parameters.push(name+'='+$scope.translation[name]);
+                    }
+                    
+                    // force content type to make SF create a Request with the PUT parameters
+                    $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
+                        .success(function () {
+                            
+                        }).error(function () {
+                            
+                        });
+                    
+                    $scope.edit = false;
+                }
+            };
+          }
+    };
+});

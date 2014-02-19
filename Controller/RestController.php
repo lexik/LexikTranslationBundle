@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class RestController extends Controller
 {
+    /**
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
     public function listAction()
     {
         $locales = $this->getManagedLocales();
@@ -27,41 +30,39 @@ class RestController extends Controller
         return $this->get('lexik_translation.data_grid_formater')->createResponse($transUnits, $count);
     }
 
-    public function updateAction()
+    /**
+     * @throws NotFoundHttpException
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function updateAction($id)
     {
-//         $request = $this->get('request');
+        $request = $this->get('request');
 
-//         if ( ! $request->isXmlHttpRequest() ) {
-//             throw new NotFoundHttpException();
-//         }
+        if (!$request->isMethod('PUT')) {
+            throw $this->createNotFoundException('Invalid request method.');
+        }
 
-//         $response = new Response('', 200, array('Content-type' => 'application/json'));
+        $storage = $this->get('lexik_translation.translation_storage');
+        $transUnit = $storage->getTransUnitById($id);
 
-//         if ('edit' == $request->request->get('oper')) {
-//             $storage = $this->get('lexik_translation.translation_storage');
-//             $transUnit = $storage->getTransUnitById($request->request->get('id'));
+        if (!$transUnit) {
+            throw $this->createNotFoundException(sprintf('No TransUnit found for "%s"', $id));
+        }
 
-//             if (!($transUnit instanceof TransUnit)) {
-//                 throw new NotFoundHttpException();
-//             }
+        $translationsContent = array();
+        foreach ($this->getManagedLocales() as $locale) {
+            $translationsContent[$locale] = $request->request->get($locale);
+        }
 
-//             $translationsContent = array();
-//             foreach ($this->getManagedLocales() as $locale) {
-//                 $translationsContent[$locale] = $request->request->get($locale);
-//             }
+        $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
 
-//             $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
+        if ($transUnit instanceof TransUnitDocument) {
+            $transUnit->convertMongoTimestamp();
+        }
 
-//             if ($transUnit instanceof TransUnitDocument) {
-//                 $transUnit->convertMongoTimestamp();
-//             }
+        $storage->flush();
 
-//             $storage->flush();
-
-//             $response->setContent(json_encode(array('message' => sprintf('TransUnit #%d updated.', $transUnit->getId()))));
-//         }
-
-//         return $response;
+        return new JsonResponse( array('message' => sprintf('TransUnit #%d updated.', $transUnit->getId())) );
     }
 
     /**
