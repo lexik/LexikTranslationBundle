@@ -3,10 +3,10 @@
 var app = angular.module('translationApp', ['ngTable']);
 
 app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', function($scope, $http, $timeout, ngTableParams) {
-    $scope.locales = translationParams.locales;
-    $scope.editType = translationParams.inputType;
-    $scope.hideColBtnLabel = translationParams.hideColBtnLabel;
-    $scope.saveRowBtnLabel = translationParams.saveRowBtnLabel;
+    $scope.locales = translationCfg.locales;
+    $scope.editType = translationCfg.inputType;
+    $scope.hideColBtnLabel = translationCfg.label.hideCol;
+    $scope.saveRowBtnLabel = translationCfg.label.saveRow;
     $scope.hideColSelector = false;
 
     // columns definition
@@ -42,7 +42,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                 }
             }
 
-            var url = translationParams.listUrl + '?' + parameters.join('&');
+            var url = translationCfg.url.list + '?' + parameters.join('&');
 
             $http.get(url).success(function (responseData) {
                 $timeout(function() {
@@ -86,7 +86,7 @@ app.directive('editableRow', function ($http) {
                     $scope.edit = false;
 
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
-                    var url = translationParams.updateUrl.replace('-id-', $scope.translation.id);
+                    var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
                     
                     var parameters = [];
                     for (var name in $scope.translation) {

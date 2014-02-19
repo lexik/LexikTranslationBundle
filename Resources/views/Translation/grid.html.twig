@@ -51,13 +51,17 @@
 {% block javascript_footer %}
     {{ parent() }}
     <script>
-        var translationParams = {
+        var translationCfg = {
             locales: {{ locales | json_encode | raw }},
-            listUrl: '{{ path('lexik_translation_list') }}',
-            updateUrl: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
             inputType: '{{ inputType }}',
-            hideColBtnLabel: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}',
-            saveRowBtnLabel: '{{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}'
+            url: {
+                list: '{{ path('lexik_translation_list') }}',
+                update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}'
+            },
+            label: {
+                hideCol: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}',
+                saveRow: '{{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}'
+            }
         };
     </script>
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
