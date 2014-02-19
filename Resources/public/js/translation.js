@@ -4,18 +4,20 @@ var app = angular.module('translationApp', ['ngTable']);
 
 app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', function($scope, $http, $timeout, ngTableParams) {
     $scope.locales = translationParams.locales;
+    $scope.editType = translationParams.inputType;
     $scope.hideColBtnLabel = translationParams.hideColBtnLabel;
+    $scope.saveRowBtnLabel = translationParams.saveRowBtnLabel;
     $scope.hideColSelector = false;
 
     // columns definition
     $scope.columns = [
-        { title: 'ID', index: 'id', filter: {'id': 'text'}, sortable: true, visible: true }, 
-        { title: 'Domain', index: 'domain', filter: {'domain': 'text'}, sortable: true, visible: true },
-        { title: 'Key', index: 'key', filter: {'key': 'text'}, sortable: true, visible: true }
+        { title: 'ID', index: 'id', edit: false, filter: {'id': 'text'}, sortable: true, visible: true }, 
+        { title: 'Domain', index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
+        { title: 'Key', index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
     ];
 
     for (var key in $scope.locales) {
-        var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], filter: {}, sortable: false, visible: true };
+        var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: false, visible: true };
         columnDef['filter'][$scope.locales[key]] = 'text';
 
         $scope.columns.push(columnDef);
@@ -68,7 +70,8 @@ app.directive('editableRow', function ($http) {
         restrict: 'A',
         scope: {
             translation: '=translation',
-            columns: '=columns'
+            columns: '=columns',
+            editType: '=editType'
         },
         template: $('#editable-row-template').html(),
         link: function ( $scope, element, attrs ) {
@@ -79,7 +82,10 @@ app.directive('editableRow', function ($http) {
             };
             
             $scope.save = function (event) {
-                if (event.which == 13) { // return key
+                if (event.which == 27) { // ecsape key
+                    $scope.edit = false;
+
+                } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
                     var url = translationParams.updateUrl.replace('-id-', $scope.translation.id);
                     
                     var parameters = [];
@@ -90,14 +96,12 @@ app.directive('editableRow', function ($http) {
                     // force content type to make SF create a Request with the PUT parameters
                     $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
                         .success(function () {
-                            
+                            $scope.edit = false;
                         }).error(function () {
-                            
+                            // TODO display an error message
                         });
-                    
-                    $scope.edit = false;
                 }
             };
-          }
+        }
     };
 });

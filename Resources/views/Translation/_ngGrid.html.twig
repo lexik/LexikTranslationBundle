@@ -3,7 +3,7 @@
 <div ng-app="translationApp" ng-controller="TranslationCtrl">
     <div class="row margin-row">
         <div class="col-md-12">
-            <a ng-click="hideColSelector = !hideColSelector">{{ hideColBtnLabel }}</a>
+            <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">{{ hideColBtnLabel }}</a>
         </div>
     </div>
 
@@ -30,21 +30,23 @@
                                 ng-show="column.visible"
                                 ng-click="sortGrid(tableParams, column)"
                                 ng-class="{
-                                  'sort-asc': tableParams.isSortBy(column.field, 'asc'),
-                                  'sort-desc': tableParams.isSortBy(column.field, 'desc')
+                                    'sort-asc': tableParams.isSortBy(column.field, 'asc'),
+                                    'sort-desc': tableParams.isSortBy(column.field, 'desc')
                                 }"
-                                class="text-center sortable">
+                                class="text-center sortable col-{{ column.index }}">
                                 {{ column.title }}
                             </th>
+                            <th ng-if="editType == 'textarea'" class="col-save">Save</th>
                         </tr>
                         <tr>
                             <th ng-repeat="column in columns" ng-show="column.visible">
                                 <input ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
                             </th>
+                            <th ng-if="editType == 'textarea'"></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns"></tr>
+                        <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns" edit-type="editType"></tr>
                     </tbody>
                 </table>
             </form>
@@ -66,15 +68,28 @@
 
     <script type="text/ng-template" id="editable-row-template">
         <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()">
-            <span ng-show="column.index == 'id' || (column.index != 'id' && !edit)">{{ translation[column.index] }}</span>
-            <input ng-if="column.index != 'id'"
-                   ng-show="edit"
-                   ng-model="translation[column.index]"
-                   ng-keydown="save($event)"
-                   type="text"
-                   name="column.index"
-                   class="form-control input-sm"
-                   value="" />
+            <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
+            <div ng-switch on="editType">
+                <textarea ng-switch-when="textarea"
+                       ng-if="column.edit"
+                       ng-show="edit"
+                       ng-model="translation[column.index]"
+                       ng-keydown="save($event)"
+                       name="column.index"
+                       class="form-control">
+                </textarea>
+                <input ng-switch-default
+                       ng-if="column.edit"
+                       ng-show="edit"
+                       ng-model="translation[column.index]"
+                       ng-keydown="save($event)"
+                       type="text"
+                       name="column.index"
+                       class="form-control input-sm" />
+            </div>
+        </td>
+        <td ng-if="editType == 'textarea'" class="text-center">
+            <button ng-show="edit" ng-click="save($event)" type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-save"></span></button>
         </td>
     </script>
 </div>

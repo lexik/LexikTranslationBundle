@@ -11,38 +11,35 @@
     <div class="container">
         {% block flash_messages %}
             <div class="row">
+                <div class="col-md-12">
                 {% set flashes = app.session.flashbag.all() %}
                 {% set css = {'error': 'warning', 'success': 'success'} %}
 
                 {% if flashes | length > 0 %}
                     {% for type, messages in flashes %}
                         {% for message in messages %}
-                            <div class="alert alert-{{ css[type] }}">
-                                <strong>{{ message }}</strong>
-                            </div>
+                            <div class="alert alert-{{ css[type] }}">{{ message }}</div>
                         {% endfor %}
                     {% endfor %}
                 {% endif %}
+                </div>
             </div>
         {% endblock flash_messages %}
 
         {% block toolbar %}
             <div id="trans-toolbar" class="row margin-row">
                 <div class="col-md-12">
-                    <a id="trans-new" href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                    <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
                         {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
                     </a>
                     &nbsp;
-                    <a id="trans-invalidate" href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
+                    <a href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
                         {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
                     </a>
-                    {% if inputType == 'textarea'  %}
-                    <button id="save-row" class="btn btn-default">
-                        {{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}
-                    </button>
-                    {% endif %}
                 </div>
             </div>
+
+            <hr />
         {% endblock toolbar %}
 
         {% block data_grid %}
@@ -59,7 +56,8 @@
             listUrl: '{{ path('lexik_translation_list') }}',
             updateUrl: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
             inputType: '{{ inputType }}',
-            hideColBtnLabel: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}'
+            hideColBtnLabel: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}',
+            saveRowBtnLabel: '{{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}'
         };
     </script>
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
