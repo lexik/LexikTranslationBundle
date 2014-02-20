@@ -1,37 +1,34 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Form;
+namespace Lexik\Bundle\TranslationBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
- * Translation form type.
+ * TransUnit form type.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TranslationType extends AbstractType
+class TransUnitType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('locale', 'hidden');
-        $builder->add('content', 'textarea', array(
-            'required' => false,
+        $builder->add('key');
+        $builder->add('domain', 'choice', array(
+            'choices' => array_combine($options['domains'], $options['domains']),
         ));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['label'] = $form['locale']->getData();
+        $builder->add('translations', 'collection', array(
+            'type'     => 'lxk_translation',
+            'required' => false,
+            'options'  => array(
+                'data_class' => $options['translation_class'],
+            )
+        ));
     }
 
     /**
@@ -41,6 +38,8 @@ class TranslationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class'         => null,
+            'domains'            => array('messages'),
+            'translation_class'  => null,
             'translation_domain' => 'LexikTranslationBundle'
         ));
     }
@@ -50,6 +49,6 @@ class TranslationType extends AbstractType
      */
     public function getName()
     {
-        return 'translation';
+        return 'lxk_trans_unit';
     }
 }

@@ -7,7 +7,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-use Lexik\Bundle\TranslationBundle\Form\TransUnitType;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -37,9 +36,9 @@ class TranslationController extends Controller
     {
         $this->get('translator')->removeLocalesCacheFiles($this->getManagedLocales());
 
-        $session = $this->get('session');
+        $message = $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle');
 
-        $session->getFlashBag()->add('success', $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle'));
+        $this->get('session')->getFlashBag()->add('success', $message);
 
         return $this->redirect($this->generateUrl('lexik_translation_grid'));
     }
@@ -51,47 +50,12 @@ class TranslationController extends Controller
      */
     public function newAction()
     {
-        // @todo
-        // - move the logic into a form handler service
-        // - define form type as services
+        $handler = $this->get('lexik_translation.form.handler.trans_unit');
 
-        $storage = $this->get('lexik_translation.translation_storage');
-        $transUnit = $this->get('lexik_translation.trans_unit.manager')->newInstance($this->getManagedLocales());
+        $form = $this->createForm('lxk_trans_unit', $handler->createFormData(), $handler->getFormOptions());
 
-        $options = array(
-            'domains'           => $storage->getTransUnitDomains(),
-            'data_class'        => $storage->getModelClass('trans_unit'),
-            'translation_class' => $storage->getModelClass('translation'),
-        );
-
-        $form = $this->createForm(new TransUnitType(), $transUnit, $options);
-
-        if ($this->get('request')->getMethod() == 'POST') {
-            $form->bind($this->get('request'));
-
-            if ($form->isValid()) {
-                $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
-
-                // link new translations to a file to be able to export them.
-                foreach ($translations as $translation) {
-                    if (!$translation->getFile()) {
-                        $file = $this->get('lexik_translation.file.manager')->getFor(
-                                sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),  // @todo allow other format
-                                $this->container->getParameter('kernel.root_dir').'/Resources/translations'
-                        );
-
-                        if ($file instanceof File) {
-                            $translation->setFile($file);
-                        }
-                    }
-                }
-
-                $transUnit->setTranslations($translations);
-                $storage->persist($transUnit);
-                $storage->flush();
-
-                return $this->redirect($this->generateUrl('lexik_translation_grid'));
-            }
+        if ($handler->process($form, $this->getRequest())) {
+            return $this->redirect($this->generateUrl('lexik_translation_grid'));
         }
 
         return $this->render('LexikTranslationBundle:Translation:new.html.twig', array(

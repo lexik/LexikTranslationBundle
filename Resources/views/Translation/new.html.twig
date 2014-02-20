@@ -13,11 +13,13 @@
                 <div class="form-group">
                     {{ form_label(form.key) }}
                     {{ form_widget(form.key, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.key) }}
                 </div>
 
                 <div class="form-group">
                     {{ form_label(form.domain) }}
                     {{ form_widget(form.domain, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.domain) }}
                 </div>
 
                 <div class="form-group">
@@ -28,6 +30,7 @@
                     {% for translation in form.translations %}
                         {{ form_label(translation) }}
                         {{ form_widget(translation.content, { 'attr': {'class': 'form-control'} }) }}
+                        {{ form_errors(translation.content) }}
                         {{ form_widget(translation.locale) }}
                     {% endfor %}
                 </div>
