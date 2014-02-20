@@ -3,7 +3,10 @@
 <div ng-app="translationApp" ng-controller="TranslationCtrl">
     <div class="row margin-row">
         <div class="col-md-12">
-            <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">{{ hideColBtnLabel }}</a>
+            <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-eye-close"></span>
+                {{ hideColBtnLabel }}
+            </a>
         </div>
     </div>
 
