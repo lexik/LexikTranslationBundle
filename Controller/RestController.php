@@ -17,7 +17,7 @@ class RestController extends Controller
     {
         list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPage($this->get('request'));
 
-        return $this->get('lexik_translation.data_grid.formater')->createListResponse($transUnits, $count);
+        return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
     }
 
     /**
@@ -34,6 +34,6 @@ class RestController extends Controller
 
         $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
 
-        return $this->get('lexik_translation.data_grid.formater')->createSingleResponse($transUnit);
+        return $this->get('lexik_translation.data_grid.formatter')->createSingleResponse($transUnit);
     }
 }

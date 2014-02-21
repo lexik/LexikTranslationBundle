@@ -9,7 +9,7 @@ use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class DataGridFormater
+class DataGridFormatter
 {
     /**
      * Managed locales.
