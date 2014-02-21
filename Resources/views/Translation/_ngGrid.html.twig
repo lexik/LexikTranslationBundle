@@ -29,34 +29,30 @@
 
     <div class="row margin-row">
         <div class="col-md-12">
-            <form ng-submit="doFilter()">
-                <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th ng-repeat="column in columns"
-                                ng-show="column.visible"
-                                ng-click="sortGrid(tableParams, column)"
-                                ng-class="{
-                                    'sort-asc': tableParams.isSortBy(column.field, 'asc'),
-                                    'sort-desc': tableParams.isSortBy(column.field, 'desc')
-                                }"
-                                class="text-center sortable col-{{ column.index }}">
-                                {{ column.title }}
-                            </th>
-                            <th ng-if="editType == 'textarea'" class="col-save">Save</th>
-                        </tr>
-                        <tr>
-                            <th ng-repeat="column in columns" ng-show="column.visible">
-                                <input ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
-                            </th>
-                            <th ng-if="editType == 'textarea'"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns" edit-type="editType"></tr>
-                    </tbody>
-                </table>
-            </form>
+            <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th ng-repeat="column in columns"
+                            ng-show="column.visible"
+                            ng-click="sortGrid(column)"
+                            class="text-center sortable col-{{ column.index }}">
+                            {{ column.title }}
+                            &nbsp;
+                            <span ng-if="column.sortable" class="glyphicon glyphicon-chevron-down"></span>
+                        </th>
+                        <th ng-if="editType == 'textarea'" class="col-save">Save</th>
+                    </tr>
+                    <tr>
+                        <th ng-repeat="column in columns" ng-show="column.visible">
+                            <input ng-if="column.filter != false" ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
+                        </th>
+                        <th ng-if="editType == 'textarea'"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns" edit-type="editType"></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 

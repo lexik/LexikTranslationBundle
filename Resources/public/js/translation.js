@@ -13,9 +13,7 @@ app.factory('sharedMessage', function () {
             this.content = content;
         },
         reset: function () {
-            this.css = '';
-            this.icon = '';
-            this.content = '';
+            this.set('', '', '');
         }
     };
 });
@@ -30,7 +28,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
 
     // columns definition
     $scope.columns = [
-        { title: 'ID', index: 'id', edit: false, filter: {'id': 'text'}, sortable: true, visible: true }, 
+        { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true }, 
         { title: 'Domain', index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
         { title: 'Key', index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
     ];
@@ -41,7 +39,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
 
         $scope.columns.push(columnDef);
     }
-
+    
     // grid data
     var tableData = {
         total: 0,
@@ -67,7 +65,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                 $timeout(function() {
                     params.total(responseData.total);
                     $defer.resolve(responseData.translations);
-                }, 200);
+                }, 100);
             });
         }
     };
@@ -77,9 +75,9 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
     // scope function
-    $scope.sortGrid = function (tableParams, column) {
+    $scope.sortGrid = function (column) {
         if (column.sortable) {
-            tableParams.sorting( column.index, tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
+            $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
         }  
     };
 }]); 
@@ -119,9 +117,9 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                         .success(function (data, status, headers, config) {
                             $scope.edit = false;
                             $scope.translation = data;
-                            sharedMessage.set('text-success', 'ok-circle', 'The translation #'+data.id+' has been successfully updated.');
+                            sharedMessage.set('text-success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data.id));
                         }).error(function (data, status, headers, config) {
-                            sharedMessage.set('text-danger', 'remove-circle', 'Fail to update translation #'+$scope.translation.id+'.');
+                            sharedMessage.set('text-danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation.id));
                         });
                 }
             };

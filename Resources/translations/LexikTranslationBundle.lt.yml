@@ -10,4 +10,6 @@ translations:
     page_title:             "Vertimai"
     show_hide_columns:      "Rodomi stulpeliai"
     save_row:               "Išsaugoti šią eilutę"
+    succesfully_updated:    "Vertimai raktas #%id% buvo atnaujintas."
+    update_failed:          "Klaida atnaujinant vertimus raktų #%id%."
     back_to_list:           "Atgal"
