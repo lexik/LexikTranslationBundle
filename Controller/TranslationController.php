@@ -4,10 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
-use Lexik\Bundle\TranslationBundle\Model\File;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */

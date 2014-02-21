@@ -25,7 +25,8 @@
         <parameter key="lexik_translation.mongodb.translation.class">Lexik\Bundle\TranslationBundle\Document\Translation</parameter>
         <parameter key="lexik_translation.mongodb.file.class">Lexik\Bundle\TranslationBundle\Document\File</parameter>
         
-        <parameter key="lexik_translation.data_grid_formater.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\NgTableGridFormater</parameter>
+        <parameter key="lexik_translation.data_grid.formater.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormater</parameter>
+        <parameter key="lexik_translation.data_grid.request_handler.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler</parameter>
         
         <parameter key="lexik_translation.form.type.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType</parameter>
         <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
@@ -89,7 +90,13 @@
         </service>
         
         <!-- Data grid -->
-        <service id="lexik_translation.data_grid_formater" class="%lexik_translation.data_grid_formater.class%">
+        <service id="lexik_translation.data_grid.formater" class="%lexik_translation.data_grid.formater.class%">
+            <argument>%lexik_translation.managed_locales%</argument>
+        </service>
+        
+        <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
+            <argument type="service" id="lexik_translation.trans_unit.manager" />
+            <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
         

@@ -15,19 +15,9 @@ class RestController extends Controller
      */
     public function listAction()
     {
-        $locales = $this->getManagedLocales();
-        $storage = $this->get('lexik_translation.translation_storage');
+        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPage($this->get('request'));
 
-        $transUnits = $storage->getTransUnitList(
-            $locales,
-            $this->get('request')->query->get('rows', 20),
-            $this->get('request')->query->get('page', 1),
-            $this->get('request')->query->all()
-        );
-
-        $count = $storage->countTransUnits($locales, $this->get('request')->query->all());
-
-        return $this->get('lexik_translation.data_grid_formater')->createResponse($transUnits, $count);
+        return $this->get('lexik_translation.data_grid.formater')->createListResponse($transUnits, $count);
     }
 
     /**
@@ -42,36 +32,8 @@ class RestController extends Controller
             throw $this->createNotFoundException('Invalid request method.');
         }
 
-        $storage = $this->get('lexik_translation.translation_storage');
-        $transUnit = $storage->getTransUnitById($id);
+        $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
 
-        if (!$transUnit) {
-            throw $this->createNotFoundException(sprintf('No TransUnit found for "%s"', $id));
-        }
-
-        $translationsContent = array();
-        foreach ($this->getManagedLocales() as $locale) {
-            $translationsContent[$locale] = $request->request->get($locale);
-        }
-
-        $this->get('lexik_translation.trans_unit.manager')->updateTranslationsContent($transUnit, $translationsContent);
-
-        if ($transUnit instanceof TransUnitDocument) {
-            $transUnit->convertMongoTimestamp();
-        }
-
-        $storage->flush();
-
-        return new JsonResponse( array('message' => sprintf('TransUnit #%d updated.', $transUnit->getId())) );
-    }
-
-    /**
-     * Returns managed locales.
-     *
-     * @return array
-     */
-    protected function getManagedLocales()
-    {
-        return $this->container->getParameter('lexik_translation.managed_locales');
+        return $this->get('lexik_translation.data_grid.formater')->createSingleResponse($transUnit);
     }
 }

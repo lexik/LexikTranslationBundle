@@ -2,12 +2,31 @@
 
 var app = angular.module('translationApp', ['ngTable']);
 
-app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', function($scope, $http, $timeout, ngTableParams) {
+app.factory('sharedMessage', function () {
+    return {
+        css: '',
+        icon: '',
+        content: '',
+        set: function (css, icon, content) {
+            this.css = css;
+            this.icon = icon;
+            this.content = content;
+        },
+        reset: function () {
+            this.css = '';
+            this.icon = '';
+            this.content = '';
+        }
+    };
+});
+
+app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', 'sharedMessage', function($scope, $http, $timeout, ngTableParams, sharedMessage) {
     $scope.locales = translationCfg.locales;
     $scope.editType = translationCfg.inputType;
     $scope.hideColBtnLabel = translationCfg.label.hideCol;
     $scope.saveRowBtnLabel = translationCfg.label.saveRow;
     $scope.hideColSelector = false;
+    $scope.saveMsg = sharedMessage;
 
     // columns definition
     $scope.columns = [
@@ -63,9 +82,9 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             tableParams.sorting( column.index, tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
         }  
     };
-}]);
+}]); 
 
-app.directive('editableRow', function ($http) {
+app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedMessage) {
     return {
         restrict: 'A',
         scope: {
@@ -75,33 +94,37 @@ app.directive('editableRow', function ($http) {
         },
         template: $('#editable-row-template').html(),
         link: function ( $scope, element, attrs ) {
+            $scope.message = null;
             $scope.edit = false;
             
             $scope.toggleEdit = function () {
                 $scope.edit = !$scope.edit;
+                sharedMessage.reset();
             };
-            
+
             $scope.save = function (event) {
                 if (event.which == 27) { // ecsape key
                     $scope.edit = false;
 
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
                     var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
-                    
+
                     var parameters = [];
                     for (var name in $scope.translation) {
                         parameters.push(name+'='+$scope.translation[name]);
                     }
-                    
+
                     // force content type to make SF create a Request with the PUT parameters
                     $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
-                        .success(function () {
+                        .success(function (data, status, headers, config) {
                             $scope.edit = false;
-                        }).error(function () {
-                            // TODO display an error message
+                            $scope.translation = data;
+                            sharedMessage.set('text-success', 'ok-circle', 'The translation #'+data.id+' has been successfully updated.');
+                        }).error(function (data, status, headers, config) {
+                            sharedMessage.set('text-danger', 'remove-circle', 'Fail to update translation #'+$scope.translation.id+'.');
                         });
                 }
             };
         }
     };
-});
+}]);

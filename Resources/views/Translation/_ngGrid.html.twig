@@ -7,6 +7,10 @@
                 <span class="glyphicon glyphicon-eye-close"></span>
                 {{ hideColBtnLabel }}
             </a>
+            <div ng-show="saveMsg.content != ''" class="pull-right {{ saveMsg.css }}">
+                <span class="glyphicon glyphicon-{{ saveMsg.icon }}"></span>
+                <span>{{ saveMsg.content }}</span>
+            </div>
         </div>
     </div>
 
