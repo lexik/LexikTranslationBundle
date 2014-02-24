@@ -96,7 +96,9 @@ class DataGridFormatter
 
         // then fill locales value
         foreach ($transUnit['translations'] as $translation) {
-            $formatted[$translation['locale']] = $translation['content'];
+            if (in_array($translation['locale'], $this->locales)) {
+                $formatted[$translation['locale']] = $translation['content'];
+            }
         }
 
         return $formatted;

@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter;
+use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -61,6 +62,6 @@ class DataGridFormatterTest extends BaseUnitTestCase
         );
 
         $formatter = new DataGridFormatter(array('de', 'en', 'fr'));
-        $this->assertEquals(json_encode($expected), $formatter->createListResponse($datas, $total)->getContent());
+        $this->assertEquals(json_encode($expected, JSON_HEX_APOS), $formatter->createListResponse($datas, $total)->getContent());
     }
 }
