@@ -92,7 +92,11 @@ class FileImporter
             }
 
             $this->storage->flush();
-            $this->storage->clear();
+
+            // clear only Lexik entities
+            foreach (array('file', 'trans_unit', 'translation') as $name) {
+                $this->storage->clear($this->storage->getModelClass($name));
+            }
         } else {
             throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
         }
