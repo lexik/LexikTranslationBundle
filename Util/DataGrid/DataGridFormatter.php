@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -65,7 +66,7 @@ class DataGridFormatter
         $formatted = array();
 
         foreach ($transUnits as $transUnit) {
-            $formatted[$transUnit['id']] = $this->formatOne($transUnit);
+            $formatted[] = $this->formatOne($transUnit);
         }
 
         return $formatted;

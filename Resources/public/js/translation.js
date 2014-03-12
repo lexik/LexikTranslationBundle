@@ -43,23 +43,32 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     // grid data
     var tableData = {
         total: 0,
+        currentSort: '',
+        currentFilter: '',
         getData: function($defer, params) {
-            var parameters = ['page='+params.page(), 'row='+params.count()];
-
             if (Object.keys(params.sorting()).length) {
                 var keys = Object.keys(params.sorting());
-                parameters.push('sidx=' + keys[0]);
-                parameters.push('sord=' + params.sorting()[keys[0]]);
-            }
-
-            if (Object.keys(params.filter()).length) {
-                parameters.push('_search=true');
-                for (var key in params.filter()) {
-                    parameters.push(key + '=' + params.filter()[key]);
+                var sort = 'sidx=' + keys[0] + '&' + 'sord=' + params.sorting()[keys[0]];
+                
+                if (this.currentSort != sort) {
+                    this.currentSort = sort;
+                    params.page(1);
                 }
             }
 
-            var url = translationCfg.url.list + '?' + parameters.join('&');
+            if (Object.keys(params.filter()).length) {
+                var filter = '_search=true';
+                for (var key in params.filter()) {
+                    filter += '&' + key + '=' + params.filter()[key];
+                }
+                
+                if (this.currentFilter != filter) {
+                    this.currentFilter = filter;
+                    params.page(1);
+                }
+            }
+
+            var url = translationCfg.url.list + '?' + ['page='+params.page(), 'row='+params.count(), this.currentSort, this.currentFilter].join('&');
 
             $http.get(url).success(function (responseData) {
                 $timeout(function() {
