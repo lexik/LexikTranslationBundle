@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var app = angular.module('translationApp', ['ngTable']);
 
@@ -43,34 +43,38 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     // grid data
     var tableData = {
         total: 0,
-        currentSort: '',
-        currentFilter: '',
+        currentSort: {},
+        currentFilter: {},
         getData: function($defer, params) {
+            var parameters = {};
+            
             if (Object.keys(params.sorting()).length) {
                 var keys = Object.keys(params.sorting());
-                var sort = 'sidx=' + keys[0] + '&' + 'sord=' + params.sorting()[keys[0]];
+                parameters['sidx'] = keys[0];
+                parameters['sord'] = params.sorting()[keys[0]];
                 
-                if (this.currentSort != sort) {
-                    this.currentSort = sort;
+                if (!angular.equals(this.currentSort, params.sorting())) {
                     params.page(1);
+                    this.currentSort = params.sorting();
                 }
             }
-
+            
             if (Object.keys(params.filter()).length) {
-                var filter = '_search=true';
+                parameters['_search'] = true;
                 for (var key in params.filter()) {
-                    filter += '&' + key + '=' + params.filter()[key];
+                    parameters[key] = params.filter()[key];
                 }
                 
-                if (this.currentFilter != filter) {
-                    this.currentFilter = filter;
+                if (!angular.equals(this.currentFilter, params.filter())) {
                     params.page(1);
+                    this.currentFilter = params.filter();
                 }
             }
-
-            var url = translationCfg.url.list + '?' + ['page='+params.page(), 'row='+params.count(), this.currentSort, this.currentFilter].join('&');
-
-            $http.get(url).success(function (responseData) {
+            
+            parameters['page'] = params.page();
+            parameters['row'] = params.count();
+            
+            $http.get(url, {'params': parameters}).success(function (responseData) {
                 $timeout(function() {
                     params.total(responseData.total);
                     $defer.resolve(responseData.translations);
@@ -116,13 +120,13 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
                     var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
 
-                    var parameters = [];
+                    var parameters = {};
                     for (var name in $scope.translation) {
-                        parameters.push(name+'='+$scope.translation[name]);
+                        parameters[name] = $scope.translation[name];
                     }
 
                     // force content type to make SF create a Request with the PUT parameters
-                    $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
+                    $http({ 'url': url, 'data': parameters, method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
                         .success(function (data, status, headers, config) {
                             $scope.edit = false;
                             $scope.translation = data;
