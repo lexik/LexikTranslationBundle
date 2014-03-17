@@ -15,7 +15,7 @@ class RestController extends Controller
      */
     public function listAction()
     {
-        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPage($this->get('request'));
+        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPage($this->getRequest());
 
         return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
     }
@@ -26,7 +26,7 @@ class RestController extends Controller
      */
     public function updateAction($id)
     {
-        $request = $this->get('request');
+        $request = $this->getRequest();
 
         if (!$request->isMethod('PUT')) {
             throw $this->createNotFoundException('Invalid request method.');
