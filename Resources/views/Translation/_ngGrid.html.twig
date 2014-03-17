@@ -1,0 +1,101 @@
+{# Raw block to display the AngularJS template #}
+{% raw %}
+<div ng-app="translationApp" ng-controller="TranslationCtrl">
+    <div class="row margin-row">
+        <div class="col-md-12">
+            <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-eye-close"></span>
+                {{ hideColBtnLabel }}
+            </a>
+            <div ng-show="saveMsg.content != ''" class="pull-right {{ saveMsg.css }}">
+                <span class="glyphicon glyphicon-{{ saveMsg.icon }}"></span>
+                <span>{{ saveMsg.content }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="hideColSelector" class="row margin-row">
+        <div class="col-md-12">
+            <ul class="list-unstyled list-inline">
+                <li ng-repeat="column in columns">
+                    <label for="toggle-{{ column.index }}">
+                        <input type="checkbox" id="toggle-{{ column.index }}" ng-model="column.visible" />
+                        {{ column.title }}
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row margin-row">
+        <div class="col-md-12">
+            <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th ng-repeat="column in columns"
+                            ng-show="column.visible"
+                            ng-click="sortGrid(column)"
+                            class="text-center sortable col-{{ column.index }}">
+                            {{ column.title }}
+                            &nbsp;
+                            <span ng-if="column.sortable" class="glyphicon glyphicon-chevron-down"></span>
+                        </th>
+                        <th ng-if="editType == 'textarea'" class="col-save">Save</th>
+                    </tr>
+                    <tr>
+                        <th ng-repeat="column in columns" ng-show="column.visible">
+                            <input ng-if="column.filter != false" ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
+                        </th>
+                        <th ng-if="editType == 'textarea'"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns" edit-type="editType"></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="pager-template">
+    <div class="ng-cloak ng-table-pager">
+        <ul class="pagination ng-table-pagination pull-right">
+            <li ng-class="{'disabled': !page.active}" ng-repeat="page in pages" ng-switch="page.type">
+                <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a>
+                <a ng-switch-when="first" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a>
+                <a ng-switch-when="page" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a>
+                <a ng-switch-when="more" ng-click="params.page(page.number)" href="">&#8230;</a>
+                <a ng-switch-when="last" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a>
+                <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a>
+            </li>
+        </ul>
+    </div>
+    </script>
+
+    <script type="text/ng-template" id="editable-row-template">
+        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()">
+            <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
+            <div ng-switch on="editType">
+                <textarea ng-switch-when="textarea"
+                       ng-if="column.edit"
+                       ng-show="edit"
+                       ng-model="translation[column.index]"
+                       ng-keydown="save($event)"
+                       name="column.index"
+                       class="form-control">
+                </textarea>
+                <input ng-switch-default
+                       ng-if="column.edit"
+                       ng-show="edit"
+                       ng-model="translation[column.index]"
+                       ng-keydown="save($event)"
+                       type="text"
+                       name="column.index"
+                       class="form-control input-sm" />
+            </div>
+        </td>
+        <td ng-if="editType == 'textarea'" class="text-center">
+            <button ng-show="edit" ng-click="save($event)" type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-save"></span></button>
+        </td>
+    </script>
+</div>
+{% endraw %}

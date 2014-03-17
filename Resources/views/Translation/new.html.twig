@@ -1,0 +1,54 @@
+{% extends layout %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ 'translations.add_translation'|trans({}, 'LexikTranslationBundle') }}</h3>
+            <hr />
+        </div>
+
+        <div class="col-md-6">
+            <form action="{{ path('lexik_translation_new') }}" method="post" class="form form-vertical">
+                <div class="form-group">
+                    {{ form_label(form.key) }}
+                    {{ form_widget(form.key, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.key) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.domain) }}
+                    {{ form_widget(form.domain, { 'attr': {'class': 'form-control'} }) }}
+                    {{ form_errors(form.domain) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.translations) }}
+                </div>
+
+                <div class="form-group">
+                    {% for translation in form.translations %}
+                        {{ form_label(translation) }}
+                        {{ form_widget(translation.content, { 'attr': {'class': 'form-control'} }) }}
+                        {{ form_errors(translation.content) }}
+                        {{ form_widget(translation.locale) }}
+                    {% endfor %}
+                </div>
+
+                {{ form_rest(form) }}
+
+                <div class="form-group">
+                    <a href="{{ path('lexik_translation_grid') }}" class="btn btn-link">
+                        <span class="glyphicon glyphicon-arrow-left"></span>
+                        {{ 'translations.back_to_list'|trans({}, 'LexikTranslationBundle') }}
+                    </a>
+                    <button type="submit" id="trans-unit-submit" name="trans-unit-submit" class="btn btn-primary pull-right">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        {{ 'translations.add'|trans({}, 'LexikTranslationBundle') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

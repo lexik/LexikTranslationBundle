@@ -1,0 +1,16 @@
+.margin-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.col-id {
+    width: 80px;
+}
+
+.col-save {
+    width: 60px;
+}
+
+.pagination {
+    margin: 0;
+}

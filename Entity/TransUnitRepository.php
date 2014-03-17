@@ -170,7 +170,7 @@ class TransUnitRepository extends EntityRepository
      * @param array        $locales
      * @param array        $filters
      */
-    protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null,  array $filters = null)
+    protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
@@ -192,7 +192,7 @@ class TransUnitRepository extends EntityRepository
      * @param array        $locales
      * @param array        $filters
      */
-    protected function addTranslationFilter(QueryBuilder $builder, array $locales = null,  array $filters = null)
+    protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
         if (null != $locales) {
             $qb = $this->createQueryBuilder('tu');
@@ -223,6 +223,6 @@ class TransUnitRepository extends EntityRepository
     protected function loadCustomHydrator()
     {
         $config = $this->getEntityManager()->getConfiguration();
-        $config->addCustomHydrationMode('SingleColumnArrayHydrator', 'Lexik\Bundle\TranslationBundle\Hydrators\SingleColumnArrayHydrator');
+        $config->addCustomHydrationMode('SingleColumnArrayHydrator', 'Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator');
     }
 }
