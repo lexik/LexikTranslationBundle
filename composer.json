@@ -5,6 +5,8 @@
     "keywords": ["Symfony2", "bundle", "translation", "i18n"],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "authors": [
         {
             "name": "Cedric Girard",
@@ -26,5 +28,11 @@
     "autoload":     {
         "psr-0": { "Lexik\\Bundle\\TranslationBundle": "" }
     },
-    "target-dir": "Lexik/Bundle/TranslationBundle"
+    "target-dir": "Lexik/Bundle/TranslationBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.x.x-dev",
+            "dev-jqgrid_ui": "1.x.x-dev"
+        }
+    }
 }
