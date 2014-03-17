@@ -32,9 +32,6 @@
     "extra": {
         "branch-alias": {
             "dev-master": "2.x.x-dev"
-        },
-        "branch-alias": {
-            "dev-jqgrid_ui": "1.x.x-dev"
         }
     }
 }
