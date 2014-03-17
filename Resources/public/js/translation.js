@@ -120,13 +120,13 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
                     var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
 
-                    var parameters = {};
+                    var parameters = [];
                     for (var name in $scope.translation) {
-                        parameters[name] = $scope.translation[name];
+                        parameters.push(name+'='+$scope.translation[name]);
                     }
 
                     // force content type to make SF create a Request with the PUT parameters
-                    $http({ 'url': url, 'data': parameters, method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
+                    $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
                         .success(function (data, status, headers, config) {
                             $scope.edit = false;
                             $scope.translation = data;
