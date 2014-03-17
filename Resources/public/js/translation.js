@@ -74,7 +74,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             parameters['page'] = params.page();
             parameters['row'] = params.count();
             
-            $http.get(url, {'params': parameters}).success(function (responseData) {
+            $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
                 $timeout(function() {
                     params.total(responseData.total);
                     $defer.resolve(responseData.translations);
