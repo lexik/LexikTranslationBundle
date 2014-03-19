@@ -118,6 +118,16 @@ abstract class TransUnit
     }
 
     /**
+     * Remove translations
+     *
+     * @param Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     */
+    public function removeTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
+    {
+        $this->translations->removeElement($translation);
+    }
+
+    /**
      * Get translations
      *
      * @return Doctrine\Common\Collections\Collection
