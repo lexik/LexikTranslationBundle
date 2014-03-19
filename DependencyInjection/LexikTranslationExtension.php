@@ -64,7 +64,7 @@ class LexikTranslationExtension extends Extension
             }
         } else if ('mongodb' == $storage) {
             if(isset($objectManager)){
-                $objectManagerReference = new Reference(sprintf('doctrine.odm.mongodb.%s_document_manager', $objectManager));
+                $objectManagerReference = new Reference(sprintf('doctrine_mongodb.odm.%s_document_manager', $objectManager));
             } else {
                 $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
             }
