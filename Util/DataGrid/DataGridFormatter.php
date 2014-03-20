@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -20,13 +19,22 @@ class DataGridFormatter
     protected $locales;
 
     /**
+     * Storage type
+     *
+     * @var string
+     */
+    protected $storage;
+
+    /**
      * Constructor.
      *
-     * @param array $locales
+     * @param array  $locales
+     * @param string $storage
      */
-    public function __construct(array $locales)
+    public function __construct(array $locales, $storage)
     {
         $this->locales = $locales;
+        $this->storage = $storage;
     }
 
     /**
@@ -85,7 +93,7 @@ class DataGridFormatter
         }
 
         $formatted = array(
-            'id'     => $transUnit['id'],
+            'id'     => ('mongodb' == $this->storage) ? $transUnit['_id']->id : $transUnit['id'],
             'domain' => $transUnit['domain'],
             'key'    => $transUnit['key'],
         );

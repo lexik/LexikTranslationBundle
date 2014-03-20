@@ -3,7 +3,7 @@
 <container xmlns="http://symfony.com/schema/dic/services"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
-    
+
     <parameters>
         <parameter key="lexik_translation.translator.class">Lexik\Bundle\TranslationBundle\Translation\Translator</parameter>
         <parameter key="lexik_translation.loader.database.class">Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader</parameter>
@@ -14,27 +14,27 @@
         <parameter key="lexik_translation.exporter.xliff.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter</parameter>
         <parameter key="lexik_translation.exporter.yml.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter</parameter>
         <parameter key="lexik_translation.exporter.php.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter</parameter>
-        
+
         <parameter key="lexik_translation.orm.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage</parameter>
         <parameter key="lexik_translation.orm.trans_unit.class">Lexik\Bundle\TranslationBundle\Entity\TransUnit</parameter>
         <parameter key="lexik_translation.orm.translation.class">Lexik\Bundle\TranslationBundle\Entity\Translation</parameter>
         <parameter key="lexik_translation.orm.file.class">Lexik\Bundle\TranslationBundle\Entity\File</parameter>
-        
+
         <parameter key="lexik_translation.mongodb.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage</parameter>
         <parameter key="lexik_translation.mongodb.trans_unit.class">Lexik\Bundle\TranslationBundle\Document\TransUnit</parameter>
         <parameter key="lexik_translation.mongodb.translation.class">Lexik\Bundle\TranslationBundle\Document\Translation</parameter>
         <parameter key="lexik_translation.mongodb.file.class">Lexik\Bundle\TranslationBundle\Document\File</parameter>
-        
+
         <parameter key="lexik_translation.data_grid.formatter.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter</parameter>
         <parameter key="lexik_translation.data_grid.request_handler.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler</parameter>
-        
+
         <parameter key="lexik_translation.form.type.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType</parameter>
         <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
     </parameters>
 
     <services>
-    
+
         <!-- Translator -->
         <service id="lexik_translation.translator" class="%lexik_translation.translator.class%">
             <argument type="service" id="service_container" />
@@ -46,25 +46,25 @@
             </argument>
             <argument type="service" id="session" on-invalid="ignore" />
         </service>
-    
+
         <!-- Loader -->
         <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <tag name="translation.loader" alias="database" />
         </service>
-        
+
         <!-- Managers -->
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument>%kernel.root_dir%</argument>
         </service>
-        
+
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%kernel.root_dir%</argument>
         </service>
-        
+
         <!-- Importer -->
         <service id="lexik_translation.importer.file" class="%lexik_translation.importer.file.class%">
             <argument type="collection" /> <!-- translation loaders -->
@@ -72,43 +72,44 @@
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
         </service>
-        
+
         <!-- Exporter -->
         <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" />
-        
+
         <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
         </service>
-        
+
         <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
             <argument>%lexik_translation.use_yml_tree%</argument>
             <tag name="lexik_translation.exporter" alias="yml" />
         </service>
-        
+
         <service id="lexik_translation.exporter.php" class="%lexik_translation.exporter.php.class%">
             <tag name="lexik_translation.exporter" alias="php" />
         </service>
-        
+
         <!-- Data grid -->
         <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%">
             <argument>%lexik_translation.managed_locales%</argument>
+            <argument>%lexik_translation.storage.type%</argument>
         </service>
-        
+
         <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
-        
+
         <!-- Form -->
         <service id="lexik_translation.form.type.trans_unit" class="%lexik_translation.form.type.trans_unit.class%">
             <tag name="form.type" alias="lxk_trans_unit" />
         </service>
-        
+
         <service id="lexik_translation.form.type.translation" class="%lexik_translation.form.type.translation.class%">
             <tag name="form.type" alias="lxk_translation" />
         </service>
-        
+
         <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
