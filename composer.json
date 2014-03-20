@@ -26,5 +26,10 @@
     "autoload":     {
         "psr-0": { "Lexik\\Bundle\\TranslationBundle": "" }
     },
-    "target-dir": "Lexik/Bundle/TranslationBundle"
+    "target-dir": "Lexik/Bundle/TranslationBundle",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.4.x-dev"
+        }
+    }
 }
