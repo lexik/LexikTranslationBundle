@@ -43,7 +43,9 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
 
-        $this->buildTranslationStorageDefinition($container, $config['storage']['type'], isset($config['storage']['object_manager'])?$config['storage']['object_manager']:null);
+        $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
+
+        $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
         $this->registerTranslatorConfiguration($config, $container);
     }
@@ -53,9 +55,12 @@ class LexikTranslationExtension extends Extension
      *
      * @param ContainerBuilder $container
      * @param string           $storage
+     * @param string           $objectManager
      */
     protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager)
     {
+        $container->setParameter('lexik_translation.storage.type', $storage);
+
         if ('orm' == $storage) {
             if(isset($objectManager)){
                 $objectManagerReference = new Reference(sprintf('doctrine.orm.%s_entity_manager', $objectManager));
