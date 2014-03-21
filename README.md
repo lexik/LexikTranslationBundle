@@ -4,6 +4,7 @@ Overview
 This Symfony2 bundle allow to import translation files content into the database and provide a GUI to edit translations.
 
 [![Build Status](https://travis-ci.org/lexik/LexikTranslationBundle.png?branch=master)](https://travis-ci.org/lexik/LexikTranslationBundle)
+![Project Status](http://stillmaintained.com/lexik/LexikTranslationBundle.png)
 
 The idea is to:
 
