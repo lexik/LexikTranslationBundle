@@ -61,7 +61,7 @@ class DataGridFormatterTest extends BaseUnitTestCase
             'total' => 3,
         );
 
-        $formatter = new DataGridFormatter(array('de', 'en', 'fr'));
+        $formatter = new DataGridFormatter(array('de', 'en', 'fr'), 'orm');
         $this->assertEquals(json_encode($expected, JSON_HEX_APOS), $formatter->createListResponse($datas, $total)->getContent());
     }
 }
