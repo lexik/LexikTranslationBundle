@@ -48,8 +48,9 @@ Additional configuration options (default values are shown here):
 ```yml
 # app/config/config.yml
 lexik_translation:
-    base_layout:      "LexikTranslationBundle::layout.html.twig"   # layout used with the translation edition template
-    use_yml_tree: false                                    # if "true" we will print a nice tree in the yml source files. It is a little slower.
+    base_layout:     "LexikTranslationBundle::layout.html.twig" # layout used with the translation edition template
+    use_yml_tree:    false                                 # if "true" we will print a nice tree in the yml source files. It is a little slower.
+    grid_input_type: text                                  # define field type used in the grid (text|textarea)
     storage:
         type: orm                                          # where to store translations: "orm" or "mongodb"
         object_manager: something                          # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
