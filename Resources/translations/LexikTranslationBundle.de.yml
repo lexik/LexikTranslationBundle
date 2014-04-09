@@ -10,6 +10,7 @@ translations:
     page_title:             "Übersetzungen"
     show_hide_columns:      "Spalten anzeigen/verstecken"
     save_row:               "Zeile speichern"
+    save:                   "Speichern"
     succesfully_updated:    "Übersetzungen für #%id% wurde erfolgreich aktualisiert."
     update_failed:          "Fehler beim aktualisieren der Übersetzungen für schlüssel #%id%."
     back_to_list:           "Zurück"
