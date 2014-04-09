@@ -40,7 +40,7 @@
                             &nbsp;
                             <span ng-if="column.sortable" class="glyphicon glyphicon-chevron-down"></span>
                         </th>
-                        <th ng-if="editType == 'textarea'" class="col-save">Save</th>
+                        <th ng-if="editType == 'textarea'" class="col-save">{{ saveLabel }}</th>
                     </tr>
                     <tr>
                         <th ng-repeat="column in columns" ng-show="column.visible">
