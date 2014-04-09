@@ -10,6 +10,7 @@ translations:
     page_title:          "Translations"
     show_hide_columns:   "Show/Hide columns"
     save_row:            "Save current row"
+    save:                "Save"
     succesfully_updated: "Translations for key #%id% has been successfully updated."
     update_failed:       "Fail to update translations for key #%id%."
     back_to_list:        "Back"
