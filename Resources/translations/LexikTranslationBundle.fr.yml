@@ -10,6 +10,7 @@ translations:
     page_title:          "Traductions"
     show_hide_columns:   "Afficher/Masquer des colonnes"
     save_row:            "Sauvegarder la ligne"
+    save:                "Sauvegarder"
     succesfully_updated: "Les traductions pour la clé #%id% ont bien été mises à jour."
     update_failed:       "Erreur lors de la mise à jour des traductions pour clé #%id%."
     back_to_list:        "Retour"

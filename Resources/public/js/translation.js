@@ -23,14 +23,15 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     $scope.editType = translationCfg.inputType;
     $scope.hideColBtnLabel = translationCfg.label.hideCol;
     $scope.saveRowBtnLabel = translationCfg.label.saveRow;
+    $scope.saveLabel = translationCfg.label.save;
     $scope.hideColSelector = false;
     $scope.saveMsg = sharedMessage;
 
     // columns definition
     $scope.columns = [
         { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true }, 
-        { title: 'Domain', index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
-        { title: 'Key', index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
+        { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
+        { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
     ];
 
     for (var key in $scope.locales) {
