@@ -70,7 +70,7 @@ class FileImporter
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
             foreach ($messageCatalogue->all($domain) as $key => $content) {
-				//skip empty translation values
+		//skip empty translation values
                 if(!isset($content)){
                     continue;
                 }
