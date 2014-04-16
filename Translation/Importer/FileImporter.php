@@ -70,6 +70,10 @@ class FileImporter
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
             foreach ($messageCatalogue->all($domain) as $key => $content) {
+		//skip empty translation values
+                if(!isset($content)){
+                    continue;
+                }
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($key, $domain);
 
                 if (!($transUnit instanceof TransUnit)) {
