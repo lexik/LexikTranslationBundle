@@ -33,6 +33,12 @@ class TransUnitType extends AbstractType
                 'data_class' => $options['translation_class'],
             )
         ));
+        $builder->add('save', 'submit', array(
+            'label' => 'translations.save',
+        ));
+        $builder->add('save_add', 'submit', array(
+            'label' => 'translations.save_add',
+        ));
     }
 
     /**
