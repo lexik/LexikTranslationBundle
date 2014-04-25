@@ -86,7 +86,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
 
         // we only export updated translations in case of the file is located in vendor/
-        $onlyUpdated = (substr($file->getPath(), 0, 6) == 'vendor');
+        $onlyUpdated = ( false !== strpos($file->getPath(), 'vendor/') );
 
         $translations = $this->getContainer()
             ->get('lexik_translation.translation_storage')
@@ -96,7 +96,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
             // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-            $outputPath = preg_match('~^([./]*vendor)~', $file->getPath()) ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/%s', $rootDir, $file->getPath());
+            $outputPath = ( false !== strpos($file->getPath(), 'vendor/') ) ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/%s', $rootDir, $file->getPath());
             $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
 
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
