@@ -61,6 +61,10 @@ lexik_translation:
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
 
+If you use Doctrine ORM, you have to update your database:
+
+    ./app/console doctrine:schema:update --force
+
 To use the translation edition page, add the routing file to you application:
 
 ```yml
