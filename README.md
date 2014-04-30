@@ -6,6 +6,8 @@ This Symfony2 bundle allow to import translation files content into the database
 [![Build Status](https://travis-ci.org/lexik/LexikTranslationBundle.png?branch=master)](https://travis-ci.org/lexik/LexikTranslationBundle)
 ![Project Status](http://stillmaintained.com/lexik/LexikTranslationBundle.png)
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/dda3efbd-0df3-44eb-beca-3659000021d4/big.png)](https://insight.sensiolabs.com/projects/dda3efbd-0df3-44eb-beca-3659000021d4)
+
 The idea is to:
 
 * write your translations files (xliff, yml or php) as usual for at least one language (the default language of your website for example).
