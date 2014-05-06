@@ -94,6 +94,15 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
         }  
     };
+
+    // invalidate the cache
+    $scope.invalidateCache = function () {
+        $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            .success(function (responseData) {
+                sharedMessage.set('text-success', 'ok-circle', responseData.message);
+            }
+        );
+    };
 }]); 
 
 app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedMessage) {
