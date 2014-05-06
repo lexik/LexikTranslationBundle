@@ -9,27 +9,29 @@
 
 {% block content %}
     <div class="container">
-        {% block toolbar %}
-            <div class="page-header">
-                <h1>
-                    {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
-                    <div class="pull-right">
-                        <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
-                        </a>
-                        <a href="{{ path('lexik_translation_invalidate_cache') }}" role="button" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-refresh"></span>
-                            {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
-                        </a>
-                    </div>
-                </h1>
-            </div>
-        {% endblock toolbar %}
+        <div ng-app="translationApp" ng-controller="TranslationCtrl">
+            {% block toolbar %}
+                <div class="page-header">
+                    <h1>
+                        {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
+                        <div class="pull-right">
+                            <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+                            </a>
+                            <a href="" ng-click="invalidateCache()" role="button" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-refresh"></span>
+                                {{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}
+                            </a>
+                        </div>
+                    </h1>
+                </div>
+            {% endblock toolbar %}
 
-        {% block data_grid %}
-            {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
-        {% endblock data_grid %}
+            {% block data_grid %}
+                {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
+            {% endblock data_grid %}
+        </div>
     </div>
 {% endblock %}
 
@@ -41,7 +43,8 @@
             inputType: '{{ inputType }}',
             url: {
                 list: '{{ path('lexik_translation_list') }}',
-                update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}'
+                update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
+                invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
             },
             label: {
                 hideCol: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}',
