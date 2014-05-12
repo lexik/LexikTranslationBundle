@@ -22,6 +22,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     $scope.locales = translationCfg.locales;
     $scope.editType = translationCfg.inputType;
     $scope.hideColBtnLabel = translationCfg.label.hideCol;
+    $scope.invalidateCacheBtnLabel = translationCfg.label.invalidateCache;
     $scope.saveRowBtnLabel = translationCfg.label.saveRow;
     $scope.saveLabel = translationCfg.label.save;
     $scope.hideColSelector = false;
@@ -29,7 +30,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
 
     // columns definition
     $scope.columns = [
-        { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true }, 
+        { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true },
         { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
         { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
     ];
@@ -40,7 +41,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
 
         $scope.columns.push(columnDef);
     }
-    
+
     // grid data
     var tableData = {
         total: 0,
@@ -48,33 +49,33 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
         currentFilter: {},
         getData: function($defer, params) {
             var parameters = {};
-            
+
             if (Object.keys(params.sorting()).length) {
                 var keys = Object.keys(params.sorting());
                 parameters['sidx'] = keys[0];
                 parameters['sord'] = params.sorting()[keys[0]];
-                
+
                 if (!angular.equals(this.currentSort, params.sorting())) {
                     params.page(1);
                     this.currentSort = params.sorting();
                 }
             }
-            
+
             if (Object.keys(params.filter()).length) {
                 parameters['_search'] = true;
                 for (var key in params.filter()) {
                     parameters[key] = params.filter()[key];
                 }
-                
+
                 if (!angular.equals(this.currentFilter, params.filter())) {
                     params.page(1);
                     this.currentFilter = params.filter();
                 }
             }
-            
+
             parameters['page'] = params.page();
             parameters['row'] = params.count();
-            
+
             $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
                 $timeout(function() {
                     params.total(responseData.total);
@@ -92,7 +93,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
     $scope.sortGrid = function (column) {
         if (column.sortable) {
             $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
-        }  
+        }
     };
 
     // invalidate the cache
@@ -103,7 +104,7 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
             }
         );
     };
-}]); 
+}]);
 
 app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedMessage) {
     return {
@@ -117,7 +118,7 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
         link: function ( $scope, element, attrs ) {
             $scope.message = null;
             $scope.edit = false;
-            
+
             $scope.toggleEdit = function () {
                 $scope.edit = !$scope.edit;
                 sharedMessage.reset();

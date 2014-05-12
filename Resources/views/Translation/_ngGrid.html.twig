@@ -1,10 +1,15 @@
 {# Raw block to display the AngularJS template #}
-{% raw %}
+{% verbatim %}
+<div ng-app="translationApp" ng-controller="TranslationCtrl">
     <div class="row margin-row">
         <div class="col-md-12">
             <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">
                 <span class="glyphicon glyphicon-eye-close"></span>
                 {{ hideColBtnLabel }}
+            </a>
+            <a ng-click="invalidateCache()" role="button" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-refresh"></span>
+                {{ invalidateCacheBtnLabel }}
             </a>
             <div ng-show="saveMsg.content != ''" class="pull-right {{ saveMsg.css }}">
                 <span class="glyphicon glyphicon-{{ saveMsg.icon }}"></span>
@@ -13,10 +18,10 @@
         </div>
     </div>
 
-    <div ng-show="hideColSelector" class="row margin-row">
+    <div ng-show="hideColSelector" class="row">
         <div class="col-md-12">
-            <ul class="list-unstyled list-inline">
-                <li ng-repeat="column in columns">
+            <ul class="list-unstyled list-inline locales-list">
+                <li ng-repeat="column in columns" class="locale">
                     <label for="toggle-{{ column.index }}">
                         <input type="checkbox" id="toggle-{{ column.index }}" ng-model="column.visible" />
                         {{ column.title }}
@@ -96,4 +101,5 @@
             <button ng-show="edit" ng-click="save($event)" type="button" class="btn btn-info btn-sm"><span class="glyphicon glyphicon-save"></span></button>
         </td>
     </script>
-{% endraw %}
+</div>
+{% endverbatim %}
