@@ -3,6 +3,18 @@
     margin-bottom: 10px;
 }
 
+.locales-list,
+.locales-list .locale label,
+.locales-list .locale input {
+    margin: 0;
+    padding: 0;
+}
+
+.locales-list .locale {
+    margin: 0 5px;
+    padding: 0 5px;
+}
+
 .col-id {
     width: 80px;
 }
