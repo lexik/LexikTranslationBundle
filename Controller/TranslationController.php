@@ -3,6 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -28,11 +30,15 @@ class TranslationController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function invalidateCacheAction()
+    public function invalidateCacheAction(Request $request)
     {
         $this->get('translator')->removeLocalesCacheFiles($this->getManagedLocales());
 
         $message = $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle');
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(array('message' => $message));
+        }
 
         $this->get('session')->getFlashBag()->add('success', $message);
 
@@ -44,22 +50,19 @@ class TranslationController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function newAction()
+    public function newAction(Request $request)
     {
         $handler = $this->get('lexik_translation.form.handler.trans_unit');
 
         $form = $this->createForm('lxk_trans_unit', $handler->createFormData(), $handler->getFormOptions());
 
-        if ($handler->process($form, $this->getRequest())) {
+        if ($handler->process($form, $request)) {
 
             $message = $this->get('translator')->trans('translations.succesfully_added', array(), 'LexikTranslationBundle');
 
             $this->get('session')->getFlashBag()->add('success', $message);
 
-            $redirectUrl = $form->get('save_add')->isClicked()
-                ? 'lexik_translation_new'
-                : 'lexik_translation_grid'
-            ;
+            $redirectUrl = $form->get('save_add')->isClicked() ? 'lexik_translation_new' : 'lexik_translation_grid';
 
             return $this->redirect($this->generateUrl($redirectUrl));
         }
