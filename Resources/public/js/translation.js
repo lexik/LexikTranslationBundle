@@ -133,7 +133,7 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
 
                     var parameters = [];
                     for (var name in $scope.translation) {
-                        parameters.push(name+'='+$scope.translation[name]);
+                        parameters.push(name+'='+encodeURIComponent($scope.translation[name]));
                     }
 
                     // force content type to make SF create a Request with the PUT parameters
