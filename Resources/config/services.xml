@@ -31,6 +31,8 @@
         <parameter key="lexik_translation.form.type.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType</parameter>
         <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
+
+        <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\Translation\GetDatabaseResourcesListener</parameter>
     </parameters>
 
     <services>
@@ -117,5 +119,13 @@
             <argument>%lexik_translation.managed_locales%</argument>
             <argument>%kernel.cache_dir%</argument>
         </service>
+
+        <!-- Listener -->
+        <service id="lexik_translation.listener.get_database_resources" class="%lexik_translation.listener.get_database_resources.class%">
+            <argument type="service" id="lexik_translation.translation_storage" />
+            <argument>%lexik_translation.storage.type%</argument>
+            <tag name="kernel.event_listener" event="lexik_translation.event.get_database_resources" method="onGetDatabaseResources"  />
+        </service>
+
     </services>
 </container>

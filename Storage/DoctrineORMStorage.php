@@ -161,6 +161,23 @@ class DoctrineORMStorage implements StorageInterface
     }
 
     /**
+     * Returns true if translation tables exist.
+     *
+     * @return boolean
+     */
+    public function translationsTablesExist()
+    {
+        $tables = array(
+            $this->em->getClassMetadata($this->getModelClass('trans_unit')),
+            $this->em->getClassMetadata($this->getModelClass('translation'))
+        );
+
+        $schemaManager = $this->em->getConnection()->getSchemaManager();
+
+        return $schemaManager->tablesExist($tables);
+    }
+
+    /**
      * Returns the TransUnit repository.
      *
      * @return TransUnitRepository

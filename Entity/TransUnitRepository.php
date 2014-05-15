@@ -22,11 +22,6 @@ class TransUnitRepository extends EntityRepository
      */
     public function getAllDomainsByLocale()
     {
-        $schemaManager = $this->getEntityManager()->getConnection()->getSchemaManager();
-        $tableName = $this->getClassMetadata()->getTableName();
-        if (!$schemaManager->tablesExist(array($tableName))) {
-            return array();
-        }
         return $this->createQueryBuilder('tu')
             ->select('te.locale, tu.domain')
             ->leftJoin('tu.translations', 'te')

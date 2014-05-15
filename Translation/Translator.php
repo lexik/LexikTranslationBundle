@@ -3,9 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
-use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Config\ConfigCache;
 
 /**
@@ -26,10 +24,11 @@ class Translator extends BaseTranslator
         $cache = new ConfigCache($file, $this->options['debug']);
 
         if (!$cache->isFresh()) {
-            $resources = $this->container->get('lexik_translation.translation_storage')->getTransUnitDomainsByLocale();
+            $event = new GetDatabaseResourcesEvent();
+            $this->container->get('event_dispatcher')->dispatch('lexik_translation.event.get_database_resources', $event);
 
             $metadata = array();
-            foreach ($resources as $resource) {
+            foreach ($event->getResources() as $resource) {
                 $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
             }
 
