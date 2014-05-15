@@ -169,11 +169,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $config->setAutoGenerateHydratorClasses(true);
         $config->setDefaultCommitOptions(array());
 
-        $options = array(
-            'connect'  => true,
-            'username' => 'travis',
-            'password' => 'lexik',
-        );
+        $options = array();
         $conn = new \Doctrine\MongoDB\Connection(null, $options, $config);
 
         $dm = \Doctrine\ODM\MongoDB\DocumentManager::create($conn, $config);
