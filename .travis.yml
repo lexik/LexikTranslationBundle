@@ -2,7 +2,7 @@ language: php
 
 php:
   - 5.3
-  
+
 services:
   - mongodb
 
@@ -12,7 +12,7 @@ env:
 
 before_script:
   - phpenv config-add travis-php.ini
-  - mongo lexik_translation_bundle_test --eval 'db.addUser({user: "travis", pwd: "lexik", roles: ["readWrite"]});'
+  - mongo lexik_translation_bundle_test --eval "db.addUser({user: 'travis', pwd: 'lexik', roles: ['readWrite']});"
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
