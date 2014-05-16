@@ -2,9 +2,11 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 
+use Lexik\Bundle\TranslationBundle\Translation\GetDatabaseResourcesListener;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -23,6 +25,10 @@ class TranslatorTest extends BaseUnitTestCase
         $em = $this->getMockSqliteEntityManager();
         $this->createSchema($em);
         $this->loadFixtures($em);
+
+        if (file_exists(sys_get_temp_dir().'/database.resources.php')) {
+            unlink(sys_get_temp_dir().'/database.resources.php');
+        }
 
         $translator = $this->createTranslator($em, sys_get_temp_dir());
         $translator->addDatabaseResources();
@@ -105,8 +111,16 @@ class TranslatorTest extends BaseUnitTestCase
 
     protected function createTranslator($em, $cacheDir)
     {
+        $listener = new GetDatabaseResourcesListener($this->getORMStorage($em), 'xxxxx');
+
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addListener(
+            'lexik_translation.event.get_database_resources',
+            array($listener, 'onGetDatabaseResources')
+        );
+
         $container = new Container();
-        $container->set('lexik_translation.translation_storage', $this->getORMStorage($em));
+        $container->set('event_dispatcher', $dispatcher);
         $container->compile();
 
         $loaderIds = array();
@@ -125,7 +139,7 @@ class TranslatorTest extends BaseUnitTestCase
 
         touch($cacheDir.'/catalogue.fr.php');
         touch($cacheDir.'/catalogue.fr.php.meta');
-        
+
         touch($cacheDir.'/catalogue.fr_FR.php');
         touch($cacheDir.'/catalogue.fr_FR.php.meta');
 

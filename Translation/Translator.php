@@ -27,8 +27,10 @@ class Translator extends BaseTranslator
             $event = new GetDatabaseResourcesEvent();
             $this->container->get('event_dispatcher')->dispatch('lexik_translation.event.get_database_resources', $event);
 
+            $resources = $event->getResources();
             $metadata = array();
-            foreach ($event->getResources() as $resource) {
+
+            foreach ($resources as $resource) {
                 $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
             }
 
