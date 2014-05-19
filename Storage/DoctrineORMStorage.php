@@ -168,8 +168,8 @@ class DoctrineORMStorage implements StorageInterface
     public function translationsTablesExist()
     {
         $tables = array(
-            $this->em->getClassMetadata($this->getModelClass('trans_unit')),
-            $this->em->getClassMetadata($this->getModelClass('translation'))
+            $this->em->getClassMetadata($this->getModelClass('trans_unit'))->table['name'],
+            $this->em->getClassMetadata($this->getModelClass('translation'))->table['name']
         );
 
         $schemaManager = $this->em->getConnection()->getSchemaManager();
