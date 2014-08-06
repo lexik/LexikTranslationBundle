@@ -34,25 +34,25 @@ class DataGridFormatterTest extends BaseUnitTestCase
         $expected = array(
             'translations' => array(
                 array(
-                    'id' => 2,
-                    'domain' => 'messages',
-                    'key' => 'key.say_goodbye',
+                    '_id' => 2,
+                    '_domain' => 'messages',
+                    '_key' => 'key.say_goodbye',
                     'de' => '',
                     'en' => 'good bye',
                     'fr' => 'au revoir',
                 ),
                 array(
-                    'id' => 1,
-                    'domain' => 'superTranslations',
-                    'key' => 'key.say_hello',
+                    '_id' => 1,
+                    '_domain' => 'superTranslations',
+                    '_key' => 'key.say_hello',
                     'de' => 'heil',
                     'en' => '',
                     'fr' => 'salut',
                 ),
                 array(
-                    'id' => 3,
-                    'domain' => 'messages',
-                    'key' => 'key.say_wtf',
+                    '_id' => 3,
+                    '_domain' => 'messages',
+                    '_key' => 'key.say_wtf',
                     'de' => '',
                     'en' => '',
                     'fr' => 'c\'est quoi ce bordel !?!'
