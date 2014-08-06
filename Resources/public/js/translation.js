@@ -18,50 +18,6 @@ app.factory('sharedMessage', function () {
     };
 });
 
-<<<<<<< Updated upstream
-app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', 'sharedMessage', function($scope, $http, $timeout, ngTableParams, sharedMessage) {
-    $scope.locales = translationCfg.locales;
-    $scope.editType = translationCfg.inputType;
-    $scope.hideColBtnLabel = translationCfg.label.hideCol;
-    $scope.invalidateCacheBtnLabel = translationCfg.label.invalidateCache;
-    $scope.saveRowBtnLabel = translationCfg.label.saveRow;
-    $scope.saveLabel = translationCfg.label.save;
-    $scope.hideColSelector = false;
-    $scope.saveMsg = sharedMessage;
-
-    // columns definition
-    $scope.columns = [
-        { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true },
-        { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
-        { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
-    ];
-
-    for (var key in $scope.locales) {
-        var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: false, visible: true };
-        columnDef['filter'][$scope.locales[key]] = 'text';
-
-        $scope.columns.push(columnDef);
-    }
-
-    // grid data
-    var tableData = {
-        total: 0,
-        currentSort: {},
-        currentFilter: {},
-        getData: function($defer, params) {
-            var parameters = {};
-
-            if (Object.keys(params.sorting()).length) {
-                var keys = Object.keys(params.sorting());
-                parameters['sidx'] = keys[0];
-                parameters['sord'] = params.sorting()[keys[0]];
-
-                if (!angular.equals(this.currentSort, params.sorting())) {
-                    params.page(1);
-                    this.currentSort = params.sorting();
-                }
-            }
-=======
 app.controller('TranslationCtrl', [
     '$scope', '$http', '$timeout', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage',
     function ($scope, $http, $timeout, $location, $anchorScroll, ngTableParams, sharedMessage) {
@@ -77,9 +33,9 @@ app.controller('TranslationCtrl', [
 
         // columns definition
         $scope.columns = [
-            { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
-            { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
-            { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
+            { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true },
+            { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
+            { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
         ];
 
         for (var key in $scope.locales) {
@@ -88,7 +44,6 @@ app.controller('TranslationCtrl', [
 
             $scope.columns.push(columnDef);
         }
->>>>>>> Stashed changes
 
         // grid data
         var tableData = {
@@ -124,9 +79,6 @@ app.controller('TranslationCtrl', [
                 parameters['page'] = params.page();
                 parameters['rows'] = params.count();
 
-<<<<<<< Updated upstream
-    var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
-=======
                 $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
                     $timeout(function() {
                         params.total(responseData.total);
@@ -135,9 +87,8 @@ app.controller('TranslationCtrl', [
                 });
             }
         };
->>>>>>> Stashed changes
 
-        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
+        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
 
         $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
