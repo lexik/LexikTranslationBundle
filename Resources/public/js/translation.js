@@ -18,6 +18,7 @@ app.factory('sharedMessage', function () {
     };
 });
 
+<<<<<<< Updated upstream
 app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams', 'sharedMessage', function($scope, $http, $timeout, ngTableParams, sharedMessage) {
     $scope.locales = translationCfg.locales;
     $scope.editType = translationCfg.inputType;
@@ -60,50 +61,107 @@ app.controller('TranslationCtrl', ['$scope', '$http', '$timeout', 'ngTableParams
                     this.currentSort = params.sorting();
                 }
             }
+=======
+app.controller('TranslationCtrl', [
+    '$scope', '$http', '$timeout', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage',
+    function ($scope, $http, $timeout, $location, $anchorScroll, ngTableParams, sharedMessage) {
 
-            if (Object.keys(params.filter()).length) {
-                parameters['_search'] = true;
-                for (var key in params.filter()) {
-                    parameters[key] = params.filter()[key];
-                }
+        $scope.locales = translationCfg.locales;
+        $scope.editType = translationCfg.inputType;
+        $scope.hideColBtnLabel = translationCfg.label.hideCol;
+        $scope.invalidateCacheBtnLabel = translationCfg.label.invalidateCache;
+        $scope.saveRowBtnLabel = translationCfg.label.saveRow;
+        $scope.saveLabel = translationCfg.label.save;
+        $scope.hideColSelector = false;
+        $scope.saveMsg = sharedMessage;
 
-                if (!angular.equals(this.currentFilter, params.filter())) {
-                    params.page(1);
-                    this.currentFilter = params.filter();
-                }
-            }
+        // columns definition
+        $scope.columns = [
+            { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
+            { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
+            { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
+        ];
 
-            parameters['page'] = params.page();
-            parameters['rows'] = params.count();
+        for (var key in $scope.locales) {
+            var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: false, visible: true };
+            columnDef['filter'][$scope.locales[key]] = 'text';
 
-            $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
-                $timeout(function() {
-                    params.total(responseData.total);
-                    $defer.resolve(responseData.translations);
-                }, 100);
-            });
+            $scope.columns.push(columnDef);
         }
-    };
+>>>>>>> Stashed changes
 
+        // grid data
+        var tableData = {
+            total: 0,
+            currentSort: {},
+            currentFilter: {},
+            getData: function($defer, params) {
+                var parameters = {};
+
+                if (Object.keys(params.sorting()).length) {
+                    var keys = Object.keys(params.sorting());
+                    parameters['sidx'] = keys[0];
+                    parameters['sord'] = params.sorting()[keys[0]];
+
+                    if (!angular.equals(this.currentSort, params.sorting())) {
+                        params.page(1);
+                        this.currentSort = params.sorting();
+                    }
+                }
+
+                if (Object.keys(params.filter()).length) {
+                    parameters['_search'] = true;
+                    for (var key in params.filter()) {
+                        parameters[key] = params.filter()[key];
+                    }
+
+                    if (!angular.equals(this.currentFilter, params.filter())) {
+                        params.page(1);
+                        this.currentFilter = params.filter();
+                    }
+                }
+
+                parameters['page'] = params.page();
+                parameters['rows'] = params.count();
+
+<<<<<<< Updated upstream
     var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
-
-    $scope.tableParams = new ngTableParams(defaultOptions, tableData);
-
-    // scope function
-    $scope.sortGrid = function (column) {
-        if (column.sortable) {
-            $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
-        }
-    };
-
-    // invalidate the cache
-    $scope.invalidateCache = function () {
-        $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
-            .success(function (responseData) {
-                sharedMessage.set('text-success', 'ok-circle', responseData.message);
+=======
+                $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
+                    $timeout(function() {
+                        params.total(responseData.total);
+                        $defer.resolve(responseData.translations);
+                    }, 100);
+                });
             }
-        );
-    };
+        };
+>>>>>>> Stashed changes
+
+        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
+
+        $scope.tableParams = new ngTableParams(defaultOptions, tableData);
+
+        // scope function
+        $scope.sortGrid = function (column) {
+            if (column.sortable) {
+                $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
+            }
+        };
+
+        $scope.changePage = function (pageNumber) {
+            $scope.tableParams.page(pageNumber);
+            $location.hash('translation-grid');
+            $anchorScroll();
+        };
+
+        // invalidate the cache
+        $scope.invalidateCache = function () {
+            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                .success(function (responseData) {
+                    sharedMessage.set('text-success', 'ok-circle', responseData.message);
+                }
+            );
+        };
 }]);
 
 app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedMessage) {
