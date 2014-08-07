@@ -33,9 +33,9 @@ app.controller('TranslationCtrl', [
 
         // columns definition
         $scope.columns = [
-            { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true },
-            { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
-            { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
+            { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
+            { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
+            { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
         ];
 
         for (var key in $scope.locales) {
@@ -88,7 +88,7 @@ app.controller('TranslationCtrl', [
             }
         };
 
-        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
+        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
 
         $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
@@ -138,7 +138,7 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                     $scope.edit = false;
 
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
-                    var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
+                    var url = translationCfg.url.update.replace('-id-', $scope.translation._id);
 
                     var parameters = [];
                     for (var name in $scope.translation) {

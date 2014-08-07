@@ -49,11 +49,15 @@ class DataGridRequestHandler
      */
     public function getPage(Request $request)
     {
+        $parameters = array_map(function ($value) {
+            return trim($value, '_');
+        }, $request->query->all());
+
         $transUnits = $this->storage->getTransUnitList(
             $this->managedLoales,
             $request->query->get('rows', 20),
             $request->query->get('page', 1),
-            $request->query->all()
+            $parameters
         );
 
         $count = $this->storage->countTransUnits($this->managedLoales, $request->query->all());

@@ -93,9 +93,9 @@ class DataGridFormatter
         }
 
         $formatted = array(
-            'id'     => ('mongodb' == $this->storage) ? $transUnit['_id']->{'$id'} : $transUnit['id'],
-            'domain' => $transUnit['domain'],
-            'key'    => $transUnit['key'],
+            '_id'     => ('mongodb' == $this->storage) ? $transUnit['_id']->{'$id'} : $transUnit['id'],
+            '_domain' => $transUnit['domain'],
+            '_key'    => $transUnit['key'],
         );
 
         // add locales in the same order as in managed_locales param
