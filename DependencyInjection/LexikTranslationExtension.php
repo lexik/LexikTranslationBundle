@@ -73,6 +73,13 @@ class LexikTranslationExtension extends Extension
             } else {
                 $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
             }
+        } else if ('propel' == $storage) {
+            // In the Propel case the object_manager setting is used for the connection name
+            if(isset($objectManager)){
+                $objectManagerReference = $objectManager;
+            } else {
+                $objectManagerReference = null;
+            }
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }

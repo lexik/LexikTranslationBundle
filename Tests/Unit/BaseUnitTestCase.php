@@ -13,6 +13,8 @@ use Doctrine\ORM\Tools\Setup;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitData;
+use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitDataPropel;
+use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
 
 /**
  * Base unit test class providing functions to create a mock entity manger, load schema and fixtures.
@@ -28,6 +30,10 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     const DOCUMENT_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
     const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
     const DOCUMENT_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Document\File';
+
+    const PROPEL_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Propel\TransUnit';
+    const PROPEL_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Propel\Translation';
+    const PROPEL_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Propel\File';
 
     /**
      * Create astorage class form doctrine ORM.
@@ -58,6 +64,22 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             'trans_unit'  => self::DOCUMENT_TRANS_UNIT_CLASS,
             'translation' => self::DOCUMENT_TRANSLATION_CLASS,
             'file'        => self::DOCUMENT_FILE_CLASS,
+        ));
+
+        return $storage;
+    }
+
+    /**
+     * Create a storage class for Propel.
+     *
+     * @return \Lexik\Bundle\TranslationBundle\Storage\PropelStorage
+     */
+    protected function getPropelStorage()
+    {
+        $storage = new PropelStorage(null, array(
+            'trans_unit'  => self::PROPEL_TRANS_UNIT_CLASS,
+            'translation' => self::PROPEL_TRANSLATION_CLASS,
+            'file'        => self::PROPEL_FILE_CLASS,
         ));
 
         return $storage;
@@ -96,6 +118,15 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
 
         $fixtures = new TransUnitData();
         $executor->execute(array($fixtures), false);
+    }
+
+    /**
+     * Load test fixtures for Propel.
+     */
+    protected function loadPropelFixtures(\PropelPDO $con)
+    {
+        $fixtures = new TransUnitDataPropel();
+        $fixtures->load($con);
     }
 
     /**
@@ -175,5 +206,18 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         $dm = \Doctrine\ODM\MongoDB\DocumentManager::create($conn, $config);
 
         return $dm;
+    }
+
+    /**
+     * @return \PropelPDO
+     */
+    protected function getMockPropelConnection()
+    {
+        $builder = new \PropelQuickBuilder();
+        $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
+        $builder->setClassTargets(array('tablemap', 'peer', 'object', 'query'));
+        $con = $builder->build();
+
+        return $con;
     }
 }

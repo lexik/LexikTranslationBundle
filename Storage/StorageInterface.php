@@ -2,8 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-use Lexik\Bundle\TranslationBundle\Model\File;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * Translation stoage interface.
@@ -83,7 +82,7 @@ interface StorageInterface
      *
      * @param string $key
      * @param string $domain
-     * @return TransUnit
+     * @return TransUnitInterface
      */
     public function getTransUnitByKeyAndDomain($key, $domain);
 
@@ -119,9 +118,9 @@ interface StorageInterface
     /**
      * Returns all translations for the given file.
      *
-     * @param File    $file
-     * @param boolean $onlyUpdated
+     * @param FileInterface $file
+     * @param boolean       $onlyUpdated
      * @return array
      */
-    public function getTranslationsFromFile(File $file, $onlyUpdated);
+    public function getTranslationsFromFile($file, $onlyUpdated);
 }

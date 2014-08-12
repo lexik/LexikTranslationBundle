@@ -4,7 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -116,10 +116,10 @@ class DataGridFormatter
     /**
      * Convert a trans unit into an array.
      *
-     * @param TransUnit $transUnit
+     * @param TransUnitInterface $transUnit
      * @return array
      */
-    protected function toArray(TransUnit $transUnit)
+    protected function toArray(TransUnitInterface $transUnit)
     {
         $data = array(
             'id'           => $transUnit->getId(),

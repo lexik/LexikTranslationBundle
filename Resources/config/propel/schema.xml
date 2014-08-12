@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="default" defaultIdMethod="native" package="src"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://xsd.propelorm.org/1.6/database.xsd">
+    
+    <table name="lexik_translation_file" phpName="File" namespace="Lexik\Bundle\TranslationBundle\Propel">
+        <behavior name="auto_add_pk" />
+        
+        <column name="domain" type="varchar" size="255" default="messages" required="true" />
+        <column name="locale" type="varchar" size="10" required="true" />
+        <column name="extention" type="varchar" size="10" />
+        <column name="path" type="varchar" size="255" />
+        <column name="hash" type="varchar" size="255" />
+    </table>
+
+    <table name="lexik_trans_unit" phpName="TransUnit" namespace="Lexik\Bundle\TranslationBundle\Propel">
+        <behavior name="auto_add_pk" />
+        <behavior name="timestampable" />        
+        
+        <column name="domain" type="varchar" size="255" required="true" default="messages" />
+        <column name="key_name" phpName="Key" type="varchar" size="255" required="true" />
+        
+        <unique>
+            <unique-column name="key_name" />
+            <unique-column name="domain" />            
+        </unique>
+    </table>
+    
+    <table name="lexik_trans_unit_translations" phpName="Translation" namespace="Lexik\Bundle\TranslationBundle\Propel">
+        <behavior name="auto_add_pk" />
+        <behavior name="timestampable" />        
+        
+        <column name="file_id" type="integer" />
+        <column name="trans_unit_id" type="integer" required="true" />
+        <column name="locale" type="varchar" size="10" required="true" />
+        <column name="content" type="longvarchar" />
+        
+        <unique>
+            <unique-column name="trans_unit_id" />
+            <unique-column name="locale" />            
+        </unique>
+        
+        <foreign-key foreignTable="lexik_translation_file" onDelete="cascade">
+            <reference local="file_id" foreign="id" />
+        </foreign-key>
+        <foreign-key foreignTable="lexik_trans_unit" onDelete="cascade">
+            <reference local="trans_unit_id" foreign="id" />
+        </foreign-key>
+    </table>
+</database>

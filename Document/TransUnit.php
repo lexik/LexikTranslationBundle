@@ -3,11 +3,12 @@
 namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class TransUnit extends TransUnitModel
+class TransUnit extends TransUnitModel implements TransUnitInterface
 {
     /**
      * Convert all MongoTimestamp object to time.

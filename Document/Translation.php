@@ -3,11 +3,12 @@
 namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
+use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translation extends TranslationModel
+class Translation extends TranslationModel implements TranslationInterface
 {
     /**
      * Convert all MongoTimestamp object to time.

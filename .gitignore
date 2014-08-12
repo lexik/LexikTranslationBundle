@@ -1,2 +1,5 @@
 vendor
 composer.lock
+Propel/map
+Propel/om
+

@@ -52,8 +52,9 @@ lexik_translation:
     use_yml_tree:    false                                 # if "true" we will print a nice tree in the yml source files. It is a little slower.
     grid_input_type: text                                  # define field type used in the grid (text|textarea)
     storage:
-        type: orm                                          # where to store translations: "orm" or "mongodb"
+        type: orm                                          # where to store translations: "orm", "mongodb" or "propel"
         object_manager: something                          # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
+                                                           # When using propel, this can be used to specify the propel connection name
     resources_registration:
         type:                 all                                  # resources type to register: "all", "files" or "database"
         managed_locales_only: true                                 # will only load resources for managed locales
