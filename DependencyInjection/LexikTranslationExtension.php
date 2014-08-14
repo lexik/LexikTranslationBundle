@@ -41,6 +41,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
+        $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;

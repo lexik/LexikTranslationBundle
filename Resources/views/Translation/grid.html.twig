@@ -35,6 +35,7 @@
         var translationCfg = {
             locales: {{ locales | json_encode | raw }},
             inputType: '{{ inputType }}',
+            toggleSimilar: {{ toggleSimilar ? 'true' : 'false' }},
             url: {
                 list: '{{ path('lexik_translation_list') }}',
                 update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
