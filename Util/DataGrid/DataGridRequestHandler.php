@@ -49,9 +49,15 @@ class DataGridRequestHandler
      */
     public function getPage(Request $request)
     {
-        $parameters = array_map(function ($value) {
-            return trim($value, '_');
-        }, $request->query->all());
+        $all = $request->query->all();
+        $parameters = array();
+
+        array_walk($all, function ($value, $key) use (&$parameters) {
+            if ($key != '_search') {
+                $key = trim($key, '_');
+            }
+            $parameters[$key] = $value;
+        });
 
         $transUnits = $this->storage->getTransUnitList(
             $this->managedLoales,
