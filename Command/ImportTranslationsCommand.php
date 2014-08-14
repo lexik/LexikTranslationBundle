@@ -64,6 +64,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $locales);
         } else {
+            $this->output->writeln('<info>*** Importing component translation files ***</info>');
+            $this->importComponentTranslationFiles($locales);
+
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
             $this->importAppTranslationFiles($locales);
 
@@ -77,6 +80,35 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->removeTranslationCache();
         }
+    }
+
+    /**
+     * Imports Symfony's components translation files.
+     *
+     * @param array $locales
+     */
+    protected function importComponentTranslationFiles(array $locales)
+    {
+        $classes = array(
+            'Symfony\Component\Validator\Validator' => '/Resources/translations',
+            'Symfony\Component\Form\Form' => '/Resources/translations',
+            'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../Resources/translations',
+        );
+
+        $dirs = array();
+        foreach ($classes as $namespace => $translationDir) {
+            $reflection = new \ReflectionClass($namespace);
+            $dirs[] = dirname($reflection->getFilename()) . $translationDir;
+        }
+
+        $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
+
+        $finder = new Finder();
+        $finder->files()
+            ->name(sprintf('/(.*(%s)\.(%s))/', implode('|', $locales), implode('|', $formats)))
+            ->in($dirs);
+
+        $this->importTranslationFiles($finder);
     }
 
     /**
@@ -100,21 +132,10 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $this->importBundleTranslationFiles($bundle, $locales);
+            $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
+            $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
+            $this->importTranslationFiles($finder);
         }
-    }
-
-    /**
-     * Imports translation files form a bundle.
-     *
-     * @param BundleInterface $bundle Bundle
-     * @param array $locales
-     */
-    protected function importBundleTranslationFiles(BundleInterface $bundle, array $locales)
-    {
-        $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
-        $this->importTranslationFiles($finder);
     }
 
     /**
