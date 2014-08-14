@@ -64,15 +64,15 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $locales);
         } else {
-            $this->output->writeln('<info>*** Importing component translation files ***</info>');
-            $this->importComponentTranslationFiles($locales);
-
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
             $this->importAppTranslationFiles($locales);
 
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
                 $this->importBundlesTranslationFiles($locales);
+
+                $this->output->writeln('<info>*** Importing component translation files ***</info>');
+                $this->importComponentTranslationFiles($locales);
             }
         }
 
