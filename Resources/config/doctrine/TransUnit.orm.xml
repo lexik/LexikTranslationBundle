@@ -18,16 +18,8 @@
         </lifecycle-callbacks>
     
         <id name="id" type="integer" column="id">
-            <generator strategy="AUTO" />
+            <generator strategy="IDENTITY" />
         </id>
-        
-        <field name="key" column="key_name" type="string" length="255" />
-        
-        <field name="domain" column="domain" type="string" length="255" />
-        
-        <field name="createdAt" column="created_at" type="datetime" nullable="true" />
-        
-        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         
         <one-to-many field="translations" target-entity="Lexik\Bundle\TranslationBundle\Entity\Translation" mapped-by="transUnit">
             <cascade>

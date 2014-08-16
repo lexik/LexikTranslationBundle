@@ -141,11 +141,13 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
 
         // xml driver
         $xmlDriver = new \Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver(array(
+            __DIR__.'/../../Resources/config/model'    => 'Lexik\Bundle\TranslationBundle\Model',
             __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Entity',
         ));
 
         $config = Setup::createAnnotationMetadataConfiguration(array(
-                __DIR__.'/../../Entity',
+            __DIR__.'/../../Model',
+            __DIR__.'/../../Entity',
         ), false, null, null, false);
 
         $config->setMetadataDriverImpl($xmlDriver);
@@ -181,6 +183,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     protected function getMockMongoDbDocumentManager()
     {
         $prefixes = array(
+            __DIR__.'/../../Resources/config/model'    => 'Lexik\Bundle\TranslationBundle\Model',
             __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Document',
         );
         $xmlDriver = new \Doctrine\Bundle\MongoDBBundle\Mapping\Driver\XmlDriver($prefixes);

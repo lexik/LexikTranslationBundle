@@ -8,31 +8,13 @@
               collection="lexik_translation_file"
               repository-class="Lexik\Bundle\TranslationBundle\Document\FileRepository">
 
-        <indexes>
-            <index>
-                <option name="unique" value="true" />
-                <option name="safe" value="true" />
-                <key name="hash" order="asc" />
-            </index>
-        </indexes>
-        
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
-
+        
         <field fieldName="id" name="id" id="true" strategy="AUTO" />
 
-        <field fieldName="domain" name="domain" type="string" />
-
-        <field fieldName="locale" name="locale" type="string" />
-        
-        <field fieldName="extention" name="extention" type="string" />
-        
-        <field fieldName="path" name="path" type="string" />
-        
-        <field fieldName="hash" name="hash" type="string" />
-        
         <reference-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" mapped-by="file">
             <cascade>
                 <persist/>

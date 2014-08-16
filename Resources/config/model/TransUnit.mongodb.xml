@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mongo-mapping xmlns="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping"
+                        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                        xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
+                                            http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
+
+    <mapped-superclass name="Lexik\Bundle\TranslationBundle\Model\TransUnit">
+
+        <indexes>
+            <index>
+                <option name="unique" value="true" />
+                <option name="safe" value="true" />
+                <key name="key" order="asc" />
+                <key name="domain" order="asc" />
+            </index>
+        </indexes>
+
+        <field fieldName="key" name="key" type="string" />
+
+        <field fieldName="domain" name="domain" type="string" />
+
+        <field fieldName="createdAt" name="created_at" type="timestamp" />
+
+        <field fieldName="updatedAt" name="updated_at" type="timestamp" />
+
+    </mapped-superclass>
+</doctrine-mongo-mapping>

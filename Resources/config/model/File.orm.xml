@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"> 
+
+    <mapped-superclass name="Lexik\Bundle\TranslationBundle\Model\File">
+            
+        <field name="domain" column="domain" type="string" length="255" />
+        
+        <field name="locale" column="locale" type="string" length="10" />
+        
+        <field name="extention" column="extention" type="string" length="10" />
+        
+        <field name="path" column="path" type="string" length="255" />
+        
+        <field name="hash" column="hash" type="string" length="255" />
+        
+    </mapped-superclass>
+</doctrine-mapping>

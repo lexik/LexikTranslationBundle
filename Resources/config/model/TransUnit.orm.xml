@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"> 
+
+    <mapped-superclass name="Lexik\Bundle\TranslationBundle\Model\TransUnit">
+        
+        <field name="key" column="key_name" type="string" length="255" />
+        
+        <field name="domain" column="domain" type="string" length="255" />
+        
+        <field name="createdAt" column="created_at" type="datetime" nullable="true" />
+        
+        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
+        
+    </mapped-superclass>
+</doctrine-mapping>
