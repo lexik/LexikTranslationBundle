@@ -14,8 +14,6 @@
             </index>
         </indexes>
 
-        <field fieldName="id" name="id" id="true" strategy="AUTO" />
-
         <field fieldName="domain" name="domain" type="string" />
 
         <field fieldName="locale" name="locale" type="string" />
