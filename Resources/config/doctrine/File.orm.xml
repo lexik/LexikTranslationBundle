@@ -18,18 +18,8 @@
         </lifecycle-callbacks>
         
         <id name="id" type="integer" column="id">
-            <generator strategy="AUTO" />
+            <generator strategy="IDENTITY" />
         </id>
-        
-        <field name="domain" column="domain" type="string" length="255" />
-        
-        <field name="locale" column="locale" type="string" length="10" />
-        
-        <field name="extention" column="extention" type="string" length="10" />
-        
-        <field name="path" column="path" type="string" length="255" />
-        
-        <field name="hash" column="hash" type="string" length="255" />
         
         <one-to-many field="translations" target-entity="Lexik\Bundle\TranslationBundle\Entity\Translation" mapped-by="file">
             <cascade>
