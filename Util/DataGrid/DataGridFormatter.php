@@ -90,10 +90,12 @@ class DataGridFormatter
     {
         if (is_object($transUnit)) {
             $transUnit = $this->toArray($transUnit);
+        } elseif ('mongodb' == $this->storage) {
+            $transUnit['id'] = $transUnit['_id']->{'$id'};
         }
 
         $formatted = array(
-            '_id'     => ('mongodb' == $this->storage) ? $transUnit['_id']->{'$id'} : $transUnit['id'],
+            '_id'     => $transUnit['id'],
             '_domain' => $transUnit['domain'],
             '_key'    => $transUnit['key'],
         );
