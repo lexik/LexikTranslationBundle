@@ -2,7 +2,6 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
 use Lexik\Bundle\TranslationBundle\Document\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Document\FileRepository;
 
@@ -155,7 +154,7 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTranslationsFromFile(File $file, $onlyUpdated)
+    public function getTranslationsFromFile($file, $onlyUpdated)
     {
         return $this->getTransUnitRepository()->getTranslationsForFile($file, $onlyUpdated);
     }

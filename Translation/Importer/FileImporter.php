@@ -4,10 +4,10 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 
 /**
  * Import a translation file into the database.
@@ -76,12 +76,12 @@ class FileImporter
                 }
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($key, $domain);
 
-                if (!($transUnit instanceof TransUnit)) {
+                if (!($transUnit instanceof TransUnitInterface)) {
                     $transUnit = $this->transUnitManager->create($key, $domain);
                 }
 
                 $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
-                if ($translation instanceof Translation) {
+                if ($translation instanceof TranslationInterface) {
                     $imported++;
                 } else if($forceUpdate) {
                     $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);

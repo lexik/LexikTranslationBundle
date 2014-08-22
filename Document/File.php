@@ -3,11 +3,12 @@
 namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class File extends FileModel
+class File extends FileModel implements FileInterface
 {
     /**
      * {@inheritdoc}

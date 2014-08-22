@@ -2,13 +2,12 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
-use Lexik\Bundle\TranslationBundle\Model\File;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 
 /**
  * Export translations from the database in to files.
@@ -79,7 +78,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      *
      * @param File $file
      */
-    protected function exportFile(File $file)
+    protected function exportFile(FileInterface $file)
     {
         $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
 
@@ -109,7 +108,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     /**
      * If the output file exists we merge existing translations with those from the database.
      *
-     * @param File $file
+     * @param FileInterface $file
      * @param string $outputFile
      * @param array $translations
      * @return array

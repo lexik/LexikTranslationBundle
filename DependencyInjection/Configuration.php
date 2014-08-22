@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('lexik_translation');
 
-        $storages = array('orm', 'mongodb');
+        $storages = array('orm', 'mongodb', 'propel');
         $registrationTypes = array('all', 'files', 'database');
         $inputTypes = array('text', 'textarea');
 

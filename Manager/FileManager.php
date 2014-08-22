@@ -3,7 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Model\File;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -45,7 +44,7 @@ class FileManager implements FileManagerInterface
         $hash = $this->generateHash($name, $this->getFileRelativePath($path));
         $file = $this->storage->getFileByHash($hash);
 
-        if (!($file instanceof File)) {
+        if (!($file instanceof FileInterface)) {
             $file = $this->create($name, $path);
         }
 

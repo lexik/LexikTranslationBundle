@@ -3,9 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Model\File;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
-use Lexik\Bundle\TranslationBundle\Model\Translation;
 
 /**
  * Class to manage TransUnit entities or documents.
@@ -84,7 +81,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addTranslation(TransUnit $transUnit, $locale, $content, File $file = null, $flush = false)
+    public function addTranslation(TransUnitInterface $transUnit, $locale, $content, FileInterface $file = null, $flush = false)
     {
         $translation = null;
 
@@ -114,7 +111,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnit $transUnit, $locale, $content, $flush = false)
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false)
     {
         $translation = null;
         $i = 0;
@@ -141,7 +138,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslationsContent(TransUnit $transUnit, array $translations, $flush = false)
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {
@@ -163,12 +160,12 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * Get the proper File for this TransUnit and locale
      *
-     * @param TransUnit $transUnit
+     * @param TransUnitInterface $transUnit
      * @param string $locale
      *
-     * @return File|null
+     * @return FileInterface|null
      */
-    protected function getTranslationFile(TransUnit &$transUnit, $locale)
+    protected function getTranslationFile(TransUnitInterface &$transUnit, $locale)
     {
         $file=null;
         foreach ($transUnit->getTranslations() as $translationModel) {
