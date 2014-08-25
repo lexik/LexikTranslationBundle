@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Symfony\Component\Translation\MessageCatalogueInterface;
 
 /**
  * Imports translation files content in the database.
@@ -132,10 +131,20 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-            $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
-            $this->importTranslationFiles($finder);
+            $this->importBundleTranslationFiles($bundle, $locales);
         }
+    }
+
+    /**
+     * Imports translation files form the specific bundles.
+     *
+     * @param BundleInterface $bundle
+     * @param array $locales
+     */
+    protected function importBundleTranslationFiles($bundle, $locales) {
+        $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
+        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
+        $this->importTranslationFiles($finder);
     }
 
     /**
