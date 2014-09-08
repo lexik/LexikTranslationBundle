@@ -133,7 +133,9 @@ class LexikTranslationExtension extends Extension
             if (class_exists('Symfony\Component\Security\Core\Exception\AuthenticationException')) {
                 $r = new \ReflectionClass('Symfony\Component\Security\Core\Exception\AuthenticationException');
 
-                $dirs[] = dirname($r->getFilename()).'/../Resources/translations';
+                if (is_dir($dir = dirname($r->getFilename()).'/../Resources/translations')) {
+                    $dirs[] = $dir;
+                }
             }
 
             $overridePath = $container->getParameter('kernel.root_dir').'/Resources/%s/translations';
