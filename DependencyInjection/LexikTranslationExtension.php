@@ -114,29 +114,44 @@ class LexikTranslationExtension extends Extension
 
         $registration = $config['resources_registration'];
 
+        // Discover translation directories
         if ('all' == $registration['type'] || 'files' == $registration['type']) {
-            // Discover translation directories
             $dirs = array();
+
             if (class_exists('Symfony\Component\Validator\Validator')) {
                 $r = new \ReflectionClass('Symfony\Component\Validator\Validator');
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
+
             if (class_exists('Symfony\Component\Form\Form')) {
                 $r = new \ReflectionClass('Symfony\Component\Form\Form');
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
+
+            if (class_exists('Symfony\Component\Security\Core\Exception\AuthenticationException')) {
+                $r = new \ReflectionClass('Symfony\Component\Security\Core\Exception\AuthenticationException');
+
+                if (is_dir($dir = dirname($r->getFilename()).'/../Resources/translations')) {
+                    $dirs[] = $dir;
+                }
+            }
+
             $overridePath = $container->getParameter('kernel.root_dir').'/Resources/%s/translations';
+
             foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
                 $reflection = new \ReflectionClass($class);
+
                 if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
                     $dirs[] = $dir;
                 }
+
                 if (is_dir($dir = sprintf($overridePath, $bundle))) {
                     $dirs[] = $dir;
                 }
             }
+
             if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
                 $dirs[] = $dir;
             }
@@ -163,14 +178,14 @@ class LexikTranslationExtension extends Extension
 
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
-                    list($domain, $locale, $format) = explode('.', $file->getBasename());
+                    list($domain, $locale, $format) = explode('.', $file->getBasename(), 3);
                     $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
                 }
             }
         }
 
+        // add resources from database
         if ('all' == $registration['type'] || 'database' == $registration['type']) {
-            // add ressources from database
             $translator->addMethodCall('addDatabaseResources', array());
         }
     }

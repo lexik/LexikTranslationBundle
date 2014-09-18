@@ -150,9 +150,9 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                         .success(function (data, status, headers, config) {
                             $scope.edit = false;
                             $scope.translation = data;
-                            sharedMessage.set('text-success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data.id));
+                            sharedMessage.set('text-success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
                         }).error(function (data, status, headers, config) {
-                            sharedMessage.set('text-danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation.id));
+                            sharedMessage.set('text-danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
                         });
                 }
             };

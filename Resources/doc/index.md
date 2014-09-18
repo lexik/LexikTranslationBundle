@@ -6,7 +6,7 @@ Add the bunde to your `composer.json` file:
 ```javascript
 require: {
     // ...
-    "lexik/translation-bundle": "v1.4.0"
+    "lexik/translation-bundle": "~2.0"
 }
 ```
 
@@ -49,15 +49,15 @@ Additional configuration options (default values are shown here):
 # app/config/config.yml
 lexik_translation:
     base_layout:     "LexikTranslationBundle::layout.html.twig" # layout used with the translation edition template
-    use_yml_tree:    false                                 # if "true" we will print a nice tree in the yml source files. It is a little slower.
-    grid_input_type: text                                  # define field type used in the grid (text|textarea)
+    use_yml_tree:    false    # if "true" we will print a nice tree in the yml source files. It is a little slower.
+    grid_input_type: text     # define field type used in the grid (text|textarea)
     storage:
-        type: orm                                          # where to store translations: "orm", "mongodb" or "propel"
-        object_manager: something                          # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
-                                                           # When using propel, this can be used to specify the propel connection name
+        type: orm                    # where to store translations: "orm", "mongodb" or "propel"
+        object_manager: something    # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
+                                     # When using propel, this can be used to specify the propel connection name
     resources_registration:
-        type:                 all                                  # resources type to register: "all", "files" or "database"
-        managed_locales_only: true                                 # will only load resources for managed locales
+        type:                 all     # resources type to register: "all", "files" or "database"
+        managed_locales_only: true    # will only load resources for managed locales
 ```
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
@@ -77,7 +77,7 @@ lexik_translation_edition:
 
 The translations edition page will be available here: /my-prefix/grid
 
-Note: The grid will be empty until you import translations in database and use [jqGrid 4.4.4](http://www.trirand.com/blog/).
+Note: The grid will be empty until you import translations in database.
 If the grid does not appear, please check your base template has a block named `javascript_footer`.
 
 ___________________
@@ -89,7 +89,7 @@ To import translations files content into your database just run the following c
 
     ./app/console lexik:translations:import [bundleName] [--cache-clear] [--force] [--globals]
 
-This command will import all application and bundles translations files according to the `managed_locales` defined in configuration.
+This command will import all application and bundles translations files according to the `managed_locales` defined in configuration (it will also load tanslations from SF conponents).
 
 Command arguments:
 * `bundleName`: only import translations for the given bundle name.
