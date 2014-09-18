@@ -6,7 +6,7 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         processIsolation="true"
+         processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
          bootstrap="Tests/bootstrap.php"
@@ -32,6 +32,7 @@
 	    <group>util</group>
 	    <group>orm</group>
 	    <group>odm</group>
+        <group>propel</group>
 	    <group>exporter</group>
 	    <group>loader</group>
 	    <group>importer</group>
