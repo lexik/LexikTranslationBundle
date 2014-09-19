@@ -213,10 +213,31 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMockPropelConnection()
     {
-        $builder = new \PropelQuickBuilder();
-        $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
-        $builder->setClassTargets(array('tablemap', 'peer', 'object', 'query'));
-        $con = $builder->build();
+        if (!class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseFile')) {
+            // classes are built in-memory.
+            $builder = new \PropelQuickBuilder();
+            $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
+            $builder->setClassTargets(array('tablemap', 'peer', 'object', 'query'));
+            $con = $builder->build();
+        } else {
+            // in memory-classes already exist, create connection and SQL manually
+            $dsn = 'sqlite::memory:';
+            $adapter = new \DBSQLite();
+            $con = new \PropelPDO($dsn, null, null);
+            $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+            $name = 'default';
+            if (!\Propel::isInit()) {
+                \Propel::setConfiguration(array('datasources' => array('default' => $name)));
+            }
+            \Propel::setDB($name, $adapter);
+            \Propel::setConnection($name, $con, \Propel::CONNECTION_READ);
+            \Propel::setConnection($name, $con, \Propel::CONNECTION_WRITE);
+
+            // don't rebuild classes
+            $builder = new \PropelQuickBuilder();
+            $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
+            $builder->buildSQL($con);
+        }
 
         return $con;
     }

@@ -198,6 +198,17 @@ class PropelStorage implements StorageInterface
      */
     public function getTransUnitDomainsByLocale()
     {
+        if (!$this->isPropelReady())
+        {
+            /*
+             * This method is called during Symfony console init and will fail horribly if there is either no connection
+             * (config not loaded yet) or no Propel base classes.
+             *
+             * To make things work the easiest way is to fail silently at this point.
+             */
+            return array();
+        }
+
         return $this->getTransUnitRepository()->getAllDomainsByLocale();
     }
 
@@ -241,6 +252,27 @@ class PropelStorage implements StorageInterface
     public function translationsTablesExist()
     {
         return true;
+    }
+
+    /**
+     * Check if both the Propel connection and the Propel base classes are present.
+     * This is necessary at some points during project init / warmup.
+     *
+     * @return boolean
+     */
+    protected function isPropelReady()
+    {
+        try {
+            $this->getConnection();
+        } catch (\PropelException $e) {
+            return false;
+        }
+
+        return
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseFile') &&
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseTranslation') &&
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseTransUnit')
+        ;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
 
 /**
  * Class to manage TransUnit entities or documents.
@@ -128,6 +129,10 @@ class TransUnitManager implements TransUnitManagerInterface
             $translation->setContent($content);
         }
 
+        if (null !== $translation && $this->storage instanceof PropelStorage) {
+            $this->storage->persist($translation);
+        }
+
         if ($flush) {
             $this->storage->flush();
         }
@@ -144,6 +149,10 @@ class TransUnitManager implements TransUnitManagerInterface
             if (!empty($content)) {
                 if ($transUnit->hasTranslation($locale)) {
                     $this->updateTranslation($transUnit, $locale, $content);
+
+                    if ($this->storage instanceof PropelStorage) {
+                        $this->storage->persist($transUnit);
+                    }
                 } else {
                     //We need to get a proper file for this translation
                     $file = $this->getTranslationFile($transUnit, $locale);
