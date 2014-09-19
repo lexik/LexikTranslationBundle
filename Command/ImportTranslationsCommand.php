@@ -91,7 +91,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $classes = array(
             'Symfony\Component\Validator\Validator' => '/Resources/translations',
             'Symfony\Component\Form\Form' => '/Resources/translations',
-            'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../Resources/translations',
+            'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../../Resources/translations',
         );
 
         $dirs = array();
