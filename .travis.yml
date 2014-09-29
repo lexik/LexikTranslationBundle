@@ -17,7 +17,7 @@ services:
 env:
   - SYMFONY_VERSION=2.3.*
   - SYMFONY_VERSION=2.4.*
-  - SYMFONY_VERSION=2.5.*
+  - SYMFONY_VERSION="~2.5.5"
 
 before_script:
   - phpenv config-add travis-php.ini
@@ -25,10 +25,6 @@ before_script:
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
-  - composer require doctrine/orm:2.4.* --no-update
-  - composer require doctrine/data-fixtures:1.0.* --no-update
-  - composer require doctrine/mongodb-odm:dev-master --no-update
-  - composer require doctrine/mongodb-odm-bundle:dev-master --no-update
   - composer update --dev
 
 script: phpunit

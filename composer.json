@@ -5,7 +5,7 @@
     "keywords": ["Symfony2", "bundle", "translation", "i18n"],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "authors": [
         {
@@ -22,10 +22,14 @@
         "symfony/framework-bundle": "~2.3"
     },
     "require-dev": {
+        "doctrine/orm": "2.4.*",
+        "doctrine/data-fixtures": "1.0.*",
+        "doctrine/mongodb-odm": "dev-master",
+        "doctrine/mongodb-odm-bundle": "dev-master",
         "propel/propel-bundle": "~1.2"
     },
     "suggest": {
-        "doctrine/orm": ">=2.1",
+        "doctrine/orm": ">=2.4",
         "doctrine/mongodb-odm": "1.0.*@dev",
         "propel/propel-bundle": "~1.2"
     },
