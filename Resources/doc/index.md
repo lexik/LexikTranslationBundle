@@ -29,6 +29,10 @@ $bundles = array(
 );
 ```
 
+Then install the required assets:
+
+    ./app/console assets:install
+
 ___________________
 
 Configuration
