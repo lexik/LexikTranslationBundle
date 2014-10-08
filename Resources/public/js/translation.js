@@ -55,7 +55,7 @@ app.controller('TranslationCtrl', [
 
                 if (Object.keys(params.sorting()).length) {
                     var keys = Object.keys(params.sorting());
-                    parameters['sidx'] = keys[0];
+                    parameters['sidx'] = keys[0].replace('_', '');
                     parameters['sord'] = params.sorting()[keys[0]];
 
                     if (!angular.equals(this.currentSort, params.sorting())) {
