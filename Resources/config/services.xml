@@ -122,7 +122,7 @@
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%lexik_translation.managed_locales%</argument>
-            <argument>%kernel.cache_dir%</argument>
+            <argument>%kernel.root_dir%</argument>
         </service>
 
         <!-- Listener -->
