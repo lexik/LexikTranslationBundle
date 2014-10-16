@@ -41,7 +41,6 @@ abstract class TransUnit
     /**
      * @var string
      *
-     * @Assert\NotBlank()
      */
     protected $client;
     
