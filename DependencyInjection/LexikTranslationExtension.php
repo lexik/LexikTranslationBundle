@@ -42,6 +42,8 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
+        $container->setParameter('lexik_translation.folders', $config['translation_folders']);
+        $container->setParameter('lexik_translation.clients', static::getFolders($container->getParameter('lexik_translation.folders')));
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 
@@ -188,5 +190,26 @@ class LexikTranslationExtension extends Extension
         if ('all' == $registration['type'] || 'database' == $registration['type']) {
             $translator->addMethodCall('addDatabaseResources', array());
         }
+    }
+    
+    /**
+     * Get folders (clients) list
+     * @params array $dirs
+     * @return array
+     */
+    protected static function getFolders(array $dirs)
+    {
+        $folders = array();
+        foreach ($dirs as $dir) {
+            if (is_dir($dir)) {
+                $subDir = scandir($dir);
+                foreach ($subDir as $folder) {
+                    if (strpos($folder, '.') === false && is_dir($dir.DIRECTORY_SEPARATOR.$folder)) {
+                        $folders[] = $folder;
+                    }
+                }
+            }
+        }
+        return $folders;
     }
 }

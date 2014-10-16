@@ -39,6 +39,13 @@ abstract class TransUnit
     protected $translations;
 
     /**
+     * @var string
+     *
+     * @Assert\NotBlank()
+     */
+    protected $client;
+    
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -212,5 +219,24 @@ abstract class TransUnit
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+    
+       
+    /**
+     * Get Client name
+     * 
+     * @return string
+     */
+    public function getClient() {
+        return $this->client;
+    }
+
+    /**
+     * Set Client name
+     * 
+     * @param string $client
+     */
+    public function setClient($client) {
+        $this->client = $client;
     }
 }

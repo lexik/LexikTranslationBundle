@@ -22,6 +22,7 @@ class TranslationController extends Controller
             'layout'    => $this->container->getParameter('lexik_translation.base_layout'),
             'inputType' => $this->container->getParameter('lexik_translation.grid_input_type'),
             'locales'   => $this->getManagedLocales(),
+            'clients'   => $this->container->getParameter('lexik_translation.clients')
         ));
     }
 

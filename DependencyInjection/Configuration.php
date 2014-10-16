@@ -91,7 +91,10 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('use_yml_tree')
                     ->defaultValue(false)
                 ->end()
-
+                
+                ->arrayNode('translation_folders')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
 

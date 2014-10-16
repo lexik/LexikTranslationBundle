@@ -25,6 +25,8 @@
         
         <field name="domain" column="domain" type="string" length="255" />
         
+        <field name="client" column="client" type="string" length="255" />
+        
         <field name="createdAt" column="created_at" type="datetime" nullable="true" />
         
         <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />

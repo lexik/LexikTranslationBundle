@@ -54,26 +54,33 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->output = $output;
 
         $locales = $this->input->getOption('locales');
+        $dirs = $this->getContainer()->getParameter('lexik_translation.folders');
         if (empty($locales)) {
             $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         }
 
         $bundleName = $this->input->getArgument('bundle');
-        if ($bundleName) {
-            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-            $this->importBundleTranslationFiles($bundle, $locales);
-        } else {
-            $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $this->importAppTranslationFiles($locales);
-
-            if (!$this->input->getOption('globals')) {
-                $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $this->importBundlesTranslationFiles($locales);
-
-                $this->output->writeln('<info>*** Importing component translation files ***</info>');
-                $this->importComponentTranslationFiles($locales);
-            }
-        }
+		if (!empty($dirs)) {
+            foreach ($dirs as $dir) {
+                $this->importClientsTranslationFiles($dir, $locales);
+                    }
+		} else {
+	        if ($bundleName) {
+	            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+	            $this->importBundleTranslationFiles($bundle, $locales);
+	        } else {
+	            $this->output->writeln('<info>*** Importing application translation files ***</info>');
+	            $this->importAppTranslationFiles($locales);
+	
+	            if (!$this->input->getOption('globals')) {
+	                $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+	                $this->importBundlesTranslationFiles($locales);
+	
+	                $this->output->writeln('<info>*** Importing component translation files ***</info>');
+	                $this->importComponentTranslationFiles($locales);
+	            }
+	        }
+		}
 
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
@@ -152,18 +159,39 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param Finder $finder
      */
-    protected function importTranslationFiles($finder)
+    protected function importTranslationFiles($finder, $client = '')
     {
         if ($finder instanceof Finder) {
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
-                $number = $importer->import($file, $this->input->getOption('force'));
+                $number = $importer->import($file, $client, $this->input->getOption('force'));
                 $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
             }
         } else {
             $this->output->writeln('<comment>No file to import for managed locales.</comment>');
+        }
+    }
+    
+    /**
+     * Imports translation files form all clients (customs).
+     *
+     * @param array $locales
+     */
+    protected function importClientsTranslationFiles($dir, array $locales)
+    {
+        if (is_dir($dir)) {
+            $clients = static::getFolders($dir);
+            foreach ($clients as $client) {
+                $this->output->writeln(sprintf('<info>*** Importing %s translation files ***</info>', $client));
+                $bundles = static::getFolders($dir.DIRECTORY_SEPARATOR.$client);
+                foreach ($bundles as $bundle) {
+                    $this->output->writeln(sprintf('<info># %s :</info>', $client. ' - '.$bundle));
+                    $finder = $this->findTranslationsFiles($dir.DIRECTORY_SEPARATOR.$client.DIRECTORY_SEPARATOR.$bundle, $locales);
+                    $this->importTranslationFiles($finder, $client);
+                }
+            }
         }
     }
 
@@ -181,9 +209,13 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         if (preg_match('#^win#i', PHP_OS)) {
             $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
         }
-
+        $findme   = 'Resources';
+        $pos = strpos($path, $findme);
+        if ($pos === false) {
         $dir = $path.'/Resources/translations';
-
+        } else {
+            $dir = $path.'/translations';
+        }
         if (is_dir($dir)) {
             $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
 
@@ -196,6 +228,23 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         return $finder;
     }
 
+    /**
+     * Get folders list
+     * @param string $dir
+     * @return array
+     */
+    protected static function getFolders($dir)
+    {
+        $folders = array();
+        $subDir = scandir($dir);
+        foreach ($subDir as $folder) {
+            if (strpos($folder, '.') === false && is_dir($dir.DIRECTORY_SEPARATOR.$folder)) {
+                $folders[] = $folder;
+            }
+        }
+        return $folders;
+    }
+    
     /**
      * Remove translation cache files managed locales.
      *

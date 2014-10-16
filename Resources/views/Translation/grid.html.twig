@@ -22,7 +22,7 @@
                 </h1>
             </div>
         {% endblock toolbar %}
-
+               
         {% block data_grid %}
             {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
         {% endblock data_grid %}
@@ -49,7 +49,8 @@
                 save: '{{ 'translations.save'|trans({}, 'LexikTranslationBundle') }}',
                 successMsg: '{{ 'translations.succesfully_updated'|trans({}, 'LexikTranslationBundle') }}',
                 errorMsg: '{{ 'translations.update_failed'|trans({}, 'LexikTranslationBundle') }}'
-            }
+            },
+            clients: {{ clients | json_encode | raw }}
         };
     </script>
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>

@@ -30,10 +30,12 @@ app.controller('TranslationCtrl', [
         $scope.saveLabel = translationCfg.label.save;
         $scope.hideColSelector = false;
         $scope.saveMsg = sharedMessage;
+        $scope.clients = translationCfg.clients;
 
         // columns definition
         $scope.columns = [
             { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
+            { title: 'Client', index: '_client', edit: false, filter: {'_client': 'text'}, sortable: true, visible: true },
             { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
             { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
         ];
@@ -46,7 +48,7 @@ app.controller('TranslationCtrl', [
         }
 
         // grid data
-        var tableData = {
+        $scope.tableData = {
             total: 0,
             currentSort: {},
             currentFilter: {},
@@ -90,7 +92,7 @@ app.controller('TranslationCtrl', [
 
         var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
 
-        $scope.tableParams = new ngTableParams(defaultOptions, tableData);
+        $scope.tableParams = new ngTableParams(defaultOptions, $scope.tableData);
 
         // scope function
         $scope.sortGrid = function (column) {
@@ -112,6 +114,12 @@ app.controller('TranslationCtrl', [
                     sharedMessage.set('text-success', 'ok-circle', responseData.message);
                 }
             );
+        };
+        
+        // update the select
+        $scope.update = function() {
+            var defaultOptions = { page: 1, count: 20, filter: {'client': $scope.client}, sort: {'_id': 'asc'} };
+            $scope.tableParams.parameters(defaultOptions);
         };
 }]);
 

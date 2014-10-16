@@ -221,4 +221,5 @@ abstract class File
     {
         return $this->translations;
     }
+ 
 }

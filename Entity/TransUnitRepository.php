@@ -182,6 +182,11 @@ class TransUnitRepository extends EntityRepository
                 $builder->andWhere($builder->expr()->like('tu.key', ':key'))
                     ->setParameter('key', sprintf('%%%s%%', $filters['key']));
             }
+            
+            if (!empty($filters['client'])) {
+                $builder->andWhere($builder->expr()->like('tu.client', ':client'))
+                    ->setParameter('client', sprintf('%%%s%%', $filters['client']));
+            }
         }
     }
 

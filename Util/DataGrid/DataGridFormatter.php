@@ -98,6 +98,7 @@ class DataGridFormatter
             '_id'     => $transUnit['id'],
             '_domain' => $transUnit['domain'],
             '_key'    => $transUnit['key'],
+            '_client' => $transUnit['client']
         );
 
         // add locales in the same order as in managed_locales param
@@ -127,6 +128,7 @@ class DataGridFormatter
             'id'           => $transUnit->getId(),
             'domain'       => $transUnit->getDomain(),
             'key'          => $transUnit->getKey(),
+            'client'       => $transUnit->getClient(),
             'translations' => array(),
         );
 

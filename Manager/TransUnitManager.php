@@ -64,12 +64,13 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function create($keyName, $domainName, $flush = false)
+    public function create($keyName, $domainName, $client, $flush = false)
     {
         $transUnit = $this->newInstance();
         $transUnit->setKey($keyName);
         $transUnit->setDomain($domainName);
-
+        $transUnit->setClient($client);
+        
         $this->storage->persist($transUnit);
 
         if ($flush) {
