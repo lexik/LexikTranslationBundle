@@ -55,6 +55,7 @@ class DataGridRequestHandler
         array_walk($all, function ($value, $key) use (&$parameters) {
             if ($key != '_search') {
                 $key = trim($key, '_');
+                $value = trim($value, '_');
             }
             $parameters[$key] = $value;
         });
