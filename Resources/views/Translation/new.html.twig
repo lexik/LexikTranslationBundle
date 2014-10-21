@@ -25,6 +25,18 @@
                 </div>
 
                 <div class="form-group">
+                    {{ form_label(form.client) }}
+                    {{ form_widget(form.client, { 'attr': {'class': 'form-control'} }) }}
+                    <span class="text-danger">{{ form_errors(form.client) }}</span>
+                </div>
+                
+                <div class="form-group">
+                    {{ form_label(form.bundle) }}
+                    {{ form_widget(form.bundle, { 'attr': {'class': 'form-control'} }) }}
+                    <span class="text-danger">{{ form_errors(form.bundle) }}</span>
+                </div>
+
+                <div class="form-group">
                     {{ form_label(form.translations) }}
                 </div>
 

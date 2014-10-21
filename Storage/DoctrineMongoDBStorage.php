@@ -99,6 +99,14 @@ class DoctrineMongoDBStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getTransUnitClients()
+    {
+        return $this->getTransUnitRepository()->getAllClients();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTransUnitById($id)
     {
         return $this->getTransUnitRepository()->findOneById($id);

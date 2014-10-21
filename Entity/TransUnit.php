@@ -8,7 +8,7 @@ use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
- * @UniqueEntity(fields={"key", "domain"})
+ * @UniqueEntity(fields={"key", "domain", "client", "bundle"})
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */

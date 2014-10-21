@@ -25,7 +25,7 @@ interface TransUnitManagerInterface
      * @param boolean $flush
      * @return TransUnitInterface
      */
-    public function create($keyName, $domainName, $client, $flush = false);
+    public function create($keyName, $domainName, $client, $bundle, $flush = false);
 
     /**
      * Add a new translation to the given trans unit.

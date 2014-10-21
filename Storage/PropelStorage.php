@@ -173,6 +173,14 @@ class PropelStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getTransUnitClients()
+    {
+        return $this->getTransUnitRepository()->getAllClients();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getTransUnitById($id)
     {
         return TransUnitQuery::create()->findOneById($id, $this->getConnection());

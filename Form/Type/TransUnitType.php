@@ -21,6 +21,14 @@ class TransUnitType extends AbstractType
         $builder->add('key', 'text', array(
             'label' => 'translations.key',
         ));
+        $builder->add('client', 'choice', array(
+            'label'   => 'Clients',
+            'choices' => array_combine($options['clients'], $options['clients']),
+        ));
+        $builder->add('bundle', 'choice', array(
+            'label'   => 'Bundles',
+            'choices' => array_combine($options['bundles'], $options['bundles']),
+        ));
         $builder->add('domain', 'choice', array(
             'label'   => 'translations.domain',
             'choices' => array_combine($options['domains'], $options['domains']),
@@ -49,6 +57,8 @@ class TransUnitType extends AbstractType
         $resolver->setDefaults(array(
             'data_class'         => null,
             'domains'            => array('messages'),
+            'clients'            => null,
+            'bundles'            => null,
             'translation_class'  => null,
             'translation_domain' => 'LexikTranslationBundle'
         ));

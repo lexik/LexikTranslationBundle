@@ -68,6 +68,24 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
+     * Returns all trans unit with translations for the given domain and locale.
+     *
+     * @param string $locale
+     * @param string $domain
+     * @return array
+     */
+    public function getAllClients()
+    {
+        $this->loadCustomHydrator();
+
+        return $this->createQueryBuilder('tu')
+            ->select('DISTINCT tu.client')
+            ->orderBy('tu.client', 'ASC')
+            ->getQuery()
+            ->getResult('SingleColumnArrayHydrator');
+    }
+
+    /**
      * Returns some trans units with their translations.
      *
      * @param array $locales

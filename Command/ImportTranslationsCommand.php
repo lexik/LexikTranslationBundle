@@ -29,6 +29,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     private $output;
 
+    private $count;
+
     /**
      * {@inheritdoc}
      */
@@ -159,15 +161,16 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param Finder $finder
      */
-    protected function importTranslationFiles($finder, $client = '')
+    protected function importTranslationFiles($finder, $client = '', $bundle = '')
     {
         if ($finder instanceof Finder) {
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
-                $number = $importer->import($file, $client, $this->input->getOption('force'));
+                $number = $importer->import($file, $client, $bundle, $this->input->getOption('force'));
                 $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
+                $this->count = $this->count + $number;
             }
         } else {
             $this->output->writeln('<comment>No file to import for managed locales.</comment>');
@@ -184,13 +187,15 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         if (is_dir($dir)) {
             $clients = static::getFolders($dir);
             foreach ($clients as $client) {
+                $this->count = 0;
                 $this->output->writeln(sprintf('<info>*** Importing %s translation files ***</info>', $client));
                 $bundles = static::getFolders($dir.DIRECTORY_SEPARATOR.$client);
                 foreach ($bundles as $bundle) {
                     $this->output->writeln(sprintf('<info># %s :</info>', $client. ' - '.$bundle));
                     $finder = $this->findTranslationsFiles($dir.DIRECTORY_SEPARATOR.$client.DIRECTORY_SEPARATOR.$bundle, $locales);
-                    $this->importTranslationFiles($finder, $client);
+                    $this->importTranslationFiles($finder, $client, $bundle);
                 }
+                $this->output->writeln(sprintf('<info>### import %s total %s :</info>', $client, $this->count));
             }
         }
     }

@@ -59,7 +59,7 @@ class FileImporter
      * @param boolean                               $forceUpdate  force update of the translations
      * @return int
      */
-    public function import(\Symfony\Component\Finder\SplFileInfo $file, $client, $forceUpdate = false)
+    public function import(\Symfony\Component\Finder\SplFileInfo $file, $client, $bundle, $forceUpdate = false)
     {
         $imported = 0;
         list($domain, $locale, $extention) = explode('.', $file->getFilename());
@@ -74,10 +74,10 @@ class FileImporter
                 if(!isset($content)){
                     continue;
                 }
-                $transUnit = $this->storage->getTransUnitByKeyAndDomain($key, $domain);
+                $transUnit = $this->storage->getTransUnitByKeyAndDomainAndClient($key, $domain, $client, $bundle);
 
                 if (!($transUnit instanceof TransUnitInterface)) {
-                    $transUnit = $this->transUnitManager->create($key, $domain, $client);
+                    $transUnit = $this->transUnitManager->create($key, $domain, $client, $bundle);
                 }
 
                 $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);

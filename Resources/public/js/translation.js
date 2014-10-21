@@ -109,7 +109,7 @@ app.controller('TranslationCtrl', [
 
         // invalidate the cache
         $scope.invalidateCache = function () {
-            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}, params: {'client': $scope.client}})
                 .success(function (responseData) {
                     sharedMessage.set('text-success', 'ok-circle', responseData.message);
                 }

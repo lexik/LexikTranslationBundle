@@ -39,6 +39,30 @@ class TransUnitRepository extends DocumentRepository
     }
 
     /**
+     * Returns all client available in database.
+     *
+     * @return array
+     */
+    public function getAllClients()
+    {
+        $results = $this->createQueryBuilder()
+            ->distinct('client')
+            ->sort('client', 'asc')
+            ->hydrate(false)
+            ->getQuery()
+            ->execute();
+
+        $clients = array();
+        foreach ($results as $item) {
+            $clients[] = $item;
+        }
+
+        sort($clients);
+
+        return $clients;
+    }
+
+    /**
      * Returns all domains for each locale.
      *
      * @return array

@@ -99,6 +99,14 @@ class DoctrineORMStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function getTransUnitClients()
+    {
+        return $this->getTransUnitRepository()->getAllClients();
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
     public function getTransUnitById($id)
     {
         return $this->getTransUnitRepository()->findOneById($id);
@@ -114,6 +122,23 @@ class DoctrineORMStorage implements StorageInterface
         $fields = array(
             'key'    => $key,
             'domain' => $domain,
+        );
+
+        return $this->getTransUnitRepository()->findOneBy($fields);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTransUnitByKeyAndDomainAndClient($key, $domain, $client, $bundle)
+    {
+        $key = mb_substr($key, 0, 255, 'UTF-8');
+
+        $fields = array(
+            'key'    => $key,
+            'domain' => $domain,
+            'client' => $client,
+            'bundle' => $bundle
         );
 
         return $this->getTransUnitRepository()->findOneBy($fields);

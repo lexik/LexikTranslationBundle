@@ -33,7 +33,8 @@ class TranslationController extends Controller
      */
     public function invalidateCacheAction(Request $request)
     {
-        $this->get('translator')->removeLocalesCacheFiles($this->getManagedLocales());
+        $client = $request->query->get('client');
+        $this->get('translator')->removeLocalesCacheFiles($client, $this->getManagedLocales());
 
         $message = $this->get('translator')->trans('translations.cache_removed', array(), 'LexikTranslationBundle');
 

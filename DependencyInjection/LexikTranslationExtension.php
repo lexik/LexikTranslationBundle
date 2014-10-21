@@ -44,6 +44,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
         $container->setParameter('lexik_translation.folders', $config['translation_folders']);
         $container->setParameter('lexik_translation.clients', static::getFolders($container->getParameter('lexik_translation.folders')));
+        $container->setParameter('lexik_translation.bundles', static::getFolders(array('src/CanalTP')));
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 

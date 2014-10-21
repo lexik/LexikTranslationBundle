@@ -41,6 +41,8 @@ class TransUnitFormHandler implements FormHandlerInterface
      */
     protected $rootDir;
 
+    protected $container;
+    
     /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param FileManagerInterface      $fileManager
@@ -48,13 +50,14 @@ class TransUnitFormHandler implements FormHandlerInterface
      * @param array                     $managedLoales
      * @param string                    $rootDir
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, array $managedLoales, $rootDir)
+    public function __construct($container, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, array $managedLoales, $rootDir)
     {
         $this->transUnitManager = $transUnitManager;
         $this->fileManager = $fileManager;
         $this->storage = $storage;
         $this->managedLoales = $managedLoales;
         $this->rootDir = $rootDir;
+        $this->container = $container;
     }
 
     /**
@@ -72,6 +75,9 @@ class TransUnitFormHandler implements FormHandlerInterface
     {
         return array(
             'domains'           => $this->storage->getTransUnitDomains(),
+            'clients'           => $this->storage->getTransUnitClients(),
+            'bundles'           => $this->container->getParameter('lexik_translation.bundles'),
+            //'clients'           => $this->container->getParameter('lexik_translation.clients'),
             'data_class'        => $this->storage->getModelClass('trans_unit'),
             'translation_class' => $this->storage->getModelClass('translation'),
         );

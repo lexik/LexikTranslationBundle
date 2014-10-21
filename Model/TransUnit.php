@@ -45,6 +45,12 @@ abstract class TransUnit
     protected $client;
     
     /**
+     * @var string
+     *
+     */
+    protected $bundle;
+    
+    /**
      * @var \DateTime
      */
     protected $createdAt;
@@ -237,5 +243,13 @@ abstract class TransUnit
      */
     public function setClient($client) {
         $this->client = $client;
+    }
+    
+    public function getBundle() {
+        return $this->bundle;
+    }
+
+    public function setBundle($bundle) {
+        $this->bundle = $bundle;
     }
 }

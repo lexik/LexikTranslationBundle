@@ -9,7 +9,7 @@
             repository-class="Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository">
             
         <unique-constraints>
-            <unique-constraint name="key_domain_idx" columns="key_name,domain" />
+            <unique-constraint name="key_domain_idx" columns="key_name,domain,client,bundle" />
         </unique-constraints>
         
         <lifecycle-callbacks>
@@ -26,6 +26,8 @@
         <field name="domain" column="domain" type="string" length="255" />
         
         <field name="client" column="client" type="string" length="255" nullable="true" />
+        
+        <field name="bundle" column="bundle" type="string" length="255" nullable="true" />
         
         <field name="createdAt" column="created_at" type="datetime" nullable="true" />
         

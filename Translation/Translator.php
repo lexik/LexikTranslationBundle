@@ -76,8 +76,9 @@ class Translator extends BaseTranslator
      *
      * @param array $locales
      */
-    public function removeLocalesCacheFiles(array $locales)
+    public function removeLocalesCacheFiles($client, array $locales)
     {
+        $this->options['cache_dir'] = $this->container->get('kernel')->getCustomCacheDir($client);
         foreach ($locales as $locale) {
             $this->removeCacheFile($locale);
         }

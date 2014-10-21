@@ -63,6 +63,13 @@ interface StorageInterface
     public function getTransUnitDomains();
 
     /**
+     * Returns all clients available in database.
+     *
+     * @return array
+     */
+    public function getTransUnitClients();
+
+    /**
      * Returns all domains for each locale.
      *
      * @return array
@@ -86,6 +93,16 @@ interface StorageInterface
      */
     public function getTransUnitByKeyAndDomain($key, $domain);
 
+    /**
+     * Returns a Transunit by its key and domain and client.
+     *
+     * @param string $key
+     * @param string $domain
+     * @param string $client
+     * @return TransUnitInterface
+     */
+    public function getTransUnitByKeyAndDomainAndClient($key, $domain, $client, $bundle);
+    
     /**
      * Returns all trans unit with translations for the given domain and locale.
      *
