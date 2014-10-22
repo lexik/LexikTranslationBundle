@@ -78,7 +78,10 @@ class Translator extends BaseTranslator
      */
     public function removeLocalesCacheFiles($client, array $locales)
     {
-        $this->options['cache_dir'] = $this->container->get('kernel')->getCustomCacheDir($client);
+        if ($client != 'CanalTP') {
+            $cacheDir = $this->container->get('kernel')->getCustomCacheDir($client).'/translations';
+            $this->options['cache_dir'] = $cacheDir;
+        }
         foreach ($locales as $locale) {
             $this->removeCacheFile($locale);
         }
