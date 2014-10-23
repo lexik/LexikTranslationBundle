@@ -54,8 +54,9 @@ class LexikTranslationExtension extends Extension
      * Build the 'lexik_translation.translation_storage' service definition.
      *
      * @param ContainerBuilder $container
-     * @param string           $storage
-     * @param string           $objectManager
+     * @param string $storage
+     * @param string $objectManager
+     * @throws \RuntimeException
      */
     protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager)
     {
@@ -67,12 +68,18 @@ class LexikTranslationExtension extends Extension
             } else {
                 $objectManagerReference = new Reference('doctrine.orm.entity_manager');
             }
+
+            $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
+
         } else if ('mongodb' == $storage) {
             if(isset($objectManager)){
                 $objectManagerReference = new Reference(sprintf('doctrine_mongodb.odm.%s_document_manager', $objectManager));
             } else {
                 $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
             }
+
+            $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
+
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
@@ -89,6 +96,23 @@ class LexikTranslationExtension extends Extension
         ));
 
         $container->setDefinition('lexik_translation.translation_storage', $storageDefinition);
+    }
+
+    /**
+     * Add a driver to load mapping of model classes.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $driverId
+     * @param string           $driverClass
+     */
+    protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
+    {
+        $driverDefinition = new Definition($driverClass, array(
+            array(realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'),
+        ));
+        $driverDefinition->setPublic(false);
+
+        $container->setDefinition($driverId, $driverDefinition);
     }
 
     /**
