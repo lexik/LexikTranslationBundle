@@ -41,6 +41,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.');
         $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
         $this->addOption('locales', 'l', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Import only for these locales, instead of using the managed locales.');
+        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
@@ -58,20 +59,22 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         }
 
+        $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
+
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-            $this->importBundleTranslationFiles($bundle, $locales);
+            $this->importBundleTranslationFiles($bundle, $locales, $domains);
         } else {
             $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $this->importAppTranslationFiles($locales);
+            $this->importAppTranslationFiles($locales, $domains);
 
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $this->importBundlesTranslationFiles($locales);
+                $this->importBundlesTranslationFiles($locales, $domains);
 
                 $this->output->writeln('<info>*** Importing component translation files ***</info>');
-                $this->importComponentTranslationFiles($locales);
+                $this->importComponentTranslationFiles($locales, $domains);
             }
         }
 
@@ -85,8 +88,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Imports Symfony's components translation files.
      *
      * @param array $locales
+     * @param array $domains
      */
-    protected function importComponentTranslationFiles(array $locales)
+    protected function importComponentTranslationFiles(array $locales, array $domains)
     {
         $classes = array(
             'Symfony\Component\Validator\Validator' => '/Resources/translations',
@@ -100,24 +104,23 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $dirs[] = dirname($reflection->getFilename()) . $translationDir;
         }
 
-        $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
-
         $finder = new Finder();
         $finder->files()
-            ->name(sprintf('/(.*(%s)\.(%s))/', implode('|', $locales), implode('|', $formats)))
+            ->name($this->getFileNamePattern($locales, $domains))
             ->in($dirs);
 
-        $this->importTranslationFiles($finder);
+        $this->importTranslationFiles($finder->count() > 0 ? $finder : null);
     }
 
     /**
      * Imports application translation files.
      *
      * @param array $locales
+     * @param array $domains
      */
-    protected function importAppTranslationFiles(array $locales)
+    protected function importAppTranslationFiles(array $locales, array $domains)
     {
-        $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales);
+        $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
         $this->importTranslationFiles($finder);
     }
 
@@ -125,13 +128,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Imports translation files form all bundles.
      *
      * @param array $locales
+     * @param array $domains
      */
-    protected function importBundlesTranslationFiles(array $locales)
+    protected function importBundlesTranslationFiles(array $locales, array $domains)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $this->importBundleTranslationFiles($bundle, $locales);
+            $this->importBundleTranslationFiles($bundle, $locales, $domains);
         }
     }
 
@@ -139,11 +143,13 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Imports translation files form the specific bundles.
      *
      * @param BundleInterface $bundle
-     * @param array $locales
+     * @param array           $locales
+     * @param array           $domains
      */
-    protected function importBundleTranslationFiles($bundle, $locales) {
+    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains)
+    {
         $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales);
+        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales, $domains);
         $this->importTranslationFiles($finder);
     }
 
@@ -158,12 +164,12 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
 
             foreach ($finder as $file)  {
-                $this->output->write(sprintf('<comment>Importing "%s" ... </comment>', $file->getPathname()));
+                $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
                 $number = $importer->import($file, $this->input->getOption('force'));
-                $this->output->writeln(sprintf('<comment>%d translations</comment>', $number));
+                $this->output->writeln(sprintf('%d translations', $number));
             }
         } else {
-            $this->output->writeln('<comment>No file to import for managed locales.</comment>');
+            $this->output->writeln('No file to import');
         }
     }
 
@@ -171,10 +177,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * Return a Finder object if $path has a Resources/translations folder.
      *
      * @param string $path
-     * @param array $locales
+     * @param array  $locales
+     * @param array  $domains
      * @return Symfony\Component\Finder\Finder
      */
-    protected function findTranslationsFiles($path, array $locales)
+    protected function findTranslationsFiles($path, array $locales, array $domains)
     {
         $finder = null;
 
@@ -185,22 +192,37 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $dir = $path.'/Resources/translations';
 
         if (is_dir($dir)) {
-            $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
-
             $finder = new Finder();
             $finder->files()
-                ->name(sprintf('/(.*(%s)\.(%s))/', implode('|', $locales), implode('|', $formats)))
+                ->name($this->getFileNamePattern($locales, $domains))
                 ->in($dir);
         }
 
-        return $finder;
+        return (null !== $finder && $finder->count() > 0) ? $finder : null;
+    }
+    /**
+
+     * @param array $locales
+     * @param array $domains
+     * @return string
+     */
+    protected function getFileNamePattern(array $locales, array $domains)
+    {
+        $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
+
+        if (count($domains)) {
+            $regex = sprintf('/((%s)\.(%s)\.(%s))/', implode('|', $domains), implode('|', $locales), implode('|', $formats));
+        } else {
+            $regex = sprintf('/(.*\.(%s)\.(%s))/', implode('|', $locales), implode('|', $formats));
+        }
+
+        return $regex;
     }
 
     /**
      * Remove translation cache files managed locales.
-     *
      */
-    public function removeTranslationCache()
+    protected function removeTranslationCache()
     {
         $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);
