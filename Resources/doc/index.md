@@ -102,7 +102,8 @@ Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
 * `--force` (or `-f`): update the translations even if the element already exist in the database.
 * `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
-* `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. ex: `--locales=fr --locales=en`
+* `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. eg: `--locales=fr --locales=en`
+* `--domains` (or `-d`): Only export files for given domains (comma separated). eg `--domains=messages,validators`
 
 Export translations
 ===================
