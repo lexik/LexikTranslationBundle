@@ -57,6 +57,7 @@
         <!-- Loader -->
         <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
+            <argument type="service" id="kernel" />
             <tag name="translation.loader" alias="database" />
         </service>
 

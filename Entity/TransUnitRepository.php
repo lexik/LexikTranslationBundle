@@ -50,6 +50,29 @@ class TransUnitRepository extends EntityRepository
     }
 
     /**
+     * Returns all domains of CanalTP and client for each locale.
+     *
+     * @return array
+     */
+    public function getAllByLocaleAndDomainAndClient($locale, $domain, $client)
+    {
+        return $this->createQueryBuilder('tu')
+            ->select('tu, te')
+            ->leftJoin('tu.translations', 'te')
+            ->where('tu.client = :client')
+            ->orWhere('tu.client = :ctp')
+            ->andWhere('tu.domain = :domain')
+            ->andWhere('te.locale = :locale')
+            ->orderBy('tu.key, tu.domain, tu.client')
+            ->setParameter('domain', $domain)
+            ->setParameter('locale', $locale)
+            ->setParameter('ctp', 'CanalTP')
+            ->setParameter('client', $client)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    /**
      * Returns all trans unit with translations for the given domain and locale.
      *
      * @param string $locale
@@ -200,7 +223,7 @@ class TransUnitRepository extends EntityRepository
                 $builder->andWhere($builder->expr()->like('tu.key', ':key'))
                     ->setParameter('key', sprintf('%%%s%%', $filters['key']));
             }
-            
+
             if (!empty($filters['client'])) {
                 $builder->andWhere($builder->expr()->like('tu.client', ':client'))
                     ->setParameter('client', sprintf('%%%s%%', $filters['client']));

@@ -20,13 +20,19 @@ class DatabaseLoader implements LoaderInterface
     private $storage;
 
     /**
+     * @var AppKernel
+     */
+    private $kernel;
+
+    /**
      * Construct.
      *
      * @param StorageInterface $storage
      */
-    public function __construct(StorageInterface $storage)
+    public function __construct(StorageInterface $storage, \AppKernel $kernel)
     {
         $this->storage = $storage;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -36,7 +42,8 @@ class DatabaseLoader implements LoaderInterface
     {
         $catalogue = new MessageCatalogue($locale);
 
-        $transUnits = $this->storage->getTransUnitsByLocaleAndDomain($locale, $domain);
+        $client = $this->kernel->getFolderClient();
+        $transUnits = $this->storage->getTransUnitsByLocaleAndDomainAndClient($locale, $domain, $client);
 
         foreach ($transUnits as $transUnit) {
             foreach ($transUnit['translations'] as $translation) {
