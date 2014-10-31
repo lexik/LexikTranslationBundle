@@ -92,17 +92,17 @@ app.controller('TranslationCtrl', [
 
         $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
+        $scope.tableParams.changePage = function (pageNumber) {
+            $scope.tableParams.page(pageNumber);
+            $location.hash('translation-grid');
+            $anchorScroll();
+        };
+
         // scope function
         $scope.sortGrid = function (column) {
             if (column.sortable) {
                 $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
             }
-        };
-
-        $scope.changePage = function (pageNumber) {
-            $scope.tableParams.page(pageNumber);
-            $location.hash('translation-grid');
-            $anchorScroll();
         };
 
         // invalidate the cache
