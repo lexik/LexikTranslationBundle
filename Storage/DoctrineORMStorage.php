@@ -179,6 +179,8 @@ class DoctrineORMStorage implements StorageInterface
                 }
                 $trads[] = $override;
             }
+            else
+              $trads[] = $current;
         }
         return $trads;
 
