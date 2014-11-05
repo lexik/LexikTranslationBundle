@@ -21,8 +21,8 @@ class TransUnitData implements FixtureInterface
         // add files
         $files = array();
         $domains = array(
-            'superTranslations' => array('fr', 'en', 'de'),
-            'messages' => array('fr', 'en'),
+            'messages' => array('fr', 'en', 'br', 'de'),
+        	'otherMessages' => array('fr', 'en'),
         );
 
         foreach ($domains as $name => $locales) {
@@ -41,72 +41,73 @@ class TransUnitData implements FixtureInterface
 
         $manager->flush();
 
-        // add translations for "key.say_hello"
-        $transUnit = $this->createTransUnitInstance($manager);
-        $transUnit->setKey('key.say_hello');
-        $transUnit->setDomain('superTranslations');
-
-        $translations = array(
-           'fr' => 'salut',
-           'en' => 'hello',
-           'de' => 'heil',
+        // add trans unit and translations for key "journey.form.tab_title"
+        $translationsByClient = array(
+        		'Custom' => array(
+					           'fr' => 'Itinéraire Custom',
+					           'en' => 'Itinerary'
+					        ),
+        		'CanalTP' => array(
+		        			   'fr' => 'Itinéraire',
+		        			   'en' => 'Itinerary',
+		        			   'de' => 'Verbindung',
+		        			   'br'	=> 'Hent'
+        					)
         );
 
-        foreach ($translations as $locale => $content) {
-            $translation = $this->createTranslationInstance($manager);
-            $translation->setLocale($locale);
-            $translation->setContent($content);
-            $translation->setFile($files['superTranslations'][$locale]);
+		foreach ($translationsByClient as $client => $translations) {
+			// trans unit creation
+			$transUnit = $this->createTransUnitInstance($manager);
+			$transUnit->setKey('journey.form.tab_title');
+			$transUnit->setDomain('messages');
+			$transUnit->setClient($client);
 
-            $transUnit->addTranslation($translation);
-        }
+			// translations creation
+	        foreach ($translations as $locale => $content) {
+	            $translation = $this->createTranslationInstance($manager);
+	            $translation->setLocale($locale);
+	            $translation->setContent($content);
+	            $translation->setFile($files['messages'][$locale]);	
+	            $transUnit->addTranslation($translation);
+	        }
+	        
+	        $manager->persist($transUnit);
+	        $manager->flush();
+		}        
 
-        $manager->persist($transUnit);
-        $manager->flush();
 
-
-        // add translations for "key.say_goodbye"
-        $transUnit = $this->createTransUnitInstance($manager);
-        $transUnit->setKey('key.say_goodbye');
-
-        $translations = array(
-            'fr' => 'au revoir',
-            'en' => 'goodbye',
+        // add trans unit and translations for key "schedule.form.tab_title"
+        $translationsByClient = array(
+        		'Custom' => array(
+					           'en' => 'Times Custom'
+					        ),
+        		'CanalTP' => array(
+		        			   'fr' => 'Horaires',
+		        			   'en' => 'Times',
+		        			   'de' => 'Fahrpläne',
+		        			   'br'	=> 'Eurioù'
+        					)
         );
 
-        foreach ($translations as $locale => $content) {
-            $translation = $this->createTranslationInstance($manager);
-            $translation->setLocale($locale);
-            $translation->setContent($content);
-            $translation->setFile($files['messages'][$locale]);
+    	foreach ($translationsByClient as $client => $translations) {
+			// trans unit creation
+			$transUnit = $this->createTransUnitInstance($manager);
+			$transUnit->setKey('schedule.form.tab_title');
+			$transUnit->setDomain('messages');
+			$transUnit->setClient($client);
 
-            $transUnit->addTranslation($translation);
-        }
+			// translations creation
+	        foreach ($translations as $locale => $content) {
+	            $translation = $this->createTranslationInstance($manager);
+	            $translation->setLocale($locale);
+	            $translation->setContent($content);
+	            $translation->setFile($files['messages'][$locale]);	
+	            $transUnit->addTranslation($translation);
+	        } 
 
-        $manager->persist($transUnit);
-        $manager->flush();
-
-
-        // add translations for "key.say_wtf"
-        $transUnit = $this->createTransUnitInstance($manager);
-        $transUnit->setKey('key.say_wtf');
-
-        $translations = array(
-            'fr' => 'c\'est quoi ce bordel !?!',
-            'en' => 'what the fuck !?!',
-        );
-
-        foreach ($translations as $locale => $content) {
-            $translation = $this->createTranslationInstance($manager);
-            $translation->setLocale($locale);
-            $translation->setContent($content);
-            $translation->setFile($files['messages'][$locale]);
-
-            $transUnit->addTranslation($translation);
-        }
-
-        $manager->persist($transUnit);
-        $manager->flush();
+	        $manager->persist($transUnit);
+	        $manager->flush();
+		}
     }
 
     /**

@@ -85,8 +85,24 @@ class TranslatorTest extends BaseUnitTestCase
     public function testRemoveLocalesCacheFiles()
     {
         $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
-        $this->createFakeCacheFiles($cacheDir);
+        $this->createLocalesCacheFiles($cacheDir);
         $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir);
+        $this->removeLocalesCacheFiles('CanalTP', $cacheDir, $translator);
+
+        $customCacheDir = __DIR__.'/../../../vendor/custom/';
+        $kernel = $this->getMock('AppKernel', array('getCustomCacheDir'));
+        $kernel->expects($this->once())
+            ->method('getCustomCacheDir')
+            ->will($this->returnValue($customCacheDir));
+        $customCacheDir .= 'test_cache_dir';
+        $this->createLocalesCacheFiles($customCacheDir);
+        $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir, $kernel);
+        $this->removeLocalesCacheFiles('custom', $customCacheDir, $translator);
+    }
+
+    protected function createLocalesCacheFiles($cacheDir)
+    {
+        $this->createFakeCacheFiles($cacheDir);
 
         $this->assertTrue(file_exists($cacheDir.'/database.resources.php'));
         $this->assertTrue(file_exists($cacheDir.'/database.resources.php.meta'));
@@ -96,8 +112,11 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php.meta'));
+    }
 
-        $translator->removeLocalesCacheFiles(array('fr', 'en'));
+    protected function removeLocalesCacheFiles($client, $cacheDir, $translator)
+    {
+        $translator->removeLocalesCacheFiles($client, array('fr', 'en'));
 
         $this->assertFalse(file_exists($cacheDir.'/database.resources.php'));
         $this->assertFalse(file_exists($cacheDir.'/database.resources.php.meta'));
@@ -109,7 +128,7 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php.meta'));
     }
 
-    protected function createTranslator($em, $cacheDir)
+    protected function createTranslator($em, $cacheDir, $kernel=null)
     {
         $listener = new GetDatabaseResourcesListener($this->getORMStorage($em), 'xxxxx');
 
@@ -121,6 +140,9 @@ class TranslatorTest extends BaseUnitTestCase
 
         $container = new Container();
         $container->set('event_dispatcher', $dispatcher);
+        if ($kernel) {
+            $container->set('kernel', $kernel);
+        }
         $container->compile();
 
         $loaderIds = array();
@@ -134,7 +156,7 @@ class TranslatorTest extends BaseUnitTestCase
     protected function createFakeCacheFiles($cacheDir)
     {
         if(!is_dir($cacheDir)) {
-            mkdir($cacheDir);
+            mkdir($cacheDir, '0777', true);
         }
 
         touch($cacheDir.'/catalogue.fr.php');

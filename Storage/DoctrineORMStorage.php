@@ -103,7 +103,7 @@ class DoctrineORMStorage implements StorageInterface
     {
         return $this->getTransUnitRepository()->getAllClients();
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -158,6 +158,32 @@ class DoctrineORMStorage implements StorageInterface
     public function getTransUnitsByLocaleAndDomain($locale, $domain)
     {
         return $this->getTransUnitRepository()->getAllByLocaleAndDomain($locale, $domain);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTransUnitsByLocaleAndDomainAndClient($locale, $domain, $client) {
+        $trads = array();
+        $dbTrads = $this->getTransUnitRepository()->getAllByLocaleAndDomainAndClient($locale, $domain, $client);
+        $nbTrads = count($dbTrads);
+        for ($i=0; $i<$nbTrads; $i++) {
+            $current = $dbTrads[$i];
+            if ($i<$nbTrads-1) {
+                $next = $dbTrads[$i+1];
+                if ($current['key'] == $next['key']) {
+                    $override = ($current['client'] === $client)? $current : $next;
+                    $i++;
+                } else {
+                    $override = $current;
+                }
+                $trads[] = $override;
+            }
+            else
+              $trads[] = $current;
+        }
+        return $trads;
+
     }
 
     /**

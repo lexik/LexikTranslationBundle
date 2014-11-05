@@ -102,7 +102,7 @@ interface StorageInterface
      * @return TransUnitInterface
      */
     public function getTransUnitByKeyAndDomainAndClient($key, $domain, $client, $bundle);
-    
+
     /**
      * Returns all trans unit with translations for the given domain and locale.
      *
@@ -111,6 +111,16 @@ interface StorageInterface
      * @return array
      */
     public function getTransUnitsByLocaleAndDomain($locale, $domain);
+
+    /**
+     * Returns all trans unit with translations for the given domain and locale and client.
+     *
+     * @param string $locale
+     * @param string $domain
+     * @param string $client
+     * @return array
+     */
+    public function getTransUnitsByLocaleAndDomainAndClient($locale, $domain, $client);
 
     /**
      * Returns some trans units with their translations.

@@ -20,8 +20,13 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $em = $this->getMockSqliteEntityManager();
         $this->createSchema($em);
         $this->loadFixtures($em);
+        
+        $appKernel = $this->getMock('AppKernel', array('getFolderClient'));
+        $appKernel->expects($this->any())
+		          ->method('getFolderClient')
+		          ->will($this->returnValue('Custom'));
 
-        $loader = new DatabaseLoader($this->getORMStorage($em), 'Lexik\\Bundle\\TranslationBundle\\Entity\\TransUnit');
+        $loader = new DatabaseLoader($this->getORMStorage($em), $appKernel);
 
         $catalogue = $loader->load(null, 'it');
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
@@ -31,22 +36,12 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $catalogue = $loader->load(null, 'fr');
         $expectedTranslations = array(
             'messages' => array(
-                'key.say_goodbye' => 'au revoir',
-                'key.say_wtf' => 'c\'est quoi ce bordel !?!',
-            ),
+                'journey.form.tab_title' => 'Itinéraire Custom',
+            	'schedule.form.tab_title' => 'Horaires'
+            )
         );
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
-        $this->assertEquals($expectedTranslations, $catalogue->all());
         $this->assertEquals('fr', $catalogue->getLocale());
-
-        $catalogue = $loader->load(null, 'en', 'superTranslations');
-        $expectedTranslations = array(
-            'superTranslations' => array(
-                'key.say_hello' => 'hello',
-            ),
-        );
-        $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
         $this->assertEquals($expectedTranslations, $catalogue->all());
-        $this->assertEquals('en', $catalogue->getLocale());
     }
 }
