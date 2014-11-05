@@ -1,9 +1,14 @@
 {# Raw block to display the AngularJS template #}
+{% set translator_mode = is_granted('ROLE_TRANSLATOR') %}
 {% verbatim %}
 <div id="translation-grid" ng-app="translationApp" ng-controller="TranslationCtrl">
     <select ng-model="client" ng-options="client for client in clients" ng-change="update()">
-        <option value="">-- Filtrer par client --</option>
-    </select>
+         <option value="">-- Filtrer par client --</option>
+     </select>
+     <select ng-model="empty" ng-change="update()">
+         <option value="">Tout afficher</option>
+         <option value="true">Traductions manquantes uniquement</option>
+     </select>
     <div class="row margin-row">
         <div class="col-md-12">
             <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm">
@@ -41,7 +46,7 @@
                     <tr>
                         <th ng-repeat="column in columns"
                             ng-show="column.visible"
-                            ng-click="sortGrid(column)"
+                            ng-click="sortGrid(column)" 
                             class="text-center sortable col-{{ column.index }}">
                             {{ column.title }}
                             &nbsp;
@@ -79,7 +84,7 @@
     </script>
 
     <script type="text/ng-template" id="editable-row-template">
-        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()">
+        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()" {% endverbatim %}{% if translator_mode %}{% verbatim %}ng-init="column.edit=column.index!='fr'"{% endverbatim %}{% endif %}{% verbatim %}>
             <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
             <div ng-switch on="editType">
                 <textarea ng-switch-when="textarea"

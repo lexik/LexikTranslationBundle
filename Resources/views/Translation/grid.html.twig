@@ -14,10 +14,12 @@
                 <h1>
                     {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
                     <div class="pull-right">
-                        <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
-                        </a>
+                        {% if not is_granted('ROLE_TRANSLATOR') %}
+                            <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+                            </a>
+                        {% endif %}
                     </div>
                 </h1>
             </div>

@@ -91,14 +91,14 @@ class DataGridFormatter
         if (is_object($transUnit)) {
             $transUnit = $this->toArray($transUnit);
         } elseif ('mongodb' == $this->storage) {
-            $transUnit['id'] = $transUnit['_id']->{'$id'};
+            $transUnit['id'] = $transUnit['id']->{'$id'};
         }
 
         $formatted = array(
-            '_id'     => $transUnit['id'],
-            '_domain' => $transUnit['domain'],
-            '_key'    => $transUnit['key'],
-            '_client' => $transUnit['client']
+            'id'     => $transUnit['id'],
+            'domain' => $transUnit['domain'],
+            'key'    => $transUnit['key'],
+            'client' => $transUnit['client']
         );
 
         // add locales in the same order as in managed_locales param

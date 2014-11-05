@@ -125,32 +125,26 @@ class TransUnitRepository extends EntityRepository
         $order = isset($filters['sord']) ? $filters['sord'] : 'ASC';
 
         $builder = $this->createQueryBuilder('tu')
-            ->select('tu.id');
+            ->leftJoin('tu.translations', 'te')
+            ->select('tu, te');
 
         $this->addTransUnitFilters($builder, $locales, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
-
-        $ids = $builder->orderBy(sprintf('tu.%s', $sortColumn), $order)
-            ->setFirstResult($rows * ($page-1))
-            ->setMaxResults($rows)
-            ->getQuery()
-            ->getResult('SingleColumnArrayHydrator');
-
-        $transUnits = array();
-
-        if (count($ids) > 0) {
-            $qb = $this->createQueryBuilder('tu');
-
-            $transUnits = $qb->select('tu, te')
-                ->leftJoin('tu.translations', 'te')
-                ->andWhere($qb->expr()->in('tu.id', $ids))
-                ->andWhere($qb->expr()->in('te.locale', $locales))
-                ->orderBy(sprintf('tu.%s', $sortColumn), $order)
-                ->getQuery()
-                ->getArrayResult();
+        
+        if (is_array($locales) && in_array($sortColumn, $locales)) {
+            $builder->addSelect('(CASE WHEN te.locale like :locale THEN 0 ELSE 1 END) AS HIDDEN sortlocale ')
+                ->setParameter('locale', $sortColumn)
+                ->orderBy('sortlocale', 'ASC')
+                ->addOrderBy(sprintf('te.%s', 'content'), $order);
+        } else {
+            $builder->orderBy(sprintf('tu.%s', $sortColumn), $order);
         }
+        
+        $transUnits = $builder->andWhere($builder->expr()->in('te.locale', $locales))
+            ->getQuery()
+            ->getArrayResult();
 
-        return $transUnits;
+        return array_slice(is_array($transUnits) ? $transUnits : array(), ($page-1) * $rows, $rows);
     }
 
     /**
@@ -223,11 +217,37 @@ class TransUnitRepository extends EntityRepository
                 $builder->andWhere($builder->expr()->like('tu.key', ':key'))
                     ->setParameter('key', sprintf('%%%s%%', $filters['key']));
             }
-
+            
             if (!empty($filters['client'])) {
                 $builder->andWhere($builder->expr()->like('tu.client', ':client'))
                     ->setParameter('client', sprintf('%%%s%%', $filters['client']));
             }
+            
+            if (!empty($filters['empty'])) {
+                $builder = $this->addEmptyTranslationFilter($builder, $locales);
+            }
+        }
+    }
+
+    /**
+     * Add filter to get only empty translations.
+     *
+     * @param QueryBuilder $builder
+     * @param array        $locales
+     */
+    protected function addEmptyTranslationFilter(QueryBuilder $builder, array $locales)
+    {
+        $qb = $this->createQueryBuilder('tu');
+        $qb->select('tu.id')
+            ->innerJoin('tu.translations', 't')
+            ->where($qb->expr()->gt($qb->expr()->length('t.content'), 0))
+            ->groupBy('tu.id')
+            ->having($qb->expr()->lt('count(t.id)', count($locales)));
+
+        $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
+
+        if (count($ids) > 0) {
+            $builder->andWhere($builder->expr()->in('tu.id', $ids));
         }
     }
 

@@ -34,14 +34,14 @@ app.controller('TranslationCtrl', [
 
         // columns definition
         $scope.columns = [
-            { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
-            { title: 'Client', index: '_client', edit: false, filter: {'_client': 'text'}, sortable: true, visible: true },
-            { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
-            { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
+            { title: 'ID', index: 'id', edit: false, filter: false, sortable: true, visible: true },
+            { title: 'Client', index: 'client', edit: false, filter: {'client': 'text'}, sortable: true, visible: true },
+            { title: translationCfg.label.domain, index: 'domain', edit: false, filter: {'domain': 'text'}, sortable: true, visible: true },
+            { title: translationCfg.label.key, index: 'key', edit: false, filter: {'key': 'text'}, sortable: true, visible: true }
         ];
 
         for (var key in $scope.locales) {
-            var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: false, visible: true };
+            var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: true, visible: true };
             columnDef['filter'][$scope.locales[key]] = 'text';
 
             $scope.columns.push(columnDef);
@@ -90,7 +90,7 @@ app.controller('TranslationCtrl', [
             }
         };
 
-        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
+        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'id': 'asc'} };
 
         $scope.tableParams = new ngTableParams(defaultOptions, $scope.tableData);
 
@@ -109,7 +109,7 @@ app.controller('TranslationCtrl', [
 
         // invalidate the cache
         $scope.invalidateCache = function () {
-            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}, params: {'client': $scope.client}})
+            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}, params: {'client': $scope.client, 'empty': $scope.empty}})
                 .success(function (responseData) {
                     sharedMessage.set('text-success', 'ok-circle', responseData.message);
                 }
@@ -118,7 +118,7 @@ app.controller('TranslationCtrl', [
         
         // update the select
         $scope.update = function() {
-            var defaultOptions = { page: 1, count: 20, filter: {'client': $scope.client}, sort: {'_id': 'asc'} };
+            var defaultOptions = { page: 1, count: 20, filter: {'client': $scope.client, 'empty': $scope.empty}, sort: {'id': 'asc'} };
             $scope.tableParams.parameters(defaultOptions);
         };
 }]);
@@ -146,7 +146,7 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                     $scope.edit = false;
 
                 } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
-                    var url = translationCfg.url.update.replace('-id-', $scope.translation._id);
+                    var url = translationCfg.url.update.replace('-id-', $scope.translation.id);
 
                     var parameters = [];
                     for (var name in $scope.translation) {
