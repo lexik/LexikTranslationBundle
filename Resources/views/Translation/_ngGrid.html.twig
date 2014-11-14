@@ -84,7 +84,7 @@
     </script>
 
     <script type="text/ng-template" id="editable-row-template">
-        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()" {% endverbatim %}{% if translator_mode %}{% verbatim %}ng-init="column.edit=column.index!='fr'"{% endverbatim %}{% endif %}{% verbatim %}>
+        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()" {% endverbatim %}{% if translator_mode %}{% verbatim %}ng-init="column.edit=(['en','br','de','nl'].indexOf(column.index) > -1)"{% endverbatim %}{% endif %}{% verbatim %}>
             <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
             <div ng-switch on="editType">
                 <textarea ng-switch-when="textarea"
