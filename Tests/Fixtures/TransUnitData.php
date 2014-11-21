@@ -21,8 +21,8 @@ class TransUnitData implements FixtureInterface
         // add files
         $files = array();
         $domains = array(
-            'messages' => array('fr', 'en', 'br', 'de'),
-        	'otherMessages' => array('fr', 'en'),
+            'superTranslations' => array('fr', 'en', 'de'),
+            'messages' => array('fr', 'en'),
         );
 
         foreach ($domains as $name => $locales) {
@@ -41,25 +41,25 @@ class TransUnitData implements FixtureInterface
 
         $manager->flush();
 
-        // add trans unit and translations for key "journey.form.tab_title"
+        // add trans unit and translations for key "key.say_hello"
         $translationsByClient = array(
         		'Custom' => array(
-					           'fr' => 'Itinéraire Custom',
-					           'en' => 'Itinerary'
+					           'fr' => 'Salut Custom',
+					           'en' => 'Hello Custom',
+        				       'de' => 'Heil Custom'
 					        ),
         		'CanalTP' => array(
-		        			   'fr' => 'Itinéraire',
-		        			   'en' => 'Itinerary',
-		        			   'de' => 'Verbindung',
-		        			   'br'	=> 'Hent'
+		        			   'fr' => 'Salut',
+		        			   'en' => 'Hello',
+		        			   'de' => 'Heil'
         					)
         );
 
 		foreach ($translationsByClient as $client => $translations) {
 			// trans unit creation
 			$transUnit = $this->createTransUnitInstance($manager);
-			$transUnit->setKey('journey.form.tab_title');
-			$transUnit->setDomain('messages');
+			$transUnit->setKey('key.say_hello');
+			$transUnit->setDomain('superTranslations');
 			$transUnit->setClient($client);
 
 			// translations creation
@@ -67,7 +67,7 @@ class TransUnitData implements FixtureInterface
 	            $translation = $this->createTranslationInstance($manager);
 	            $translation->setLocale($locale);
 	            $translation->setContent($content);
-	            $translation->setFile($files['messages'][$locale]);	
+	            $translation->setFile($files['superTranslations'][$locale]);	
 	            $transUnit->addTranslation($translation);
 	        }
 	        
@@ -76,23 +76,22 @@ class TransUnitData implements FixtureInterface
 		}        
 
 
-        // add trans unit and translations for key "schedule.form.tab_title"
+        // add trans unit and translations for key "key.say_goodbye"
         $translationsByClient = array(
         		'Custom' => array(
-					           'en' => 'Times Custom'
+					           'fr' => 'Au revoir Custom',
+            				   'en' => 'Goodbye Custom'
 					        ),
         		'CanalTP' => array(
-		        			   'fr' => 'Horaires',
-		        			   'en' => 'Times',
-		        			   'de' => 'Fahrpläne',
-		        			   'br'	=> 'Eurioù'
+		        			   'fr' => 'Au revoir Custom',
+		        			   'en' => 'Goodbye Custom'
         					)
         );
 
     	foreach ($translationsByClient as $client => $translations) {
 			// trans unit creation
 			$transUnit = $this->createTransUnitInstance($manager);
-			$transUnit->setKey('schedule.form.tab_title');
+			$transUnit->setKey('key.say_goodbye');
 			$transUnit->setDomain('messages');
 			$transUnit->setClient($client);
 
@@ -107,6 +106,38 @@ class TransUnitData implements FixtureInterface
 
 	        $manager->persist($transUnit);
 	        $manager->flush();
+		}
+		
+		// add trans unit and translations for key "key.say_wtf"
+		$translationsByClient = array(
+				'Custom' => array(
+						'fr' => 'C\'est quoi ce bordel !?! Custom',
+						'en' => 'What the fuck !?!'
+				),
+				'CanalTP' => array(
+						'fr' => 'C\'est quoi ce bordel !?!',
+						'en' => 'What the fuck !?! Custom'
+				)
+		);
+		
+		foreach ($translationsByClient as $client => $translations) {
+			// trans unit creation
+			$transUnit = $this->createTransUnitInstance($manager);
+			$transUnit->setKey('key.say_wtf');
+			$transUnit->setDomain('messages');
+			$transUnit->setClient($client);
+		
+			// translations creation
+			foreach ($translations as $locale => $content) {
+				$translation = $this->createTranslationInstance($manager);
+				$translation->setLocale($locale);
+				$translation->setContent($content);
+				$translation->setFile($files['messages'][$locale]);
+				$transUnit->addTranslation($translation);
+			}
+		
+			$manager->persist($transUnit);
+			$manager->flush();
 		}
     }
 
