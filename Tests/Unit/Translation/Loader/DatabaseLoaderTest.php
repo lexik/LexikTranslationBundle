@@ -41,8 +41,17 @@ class DatabaseLoaderTest extends BaseUnitTestCase
             )
         );
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
-        $this->assertEquals('fr', $catalogue->getLocale());
+        $this->assertEquals('fr', $catalogue->getLocale());        
+        $this->assertEquals($expectedTranslations, $catalogue->all());
         
+        $catalogue = $loader->load(null, 'de', 'superTranslations');
+        $expectedTranslations = array(
+        		'superTranslations' => array(
+        				'key.say_hello' => 'Heil Custom'
+        		)
+        );
+        $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
+        $this->assertEquals('de', $catalogue->getLocale());
         $this->assertEquals($expectedTranslations, $catalogue->all());
     }
 }

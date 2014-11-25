@@ -35,7 +35,8 @@ class TranslatorTest extends BaseUnitTestCase
 
         $expected = array(
             'de' => array(
-                array('database', 'DB', 'superTranslations'),
+            	array('database', 'DB', 'messages'),
+            	array('database', 'DB', 'superTranslations'),
             ),
             'en' => array(
                 array('database', 'DB', 'messages'),

@@ -25,8 +25,9 @@ class FileRepositoryTest extends BaseUnitTestCase
         $result = $repository->findForLocalesAndDomains(array('de'), array());
         $expected = array(
             'Resources/translations/superTranslations.de.yml',
+        	'Resources/translations/messages.de.yml',
         );
-        $this->assertEquals(1, count($result));
+        $this->assertEquals(2, count($result));
         $this->assertFilesPath($expected, $result);
 
         $result = $repository->findForLocalesAndDomains(array('fr'), array());
@@ -41,16 +42,18 @@ class FileRepositoryTest extends BaseUnitTestCase
         $expected = array(
             'Resources/translations/messages.fr.yml',
             'Resources/translations/messages.en.yml',
+        	'Resources/translations/messages.de.yml',
         );
-        $this->assertEquals(2, count($result));
+        $this->assertEquals(3, count($result));
 
         $result = $repository->findForLocalesAndDomains(array('en', 'de'), array('messages', 'superTranslations'));
         $expected = array(
             'Resources/translations/superTranslations.en.yml',
             'Resources/translations/superTranslations.de.yml',
             'Resources/translations/messages.en.yml',
+        	'Resources/translations/messages.de.yml',
         );
-        $this->assertEquals(3, count($result));
+        $this->assertEquals(4, count($result));
         $this->assertFilesPath($expected, $result);
     }
 
