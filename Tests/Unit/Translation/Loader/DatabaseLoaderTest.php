@@ -36,12 +36,22 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $catalogue = $loader->load(null, 'fr');
         $expectedTranslations = array(
             'messages' => array(
-                'journey.form.tab_title' => 'Itinéraire Custom',
-            	'schedule.form.tab_title' => 'Horaires'
+                'key.say_goodbye' => 'Au revoir Custom',
+            	'key.say_wtf' => 'C\'est quoi ce bordel !?! Custom'
             )
         );
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
-        $this->assertEquals('fr', $catalogue->getLocale());
+        $this->assertEquals('fr', $catalogue->getLocale());        
+        $this->assertEquals($expectedTranslations, $catalogue->all());
+        
+        $catalogue = $loader->load(null, 'de', 'superTranslations');
+        $expectedTranslations = array(
+        		'superTranslations' => array(
+        				'key.say_hello' => 'Heil Custom'
+        		)
+        );
+        $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);
+        $this->assertEquals('de', $catalogue->getLocale());
         $this->assertEquals($expectedTranslations, $catalogue->all());
     }
 }
