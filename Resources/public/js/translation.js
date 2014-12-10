@@ -18,7 +18,7 @@ app.factory('sharedMessage', function () {
     };
 });
 
-app.controller('TranslationCtrl', [
+app.controller('TranslationController', [
     '$scope', '$http', '$timeout', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage',
     function ($scope, $http, $timeout, $location, $anchorScroll, ngTableParams, sharedMessage) {
 
