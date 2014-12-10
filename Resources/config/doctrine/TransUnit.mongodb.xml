@@ -8,29 +8,12 @@
               collection="lexik_trans_unit"
               repository-class="Lexik\Bundle\TranslationBundle\Document\TransUnitRepository">
 
-        <indexes>
-            <index>
-                <option name="unique" value="true" />
-                <option name="safe" value="true" />
-                <key name="key" order="asc" />
-                <key name="domain" order="asc" />
-            </index>
-        </indexes>
-
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
-
+        
         <field fieldName="id" name="id" id="true" strategy="AUTO" />
-
-        <field fieldName="key" name="key" type="string" />
-
-        <field fieldName="domain" name="domain" type="string" />
-
-        <field fieldName="createdAt" name="created_at" type="timestamp" />
-
-        <field fieldName="updatedAt" name="updated_at" type="timestamp" />
 
         <embed-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" strategy="set" />
         

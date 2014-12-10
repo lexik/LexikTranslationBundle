@@ -17,16 +17,8 @@
         </lifecycle-callbacks>
         
         <id name="id" type="integer" column="id">
-            <generator strategy="AUTO"/>
+            <generator strategy="IDENTITY"/>
         </id>
-        
-        <field name="locale" column="locale" type="string" length="10" />
-        
-        <field name="content" column="content" type="text" />
-        
-        <field name="createdAt" column="created_at" type="datetime" nullable="true" />
-        
-        <field name="updatedAt" column="updated_at" type="datetime" nullable="true" />
         
         <many-to-one field="file" target-entity="Lexik\Bundle\TranslationBundle\Entity\File" inversed-by="translations">
             <join-column name="file_id" referenced-column-name="id" />
