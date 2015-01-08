@@ -72,7 +72,7 @@ class YamlExporter implements ExporterInterface
     }
 
 	/**
-     * 
+     *
      *
      * @param array $array
      * @param $value
