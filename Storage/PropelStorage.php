@@ -2,10 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Lexik\Bundle\TranslationBundle\Propel\FilePeer;
 use Lexik\Bundle\TranslationBundle\Propel\FileQuery;
 use Lexik\Bundle\TranslationBundle\Propel\FileRepository;
-use Lexik\Bundle\TranslationBundle\Propel\TransUnitPeer;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
 

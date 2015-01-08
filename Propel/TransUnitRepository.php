@@ -105,7 +105,7 @@ class TransUnitRepository
             ->select('Id')
         ;
 
-        $this->addTransUnitFilters($query, $locales, $filters);
+        $this->addTransUnitFilters($query, $filters);
         $this->addTranslationFilter($query, $locales, $filters);
 
         $ids = $query
@@ -149,7 +149,7 @@ class TransUnitRepository
             ->distinct()
         ;
 
-        $this->addTransUnitFilters($query, $locales, $filters);
+        $this->addTransUnitFilters($query, $filters);
         $this->addTranslationFilter($query, $locales, $filters);
 
         return $query->count($this->getConnection());
@@ -192,10 +192,9 @@ class TransUnitRepository
      * Add conditions according to given filters.
      *
      * @param TransUnitQuery    $query
-     * @param array             $locales
      * @param array             $filters
      */
-    protected function addTransUnitFilters(TransUnitQuery $query, array $locales = null, array $filters = null)
+    protected function addTransUnitFilters(TransUnitQuery $query, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['_domain'])) {

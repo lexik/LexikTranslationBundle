@@ -72,7 +72,7 @@ FCT;
         if (isset($results[0], $results[0]['couples'])) {
             $couples = $results[0]['couples'];
 
-            usort($couples, function($a, $b) { // @todo remove usort()
+            usort($couples, function($a, $b) {
                 $result = strcmp($a['locale'], $b['locale']);
                 if (0 === $result) {
                     $result = strcmp($a['domain'], $b['domain']);
@@ -136,7 +136,7 @@ FCT;
             ->hydrate(false)
             ->select('id');
 
-        $this->addTransUnitFilters($builder, $locales, $filters);
+        $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $results = $builder->sort($sortColumn, $order)
@@ -152,25 +152,27 @@ FCT;
 
         $transUnits = array();
 
-        if (count($ids) > 0) {
-            $qb = $this->createQueryBuilder();
+        if (count($ids) < 1) {
+            return $transUnits;
+        }
 
-            $results = $qb->hydrate(false)
-                ->field('id')->in($ids)
-                ->field('translations.locale')->in($locales)
-                ->sort(array($sortColumn => $order, 'translations.locale' => 'asc'))
-                ->getQuery()
-                ->execute();
+        $results = $this->createQueryBuilder()
+            ->hydrate(false)
+            ->field('id')->in($ids)
+            ->field('translations.locale')->in($locales)
+            ->sort(array($sortColumn => $order, 'translations.locale' => 'asc'))
+            ->getQuery()
+            ->execute();
 
-            foreach ($results as $item) {
-                for ($i=0; $i<count($item['translations']); $i++) {
-                    if (!in_array($item['translations'][$i]['locale'], $locales)) {
-                        unset($item['translations'][$i]);
-                    }
+        foreach ($results as $item) {
+            $end = count($item['translations']);
+            for ($i=0; $i<$end; $i++) {
+                if (!in_array($item['translations'][$i]['locale'], $locales)) {
+                    unset($item['translations'][$i]);
                 }
-                sort($item['translations']);
-                $transUnits[] = $item;
             }
+            sort($item['translations']);
+            $transUnits[] = $item;
         }
 
         return $transUnits;
@@ -187,7 +189,7 @@ FCT;
     {
         $builder = $this->createQueryBuilder();
 
-        $this->addTransUnitFilters($builder, $locales, $filters);
+        $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $count = $builder->count()
@@ -218,7 +220,7 @@ FCT;
         foreach ($results as $result) {
             $content = null;
             $i = 0;
-            while ($i<count($result['translations']) && null == $content) {
+            while ($i<count($result['translations']) && null === $content) {
                 if ($file->getLocale() == $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
                         $updated = ($result['translations'][$i]['created_at']->sec < $result['translations'][$i]['updated_at']->sec);
@@ -242,10 +244,9 @@ FCT;
      * Add conditions according to given filters.
      *
      * @param Builder $builder
-     * @param array   $locales
      * @param array   $filters
      */
-    protected function addTransUnitFilters(Builder $builder, array $locales = null,  array $filters = null)
+    protected function addTransUnitFilters(Builder $builder,  array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
 

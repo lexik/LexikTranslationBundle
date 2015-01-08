@@ -3,7 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -21,13 +21,14 @@ class RestController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param integer $id
+     *
      * @throws NotFoundHttpException
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function updateAction($id)
+    public function updateAction(Request $request, $id)
     {
-        $request = $this->getRequest();
-
         if (!$request->isMethod('PUT')) {
             throw $this->createNotFoundException('Invalid request method.');
         }

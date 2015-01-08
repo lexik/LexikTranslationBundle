@@ -52,8 +52,6 @@ class TransUnitRepository extends EntityRepository
     /**
      * Returns all trans unit with translations for the given domain and locale.
      *
-     * @param string $locale
-     * @param string $domain
      * @return array
      */
     public function getAllDomains()
@@ -86,7 +84,7 @@ class TransUnitRepository extends EntityRepository
         $builder = $this->createQueryBuilder('tu')
             ->select('tu.id');
 
-        $this->addTransUnitFilters($builder, $locales, $filters);
+        $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $ids = $builder->orderBy(sprintf('tu.%s', $sortColumn), $order)
@@ -126,7 +124,7 @@ class TransUnitRepository extends EntityRepository
         $builder = $this->createQueryBuilder('tu')
             ->select('COUNT(DISTINCT tu.id) AS number');
 
-        $this->addTransUnitFilters($builder, $locales, $filters);
+        $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
         return (int) $builder->getQuery()
@@ -167,10 +165,9 @@ class TransUnitRepository extends EntityRepository
      * Add conditions according to given filters.
      *
      * @param QueryBuilder $builder
-     * @param array        $locales
      * @param array        $filters
      */
-    protected function addTransUnitFilters(QueryBuilder $builder, array $locales = null, array $filters = null)
+    protected function addTransUnitFilters(QueryBuilder $builder, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {

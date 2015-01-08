@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Propel;
 
+use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Propel\om\BaseTransUnit;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
@@ -17,7 +18,7 @@ class TransUnit extends BaseTransUnit implements TransUnitInterface
      */
     public function filterNotBlankTranslations()
     {
-        return array_filter($this->getTranslations()->getArrayCopy(), function ($translation) {
+        return array_filter($this->getTranslations()->getArrayCopy(), function (TranslationInterface $translation) {
             $content = $translation->getContent();
 
             return !empty($content);

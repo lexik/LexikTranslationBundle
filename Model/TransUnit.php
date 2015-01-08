@@ -5,6 +5,8 @@ namespace Lexik\Bundle\TranslationBundle\Model;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,7 +36,7 @@ abstract class TransUnit
     protected $domain;
 
     /**
-     * @var Doctrine\Common\Collections\Collection
+     * @var \Doctrine\Common\Collections\Collection
      */
     protected $translations;
 
@@ -110,7 +112,7 @@ abstract class TransUnit
     /**
      * Add translations
      *
-     * @param Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
      */
     public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
     {
@@ -120,7 +122,7 @@ abstract class TransUnit
     /**
      * Remove translations
      *
-     * @param Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
      */
     public function removeTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
     {
@@ -130,7 +132,7 @@ abstract class TransUnit
     /**
      * Get translations
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTranslations()
     {
@@ -152,7 +154,7 @@ abstract class TransUnit
      * Return the content of translation for the given locale.
      *
      * @param string $locale
-     * @return Lexik\Bundle\TranslationBundle\Model\Translation
+     * @return \Lexik\Bundle\TranslationBundle\Model\Translation
      */
     public function getTranslation($locale)
     {
@@ -184,11 +186,11 @@ abstract class TransUnit
     /**
      * Return transaltions with  not blank content.
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function filterNotBlankTranslations()
     {
-        return $this->getTranslations()->filter(function ($translation) {
+        return $this->getTranslations()->filter(function (TranslationInterface $translation) {
             $content = $translation->getContent();
             return !empty($content);
         });

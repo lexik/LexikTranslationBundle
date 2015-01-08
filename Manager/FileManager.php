@@ -4,8 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 /**
  * Manager for translations files.
  *
@@ -110,7 +108,10 @@ class FileManager implements FileManagerInterface
 
         $filePath = str_replace(implode('/', $commonParts).'/', '', $filePath);
 
-        for ($i=count($commonParts); $i<count($rootDirParts); $i++) {
+        $nbCommonParts = count($commonParts);
+        $nbRootParts = count($rootDirParts);
+
+        for ($i=$nbCommonParts; $i<$nbRootParts; $i++) {
             $filePath = '../'.$filePath;
         }
 
