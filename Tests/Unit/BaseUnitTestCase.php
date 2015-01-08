@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
@@ -43,7 +44,9 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getORMStorage(\Doctrine\ORM\EntityManager $em)
     {
-        $storage = new DoctrineORMStorage($em, array(
+        $registryMock = $this->getDoctrineRegistryMock($em);
+
+        $storage = new DoctrineORMStorage($registryMock, 'default', array(
             'trans_unit'  => self::ENTITY_TRANS_UNIT_CLASS,
             'translation' => self::ENTITY_TRANSLATION_CLASS,
             'file'        => self::ENTITY_FILE_CLASS,
@@ -60,7 +63,9 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getMongoDBStorage(\Doctrine\ODM\MongoDB\DocumentManager $dm)
     {
-        $storage = new DoctrineMongoDBStorage($dm, array(
+        $registryMock = $this->getDoctrineRegistryMock($dm);
+
+        $storage = new DoctrineMongoDBStorage($registryMock, 'default', array(
             'trans_unit'  => self::DOCUMENT_TRANS_UNIT_CLASS,
             'translation' => self::DOCUMENT_TRANSLATION_CLASS,
             'file'        => self::DOCUMENT_FILE_CLASS,
@@ -127,6 +132,32 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     {
         $fixtures = new TransUnitDataPropel();
         $fixtures->load($con);
+    }
+
+    /**
+     * @param $om
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getDoctrineRegistryMock($om)
+    {
+        $registryMock = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->setConstructorArgs(array(
+                'registry',
+                array(),
+                array(),
+                'default',
+                'default',
+                'proxy'
+            ))
+            ->getMock();
+
+        $registryMock
+            ->expects($this->any())
+            ->method('getManager')
+            ->will($this->returnValue($om))
+        ;
+
+        return $registryMock;
     }
 
     /**

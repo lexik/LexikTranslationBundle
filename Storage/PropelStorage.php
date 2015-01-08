@@ -49,8 +49,8 @@ class PropelStorage implements StorageInterface
     /**
      * Constructor.
      *
-     * @param string        $connection
-     * @param array         $classes
+     * @param string $connectionName
+     * @param array  $classes
      */
     public function __construct($connectionName, array $classes)
     {
@@ -186,8 +186,8 @@ class PropelStorage implements StorageInterface
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
         $fields = array(
-            'Key' => $key,
-            'Domain'   => $domain,
+            'Key'    => $key,
+            'Domain' => $domain,
         );
 
         return TransUnitQuery::create()->findOneByArray($fields, $this->getConnection());
@@ -198,8 +198,7 @@ class PropelStorage implements StorageInterface
      */
     public function getTransUnitDomainsByLocale()
     {
-        if (!$this->isPropelReady())
-        {
+        if (!$this->isPropelReady()) {
             /*
              * This method is called during Symfony console init and will fail horribly if there is either no connection
              * (config not loaded yet) or no Propel base classes.

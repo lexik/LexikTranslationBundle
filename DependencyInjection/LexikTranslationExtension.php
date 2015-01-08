@@ -54,8 +54,8 @@ class LexikTranslationExtension extends Extension
      * Build the 'lexik_translation.translation_storage' service definition.
      *
      * @param ContainerBuilder $container
-     * @param string $storage
-     * @param string $objectManager
+     * @param string           $storage
+     * @param string           $objectManager
      * @throws \RuntimeException
      */
     protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager)
@@ -63,45 +63,38 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.storage.type', $storage);
 
         if ('orm' == $storage) {
-            if(isset($objectManager)){
-                $objectManagerReference = new Reference(sprintf('doctrine.orm.%s_entity_manager', $objectManager));
-            } else {
-                $objectManagerReference = new Reference('doctrine.orm.entity_manager');
-            }
+            $args = array(
+                new Reference('doctrine'),
+                (null === $objectManager) ? 'default' : $objectManager
+            );
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
 
         } else if ('mongodb' == $storage) {
-            if(isset($objectManager)){
-                $objectManagerReference = new Reference(sprintf('doctrine_mongodb.odm.%s_document_manager', $objectManager));
-            } else {
-                $objectManagerReference = new Reference('doctrine.odm.mongodb.document_manager');
-            }
+            $args = array(
+                new Reference('doctrine_mongodb'),
+                (null === $objectManager) ? 'default' : $objectManager
+            );
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
 
         } else if ('propel' == $storage) {
             // In the Propel case the object_manager setting is used for the connection name
-            if(isset($objectManager)){
-                $objectManagerReference = $objectManager;
-            } else {
-                $objectManagerReference = null;
-            }
+            $args = array($objectManager);
 
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
 
+        $args[] = array(
+            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
+            'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage)),
+        );
+
         $storageDefinition = new Definition();
         $storageDefinition->setClass(new Parameter(sprintf('lexik_translation.%s.translation_storage.class', $storage)));
-        $storageDefinition->setArguments(array(
-            $objectManagerReference,
-            array(
-                'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
-                'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
-                'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage)),
-            ),
-        ));
+        $storageDefinition->setArguments($args);
 
         $container->setDefinition('lexik_translation.translation_storage', $storageDefinition);
     }
