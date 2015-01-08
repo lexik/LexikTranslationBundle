@@ -93,7 +93,7 @@ class TransUnitManager implements TransUnitManagerInterface
             $translation->setLocale($locale);
             $translation->setContent($content);
 
-            if ($file != null) {
+            if ($file !== null) {
                 $translation->setFile($file);
             }
 
@@ -184,7 +184,7 @@ class TransUnitManager implements TransUnitManagerInterface
         }
 
         //if we found a file
-        if ($file!=null) {
+        if ($file !== null) {
             //make sure we got the correct file for this locale and domain
             $name = sprintf('%s.%s.%s', $file->getDomain(), $locale, $file->getExtention());
             $file = $this->fileManager->getFor($name, $this->kernelRootDir.DIRECTORY_SEPARATOR.$file->getPath());

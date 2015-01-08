@@ -191,7 +191,7 @@ class TransUnitRepository extends EntityRepository
      */
     protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
-        if (null != $locales) {
+        if (null !== $locales) {
             $qb = $this->createQueryBuilder('tu');
             $qb->select('DISTINCT tu.id')
                 ->leftJoin('tu.translations', 't')
@@ -214,8 +214,6 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Load custom hydrator.
-     *
-     * @todo to remove, this should be usefull only with sf2.0
      */
     protected function loadCustomHydrator()
     {

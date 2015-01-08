@@ -95,7 +95,7 @@ class TransUnitFormHandler implements FormHandlerInterface
                 foreach ($translations as $translation) {
                     if (!$translation->getFile()) {
                         $file = $this->fileManager->getFor(
-                            sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),  // @todo allow other format
+                            sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),
                             $this->rootDir.'/Resources/translations'
                         );
 

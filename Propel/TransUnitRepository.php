@@ -216,7 +216,7 @@ class TransUnitRepository
      */
     protected function addTranslationFilter(TransUnitQuery $query, array $locales = null, array $filters = null)
     {
-        if (null != $locales) {
+        if (null !== $locales) {
             $q = TransUnitQuery::create()
                 ->select('Id')
                 ->distinct()

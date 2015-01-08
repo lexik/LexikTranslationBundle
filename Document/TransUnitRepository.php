@@ -232,7 +232,7 @@ FCT;
                 $i++;
             }
 
-            if (null != $content) {
+            if (null !== $content) {
                 $translations[$result['key']] = $content;
             }
         }
@@ -269,7 +269,7 @@ FCT;
      */
     protected function addTranslationFilter(Builder $builder, array $locales = null,  array $filters = null)
     {
-        if (null != $locales) {
+        if (null !== $locales) {
             $qb = $this->createQueryBuilder()
                 ->hydrate(false)
                 ->distinct('id')
