@@ -16,8 +16,8 @@ services:
 
 env:
   - SYMFONY_VERSION=2.3.*
-  - SYMFONY_VERSION=2.4.*
   - SYMFONY_VERSION=2.5.*
+  - SYMFONY_VERSION=2.6.*
 
 before_script:
   - phpenv config-add travis-php.ini
@@ -26,5 +26,5 @@ before_script:
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
   - composer update --dev
-
+tra
 script: phpunit
