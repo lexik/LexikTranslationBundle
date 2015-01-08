@@ -26,5 +26,5 @@ before_script:
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
   - composer update --dev
-tra
+
 script: phpunit
