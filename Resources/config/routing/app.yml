@@ -1,0 +1,14 @@
+lexik_translation_grid:
+    pattern:      /grid
+    defaults:     { _controller: "LexikTranslationBundle:Translation:grid" }
+    requirements: { _method: GET }
+
+lexik_translation_new:
+    pattern:  /new
+    defaults: { _controller: "LexikTranslationBundle:Translation:new" }
+    requirements: { _method: GET|POST }
+
+lexik_translation_invalidate_cache:
+    pattern:  /invalidate-cache
+    defaults: { _controller: "LexikTranslationBundle:Translation:invalidateCache" }
+    requirements: { _method: GET }

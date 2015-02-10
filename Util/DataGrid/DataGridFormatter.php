@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
@@ -90,7 +90,7 @@ class DataGridFormatter
     {
         if (is_object($transUnit)) {
             $transUnit = $this->toArray($transUnit);
-        } elseif ('mongodb' == $this->storage) {
+        } elseif (StorageInterface::STORAGE_MONGODB == $this->storage) {
             $transUnit['id'] = $transUnit['_id']->{'$id'};
         }
 
