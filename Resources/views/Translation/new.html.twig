@@ -38,13 +38,15 @@
                 </div>
 
                 <div class="form-group">
-                    <a href="{{ path('lexik_translation_grid') }}" class="btn btn-link">
+                    <a href="{{ path('lexik_translation_grid') }}" class="btn btn-default">
                         <span class="glyphicon glyphicon-arrow-left"></span>
                         {{ 'translations.back_to_list'|trans({}, 'LexikTranslationBundle') }}
                     </a>
 
-                    {{ form_widget(form.save, { 'attr': {'id': 'trans-unit-submit', 'name': 'trans-unit-submit', 'class': 'btn btn-primary pull-right'} }) }}
-                    {{ form_widget(form.save_add, { 'attr': {'id': 'trans-unit-submit-2', 'name': 'trans-unit-submit-2', 'class': 'btn btn-primary pull-right'} }) }}
+                    <div class="btn-group pull-right">
+                        {{ form_widget(form.save, { 'attr': {'id': 'trans-unit-submit', 'name': 'trans-unit-submit', 'class': 'btn btn-primary'} }) }}
+                        {{ form_widget(form.save_add, { 'attr': {'id': 'trans-unit-submit-2', 'name': 'trans-unit-submit-2', 'class': 'btn btn-primary'} }) }}
+                    </div>
                 </div>
 
                 {{ form_end(form) }}

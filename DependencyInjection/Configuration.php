@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
+use Lexik\Bundle\TranslationBundle\Storage\AbstractDoctrineStorage;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -23,7 +24,11 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('lexik_translation');
 
-        $storages = array('orm', 'mongodb', 'propel');
+        $storages = array(
+            AbstractDoctrineStorage::STORAGE_ORM,
+            AbstractDoctrineStorage::STORAGE_MONGODB,
+            AbstractDoctrineStorage::STORAGE_PROPEL,
+        );
         $registrationTypes = array('all', 'files', 'database');
         $inputTypes = array('text', 'textarea');
 
@@ -60,7 +65,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('type')
                             ->cannotBeEmpty()
-                            ->defaultValue('orm')
+                            ->defaultValue(AbstractDoctrineStorage::STORAGE_ORM)
                             ->validate()
                                 ->ifNotInArray($storages)
                                 ->thenInvalid('The storage "%s" is not supported. Please use one of the following storage: '.implode(', ', $storages))

@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
+use Lexik\Bundle\TranslationBundle\Storage\AbstractDoctrineStorage;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\DirectoryResource;
@@ -62,7 +63,7 @@ class LexikTranslationExtension extends Extension
     {
         $container->setParameter('lexik_translation.storage.type', $storage);
 
-        if ('orm' == $storage) {
+        if (AbstractDoctrineStorage::STORAGE_ORM == $storage) {
             $args = array(
                 new Reference('doctrine'),
                 (null === $objectManager) ? 'default' : $objectManager
@@ -70,7 +71,7 @@ class LexikTranslationExtension extends Extension
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
 
-        } else if ('mongodb' == $storage) {
+        } elseif (AbstractDoctrineStorage::STORAGE_MONGODB == $storage) {
             $args = array(
                 new Reference('doctrine_mongodb'),
                 (null === $objectManager) ? 'default' : $objectManager
@@ -78,7 +79,7 @@ class LexikTranslationExtension extends Extension
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
 
-        } else if ('propel' == $storage) {
+        } elseif (AbstractDoctrineStorage::STORAGE_PROPEL == $storage) {
             // In the Propel case the object_manager setting is used for the connection name
             $args = array($objectManager);
 

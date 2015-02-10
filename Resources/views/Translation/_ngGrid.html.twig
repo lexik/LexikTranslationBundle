@@ -11,15 +11,25 @@
                 <span class="glyphicon glyphicon-refresh"></span>
                 {{ invalidateCacheBtnLabel }}
             </a>
-            <div ng-show="saveMsg.content != ''" class="pull-right {{ saveMsg.css }}">
-                <span class="glyphicon glyphicon-{{ saveMsg.icon }}"></span>
-                <span>{{ saveMsg.content }}</span>
+            <div ng-show="sharedMsg.content != ''" class="pull-right label label-{{ sharedMsg.css }}">
+                <span>
+                    <i class="glyphicon glyphicon-{{ sharedMsg.icon }}"></i>
+                    {{ sharedMsg.content }}
+                </span>
             </div>
         </div>
     </div>
 
     <div ng-show="hideColSelector" class="row">
         <div class="col-md-12">
+            <ul class="list-unstyled list-inline locales-list">
+                <li class="locale">
+                    <label for="toggle-all-columns" class="locale">
+                        <input type="checkbox" id="toggle-all-columns" ng-model="areAllColumnsSelected" ng-checked="areAllColumnsSelected" ng-click="toggleAllColumns()"/>
+                        toggleAllColumns
+                    </label>
+                </li>
+            </ul>
             <ul class="list-unstyled list-inline locales-list">
                 <li ng-repeat="column in columns" class="locale">
                     <label for="toggle-{{ column.index }}">

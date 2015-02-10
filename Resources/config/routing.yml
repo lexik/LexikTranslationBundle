@@ -1,10 +1,10 @@
 lexik_translation_list:
-    pattern:      /translations
+    pattern:      /list
     defaults:     { _controller: "LexikTranslationBundle:Rest:list" }
     requirements: { _method: GET }
 
 lexik_translation_update:
-    pattern:      /translations/{id}
+    pattern:      /update/{id}
     defaults:     { _controller: "LexikTranslationBundle:Rest:update" }
     requirements: { _method: PUT }
 
@@ -16,7 +16,9 @@ lexik_translation_grid:
 lexik_translation_new:
     pattern:  /new
     defaults: { _controller: "LexikTranslationBundle:Translation:new" }
+    requirements: { _method: GET|POST }
 
 lexik_translation_invalidate_cache:
     pattern:  /invalidate-cache
     defaults: { _controller: "LexikTranslationBundle:Translation:invalidateCache" }
+    requirements: { _method: GET }

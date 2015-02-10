@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 
+use Lexik\Bundle\TranslationBundle\Storage\AbstractDoctrineStorage;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -25,14 +26,14 @@ class RegisterMappingPass implements CompilerPassInterface
         $ormDriverId     = sprintf('doctrine.orm.%s_metadata_driver', $name);
         $mongodbDriverId = sprintf('doctrine_mongodb.odm.%s_metadata_driver', $name);
 
-        if ('orm' == $storage['type'] && $container->hasDefinition($ormDriverId)) {
+        if (AbstractDoctrineStorage::STORAGE_ORM == $storage['type'] && $container->hasDefinition($ormDriverId)) {
             $container->getDefinition($ormDriverId)->addMethodCall(
                 'addDriver',
                 array(new Reference('lexik_translation.orm.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model')
             );
         }
 
-        if ('mongodb' == $storage['type'] && $container->hasDefinition($mongodbDriverId)) {
+        if (AbstractDoctrineStorage::STORAGE_MONGODB == $storage['type'] && $container->hasDefinition($mongodbDriverId)) {
             $container->getDefinition($mongodbDriverId)->addMethodCall(
                 'addDriver',
                 array(new Reference('lexik_translation.mongodb.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model')

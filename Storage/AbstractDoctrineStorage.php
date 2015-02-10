@@ -12,6 +12,13 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 abstract class AbstractDoctrineStorage implements StorageInterface
 {
     /**
+     * All the available config storage types.
+     */
+    const STORAGE_ORM     = 'orm';
+    const STORAGE_MONGODB = 'mongodb';
+    const STORAGE_PROPEL  = 'propel';
+
+    /**
      * @var ManagerRegistry
      */
     protected $registry;

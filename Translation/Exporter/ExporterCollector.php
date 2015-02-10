@@ -15,6 +15,14 @@ class ExporterCollector
     private $exporters;
 
     /**
+     * @return array
+     */
+    public function getExporters()
+    {
+        return $this->exporters;
+    }
+
+    /**
      *
      * @param string $id
      * @param ExporterInterface $exporter
@@ -25,28 +33,23 @@ class ExporterCollector
     }
 
     /**
-     * Returns an exporter that support the given format.
-     *
-     * @param string $format
-     * @return ExporterInterface
+     * @param $format
+     * @param $file
+     * @param $translations
+     * @return bool
+     * @throws \RuntimeException
      */
-    public function getByFormat($format)
+    public function export($format, $file, $translations)
     {
-        $exporter = null;
-        $i = 0;
-        $ids = array_keys($this->exporters);
-
-        while ($i<count($ids) && null === $exporter) {
-            if ($this->exporters[$ids[$i]]->support($format)) {
-                $exporter = $this->exporters[$ids[$i]];
+        foreach ($this->getExporters() as $exporter) {
+            /**
+             * @var $exporter ExporterInterface
+             */
+            if ($exporter->support($format)) {
+                return $exporter->export($file, $translations);
             }
-            $i++;
         }
 
-        if (null === $exporter) {
-            throw new \RuntimeException(sprintf('No exporter found for "%s" format.', $format));
-        }
-
-        return $exporter;
+        throw new \RuntimeException(sprintf('No exporter found for "%s" format.', $format));
     }
 }

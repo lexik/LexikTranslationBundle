@@ -5,7 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
- * Translation stoage interface.
+ * Translation storage interface.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
@@ -49,7 +49,7 @@ interface StorageInterface
     public function getFilesByLocalesAndDomains(array $locales, array $domains);
 
     /**
-     * Retunns a File by its hash.
+     * Returns a File by its hash.
      *
      * @param string $hash
      */
@@ -70,7 +70,7 @@ interface StorageInterface
     public function getTransUnitDomainsByLocale();
 
     /**
-     * Returns a TransuNit by its id.
+     * Returns a TransUnit by its id.
      *
      * @param int $id
      * @return TransUnit
@@ -78,7 +78,7 @@ interface StorageInterface
     public function getTransUnitById($id);
 
     /**
-     * Returns a Transunit by its key and domain.
+     * Returns a TransUnit by its key and domain.
      *
      * @param string $key
      * @param string $domain

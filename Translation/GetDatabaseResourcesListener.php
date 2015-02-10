@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
+use Lexik\Bundle\TranslationBundle\Storage\AbstractDoctrineStorage;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 
 /**
@@ -37,7 +38,7 @@ class GetDatabaseResourcesListener
     public function onGetDatabaseResources(GetDatabaseResourcesEvent $event)
     {
         // prevent errors on command such as cache:clear if doctrine schema has not been updated yet
-        if ('orm' == $this->storageType && !$this->storage->translationsTablesExist()) {
+        if (AbstractDoctrineStorage::STORAGE_ORM == $this->storageType && !$this->storage->translationsTablesExist()) {
             $resources = array();
         } else {
             $resources = $this->storage->getTransUnitDomainsByLocale();

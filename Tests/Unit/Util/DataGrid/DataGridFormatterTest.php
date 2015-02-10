@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Storage\AbstractDoctrineStorage;
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
@@ -61,7 +62,7 @@ class DataGridFormatterTest extends BaseUnitTestCase
             'total' => 3,
         );
 
-        $formatter = new DataGridFormatter(array('de', 'en', 'fr'), 'orm');
+        $formatter = new DataGridFormatter(array('de', 'en', 'fr'), AbstractDoctrineStorage::STORAGE_ORM);
         $this->assertEquals(json_encode($expected, JSON_HEX_APOS), $formatter->createListResponse($datas, $total)->getContent());
     }
 }
