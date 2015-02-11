@@ -121,3 +121,8 @@ Command options:
 * `--format`: Force the output format.
 
 *Note that it's not required to export translations to make them appear on your website as the `DatabaseLoader` will load them.*
+
+TESTING
+=======
+
+[Read the documentation for testing ](./test.md)

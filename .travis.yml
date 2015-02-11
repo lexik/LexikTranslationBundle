@@ -15,16 +15,21 @@ services:
   - mongodb
 
 env:
-  - SYMFONY_VERSION=2.3.*
-  - SYMFONY_VERSION=2.5.*
-  - SYMFONY_VERSION=2.6.*
+  - SYMFONY_VERSION=2.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+  - SYMFONY_VERSION=2.5.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+  - SYMFONY_VERSION=2.6.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 before_script:
   - phpenv config-add travis-php.ini
+
+  - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
+
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
-  - composer update --dev
+  - composer update -vvv
 
-script: phpunit
+script:
+  - phpunit
+  - phpunit --group command

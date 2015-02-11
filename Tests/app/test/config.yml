@@ -1,0 +1,10 @@
+imports:
+    - { resource: database.php }
+
+framework:
+    fragments: ~
+    secret: afasfsf
+
+lexik_translation:
+    fallback_locale: en
+    managed_locales: [en, pl, de, sv]
