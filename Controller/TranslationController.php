@@ -19,9 +19,10 @@ class TranslationController extends Controller
     public function gridAction()
     {
         return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
-            'layout'    => $this->container->getParameter('lexik_translation.base_layout'),
-            'inputType' => $this->container->getParameter('lexik_translation.grid_input_type'),
-            'locales'   => $this->getManagedLocales(),
+            'layout'        => $this->container->getParameter('lexik_translation.base_layout'),
+            'inputType'     => $this->container->getParameter('lexik_translation.grid_input_type'),
+            'toggleSimilar' => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
+            'locales'       => $this->getManagedLocales(),
         ));
     }
 

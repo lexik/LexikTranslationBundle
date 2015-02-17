@@ -92,16 +92,35 @@ app.controller('TranslationController', [
 
         $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
+        // scope function
         $scope.tableParams.changePage = function (pageNumber) {
             $scope.tableParams.page(pageNumber);
             $location.hash('translation-grid');
             $anchorScroll();
         };
 
-        // scope function
+        // trigger the grid sorting
         $scope.sortGrid = function (column) {
             if (column.sortable) {
                 $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
+            }
+        };
+
+        // go the top of the grid on page change
+        $scope.changePage = function (pageNumber) {
+            $scope.tableParams.page(pageNumber);
+            $location.hash('translation-grid');
+            $anchorScroll();
+        };
+
+        // toggle show/hide column with a similar name (if "en" is clicked all "en_XX" columns will be toggled too)
+        $scope.toggleSimilar = function (currentCol) {
+            if (translationCfg.toggleSimilar) {
+                angular.forEach($scope.columns, function (column) {
+                    if ( column.index != currentCol.index && column.index.indexOf(currentCol.index+'_') == 0 ) {
+                        column.visible = !currentCol.visible; // use the negation because it seems the model value has not been refreshed yet.
+                    }
+                });
             }
         };
 

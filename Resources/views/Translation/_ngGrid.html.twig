@@ -23,7 +23,7 @@
             <ul class="list-unstyled list-inline locales-list">
                 <li ng-repeat="column in columns" class="locale">
                     <label for="toggle-{{ column.index }}">
-                        <input type="checkbox" id="toggle-{{ column.index }}" ng-model="column.visible" />
+                        <input type="checkbox" id="toggle-{{ column.index }}" ng-model="column.visible" ng-click="toggleSimilar(column)" />
                         {{ column.title }}
                     </label>
                 </li>

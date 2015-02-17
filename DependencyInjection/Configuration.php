@@ -55,6 +55,10 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
+                ->booleanNode('grid_toggle_similar')
+                    ->defaultValue(false)
+                ->end()
+
                 ->arrayNode('storage')
                     ->addDefaultsIfNotSet()
                     ->children()
