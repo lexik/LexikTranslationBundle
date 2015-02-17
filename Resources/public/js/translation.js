@@ -29,7 +29,8 @@ app.controller('TranslationController', [
         $scope.saveRowBtnLabel = translationCfg.label.saveRow;
         $scope.saveLabel = translationCfg.label.save;
         $scope.hideColSelector = false;
-        $scope.saveMsg = sharedMessage;
+        $scope.areAllColumnsSelected = true;
+        $scope.sharedMsg = sharedMessage;
 
         // columns definition
         $scope.columns = [
@@ -128,9 +129,20 @@ app.controller('TranslationController', [
         $scope.invalidateCache = function () {
             $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
                 .success(function (responseData) {
-                    sharedMessage.set('text-success', 'ok-circle', responseData.message);
-                }
-            );
+                    sharedMessage.set('success', 'ok-circle', responseData.message);
+                })
+                .error(function (responseData, status, headers, config) {
+                    sharedMessage.set('danger', 'remove-circle', 'Error');
+                })
+            ;
+        };
+
+        // toggle all columns
+        $scope.toggleAllColumns = function () {
+            $scope.areAllColumnsSelected = !$scope.areAllColumnsSelected;
+            angular.forEach($scope.columns, function(column){
+                column.visible = $scope.areAllColumnsSelected;
+            });
         };
 }]);
 
@@ -169,9 +181,9 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                         .success(function (data, status, headers, config) {
                             $scope.edit = false;
                             $scope.translation = data;
-                            sharedMessage.set('text-success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
+                            sharedMessage.set('success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
                         }).error(function (data, status, headers, config) {
-                            sharedMessage.set('text-danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
+                            sharedMessage.set('danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
                         });
                 }
             };

@@ -1,0 +1,9 @@
+lexik_translation_list:
+    pattern:      /translations
+    defaults:     { _controller: "LexikTranslationBundle:Rest:list" }
+    requirements: { _method: GET }
+
+lexik_translation_update:
+    pattern:      /translations/{id}
+    defaults:     { _controller: "LexikTranslationBundle:Rest:update" }
+    requirements: { _method: PUT }

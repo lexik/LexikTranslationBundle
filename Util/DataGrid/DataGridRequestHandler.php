@@ -27,18 +27,18 @@ class DataGridRequestHandler
     /**
      * @var array
      */
-    protected $managedLoales;
+    protected $managedLocales;
 
     /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param StorageInterface          $storage
-     * @param array                     $managedLoales
+     * @param array                     $managedLocales
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLoales)
+    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales)
     {
         $this->transUnitManager = $transUnitManager;
         $this->storage = $storage;
-        $this->managedLoales = $managedLoales;
+        $this->managedLocales = $managedLocales;
     }
 
     /**
@@ -61,13 +61,13 @@ class DataGridRequestHandler
         });
 
         $transUnits = $this->storage->getTransUnitList(
-            $this->managedLoales,
+            $this->managedLocales,
             $request->query->get('rows', 20),
             $request->query->get('page', 1),
             $parameters
         );
 
-        $count = $this->storage->countTransUnits($this->managedLoales, $request->query->all());
+        $count = $this->storage->countTransUnits($this->managedLocales, $request->query->all());
 
         return array($transUnits, $count);
     }
@@ -90,7 +90,7 @@ class DataGridRequestHandler
         }
 
         $translationsContent = array();
-        foreach ($this->managedLoales as $locale) {
+        foreach ($this->managedLocales as $locale) {
             $translationsContent[$locale] = $request->request->get($locale);
         }
 

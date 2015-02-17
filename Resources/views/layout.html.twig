@@ -14,12 +14,10 @@
                 <div class="row">
                     <div class="col-md-12">
                         {% set flashes = app.session.flashbag.all() %}
-                        {% set css = {'error': 'warning', 'success': 'success'} %}
-
                         {% if flashes | length > 0 %}
                             {% for type, messages in flashes %}
                                 {% for message in messages %}
-                                    <div class="alert alert-{{ css[type] }}">{{ message }}</div>
+                                    <div class="alert alert-{{ type }}">{{ message }}</div>
                                 {% endfor %}
                             {% endfor %}
                         {% endif %}
