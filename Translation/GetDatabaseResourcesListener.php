@@ -37,7 +37,7 @@ class GetDatabaseResourcesListener
     public function onGetDatabaseResources(GetDatabaseResourcesEvent $event)
     {
         // prevent errors on command such as cache:clear if doctrine schema has not been updated yet
-        if ('orm' == $this->storageType && !$this->storage->translationsTablesExist()) {
+        if (StorageInterface::STORAGE_ORM == $this->storageType && !$this->storage->translationsTablesExist()) {
             $resources = array();
         } else {
             $resources = $this->storage->getTransUnitDomainsByLocale();

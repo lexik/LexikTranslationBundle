@@ -137,8 +137,11 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
         try {
-            $exporter = $this->getContainer()->get('lexik_translation.exporter_collector')->getByFormat($format);
-            $exported = $exporter->export($outputFile, $translations);
+            $exported = $this->getContainer()->get('lexik_translation.exporter_collector')->export(
+                $format,
+                $outputFile,
+                $translations
+            );
 
             $this->output->writeln($exported ? '<comment>success</comment>' : '<error>fail</error>');
         } catch (\Exception $e) {
