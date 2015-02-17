@@ -22,10 +22,11 @@ class SingleColumnArrayHydrator extends AbstractHydrator
             $value = $data[0];
 
             if(is_numeric($value)) {
-                $value = (false === mb_strpos($value, '.', 0, 'UTF-8'))
-                    ? (int) $value
-                    : (float) $value
-                ;
+                if (false === mb_strpos($value, '.', 0, 'UTF-8')) {
+                    $value = (int) $value;
+                } else {
+                    $value = (float) $value;
+                }
             }
 
             $result[] = $value;
