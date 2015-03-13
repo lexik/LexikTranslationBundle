@@ -40,6 +40,16 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('LexikTranslationBundle::layout.html.twig')
                 ->end()
 
+                ->scalarNode('grid_template')
+                    ->cannotBeEmpty()
+                    ->defaultValue('LexikTranslationBundle:Translation:grid.html.twig')
+                ->end()
+
+                ->scalarNode('new_template')
+                    ->cannotBeEmpty()
+                    ->defaultValue('LexikTranslationBundle:Translation:new.html.twig')
+                ->end()
+
                 ->scalarNode('fallback_locale')
                     ->isRequired()
                     ->cannotBeEmpty()

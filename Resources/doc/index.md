@@ -53,6 +53,8 @@ Additional configuration options (default values are shown here):
 # app/config/config.yml
 lexik_translation:
     base_layout:     "LexikTranslationBundle::layout.html.twig" # layout used with the translation edition template
+    grid_template:   "LexikTranslationBundle:Translation:grid.html.twig" # template used for displaying translation grid
+    new_template:    "LexikTranslationBundle:Translation:new.html.twig" # template used for adding a new trans unit
     use_yml_tree:    false    # if "true" we will print a nice tree in the yml source files. It is a little slower.
     grid_input_type: text     # define field type used in the grid (text|textarea)
     grid_toggle_similar: false  # if "true", on the grid if a locale colunm is shown/hidden then similar locales columns will be shown/hidden too.
