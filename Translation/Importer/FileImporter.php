@@ -69,12 +69,21 @@ class FileImporter
 
             $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
+            // in order to control repeated keys in the same file
+            $repeatedControl = array();
+
             foreach ($messageCatalogue->all($domain) as $key => $content) {
                 // skip empty translation values
                 if(!isset($content)){
                     continue;
                 }
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($key, $domain);
+
+                if(isset($repeatedControl[strtolower($key)])){
+                    print sprintf("\n\t The key '%s' is already in this file, need to be purged!, Ignoring second appearance.\n", $key);
+                    continue;
+                }
+                $repeatedControl[strtolower($key)] = true;
 
                 if (!($transUnit instanceof TransUnitInterface)) {
                     $transUnit = $this->transUnitManager->create($key, $domain);
