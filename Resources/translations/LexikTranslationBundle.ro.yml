@@ -10,6 +10,7 @@ translations:
    save_add:            "Salvează și adaugă"
    page_title:          "Traduceri"
    show_hide_columns:   "Arată / Ascunde coloanele"
+   toggle_all_columns:  "Show/Hide all columns"
    save_row:            "Salvați rândul curent"
    succesfully_updated: "Traducerea pentru cheie #%id% a fost actualizată."
    succesfully_added:   "Traducerea a fost actualizat."

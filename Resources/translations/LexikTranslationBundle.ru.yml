@@ -10,6 +10,7 @@ translations:
     save_add:            "Создать и добавить новый"
     page_title:          "Переводы"
     show_hide_columns:   "Показать/Скрыть колонки"
+    toggle_all_columns:  "Show/Hide all columns"
     save_row:            "Сохранить текущую строку"
     succesfully_updated: "Перевод для ключа #%id% успешно обновлён."
     succesfully_added:   "Перевод успешно добавлен."

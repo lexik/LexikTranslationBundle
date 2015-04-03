@@ -10,6 +10,7 @@ translations:
     save_add:               "Save and Add"
     page_title:             "Vertimai"
     show_hide_columns:      "Rodomi stulpeliai"
+    toggle_all_columns:     "Show/Hide all columns"
     save_row:               "Išsaugoti šią eilutę"
     succesfully_updated:    "Vertimai raktas #%id% buvo atnaujintas."
     succesfully_added:      "Translation has been successfully added."
