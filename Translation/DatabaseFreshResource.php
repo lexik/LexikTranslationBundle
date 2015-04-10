@@ -33,8 +33,7 @@ class DatabaseFreshResource implements ResourceInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Config\Resource.ResourceInterface::__toString()
+     * {@inheritdoc}
      */
     public function __toString()
     {
@@ -42,8 +41,7 @@ class DatabaseFreshResource implements ResourceInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Config\Resource.ResourceInterface::isFresh()
+     * {@inheritdoc}
      */
     public function isFresh($timestamp)
     {
@@ -51,8 +49,7 @@ class DatabaseFreshResource implements ResourceInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Symfony\Component\Config\Resource.ResourceInterface::getResource()
+     * {@inheritdoc}
      */
     public function getResource()
     {

@@ -44,12 +44,38 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
+        $container->setParameter('lexik_translation.auto_cache_clean', $config['auto_cache_clean']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
+        if (true === $config['auto_cache_clean']) {
+            $this->buildCacheCleanListenerDefinition($container);
+        }
+
         $this->registerTranslatorConfiguration($config, $container);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    public function buildCacheCleanListenerDefinition(ContainerBuilder $container)
+    {
+        $listener = new Definition();
+        $listener->setClass('%lexik_translation.listener.clean_translation_cache.class%');
+
+        $listener->addArgument(new Reference('lexik_translation.translation_storage'));
+        $listener->addArgument(new Reference('translator'));
+        $listener->addArgument(new Parameter('kernel.cache_dir'));
+        $listener->addArgument(new Parameter('lexik_translation.managed_locales'));
+
+        $listener->addTag('kernel.event_listener', array(
+            'event'  => 'kernel.request',
+            'method' => 'onKernelRequest',
+        ));
+
+        $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
 
     /**

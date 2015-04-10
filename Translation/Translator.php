@@ -15,7 +15,6 @@ class Translator extends BaseTranslator
 {
     /**
      * Add all resources available in database.
-     *
      */
     public function addDatabaseResources()
     {
