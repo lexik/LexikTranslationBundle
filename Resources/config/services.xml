@@ -38,6 +38,8 @@
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
 
         <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\Translation\GetDatabaseResourcesListener</parameter>
+
+        <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
     </parameters>
 
     <services>
@@ -78,6 +80,9 @@
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
+            <call method="setCaseInsensitiveInsert">
+                <argument>%lexik_translation.importer.case_insensitive%</argument>
+            </call>
         </service>
 
         <!-- Exporter -->

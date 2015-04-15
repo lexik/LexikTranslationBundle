@@ -42,6 +42,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
         $this->addOption('locales', 'l', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Import only for these locales, instead of using the managed locales.');
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
+        $this->addOption('case-insensitive', 'i', InputOption::VALUE_NONE, 'Process translation as lower case to avoid duplicate entry errors.');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
@@ -162,11 +163,17 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     {
         if ($finder instanceof Finder) {
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
+            $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
                 $number = $importer->import($file, $this->input->getOption('force'));
                 $this->output->writeln(sprintf('%d translations', $number));
+
+                $skipped = $importer->getSkippedKeys();
+                if (count($skipped) > 0) {
+                    $this->output->writeln(sprintf('    <error>[!]</error> The following keys have been skipped: "%s".', implode('", "', $skipped)));
+                }
             }
         } else {
             $this->output->writeln('No file to import');

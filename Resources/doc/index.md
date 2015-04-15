@@ -106,13 +106,14 @@ Command options:
 * `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
 * `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. eg: `--locales=fr --locales=en`
 * `--domains` (or `-d`): Only export files for given domains (comma separated). eg `--domains=messages,validators`
+* `--case-insensitive` (or `-i`): Convert keys as lower case to check if a key has already been imported.
 
 Export translations
 ===================
 
 To export translations from the database in to files run the following command:
 
-    ./app/console lexik:translations:export [--locales=en,de] [--domains=messages,validators] [--format=yml]
+    ./app/console lexik:translations:export [--locales=en,de] [--domains=messages,validators] [--format=yml] [--case-insensitive]
 
 This command will export all translations from the database in to files. A translation is exported in the same file (and format) it was imported in,
 except for vendors files which are exported in `app/Resources/translations/` and in this case the command will only export translations that changed.
