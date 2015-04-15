@@ -10,6 +10,7 @@ translations:
     save_add:               "Save and Add"
     page_title:             "Übersetzungen"
     show_hide_columns:      "Spalten anzeigen/verstecken"
+    toggle_all_columns:     "Show/Hide all columns"
     save_row:               "Zeile speichern"
     succesfully_updated:    "Übersetzungen für #%id% wurde erfolgreich aktualisiert."
     succesfully_added:      "Translation has been successfully added."
