@@ -36,6 +36,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
+        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are imported fully anyway)');
     }
 
     /**
@@ -83,8 +84,12 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
 
+        $override = $this->input->getOption('override');
+
         // we only export updated translations in case of the file is located in vendor/
-        $onlyUpdated = ( false !== strpos($file->getPath(), 'vendor/') );
+        $onlyUpdated = $override ?
+            ( false === strpos($file->getPath(), 'app/Resources/') ) :
+            ( false !== strpos($file->getPath(), 'vendor/') );
 
         $translations = $this->getContainer()
             ->get('lexik_translation.translation_storage')
@@ -94,7 +99,10 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
             // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-            $outputPath = ( false !== strpos($file->getPath(), 'vendor/') ) ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/%s', $rootDir, $file->getPath());
+            $outputPath = ( false === strpos($file->getPath(), 'vendor/') || $override ) ?
+                sprintf('%s/Resources/translations', $rootDir) :
+                sprintf('%s/%s', $rootDir, $file->getPath());
+
             $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
 
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);

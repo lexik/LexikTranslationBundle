@@ -57,9 +57,10 @@ class FileImporter
      *
      * @param \Symfony\Component\Finder\SplFileInfo $file
      * @param boolean                               $forceUpdate  force update of the translations
+     * @param boolean                               $merge        merge translations
      * @return int
      */
-    public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false)
+    public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false, $merge = false)
     {
         $imported = 0;
         list($domain, $locale, $extention) = explode('.', $file->getFilename());
@@ -86,6 +87,11 @@ class FileImporter
                 } else if($forceUpdate) {
                     $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                     $imported++;
+                } else if($merge) {
+                    $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
+                    if ($translation instanceof TranslationInterface) {
+                        $imported++;
+                    }
                 }
 
                 // convert MongoTimestamp objects to time to don't get an error in:

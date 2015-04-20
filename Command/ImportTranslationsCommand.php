@@ -42,6 +42,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('globals', 'g', InputOption::VALUE_NONE, 'Import only globals (app/Resources/translations.');
         $this->addOption('locales', 'l', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Import only for these locales, instead of using the managed locales.');
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
+        $this->addOption('merge', 'm', InputOption::VALUE_NONE, 'Merge translation (use ones with latest updatedAt date).');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
@@ -165,7 +166,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
-                $number = $importer->import($file, $this->input->getOption('force'));
+                $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
                 $this->output->writeln(sprintf('%d translations', $number));
             }
         } else {

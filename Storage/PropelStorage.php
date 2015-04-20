@@ -109,6 +109,14 @@ class PropelStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function remove($entity)
+    {
+        // @TODO: implement
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function flush($entity = null)
     {
         if (null === $entity) {
