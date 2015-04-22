@@ -88,7 +88,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         // we only export updated translations in case of the file is located in vendor/
         $onlyUpdated = $override ?
-            ( false === strpos($file->getPath(), 'app/Resources/') ) :
+            ( 'Resources/translations' !== $file->getPath() ) :
             ( false !== strpos($file->getPath(), 'vendor/') );
 
         $translations = $this->getContainer()
@@ -123,7 +123,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     protected function mergeExistingTranslations($file, $outputFile, $translations)
     {
         if (file_exists($outputFile)) {
-            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($file->getExtention());
+            $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
+            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);

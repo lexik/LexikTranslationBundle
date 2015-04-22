@@ -138,6 +138,8 @@ class TransUnitManager implements TransUnitManagerInterface
 
                 $newTranslation = clone $translation;
                 $this->storage->remove($translation);
+                $this->storage->flush();
+
                 $newTranslation->setContent($content);
                 $this->storage->persist($newTranslation);
                 $translation = $newTranslation;

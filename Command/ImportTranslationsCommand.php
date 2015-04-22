@@ -67,8 +67,10 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $locales, $domains);
         } else {
-            $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $this->importAppTranslationFiles($locales, $domains);
+            if (!$this->input->getOption('merge')) {
+                $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                $this->importAppTranslationFiles($locales, $domains);
+            }
 
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
@@ -76,6 +78,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
                 $this->output->writeln('<info>*** Importing component translation files ***</info>');
                 $this->importComponentTranslationFiles($locales, $domains);
+            }
+
+            if ($this->input->getOption('merge')) {
+                $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                $this->importAppTranslationFiles($locales, $domains);
             }
         }
 
