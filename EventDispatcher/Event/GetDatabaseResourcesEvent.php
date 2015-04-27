@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Translation;
+namespace Lexik\Bundle\TranslationBundle\EventDispatcher\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
