@@ -292,4 +292,24 @@ FCT;
             }
         }
     }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLatestTranslationUpdatedAt()
+    {
+        $result = $this->createQueryBuilder()
+            ->hydrate(false)
+            ->select('translations.updatedAt')
+            ->sort('translations.updatedAt', 'desc')
+            ->limit(1)
+            ->getQuery()
+            ->getSingleResult();
+
+        if (!isset($result['translations'], $result['translations'][0])) {
+            return null;
+        }
+
+        return new \DateTime(date('Y-m-d H:i:s', $result['translations'][0]['updated_at']->sec));
+    }
 }

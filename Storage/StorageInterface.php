@@ -130,4 +130,11 @@ interface StorageInterface
      * @return array
      */
     public function getTranslationsFromFile($file, $onlyUpdated);
+
+    /**
+     * Returns the latest updatedAt date among all translation.
+     *
+     * @return \DateTime|null
+     */
+    public function getLatestUpdatedAt();
 }

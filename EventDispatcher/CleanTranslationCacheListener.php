@@ -54,20 +54,18 @@ class CleanTranslationCacheListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         if ($event->isMasterRequest()) {
-            throw new \RuntimeException('TODO Bwaaahhhaha');
+            $lastUpdateTime = $this->storage->getLatestUpdatedAt();
 
-//            $qb = $this->em->createQueryBuilder();
-//            $qb->select('max(t.updatedAt)')
-//                ->from('LexikTranslationBundle:Translation', 't');
-//
-//            $lastUpdateTime = $qb->getQuery()->getSingleScalarResult();
-//
-//            $finder = new Finder();
-//            $finder->files()->in($this->cacheDirectory.'/translations')->date('< '.$lastUpdateTime);
-//
-//            if ($finder->count() > 0) {
-//                $this->translator->removeLocalesCacheFiles($this->managedLocales);
-//            }
+            if ($lastUpdateTime instanceof \DateTime) {
+                $finder = new Finder();
+                $finder->files()
+                    ->in($this->cacheDirectory.'/translations')
+                    ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
+
+                if ($finder->count() > 0) {
+                    $this->translator->removeLocalesCacheFiles($this->managedLocales);
+                }
+            }
         }
     }
 }

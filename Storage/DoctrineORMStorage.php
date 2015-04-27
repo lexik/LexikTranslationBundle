@@ -27,4 +27,22 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
 
         return $schemaManager->tablesExist($tables);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLatestUpdatedAt()
+    {
+        return $this->getTranslationRepository()->getLatestTranslationUpdatedAt();
+    }
+
+    /**
+     * Returns the TransUnit repository.
+     *
+     * @return object
+     */
+    protected function getTranslationRepository()
+    {
+        return $this->getManager()->getRepository($this->classes['translation']);
+    }
 }
