@@ -2,7 +2,6 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Repository\Propel;
 
-use Lexik\Bundle\TranslationBundle\Propel\TranslationRepository;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Propel\FileRepository;
@@ -215,10 +214,6 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
             'key.say_goodbye' => 'au revoir',
         );
         $this->assertEquals($expected, $result);
-
-
-        $repository = new TranslationRepository($con);
-        var_dump($repository->getLatestTranslationUpdatedAt());
     }
 
     protected function assertSameTransUnit($expected, $result)
