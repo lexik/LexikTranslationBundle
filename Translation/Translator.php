@@ -86,11 +86,32 @@ class Translator extends BaseTranslator
         $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
         if (file_exists($file)) {
             unlink($file);
+            $this->invalidateSystemCacheForFile($file);
         }
 
         $metadata = $file.'.meta';
         if (file_exists($metadata)) {
             unlink($metadata);
+            $this->invalidateSystemCacheForFile($metadata);
+        }
+    }
+
+    /**
+     * @param string $path
+     *
+     * @throws \RuntimeException
+     */
+    protected function invalidateSystemCacheForFile($path)
+    {
+        if (ini_get('apc.enabled')) {
+            if (apc_exists($path) && !apc_delete_file($path)) {
+                throw new \RuntimeException(sprintf('Failed to clear APC Cache for file %s', $path));
+            }
+        }
+        elseif (ini_get('opcache.enable')) {
+            if (!opcache_invalidate($path, true)) {
+                throw new \RuntimeException(sprintf('Failed to clear OPCache for file %s', $path));
+            }
         }
     }
 
