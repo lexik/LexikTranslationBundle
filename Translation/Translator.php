@@ -62,9 +62,13 @@ class Translator extends BaseTranslator
             if (!unlink($file)) {
                 $deleted = false;
             }
+            else {
+                $this->invalidateSystemCacheForFile($file);
+            }
             $metadata = $file.'.meta';
             if (file_exists($metadata)) {
                 unlink($metadata);
+                $this->invalidateSystemCacheForFile($metadata);
             }
         }
 
