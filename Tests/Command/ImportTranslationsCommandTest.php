@@ -113,6 +113,6 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     private function assertLanguageDumped($result)
     {
-        $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 16 translations/', $result);
+        $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $result);
     }
 }
