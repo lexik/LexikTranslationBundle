@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
+use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
 
@@ -112,7 +113,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false)
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false, \DateTime $modifiedOn = null)
     {
         $translation = null;
         $i = 0;
@@ -125,7 +126,24 @@ class TransUnitManager implements TransUnitManagerInterface
         }
 
         if ($found) {
+            /* @var Translation $translation */
             $translation = $transUnit->getTranslations()->get($i-1);
+            if ($merge) {
+                if ($translation->getContent() == $content) {
+                    return null;
+                }
+                if ($translation->getCreatedAt() != $translation->getUpdatedAt() && (!$modifiedOn || $translation->getUpdatedAt() > $modifiedOn)) {
+                    return null;
+                }
+
+                $newTranslation = clone $translation;
+                $this->storage->remove($translation);
+                $this->storage->flush();
+
+                $newTranslation->setContent($content);
+                $this->storage->persist($newTranslation);
+                $translation = $newTranslation;
+            }
             $translation->setContent($content);
         }
 

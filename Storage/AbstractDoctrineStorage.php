@@ -79,6 +79,14 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
+    public function remove($entity)
+    {
+        $this->getManager()->remove($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function flush($entity = null)
     {
         $this->getManager()->flush($entity);

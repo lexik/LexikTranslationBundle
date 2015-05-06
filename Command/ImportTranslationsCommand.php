@@ -43,6 +43,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('locales', 'l', InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Import only for these locales, instead of using the managed locales.');
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
         $this->addOption('case-insensitive', 'i', InputOption::VALUE_NONE, 'Process translation as lower case to avoid duplicate entry errors.');
+        $this->addOption('merge', 'm', InputOption::VALUE_NONE, 'Merge translation (use ones with latest updatedAt date).');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
     }
@@ -67,8 +68,10 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $locales, $domains);
         } else {
-            $this->output->writeln('<info>*** Importing application translation files ***</info>');
-            $this->importAppTranslationFiles($locales, $domains);
+            if (!$this->input->getOption('merge')) {
+                $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                $this->importAppTranslationFiles($locales, $domains);
+            }
 
             if (!$this->input->getOption('globals')) {
                 $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
@@ -76,6 +79,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
                 $this->output->writeln('<info>*** Importing component translation files ***</info>');
                 $this->importComponentTranslationFiles($locales, $domains);
+            }
+
+            if ($this->input->getOption('merge')) {
+                $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                $this->importAppTranslationFiles($locales, $domains);
             }
         }
 
@@ -167,7 +175,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
             foreach ($finder as $file)  {
                 $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
-                $number = $importer->import($file, $this->input->getOption('force'));
+                $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
                 $this->output->writeln(sprintf('%d translations', $number));
 
                 $skipped = $importer->getSkippedKeys();
@@ -207,8 +215,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         return (null !== $finder && $finder->count() > 0) ? $finder : null;
     }
-    /**
 
+    /**
      * @param array $locales
      * @param array $domains
      * @return string

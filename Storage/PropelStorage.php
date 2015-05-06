@@ -21,7 +21,7 @@ class PropelStorage implements StorageInterface
     private $connectionName;
 
     /**
-     * @var PDO
+     * @var \PDO
      */
     private $connection;
 
@@ -80,7 +80,7 @@ class PropelStorage implements StorageInterface
     }
 
     /**
-     * @return PDO
+     * @return \PDO
      */
     private function getConnection()
     {
@@ -110,6 +110,14 @@ class PropelStorage implements StorageInterface
         if (!$found) {
             throw new \RuntimeException(sprintf('Invalid entity class: "%s".', get_class($entity)));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function remove($entity)
+    {
+        $entity->delete();
     }
 
     /**

@@ -36,6 +36,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
+        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are imported fully anyway)');
     }
 
     /**
@@ -75,7 +76,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     /**
      * Get translations to export and export translations into a file.
      *
-     * @param File $file
+     * @param FileInterface $file
      */
     protected function exportFile(FileInterface $file)
     {
@@ -83,8 +84,14 @@ class ExportTranslationsCommand extends ContainerAwareCommand
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
 
+        $override = $this->input->getOption('override');
+
         // we only export updated translations in case of the file is located in vendor/
-        $onlyUpdated = ( false !== strpos($file->getPath(), 'vendor/') );
+        if ($override) {
+            $onlyUpdated = ('Resources/translations' !== $file->getPath());
+        } else {
+            $onlyUpdated = (false !== strpos($file->getPath(), 'vendor/'));
+        }
 
         $translations = $this->getContainer()
             ->get('lexik_translation.translation_storage')
@@ -94,7 +101,12 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
             // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-            $outputPath = ( false !== strpos($file->getPath(), 'vendor/') ) ? sprintf('%s/Resources/translations', $rootDir) : sprintf('%s/%s', $rootDir, $file->getPath());
+            if (false === strpos($file->getPath(), 'vendor/') || $override) {
+                $outputPath = sprintf('%s/Resources/translations', $rootDir);
+            } else {
+                $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());
+            }
+
             $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
 
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
@@ -115,7 +127,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
     protected function mergeExistingTranslations($file, $outputFile, $translations)
     {
         if (file_exists($outputFile)) {
-            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($file->getExtention());
+            $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
+            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);
