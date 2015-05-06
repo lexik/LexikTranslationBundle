@@ -49,6 +49,8 @@ class TransUnitRepository
     /**
      * Returns all domains for each locale.
      *
+     * @param string $locale
+     * @param string $domain
      * @return array
      */
     public function getAllByLocaleAndDomain($locale, $domain)
@@ -69,8 +71,6 @@ class TransUnitRepository
     /**
      * Returns all trans unit with translations for the given domain and locale.
      *
-     * @param string $locale
-     * @param string $domain
      * @return array
      */
     public function getAllDomains()

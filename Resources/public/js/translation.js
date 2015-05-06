@@ -24,6 +24,7 @@ app.controller('TranslationController', [
 
         $scope.locales = translationCfg.locales;
         $scope.editType = translationCfg.inputType;
+        $scope.autoCacheClean = translationCfg.autoCacheClean;
         $scope.hideColBtnLabel = translationCfg.label.hideCol;
         $scope.toggleAllColBtnLabel = translationCfg.label.toggleAllCol;
         $scope.invalidateCacheBtnLabel = translationCfg.label.invalidateCache;

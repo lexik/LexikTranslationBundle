@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
+use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
@@ -15,7 +16,6 @@ class Translator extends BaseTranslator
 {
     /**
      * Add all resources available in database.
-     *
      */
     public function addDatabaseResources()
     {

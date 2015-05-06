@@ -9,4 +9,11 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
  */
 class DoctrineMongoDBStorage extends AbstractDoctrineStorage
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getLatestUpdatedAt()
+    {
+        return $this->getTransUnitRepository()->getLatestTranslationUpdatedAt();
+    }
 }

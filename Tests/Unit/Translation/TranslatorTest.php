@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 
-use Lexik\Bundle\TranslationBundle\Translation\GetDatabaseResourcesListener;
+use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 

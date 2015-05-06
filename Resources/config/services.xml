@@ -37,7 +37,8 @@
         <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
 
-        <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\Translation\GetDatabaseResourcesListener</parameter>
+        <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener</parameter>
+        <parameter key="lexik_translation.listener.clean_translation_cache.class">Lexik\Bundle\TranslationBundle\EventDispatcher\CleanTranslationCacheListener</parameter>
 
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
     </parameters>

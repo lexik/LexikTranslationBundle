@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\Propel\FileQuery;
 use Lexik\Bundle\TranslationBundle\Propel\FileRepository;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
+use Lexik\Bundle\TranslationBundle\Propel\TranslationRepository;
 
 /**
  * Doctrine ORM storage class.
@@ -38,6 +39,11 @@ class PropelStorage implements StorageInterface
      * @var TransUnitRepository
      */
     private $transUnitRepository;
+
+    /**
+     * @var TranslationRepository
+     */
+    private $translationRepository;
 
     /**
      * @var FileRepository
@@ -242,6 +248,14 @@ class PropelStorage implements StorageInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getLatestUpdatedAt()
+    {
+        return $this->getTranslationRepository()->getLatestTranslationUpdatedAt();
+    }
+
+    /**
      * Returns true if translation tables exist.
      *
      * @return boolean
@@ -284,6 +298,20 @@ class PropelStorage implements StorageInterface
         }
 
         return $this->transUnitRepository;
+    }
+
+    /**
+     * Returns the TransUnit repository.
+     *
+     * @return TranslationRepository
+     */
+    protected function getTranslationRepository()
+    {
+        if (null === $this->translationRepository) {
+            $this->translationRepository = new TranslationRepository($this->getConnection());
+        }
+
+        return $this->translationRepository;
     }
 
     /**

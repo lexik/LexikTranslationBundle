@@ -1,7 +1,8 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Translation;
+namespace Lexik\Bundle\TranslationBundle\EventDispatcher;
 
+use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 
 /**
