@@ -130,7 +130,7 @@ class LexikTranslationExtension extends Extension
         $container->setAlias('translator', 'lexik_translation.translator');
 
         $translator = $container->findDefinition('lexik_translation.translator');
-        $translator->addMethodCall('setFallbackLocale', array($config['fallback_locale']));
+        $translator->addMethodCall('setFallbackLocales', array(array($config['fallback_locale'])));
 
         $registration = $config['resources_registration'];
 
