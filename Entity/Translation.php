@@ -59,8 +59,9 @@ class Translation extends TranslationModel implements TranslationInterface
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime("now");
-        $this->updatedAt = new \DateTime("now");
+        $now             = new \DateTime("now");
+        $this->createdAt = $now;
+        $this->updatedAt = $now;
     }
 
     /**

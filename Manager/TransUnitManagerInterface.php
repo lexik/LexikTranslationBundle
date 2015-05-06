@@ -46,9 +46,11 @@ interface TransUnitManagerInterface
      * @param string                $locale
      * @param string                $content
      * @param boolean               $flush
+     * @param boolean               $merge
+     * @param \DateTime|null        $modifiedOn
      * @return TranslationInterface
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false);
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false, \DateTime $modifiedOn = null);
 
     /**
      * Update the content of each translations for the given trans unit.
