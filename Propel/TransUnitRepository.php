@@ -197,12 +197,12 @@ class TransUnitRepository
     protected function addTransUnitFilters(TransUnitQuery $query, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
-            if (!empty($filters['_domain'])) {
-                $query->filterByDomain(sprintf('%%%s%%', $filters['_domain']), \Criteria::LIKE);
+            if (!empty($filters['domain'])) {
+                $query->filterByDomain(sprintf('%%%s%%', $filters['domain']), \Criteria::LIKE);
             }
 
-            if (!empty($filters['_key'])) {
-                $query->filterByKey(sprintf('%%%s%%', $filters['_key']), \Criteria::LIKE);
+            if (!empty($filters['key'])) {
+                $query->filterByKey(sprintf('%%%s%%', $filters['key']), \Criteria::LIKE);
             }
         }
     }
