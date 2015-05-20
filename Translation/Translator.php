@@ -89,14 +89,14 @@ class Translator extends BaseTranslator
         // also remove database.resources.php cache file
         $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
         if (file_exists($file)) {
-            unlink($file);
             $this->invalidateSystemCacheForFile($file);
+            unlink($file);
         }
 
         $metadata = $file.'.meta';
         if (file_exists($metadata)) {
-            unlink($metadata);
             $this->invalidateSystemCacheForFile($metadata);
+            unlink($metadata);
         }
     }
 
