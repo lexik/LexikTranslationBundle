@@ -59,10 +59,9 @@ class Translator extends BaseTranslator
 
         $deleted = true;
         foreach ($files as $file) {
-            if (!unlink($file)) {
-                $deleted = false;
-            } else {
+            if (file_exists($file)) {
                 $this->invalidateSystemCacheForFile($file);
+                $deleted = unlink($file);
             }
 
             $metadata = $file.'.meta';
