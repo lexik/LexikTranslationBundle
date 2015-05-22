@@ -51,7 +51,7 @@ class LexikTranslationExtension extends Extension
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
         if (true === $config['auto_cache_clean']) {
-            $this->buildCacheCleanListenerDefinition($container);
+            $this->buildCacheCleanListenerDefinition($container, $config['auto_cache_clean_interval']);
         }
 
         $this->registerTranslatorConfiguration($config, $container);
@@ -59,8 +59,9 @@ class LexikTranslationExtension extends Extension
 
     /**
      * @param ContainerBuilder $container
+     * @param int $cacheInterval
      */
-    public function buildCacheCleanListenerDefinition(ContainerBuilder $container)
+    public function buildCacheCleanListenerDefinition(ContainerBuilder $container, $cacheInterval)
     {
         $listener = new Definition();
         $listener->setClass('%lexik_translation.listener.clean_translation_cache.class%');
@@ -69,6 +70,7 @@ class LexikTranslationExtension extends Extension
         $listener->addArgument(new Reference('translator'));
         $listener->addArgument(new Parameter('kernel.cache_dir'));
         $listener->addArgument(new Parameter('lexik_translation.managed_locales'));
+        $listener->addArgument($cacheInterval);
 
         $listener->addTag('kernel.event_listener', array(
             'event'  => 'kernel.request',

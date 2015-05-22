@@ -33,19 +33,26 @@ class CleanTranslationCacheListener
     private $managedLocales;
 
     /**
+     * @var int
+     */
+    private $cacheInterval;
+
+    /**
      * Constructor
      *
      * @param StorageInterface    $storage
      * @param TranslatorInterface $translator
      * @param string              $cacheDirectory
      * @param array               $managedLocales
+     * @param int                 $cacheInterval
      */
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, $managedLocales)
+    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, $managedLocales, $cacheInterval)
     {
         $this->storage = $storage;
         $this->cacheDirectory = $cacheDirectory;
         $this->translator = $translator;
         $this->managedLocales = $managedLocales;
+        $this->cacheInterval = $cacheInterval;
     }
 
     /**
@@ -53,7 +60,7 @@ class CleanTranslationCacheListener
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
-        if ($event->isMasterRequest()) {
+        if ($event->isMasterRequest() && $this->isCacheExpired()) {
             $lastUpdateTime = $this->storage->getLatestUpdatedAt();
 
             if ($lastUpdateTime instanceof \DateTime) {
@@ -67,5 +74,30 @@ class CleanTranslationCacheListener
                 }
             }
         }
+    }
+
+    /**
+    * Checks if cache has expired
+    *
+    * @return boolean
+    */
+    private function isCacheExpired()
+    {
+        if (empty($this->cacheInterval)) {
+            return true;
+        }
+
+        $cache_file = $this->cacheDirectory.'/translations/cache_timestamp';
+        if (!\file_exists($cache_file)) {
+            \touch($cache_file);
+            return true;
+        }
+        $expired = false;
+        if ((\time() - \filemtime($cache_file)) > $this->cacheInterval) {
+            \file_put_contents($cache_file, \time());
+            $expired = true;
+        }
+
+        return $expired;
     }
 }
