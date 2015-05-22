@@ -65,7 +65,7 @@ lexik_translation:
         type:                 all     # resources type to register: "all", "files" or "database"
         managed_locales_only: true    # will only load resources for managed locales
     auto_cache_clean: false     # set to true to make the bundle automatically clear translations cache files
-    auto_cache_clean_interval: 600     # time interval in seconds. If set the store will be accessed only when at the specified time intervals.
+    auto_cache_clean_interval: 600     # The number of seconds to wait before trying to check if translations have changed in the database.
 ```
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
