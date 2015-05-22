@@ -68,6 +68,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(false)
                 ->end()
 
+                ->integerNode('auto_cache_clean_interval')
+                    ->defaultValue(null)
+                ->end()
+
                 ->arrayNode('storage')
                     ->addDefaultsIfNotSet()
                     ->children()
