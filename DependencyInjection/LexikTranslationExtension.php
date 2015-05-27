@@ -164,8 +164,8 @@ class LexikTranslationExtension extends Extension
         if ('all' == $registration['type'] || 'files' == $registration['type']) {
             $dirs = array();
 
-            if (class_exists('Symfony\Component\Validator\Validator')) {
-                $r = new \ReflectionClass('Symfony\Component\Validator\Validator');
+            if (class_exists('Symfony\Component\Validator\Validation')) {
+                $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
