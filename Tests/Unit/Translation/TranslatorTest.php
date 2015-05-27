@@ -120,6 +120,7 @@ class TranslatorTest extends BaseUnitTestCase
         );
 
         $container = new Container();
+        $container->setParameter('kernel.default_locale', 'en');
         $container->set('event_dispatcher', $dispatcher);
         $container->compile();
 
