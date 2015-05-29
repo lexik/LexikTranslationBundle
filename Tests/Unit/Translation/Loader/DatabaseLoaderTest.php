@@ -32,7 +32,7 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $expectedTranslations = array(
             'messages' => array(
                 'key.say_goodbye' => 'au revoir',
-                'key.say_wtf' => 'c\'est quoi ce bordel !?!',
+                'key.say_wtf'     => 'c\'est quoi ce bordel !?!',
             ),
         );
         $this->assertInstanceOf('Symfony\Component\Translation\MessageCatalogue', $catalogue);

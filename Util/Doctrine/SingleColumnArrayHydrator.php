@@ -21,7 +21,7 @@ class SingleColumnArrayHydrator extends AbstractHydrator
         while ($data = $this->_stmt->fetch(\PDO::FETCH_NUM)) {
             $value = $data[0];
 
-            if(is_numeric($value)) {
+            if (is_numeric($value)) {
                 if (false === mb_strpos($value, '.', 0, 'UTF-8')) {
                     $value = (int) $value;
                 } else {

@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Entity;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
-
 use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
@@ -88,7 +87,7 @@ class TransUnitRepository extends EntityRepository
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $ids = $builder->orderBy(sprintf('tu.%s', $sortColumn), $order)
-            ->setFirstResult($rows * ($page-1))
+            ->setFirstResult($rows * ($page - 1))
             ->setMaxResults($rows)
             ->getQuery()
             ->getResult('SingleColumnArrayHydrator');

@@ -125,12 +125,10 @@ class FileImporter
             $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
             if ($translation instanceof TranslationInterface) {
                 $imported++;
-
-            } else if($forceUpdate) {
+            } elseif ($forceUpdate) {
                 $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                 $imported++;
-
-            } else if($merge) {
+            } elseif ($merge) {
                 $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
                 if ($translation instanceof TranslationInterface) {
                     $imported++;

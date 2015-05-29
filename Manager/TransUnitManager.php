@@ -87,7 +87,7 @@ class TransUnitManager implements TransUnitManagerInterface
     {
         $translation = null;
 
-        if(!$transUnit->hasTranslation($locale)) {
+        if (!$transUnit->hasTranslation($locale)) {
             $class = $this->storage->getModelClass('translation');
 
             $translation = new $class();
@@ -120,14 +120,14 @@ class TransUnitManager implements TransUnitManagerInterface
         $end = $transUnit->getTranslations()->count();
         $found = false;
 
-        while ($i<$end && !$found) {
+        while ($i < $end && !$found) {
             $found = ($transUnit->getTranslations()->get($i)->getLocale() == $locale);
             $i++;
         }
 
         if ($found) {
             /* @var Translation $translation */
-            $translation = $transUnit->getTranslations()->get($i-1);
+            $translation = $transUnit->getTranslations()->get($i - 1);
             if ($merge) {
                 if ($translation->getContent() == $content) {
                     return null;
@@ -192,9 +192,9 @@ class TransUnitManager implements TransUnitManagerInterface
      *
      * @return FileInterface|null
      */
-    protected function getTranslationFile(TransUnitInterface &$transUnit, $locale)
+    protected function getTranslationFile(TransUnitInterface & $transUnit, $locale)
     {
-        $file=null;
+        $file = null;
         foreach ($transUnit->getTranslations() as $translationModel) {
             if (null !== $file = $translationModel->getFile()) {
                 break;

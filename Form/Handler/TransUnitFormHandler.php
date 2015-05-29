@@ -7,7 +7,6 @@ use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnit as PropelTransUnit;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 

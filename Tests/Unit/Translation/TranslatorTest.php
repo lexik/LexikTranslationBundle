@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
-
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\DependencyInjection\Container;
@@ -134,7 +133,7 @@ class TranslatorTest extends BaseUnitTestCase
 
     protected function createFakeCacheFiles($cacheDir)
     {
-        if(!is_dir($cacheDir)) {
+        if (!is_dir($cacheDir)) {
             mkdir($cacheDir);
         }
 

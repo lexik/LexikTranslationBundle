@@ -3,7 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Translation\Loader;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -40,7 +39,7 @@ class DatabaseLoader implements LoaderInterface
 
         foreach ($transUnits as $transUnit) {
             foreach ($transUnit['translations'] as $translation) {
-                if($translation['locale'] == $locale) {
+                if ($translation['locale'] == $locale) {
                     $catalogue->set($transUnit['key'], $translation['content'], $domain);
                 }
             }

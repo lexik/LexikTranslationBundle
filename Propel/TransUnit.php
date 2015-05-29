@@ -42,9 +42,7 @@ class TransUnit extends BaseTransUnit implements TransUnitInterface
     public function getTranslation($locale)
     {
         foreach ($this->getTranslations() as $translation) {
-
             if ($translation->getLocale() == $locale) {
-
                 return $translation;
             }
         }

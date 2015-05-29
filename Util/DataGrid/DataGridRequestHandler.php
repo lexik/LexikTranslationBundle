@@ -4,7 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
@@ -71,7 +70,6 @@ class DataGridRequestHandler
 
         return array($transUnits, $count);
     }
-
 
     /**
      * Updates a trans unit from the request.

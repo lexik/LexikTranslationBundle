@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Tester\CommandTester;
-
 use Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand;
 use Symfony\Component\HttpKernel\Kernel;
 
@@ -62,7 +61,6 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::runCommand("doctrine:schema:drop", array('--force' => true));
         static::runCommand("doctrine:schema:create");
     }
-
 
     private static function runCommand($commandName, $options = array())
     {

@@ -7,5 +7,4 @@ use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 
 class Translation extends BaseTranslation implements TranslationInterface
 {
-
 }

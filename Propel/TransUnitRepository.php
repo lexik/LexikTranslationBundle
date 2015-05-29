@@ -110,7 +110,7 @@ class TransUnitRepository
 
         $ids = $query
             ->orderBy($sortColumn, $order)
-            ->offset($rows * ($page-1))
+            ->offset($rows * ($page - 1))
             ->limit($rows)
             ->find($this->getConnection())
         ;
@@ -258,16 +258,15 @@ class TransUnitRepository
         foreach ($unitsData as $unit) {
             /* @var $unit TransUnit */
             $transUnit = array(
-                'id' => $unit['Id'],
-                'key' => $unit['Key'],
-                'domain' => $unit['Domain'],
+                'id'           => $unit['Id'],
+                'key'          => $unit['Key'],
+                'domain'       => $unit['Domain'],
                 'translations' => array(),
             );
 
-            foreach ($unit['Translations'] as $translation)
-            {
+            foreach ($unit['Translations'] as $translation) {
                 $transUnit['translations'][] = array(
-                    'locale' => $translation['Locale'],
+                    'locale'  => $translation['Locale'],
                     'content' => $translation['Content'],
                 );
             }

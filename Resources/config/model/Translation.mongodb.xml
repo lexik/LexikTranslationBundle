@@ -3,7 +3,7 @@
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
-                  
+
     <mapped-superclass name="Lexik\Bundle\TranslationBundle\Model\Translation">
 
         <field fieldName="locale" name="locale" type="string" />
@@ -13,6 +13,6 @@
         <field fieldName="createdAt" name="created_at" type="timestamp" />
 
         <field fieldName="updatedAt" name="updated_at" type="timestamp" />
-        
+
     </mapped-superclass>
 </doctrine-mongo-mapping>

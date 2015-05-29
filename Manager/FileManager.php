@@ -100,7 +100,7 @@ class FileManager implements FileManagerInterface
 
         $i = 0;
         while ($i < count($rootDirParts)) {
-            if ( isset($rootDirParts[$i], $filePathParts[$i]) && $rootDirParts[$i] == $filePathParts[$i] ) {
+            if (isset($rootDirParts[$i], $filePathParts[$i]) && $rootDirParts[$i] == $filePathParts[$i]) {
                 $commonParts[] = $rootDirParts[$i];
             }
             $i++;
@@ -111,7 +111,7 @@ class FileManager implements FileManagerInterface
         $nbCommonParts = count($commonParts);
         $nbRootParts = count($rootDirParts);
 
-        for ($i=$nbCommonParts; $i<$nbRootParts; $i++) {
+        for ($i = $nbCommonParts; $i < $nbRootParts; $i++) {
             $filePath = '../'.$filePath;
         }
 

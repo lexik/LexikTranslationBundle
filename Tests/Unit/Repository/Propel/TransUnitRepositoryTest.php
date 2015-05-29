@@ -186,8 +186,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = new TransUnitRepository($con);
 
         $file = FileQuery::create()->findOneByArray(array(
-            'Domain' => 'messages',
-            'Locale' => 'fr',
+            'Domain'    => 'messages',
+            'Locale'    => 'fr',
             'Extention' => 'yml',
         ), $con);
         $this->assertInstanceOf(self::PROPEL_FILE_CLASS, $file);
@@ -195,7 +195,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $result = $repository->getTranslationsForFile($file, false);
         $expected = array(
             'key.say_goodbye' => 'au revoir',
-            'key.say_wtf' => 'c\'est quoi ce bordel !?!',
+            'key.say_wtf'     => 'c\'est quoi ce bordel !?!',
         );
         $this->assertEquals($expected, $result);
 

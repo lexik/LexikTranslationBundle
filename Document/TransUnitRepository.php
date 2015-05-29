@@ -4,7 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
-
 use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
@@ -72,7 +71,7 @@ FCT;
         if (isset($results[0], $results[0]['couples'])) {
             $couples = $results[0]['couples'];
 
-            usort($couples, function($a, $b) {
+            usort($couples, function ($a, $b) {
                 $result = strcmp($a['locale'], $b['locale']);
                 if (0 === $result) {
                     $result = strcmp($a['domain'], $b['domain']);
@@ -105,13 +104,13 @@ FCT;
         foreach ($results as $item) {
             $i = 0;
             $index = null;
-            while ($i<$item['translations'] && null === $index) {
+            while ($i < $item['translations'] && null === $index) {
                 if ($item['translations'][$i]['locale'] == $locale) {
                     $index = $i;
                 }
                 $i++;
             }
-            $item['translations'] = array($item['translations'][$i-1]);
+            $item['translations'] = array($item['translations'][$i - 1]);
             $values[] = $item;
         }
 
@@ -140,7 +139,7 @@ FCT;
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $results = $builder->sort($sortColumn, $order)
-            ->skip($rows * ($page-1))
+            ->skip($rows * ($page - 1))
             ->limit($rows)
             ->getQuery()
             ->execute();
@@ -166,7 +165,7 @@ FCT;
 
         foreach ($results as $item) {
             $end = count($item['translations']);
-            for ($i=0; $i<$end; $i++) {
+            for ($i = 0; $i < $end; $i++) {
                 if (!in_array($item['translations'][$i]['locale'], $locales)) {
                     unset($item['translations'][$i]);
                 }
@@ -220,7 +219,7 @@ FCT;
         foreach ($results as $result) {
             $content = null;
             $i = 0;
-            while ($i<count($result['translations']) && null === $content) {
+            while ($i < count($result['translations']) && null === $content) {
                 if ($file->getLocale() == $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
                         $updated = ($result['translations'][$i]['created_at']->sec < $result['translations'][$i]['updated_at']->sec);
@@ -249,7 +248,6 @@ FCT;
     protected function addTransUnitFilters(Builder $builder,  array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
-
             if (!empty($filters['domain'])) {
                 $builder->addAnd($builder->expr()->field('domain')->equals(new \MongoRegex(sprintf('/%s/i', $filters['domain']))));
             }

@@ -1,10 +1,9 @@
 <?php
 
-namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;;
+namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;
 
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
-
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Manager\FileManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;

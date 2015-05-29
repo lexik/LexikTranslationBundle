@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Tools\Setup;
-
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitData;
@@ -100,7 +99,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         if ($om instanceof \Doctrine\ORM\EntityManager) {
             $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($om);
             $schemaTool->createSchema($om->getMetadataFactory()->getAllMetadata());
-        } else if ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $sm = new \Doctrine\ODM\MongoDB\SchemaManager($om, $om->getMetadataFactory());
             $sm->createCollections();
         }
@@ -116,7 +115,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
         if ($om instanceof \Doctrine\ORM\EntityManager) {
             $purger = new ORMPurger();
             $executor = new ORMExecutor($om, $purger);
-        } else if ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $purger = new MongoDBPurger();
             $executor = new MongoDBExecutor($om, $purger);
         }
@@ -147,7 +146,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
                 array(),
                 'default',
                 'default',
-                'proxy'
+                'proxy',
             ))
             ->getMock();
 

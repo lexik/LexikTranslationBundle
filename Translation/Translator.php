@@ -40,7 +40,7 @@ class Translator extends BaseTranslator
             $resources = include $file;
         }
 
-        foreach($resources as $resource) {
+        foreach ($resources as $resource) {
             $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
         }
     }
@@ -150,14 +150,14 @@ class Translator extends BaseTranslator
         $i = 0;
         $ids = array_keys($this->loaderIds);
 
-        while($i<count($ids) && null === $loader) {
+        while ($i < count($ids) && null === $loader) {
             if (in_array($format, $this->loaderIds[$ids[$i]])) {
                 $loader = $this->container->get($ids[$i]);
             }
             $i++;
         }
 
-        if ( !($loader instanceof LoaderInterface) ) {
+        if (!($loader instanceof LoaderInterface)) {
             throw new \RuntimeException(sprintf('No loader found for "%s" format.', $format));
         }
 

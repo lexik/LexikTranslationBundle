@@ -22,7 +22,7 @@ class TransUnitData implements FixtureInterface
         $files = array();
         $domains = array(
             'superTranslations' => array('fr', 'en', 'de'),
-            'messages' => array('fr', 'en'),
+            'messages'          => array('fr', 'en'),
         );
 
         foreach ($domains as $name => $locales) {
@@ -64,7 +64,6 @@ class TransUnitData implements FixtureInterface
         $manager->persist($transUnit);
         $manager->flush();
 
-
         // add translations for "key.say_goodbye"
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_goodbye');
@@ -85,7 +84,6 @@ class TransUnitData implements FixtureInterface
 
         $manager->persist($transUnit);
         $manager->flush();
-
 
         // add translations for "key.say_wtf"
         $transUnit = $this->createTransUnitInstance($manager);
@@ -120,7 +118,7 @@ class TransUnitData implements FixtureInterface
 
         if ($manager instanceof \Doctrine\ORM\EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\TransUnit();
-        } else if ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\TransUnit();
         }
 
@@ -138,7 +136,7 @@ class TransUnitData implements FixtureInterface
 
         if ($manager instanceof \Doctrine\ORM\EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\Translation();
-        } else if ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\Translation();
         }
 
@@ -156,7 +154,7 @@ class TransUnitData implements FixtureInterface
 
         if ($manager instanceof \Doctrine\ORM\EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\File();
-        } else if ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\File();
         }
 
