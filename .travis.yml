@@ -16,8 +16,8 @@ services:
 
 env:
   - SYMFONY_VERSION=2.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-  - SYMFONY_VERSION=2.5.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
   - SYMFONY_VERSION=2.6.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+  - SYMFONY_VERSION=2.7.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 before_script:
   - phpenv config-add travis-php.ini
