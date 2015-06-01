@@ -36,9 +36,8 @@
         "propel/propel-bundle": "~1.2"
     },
     "autoload":     {
-        "psr-0": { "Lexik\\Bundle\\TranslationBundle": "" }
+        "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
     },
-    "target-dir": "Lexik/Bundle/TranslationBundle",
     "extra": {
         "branch-alias": {
             "dev-master": "2.x.x-dev"
