@@ -20,12 +20,12 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
     /**
-     * @var Symfony\Component\Console\Input\InputInterface
+     * @var \Symfony\Component\Console\Input\InputInterface
      */
     private $input;
 
     /**
-     * @var Symfony\Component\Console\Output\OutputInterface
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
 
@@ -66,6 +66,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+
+            if (null !== $bundle->getParent()) {
+                // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
+                // so we tell getBundle to NOT fetch the first if a parent is present
+                $bundle = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false)[1];
+                $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
+            }
+
             $this->importBundleTranslationFiles($bundle, $locales, $domains);
         } else {
             if (!$this->input->getOption('merge')) {
@@ -194,7 +202,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * @param string $path
      * @param array  $locales
      * @param array  $domains
-     * @return Symfony\Component\Finder\Finder
+     * @return \Symfony\Component\Finder\Finder
      */
     protected function findTranslationsFiles($path, array $locales, array $domains)
     {
