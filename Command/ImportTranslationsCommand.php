@@ -74,11 +74,15 @@ class ImportTranslationsCommand extends ContainerAwareCommand
                 $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
             }
 
-            $this->importBundleTranslationFiles($bundle, $locales, $domains);
+            $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool) $this->input->getOption('globals'));
         } else {
             if (!$this->input->getOption('merge')) {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');
                 $this->importAppTranslationFiles($locales, $domains);
+            }
+
+            if ($this->input->getOption('globals')) {
+                $this->importBundlesTranslationFiles($locales, $domains, true);
             }
 
             if (!$this->input->getOption('globals')) {
@@ -146,13 +150,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param array $locales
      * @param array $domains
+     * @param boolean $global
      */
-    protected function importBundlesTranslationFiles(array $locales, array $domains)
+    protected function importBundlesTranslationFiles(array $locales, array $domains, $global = false)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $this->importBundleTranslationFiles($bundle, $locales, $domains);
+            $this->importBundleTranslationFiles($bundle, $locales, $domains, $global);
         }
     }
 
@@ -162,11 +167,18 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * @param BundleInterface $bundle
      * @param array           $locales
      * @param array           $domains
+     * @param boolean         $global
      */
-    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains)
+    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains, $global = false)
     {
+        $path = $bundle->getPath();
+        if ($global) {
+            $path = $this->getApplication()->getKernel()->getRootDir() . '/Resources/' . $bundle->getName() . '/translations';
+            $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
+        }
+
         $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales, $domains);
+        $finder = $this->findTranslationsFiles($path, $locales, $domains);
         $this->importTranslationFiles($finder);
     }
 
@@ -212,7 +224,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
         }
 
-        $dir = $path.'/Resources/translations';
+        $dir = 0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources') ? $path : $path . '/Resources/translations';
+        $this->output->writeln('<info>*** Using dir ' . $dir . ' to lookup translation files. ***</info>');
 
         if (is_dir($dir)) {
             $finder = new Finder();
