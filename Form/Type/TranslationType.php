@@ -41,7 +41,7 @@ class TranslationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class'         => null,
-            'translation_domain' => 'LexikTranslationBundle'
+            'translation_domain' => 'LexikTranslationBundle',
         ));
     }
 

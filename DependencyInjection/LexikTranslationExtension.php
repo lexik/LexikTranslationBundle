@@ -93,23 +93,20 @@ class LexikTranslationExtension extends Extension
         if (StorageInterface::STORAGE_ORM == $storage) {
             $args = array(
                 new Reference('doctrine'),
-                (null === $objectManager) ? 'default' : $objectManager
+                (null === $objectManager) ? 'default' : $objectManager,
             );
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
-
         } elseif (StorageInterface::STORAGE_MONGODB == $storage) {
             $args = array(
                 new Reference('doctrine_mongodb'),
-                (null === $objectManager) ? 'default' : $objectManager
+                (null === $objectManager) ? 'default' : $objectManager,
             );
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
-
         } elseif (StorageInterface::STORAGE_PROPEL == $storage) {
             // In the Propel case the object_manager setting is used for the connection name
             $args = array($objectManager);
-
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
@@ -164,8 +161,8 @@ class LexikTranslationExtension extends Extension
         if ('all' == $registration['type'] || 'files' == $registration['type']) {
             $dirs = array();
 
-            if (class_exists('Symfony\Component\Validator\Validator')) {
-                $r = new \ReflectionClass('Symfony\Component\Validator\Validator');
+            if (class_exists('Symfony\Component\Validator\Validation')) {
+                $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }

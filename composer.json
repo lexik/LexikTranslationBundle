@@ -5,7 +5,6 @@
     "keywords": ["Symfony2", "bundle", "translation", "i18n"],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
-    "minimum-stability": "dev",
     "prefer-stable": true,
     "authors": [
         {

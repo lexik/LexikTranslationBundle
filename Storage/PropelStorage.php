@@ -139,11 +139,11 @@ class PropelStorage implements StorageInterface
      */
     public function clear($entityName = null)
     {
-         if (null === $entityName) {
-             $this->initCollections();
-         } else {
-             $this->initCollection($entityName);
-         }
+        if (null === $entityName) {
+            $this->initCollections();
+        } else {
+            $this->initCollection($entityName);
+        }
     }
 
     /**
@@ -151,7 +151,7 @@ class PropelStorage implements StorageInterface
      */
     public function getModelClass($name)
     {
-        if ( !isset($this->classes[$name]) ) {
+        if (!isset($this->classes[$name])) {
             throw new \RuntimeException(sprintf('No class defined for name "%s".', $name));
         }
 

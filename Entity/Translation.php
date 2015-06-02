@@ -3,7 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 

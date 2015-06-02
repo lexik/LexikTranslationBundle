@@ -4,9 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -96,7 +94,7 @@ abstract class TransUnit
      */
     public function setDomain($domain)
     {
-      $this->domain = $domain;
+        $this->domain = $domain;
     }
 
     /**
@@ -106,7 +104,7 @@ abstract class TransUnit
      */
     public function getDomain()
     {
-      return $this->domain;
+        return $this->domain;
     }
 
     /**
@@ -159,9 +157,7 @@ abstract class TransUnit
     public function getTranslation($locale)
     {
         foreach ($this->getTranslations() as $translation) {
-
             if ($translation->getLocale() == $locale) {
-
                 return $translation;
             }
         }

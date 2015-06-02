@@ -26,7 +26,7 @@ class TransUnitDataPropel
         $files = array();
         $domains = array(
             'superTranslations' => array('fr', 'en', 'de'),
-            'messages' => array('fr', 'en'),
+            'messages'          => array('fr', 'en'),
         );
 
         foreach ($domains as $name => $locales) {

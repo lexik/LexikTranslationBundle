@@ -20,7 +20,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
 
         $tables = array(
             $em->getClassMetadata($this->getModelClass('trans_unit'))->table['name'],
-            $em->getClassMetadata($this->getModelClass('translation'))->table['name']
+            $em->getClassMetadata($this->getModelClass('translation'))->table['name'],
         );
 
         $schemaManager = $em->getConnection()->getSchemaManager();

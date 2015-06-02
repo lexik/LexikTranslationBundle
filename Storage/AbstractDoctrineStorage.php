@@ -105,7 +105,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function getModelClass($name)
     {
-        if ( !isset($this->classes[$name]) ) {
+        if (!isset($this->classes[$name])) {
             throw new \RuntimeException(sprintf('No class defined for name "%s".', $name));
         }
 

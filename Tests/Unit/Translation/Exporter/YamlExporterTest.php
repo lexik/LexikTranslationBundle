@@ -57,17 +57,17 @@ C;
     {
         $exporter = new TmpExporter();
 
-        $result=$exporter->createMultiArray(array('foo.bar.baz'=>'foobar'));
-        $expected=array('foo'=>array('bar'=>array('baz'=>'foobar')));
+        $result = $exporter->createMultiArray(array('foo.bar.baz' => 'foobar'));
+        $expected = array('foo' => array('bar' => array('baz' => 'foobar')));
         $this->assertEquals($expected, $result);
 
-        $result=$exporter->createMultiArray(array(
-                'foo.bar.baz'=>'foobar',
-                'foo.foobaz'=>'bazbar',
+        $result = $exporter->createMultiArray(array(
+                'foo.bar.baz' => 'foobar',
+                'foo.foobaz' => 'bazbar',
             ));
-        $expected=array('foo'=>array(
-            'foobaz'=>'bazbar',
-            'bar'=>array('baz'=>'foobar'),
+        $expected = array('foo' => array(
+            'foobaz' => 'bazbar',
+            'bar'   => array('baz' => 'foobar'),
         ));
         $this->assertEquals($expected, $result);
     }
@@ -79,51 +79,43 @@ C;
     {
         $exporter = new TmpExporter();
 
-        $result=$exporter->flattenArray(array('foo'=>array('bar'=>array('baz'=>'foobar'))));
-        $expected=array('foo.bar.baz'=>'foobar');
+        $result = $exporter->flattenArray(array('foo' => array('bar' => array('baz' => 'foobar'))));
+        $expected = array('foo.bar.baz' => 'foobar');
         $this->assertEquals($expected, $result);
 
-        $result=$exporter->flattenArray(
-            array('bundle'=>
-                array('foo'=>
-                    array(
-                        'foobaz'=>'bazbar',
-                        'bar'=>
-                            array(
-                                'baz0'=>'foobar',
-                                'baz1'=>'foobaz',
+        $result = $exporter->flattenArray(
+            array('bundle' => array('foo' => array(
+                        'foobaz' => 'bazbar',
+                        'bar'   => array(
+                                'baz0' => 'foobar',
+                                'baz1' => 'foobaz',
                             ),
-                    )
-                )
+                    ),
+                ),
             )
         );
-        $expected=array('bundle.foo'=>
-            array(
-                'foobaz'=>'bazbar',
-                'bar'=>
-                    array(
-                        'baz0'=>'foobar',
-                        'baz1'=>'foobaz',
+        $expected = array('bundle.foo' => array(
+                'foobaz' => 'bazbar',
+                'bar'   => array(
+                        'baz0' => 'foobar',
+                        'baz1' => 'foobaz',
                     ),
-            )
+            ),
         );
         $this->assertEquals($expected, $result);
 
-        $result=$exporter->flattenArray(
-            array('bundle'=>
-                array('foo'=>
-                    array(
-                        'foobaz'=>'bazbar',
-                        'bar'=>array('baz'=>'foobar'),
-                    )
-                )
+        $result = $exporter->flattenArray(
+            array('bundle' => array('foo' => array(
+                        'foobaz' => 'bazbar',
+                        'bar'   => array('baz' => 'foobar'),
+                    ),
+                ),
             )
         );
-        $expected=array('bundle.foo'=>
-            array(
-                'foobaz'=>'bazbar',
-                'bar'=>array('baz'=>'foobar'),
-            )
+        $expected = array('bundle.foo' => array(
+                'foobaz' => 'bazbar',
+                'bar'   => array('baz' => 'foobar'),
+            ),
         );
         $this->assertEquals($expected, $result);
     }
@@ -143,7 +135,7 @@ class TmpExporter extends YamlExporter
         return parent::createMultiArray($translations);
     }
 
-    public function flattenArray($array, $prefix='')
+    public function flattenArray($array, $prefix = '')
     {
         return parent::flattenArray($array, $prefix);
     }

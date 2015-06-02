@@ -2,30 +2,30 @@
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
-                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd"> 
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Lexik\Bundle\TranslationBundle\Entity\TransUnit" 
-            table="lexik_trans_unit" 
+    <entity name="Lexik\Bundle\TranslationBundle\Entity\TransUnit"
+            table="lexik_trans_unit"
             repository-class="Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository">
-            
+
         <unique-constraints>
             <unique-constraint name="key_domain_idx" columns="key_name,domain" />
         </unique-constraints>
-        
+
         <lifecycle-callbacks>
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
-    
+
         <id name="id" type="integer" column="id">
             <generator strategy="IDENTITY" />
         </id>
-        
+
         <one-to-many field="translations" target-entity="Lexik\Bundle\TranslationBundle\Entity\Translation" mapped-by="transUnit">
             <cascade>
                 <cascade-all/>
             </cascade>
         </one-to-many>
-        
+
     </entity>
 </doctrine-mapping>

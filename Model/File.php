@@ -3,7 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**

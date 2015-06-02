@@ -3,7 +3,7 @@
                         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                         xsi:schemaLocation="http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping
                                             http://doctrine-project.org/schemas/odm/doctrine-mongo-mapping.xsd">
-                  
+
     <document name="Lexik\Bundle\TranslationBundle\Document\File"
               collection="lexik_translation_file"
               repository-class="Lexik\Bundle\TranslationBundle\Document\FileRepository">
@@ -12,7 +12,7 @@
             <lifecycle-callback type="prePersist" method="prePersist" />
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
-        
+
         <field fieldName="id" name="id" id="true" strategy="AUTO" />
 
         <reference-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" mapped-by="file">

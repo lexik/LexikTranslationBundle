@@ -81,7 +81,6 @@ abstract class Translation
         return $this->content;
     }
 
-
     /**
      * Set file
      *

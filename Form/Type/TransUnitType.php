@@ -31,7 +31,7 @@ class TransUnitType extends AbstractType
             'required' => false,
             'options'  => array(
                 'data_class' => $options['translation_class'],
-            )
+            ),
         ));
         $builder->add('save', 'submit', array(
             'label' => 'translations.save',
@@ -50,7 +50,7 @@ class TransUnitType extends AbstractType
             'data_class'         => null,
             'domains'            => array('messages'),
             'translation_class'  => null,
-            'translation_domain' => 'LexikTranslationBundle'
+            'translation_domain' => 'LexikTranslationBundle',
         ));
     }
 

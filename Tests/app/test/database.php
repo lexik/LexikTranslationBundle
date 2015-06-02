@@ -10,9 +10,9 @@ if (ORM_TYPE == "doctrine") {
                         'type'      => 'xml',
                         'prefix'    => 'Lexik\Bundle\TranslationBundle\Entity',
                         'is_bundle' => false,
-                        'dir'       => '%kernel.root_dir%/../../Resources/config/doctrine'
-                    )
-                )
+                        'dir'       => '%kernel.root_dir%/../../Resources/config/doctrine',
+                    ),
+                ),
             ),
             'dbal' => array(
                 'charset'  => 'UTF8',
@@ -21,8 +21,8 @@ if (ORM_TYPE == "doctrine") {
                 'port'     => DB_PORT,
                 'dbname'   => DB_NAME,
                 'user'     => DB_USER,
-                'password' => DB_PASSWD
-            )
+                'password' => DB_PASSWD,
+            ),
         )
     );
 } else {

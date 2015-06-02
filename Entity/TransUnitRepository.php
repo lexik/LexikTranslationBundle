@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Entity;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
-
 use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
@@ -88,7 +87,7 @@ class TransUnitRepository extends EntityRepository
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $ids = $builder->orderBy(sprintf('tu.%s', $sortColumn), $order)
-            ->setFirstResult($rows * ($page-1))
+            ->setFirstResult($rows * ($page - 1))
             ->setMaxResults($rows)
             ->getQuery()
             ->getResult('SingleColumnArrayHydrator');
@@ -199,8 +198,11 @@ class TransUnitRepository extends EntityRepository
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
-                    $qb->andWhere($qb->expr()->like('t.content', sprintf("'%%%s%%'", $filters[$locale])));
-                    $qb->andWhere($qb->expr()->eq('t.locale', sprintf("'%s'", $locale)));
+                    $qb->andWhere($qb->expr()->like('t.content', ':content'))
+                        ->setParameter('content', sprintf('%%%s%%', $filters[$locale]));
+
+                    $qb->andWhere($qb->expr()->eq('t.locale', ':locale'))
+                        ->setParameter('locale', sprintf('%s', $locale));
                 }
             }
 

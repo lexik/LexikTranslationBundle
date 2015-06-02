@@ -45,7 +45,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('case-insensitive', 'i', InputOption::VALUE_NONE, 'Process translation as lower case to avoid duplicate entry errors.');
         $this->addOption('merge', 'm', InputOption::VALUE_NONE, 'Merge translation (use ones with latest updatedAt date).');
 
-        $this->addArgument('bundle', InputArgument::OPTIONAL,'Import translations for this specific bundle.', null);
+        $this->addArgument('bundle', InputArgument::OPTIONAL, 'Import translations for this specific bundle.', null);
     }
 
     /**
@@ -102,8 +102,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     protected function importComponentTranslationFiles(array $locales, array $domains)
     {
         $classes = array(
-            'Symfony\Component\Validator\Validator' => '/Resources/translations',
-            'Symfony\Component\Form\Form' => '/Resources/translations',
+            'Symfony\Component\Validator\Validator'                             => '/Resources/translations',
+            'Symfony\Component\Form\Form'                                       => '/Resources/translations',
             'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../../Resources/translations',
         );
 
@@ -173,7 +173,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $importer = $this->getContainer()->get('lexik_translation.importer.file');
             $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
 
-            foreach ($finder as $file)  {
+            foreach ($finder as $file) {
                 $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
                 $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
                 $this->output->writeln(sprintf('%d translations', $number));

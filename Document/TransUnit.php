@@ -15,14 +15,13 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
      */
     public function convertMongoTimestamp()
     {
-        $this->createdAt = ($this->createdAt instanceof \MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;;
+        $this->createdAt = ($this->createdAt instanceof \MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;
         $this->updatedAt = ($this->updatedAt instanceof \MongoTimestamp) ? $this->updatedAt->sec : $this->updatedAt;
 
         foreach ($this->getTranslations() as $translation) {
             $translation->convertMongoTimestamp();
         }
     }
-
 
     /**
      * {@inheritdoc}

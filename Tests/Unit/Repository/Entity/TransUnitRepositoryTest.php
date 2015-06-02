@@ -57,7 +57,6 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $expected = array();
         $this->assertSameTransUnit($expected, $results);
 
-
         $results = $repository->getAllByLocaleAndDomain('de', 'superTranslations');
         $expected = array(
             array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(array('locale' => 'de', 'content' => 'heil'))),
@@ -173,8 +172,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(array(
-            'domain' => 'messages',
-            'locale' => 'fr',
+            'domain'    => 'messages',
+            'locale'    => 'fr',
             'extention' => 'yml',
          ));
         $this->assertInstanceOf(self::ENTITY_FILE_CLASS, $file);
@@ -182,7 +181,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $result = $repository->getTranslationsForFile($file, false);
         $expected = array(
             'key.say_goodbye' => 'au revoir',
-            'key.say_wtf' => 'c\'est quoi ce bordel !?!',
+            'key.say_wtf'     => 'c\'est quoi ce bordel !?!',
         );
         $this->assertEquals($expected, $result);
 

@@ -40,7 +40,7 @@ class Translator extends BaseTranslator
             $resources = include $file;
         }
 
-        foreach($resources as $resource) {
+        foreach ($resources as $resource) {
             $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
         }
     }
@@ -59,16 +59,15 @@ class Translator extends BaseTranslator
 
         $deleted = true;
         foreach ($files as $file) {
-            if (!unlink($file)) {
-                $deleted = false;
-            }
-            else {
+            if (file_exists($file)) {
                 $this->invalidateSystemCacheForFile($file);
+                $deleted = unlink($file);
             }
+
             $metadata = $file.'.meta';
             if (file_exists($metadata)) {
-                unlink($metadata);
                 $this->invalidateSystemCacheForFile($metadata);
+                unlink($metadata);
             }
         }
 
@@ -89,14 +88,14 @@ class Translator extends BaseTranslator
         // also remove database.resources.php cache file
         $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
         if (file_exists($file)) {
-            unlink($file);
             $this->invalidateSystemCacheForFile($file);
+            unlink($file);
         }
 
         $metadata = $file.'.meta';
         if (file_exists($metadata)) {
-            unlink($metadata);
             $this->invalidateSystemCacheForFile($metadata);
+            unlink($metadata);
         }
     }
 
@@ -111,8 +110,7 @@ class Translator extends BaseTranslator
             if (apc_exists($path) && !apc_delete_file($path)) {
                 throw new \RuntimeException(sprintf('Failed to clear APC Cache for file %s', $path));
             }
-        }
-        elseif (ini_get('opcache.enable')) {
+        } elseif ('cli' === php_sapi_name() ? ini_get('opcache.enable_cli') : ini_get('opcache.enable')) {
             if (!opcache_invalidate($path, true)) {
                 throw new \RuntimeException(sprintf('Failed to clear OPCache for file %s', $path));
             }
@@ -152,14 +150,14 @@ class Translator extends BaseTranslator
         $i = 0;
         $ids = array_keys($this->loaderIds);
 
-        while($i<count($ids) && null === $loader) {
+        while ($i < count($ids) && null === $loader) {
             if (in_array($format, $this->loaderIds[$ids[$i]])) {
                 $loader = $this->container->get($ids[$i]);
             }
             $i++;
         }
 
-        if ( !($loader instanceof LoaderInterface) ) {
+        if (!($loader instanceof LoaderInterface)) {
             throw new \RuntimeException(sprintf('No loader found for "%s" format.', $format));
         }
 
