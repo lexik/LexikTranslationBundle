@@ -101,7 +101,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
 
             // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-            if (false === strpos($file->getPath(), 'vendor/') || $override) {
+            if (false !== strpos($file->getPath(), 'vendor/') || $override) {
                 $outputPath = sprintf('%s/Resources/translations', $rootDir);
             } else {
                 $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());
