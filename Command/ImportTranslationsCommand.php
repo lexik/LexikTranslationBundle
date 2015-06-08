@@ -44,6 +44,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
         $this->addOption('case-insensitive', 'i', InputOption::VALUE_NONE, 'Process translation as lower case to avoid duplicate entry errors.');
         $this->addOption('merge', 'm', InputOption::VALUE_NONE, 'Merge translation (use ones with latest updatedAt date).');
+        $this->addOption('import-path', 'p', InputOption::VALUE_REQUIRED, 'Search for translations at given path');
+        $this->addOption('only-vendors', 'o', InputOption::VALUE_NONE, 'Import from vendors only');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL, 'Import translations for this specific bundle.', null);
     }
@@ -61,6 +63,17 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         }
 
+        if ($this->input->getOption('import-path')
+            && ($this->input->getOption('globals')
+                || $this->input->getOption('merge')
+                || $this->input->getOption('only-vendors'))) {
+            throw new \LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
+        }
+
+        if ($this->input->getOption('only-vendors') && $this->input->getOption('globals')) {
+            throw new \LogicException('You cannot use "globals" and "only-vendors" at the same time.');
+        }
+
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
 
         $bundleName = $this->input->getArgument('bundle');
@@ -75,8 +88,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             }
 
             $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool) $this->input->getOption('globals'));
-        } else {
-            if (!$this->input->getOption('merge')) {
+        } else if(!$this->input->getOption('import-path')) {
+
+            if (!$this->input->getOption('merge') && !$this->input->getOption('only-vendors')) {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');
                 $this->importAppTranslationFiles($locales, $domains);
             }
@@ -99,10 +113,19 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             }
         }
 
+        if ($this->input->getOption('import-path')) {
+            $this->importTranslationFilesFromPath($this->input->getOption('import-path'), $locales, $domains);
+        }
+
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->removeTranslationCache();
         }
+    }
+
+    protected function importTranslationFilesFromPath($path, array $locales, array $domains) {
+        $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
+        $this->importTranslationFiles($finder);
     }
 
     /**
@@ -216,7 +239,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * @param array  $domains
      * @return \Symfony\Component\Finder\Finder
      */
-    protected function findTranslationsFiles($path, array $locales, array $domains)
+    protected function findTranslationsFiles($path, array $locales, array $domains, $autocompletePath = true)
     {
         $finder = null;
 
@@ -224,7 +247,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
         }
 
-        $dir = 0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources') ? $path : $path . '/Resources/translations';
+        $dir = true == $autocompletePath ? (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources') ? $path : $path . '/Resources/translations') : $path;
         $this->output->writeln('<info>*** Using dir ' . $dir . ' to lookup translation files. ***</info>');
 
         if (is_dir($dir)) {

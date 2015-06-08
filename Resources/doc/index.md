@@ -106,8 +106,10 @@ Command options:
 * `--force` (or `-f`): update the translations even if the element already exist in the database.
 * `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
 * `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. eg: `--locales=fr --locales=en`
-* `--domains` (or `-d`): Only export files for given domains (comma separated). eg `--domains=messages,validators`
+* `--domains` (or `-d`): Only import files for given domains (comma separated). eg `--domains=messages,validators`
 * `--case-insensitive` (or `-i`): Convert keys as lower case to check if a key has already been imported.
+* `--import-path` (or `-p`): Search for translations at given path. Cannot be used with globals, merge or only-vendors option. eg `--import-path=\tmp`
+* `--only-vendors` (or `-o`): Only import files from vendor-bundles. eg `--only-vendors`
 
 Export translations
 ===================
