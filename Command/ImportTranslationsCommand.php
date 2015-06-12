@@ -20,12 +20,12 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
     /**
-     * @var Symfony\Component\Console\Input\InputInterface
+     * @var \Symfony\Component\Console\Input\InputInterface
      */
     private $input;
 
     /**
-     * @var Symfony\Component\Console\Output\OutputInterface
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
 
@@ -44,6 +44,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only imports files for given domains (comma separated).');
         $this->addOption('case-insensitive', 'i', InputOption::VALUE_NONE, 'Process translation as lower case to avoid duplicate entry errors.');
         $this->addOption('merge', 'm', InputOption::VALUE_NONE, 'Merge translation (use ones with latest updatedAt date).');
+        $this->addOption('import-path', 'p', InputOption::VALUE_REQUIRED, 'Search for translations at given path');
+        $this->addOption('only-vendors', 'o', InputOption::VALUE_NONE, 'Import from vendors only');
 
         $this->addArgument('bundle', InputArgument::OPTIONAL, 'Import translations for this specific bundle.', null);
     }
@@ -61,16 +63,40 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
         }
 
+        if ($this->input->getOption('import-path')
+            && ($this->input->getOption('globals')
+                || $this->input->getOption('merge')
+                || $this->input->getOption('only-vendors'))) {
+            throw new \LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
+        }
+
+        if ($this->input->getOption('only-vendors') && $this->input->getOption('globals')) {
+            throw new \LogicException('You cannot use "globals" and "only-vendors" at the same time.');
+        }
+
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
 
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-            $this->importBundleTranslationFiles($bundle, $locales, $domains);
-        } else {
-            if (!$this->input->getOption('merge')) {
+
+            if (null !== $bundle->getParent()) {
+                // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
+                // so we tell getBundle to NOT fetch the first if a parent is present
+                $bundle = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false)[1];
+                $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
+            }
+
+            $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool) $this->input->getOption('globals'));
+        } else if(!$this->input->getOption('import-path')) {
+
+            if (!$this->input->getOption('merge') && !$this->input->getOption('only-vendors')) {
                 $this->output->writeln('<info>*** Importing application translation files ***</info>');
                 $this->importAppTranslationFiles($locales, $domains);
+            }
+
+            if ($this->input->getOption('globals')) {
+                $this->importBundlesTranslationFiles($locales, $domains, true);
             }
 
             if (!$this->input->getOption('globals')) {
@@ -87,10 +113,19 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             }
         }
 
+        if ($this->input->getOption('import-path')) {
+            $this->importTranslationFilesFromPath($this->input->getOption('import-path'), $locales, $domains);
+        }
+
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->removeTranslationCache();
         }
+    }
+
+    protected function importTranslationFilesFromPath($path, array $locales, array $domains) {
+        $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
+        $this->importTranslationFiles($finder);
     }
 
     /**
@@ -138,13 +173,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      *
      * @param array $locales
      * @param array $domains
+     * @param boolean $global
      */
-    protected function importBundlesTranslationFiles(array $locales, array $domains)
+    protected function importBundlesTranslationFiles(array $locales, array $domains, $global = false)
     {
         $bundles = $this->getApplication()->getKernel()->getBundles();
 
         foreach ($bundles as $bundle) {
-            $this->importBundleTranslationFiles($bundle, $locales, $domains);
+            $this->importBundleTranslationFiles($bundle, $locales, $domains, $global);
         }
     }
 
@@ -154,11 +190,18 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * @param BundleInterface $bundle
      * @param array           $locales
      * @param array           $domains
+     * @param boolean         $global
      */
-    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains)
+    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains, $global = false)
     {
+        $path = $bundle->getPath();
+        if ($global) {
+            $path = $this->getApplication()->getKernel()->getRootDir() . '/Resources/' . $bundle->getName() . '/translations';
+            $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
+        }
+
         $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-        $finder = $this->findTranslationsFiles($bundle->getPath(), $locales, $domains);
+        $finder = $this->findTranslationsFiles($path, $locales, $domains);
         $this->importTranslationFiles($finder);
     }
 
@@ -194,9 +237,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      * @param string $path
      * @param array  $locales
      * @param array  $domains
-     * @return Symfony\Component\Finder\Finder
+     * @return \Symfony\Component\Finder\Finder
      */
-    protected function findTranslationsFiles($path, array $locales, array $domains)
+    protected function findTranslationsFiles($path, array $locales, array $domains, $autocompletePath = true)
     {
         $finder = null;
 
@@ -204,7 +247,8 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
         }
 
-        $dir = $path.'/Resources/translations';
+        $dir = true == $autocompletePath ? (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources') ? $path : $path . '/Resources/translations') : $path;
+        $this->output->writeln('<info>*** Using dir ' . $dir . ' to lookup translation files. ***</info>');
 
         if (is_dir($dir)) {
             $finder = new Finder();

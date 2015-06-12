@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
+use Symfony\Component\HttpFoundation\File\File;
+
 /**
  * File interface.
  *
