@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Export translations from the database in to files.
@@ -16,12 +17,12 @@ use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 class ExportTranslationsCommand extends ContainerAwareCommand
 {
     /**
-     * @var Symfony\Component\Console\Input\InputInterface
+     * @var \Symfony\Component\Console\Input\InputInterface
      */
     private $input;
 
     /**
-     * @var Symfony\Component\Console\Output\OutputInterface
+     * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
 
@@ -36,7 +37,8 @@ class ExportTranslationsCommand extends ContainerAwareCommand
         $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
         $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
-        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are imported fully anyway)');
+        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are exported fully anyway)');
+        $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');
     }
 
     /**
@@ -80,17 +82,20 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function exportFile(FileInterface $file)
     {
-        $rootDir = $this->getContainer()->getParameter('kernel.root_dir');
+        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.root_dir');
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
-
         $override = $this->input->getOption('override');
 
-        // we only export updated translations in case of the file is located in vendor/
-        if ($override) {
-            $onlyUpdated = ('Resources/translations' !== $file->getPath());
+        if (!$this->input->getOption('export-path')) {
+            // we only export updated translations in case of the file is located in vendor/
+            if ($override) {
+                $onlyUpdated = ('Resources/translations' !== $file->getPath());
+            } else {
+                $onlyUpdated = (false !== strpos($file->getPath(), 'vendor/'));
+            }
         } else {
-            $onlyUpdated = (false !== strpos($file->getPath(), 'vendor/'));
+            $onlyUpdated = !$override;
         }
 
         $translations = $this->getContainer()
@@ -107,7 +112,19 @@ class ExportTranslationsCommand extends ContainerAwareCommand
                 $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());
             }
 
+            $this->output->writeln(sprintf('<info># OutputPath "%s":</info>', $outputPath));
+
+            // ensure the path exists
+            if ($this->input->getOption('export-path')) {
+                /** @var Filesystem $fs */
+                $fs = $this->getContainer()->get('filesystem');
+                if (!$fs->exists($outputPath)) {
+                    $fs->mkdir($outputPath);
+                }
+            }
+
             $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
+            $this->output->writeln(sprintf('<info># OutputFile "%s":</info>', $outputFile));
 
             $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
             $this->doExport($outputFile, $translations, $format);
