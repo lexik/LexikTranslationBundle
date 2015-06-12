@@ -14,7 +14,9 @@
     </table>
 
     <table name="lexik_trans_unit" phpName="TransUnit" namespace="Lexik\Bundle\TranslationBundle\Propel">
-        <behavior name="auto_add_pk" />
+        <behavior name="auto_add_pk">
+            <parameter name="phpName" value="Id" />
+        </behavior>
         <behavior name="timestampable" />
 
         <column name="domain" type="varchar" size="255" required="true" default="messages" />
