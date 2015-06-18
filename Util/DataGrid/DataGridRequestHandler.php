@@ -2,11 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Profiler\Profile;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
+use Symfony\Component\Translation\DataCollector\TranslationDataCollector;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -29,11 +33,16 @@ class DataGridRequestHandler
     protected $managedLocales;
 
     /**
+     * @var Profiler
+     */
+    protected $profiler;
+
+    /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param StorageInterface          $storage
      * @param array                     $managedLocales
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales)
+    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales, Profiler $profiler = null)
     {
         $this->transUnitManager = $transUnitManager;
         $this->storage = $storage;
@@ -69,6 +78,44 @@ class DataGridRequestHandler
         $count = $this->storage->countTransUnits($this->managedLocales, $parameters);
 
         return array($transUnits, $count);
+    }
+
+    /**
+     * Get a profile's translation messages based on a previous Profiler token.
+     *
+     * @param $token by which a Profile can be found in the Profiler
+     *
+     * @return array with collection of TransUnits and it's count
+     */
+    public function getByToken($token)
+    {
+        $profile = $this->profiler->loadProfile($token);
+
+        // In case no results were found
+        if ($profile instanceof Profile == false) {
+            return array(array(), 0);
+        }
+
+        try {
+            /** @var TranslationDataCollector $collector */
+            $collector = $profile->getCollector('translation');
+            $messages = $collector->getMessages();
+
+            $transUnits = array();
+            foreach ($messages as $message) {
+
+                $transUnit = $this->storage->getTransUnitByKeyAndDomain($message['id'], $message['domain']);
+                if ($transUnit instanceof TransUnit) {
+                    $transUnits[] = $transUnit;
+                }
+            }
+            return array($transUnits, count($transUnits));
+
+        } catch (\InvalidArgumentException $e) {
+
+            // Translation collector is a 2.7 feature
+            return array(array(), 0);
+        }
     }
 
     /**
