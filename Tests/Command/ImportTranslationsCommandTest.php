@@ -19,7 +19,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class ImportTranslationsCommandTest extends WebTestCase
 {
-
     /**
      * @var Application
      */
@@ -54,9 +53,7 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     private static function rebuildDatabase()
     {
-        $connection = static::$kernel->getContainer()->get('doctrine.dbal.default_connection');
-
-        $dbPath = $connection->getDatabase();
+        static::$kernel->getContainer()->get('doctrine.dbal.default_connection');
 
         static::runCommand("doctrine:schema:drop", array('--force' => true));
         static::runCommand("doctrine:schema:create");
@@ -72,7 +69,7 @@ class ImportTranslationsCommandTest extends WebTestCase
         $output = new NullOutput();
 
         static::$application->setAutoExit(false);
-        $result = self::$application->run($input, $output);
+        self::$application->run($input, $output);
     }
 
     /**
@@ -101,16 +98,9 @@ class ImportTranslationsCommandTest extends WebTestCase
         $resultLines = explode("\n", $commandTester->getDisplay());
 
         $this->assertEquals('# LexikTranslationBundle:', $resultLines[0]);
-        $this->assertLanguageDumped($resultLines[1]);
-        $this->assertLanguageDumped($resultLines[2]);
-        $this->assertEquals('Removing translations cache files ...', $resultLines[3]);
-    }
-
-    /**
-     * @param $result
-     */
-    private function assertLanguageDumped($result)
-    {
-        $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $result);
+        $this->assertRegExp('/Using dir (.)+\/Lexik\/Bundle\/TranslationBundle\/Resources\/translations to lookup translation files/', $resultLines[1]);
+        $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $resultLines[2]);
+        $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $resultLines[3]);
+        $this->assertEquals('Removing translations cache files ...', $resultLines[4]);
     }
 }
