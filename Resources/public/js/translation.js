@@ -166,11 +166,22 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
                 sharedMessage.reset();
             };
 
-            $scope.save = function (event) {
-                if (event.which == 27) { // ecsape key
+            $scope.enableEdit = function () {
+                $scope.edit = true;
+                sharedMessage.reset();
+            };
+
+            $scope.disableEdit = function () {
+                $scope.edit = false;
+                sharedMessage.reset();
+            };
+
+            $scope.save = function (event, source) {
+                console.log(event);
+                if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // ecsape key
                     $scope.edit = false;
 
-                } else if ( ($scope.editType == 'textarea' && event.type == 'click') || ($scope.editType == 'text' && event.which == 13) ) { // click btn OR return key
+                } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
                     var url = translationCfg.url.update.replace('-id-', $scope.translation._id);
 
                     var parameters = [];
