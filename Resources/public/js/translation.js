@@ -18,9 +18,61 @@ app.factory('sharedMessage', function () {
     };
 });
 
+app.service('TranslationApiManager', function ($http) {
+
+    this.getPage = function (params, tableData) {
+        var parameters = {};
+
+        if (Object.keys(params.sorting()).length) {
+            var keys = Object.keys(params.sorting());
+            parameters['sidx'] = keys[0];
+            parameters['sord'] = params.sorting()[keys[0]];
+
+            if (!angular.equals(tableData.currentSort, params.sorting())) {
+                params.page(1);
+                tableData.currentSort = params.sorting();
+            }
+        }
+
+        if (Object.keys(params.filter()).length) {
+            parameters['_search'] = true;
+            for (var key in params.filter()) {
+                parameters[key] = params.filter()[key];
+            }
+
+            if (!angular.equals(tableData.currentFilter, params.filter())) {
+                params.page(1);
+                tableData.currentFilter = params.filter();
+            }
+        }
+
+        parameters['page'] = params.page();
+        parameters['rows'] = params.count();
+
+        return $http.get(translationCfg.url.list, {'params': parameters});
+    };
+
+    this.invalidateCache = function () {
+        return $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+    };
+
+    this.updateTranslation = function (translation) {
+        var url = translationCfg.url.update.replace('-id-', translation._id);
+
+        var parameters = [];
+        for (var name in translation) {
+            parameters.push(name+'='+encodeURIComponent(translation[name]));
+        }
+
+        // force content type to make SF create a Request with the PUT parameters
+        return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
+    };
+
+});
+
 app.controller('TranslationController', [
-    '$scope', '$http', '$timeout', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage',
-    function ($scope, $http, $timeout, $location, $anchorScroll, ngTableParams, sharedMessage) {
+    '$scope', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage', 'TranslationApiManager',
+    function ($scope, $location, $anchorScroll, ngTableParams, sharedMessage, TranslationApiManager) {
 
         $scope.locales = translationCfg.locales;
         $scope.editType = translationCfg.inputType;
@@ -54,40 +106,12 @@ app.controller('TranslationController', [
             currentSort: {},
             currentFilter: {},
             getData: function($defer, params) {
-                var parameters = {};
-
-                if (Object.keys(params.sorting()).length) {
-                    var keys = Object.keys(params.sorting());
-                    parameters['sidx'] = keys[0];
-                    parameters['sord'] = params.sorting()[keys[0]];
-
-                    if (!angular.equals(this.currentSort, params.sorting())) {
-                        params.page(1);
-                        this.currentSort = params.sorting();
-                    }
-                }
-
-                if (Object.keys(params.filter()).length) {
-                    parameters['_search'] = true;
-                    for (var key in params.filter()) {
-                        parameters[key] = params.filter()[key];
-                    }
-
-                    if (!angular.equals(this.currentFilter, params.filter())) {
-                        params.page(1);
-                        this.currentFilter = params.filter();
-                    }
-                }
-
-                parameters['page'] = params.page();
-                parameters['rows'] = params.count();
-
-                $http.get(translationCfg.url.list, {'params': parameters}).success(function (responseData) {
-                    $timeout(function() {
+                TranslationApiManager
+                    .getPage(params, this)
+                    .success(function (responseData) {
                         params.total(responseData.total);
                         $defer.resolve(responseData.translations);
-                    }, 100);
-                });
+                    });
             }
         };
 
@@ -129,11 +153,12 @@ app.controller('TranslationController', [
 
         // invalidate the cache
         $scope.invalidateCache = function () {
-            $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+            TranslationApiManager
+                .invalidateCache()
                 .success(function (responseData) {
                     sharedMessage.set('success', 'ok-circle', responseData.message);
                 })
-                .error(function (responseData, status, headers, config) {
+                .error(function () {
                     sharedMessage.set('danger', 'remove-circle', 'Error');
                 })
             ;
@@ -148,7 +173,7 @@ app.controller('TranslationController', [
         };
 }]);
 
-app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedMessage) {
+app.directive('editableRow', ['TranslationApiManager', 'sharedMessage', function (TranslationApiManager, sharedMessage) {
     return {
         restrict: 'A',
         scope: {
@@ -157,8 +182,7 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
             editType: '=editType'
         },
         template: $('#editable-row-template').html(),
-        link: function ( $scope, element, attrs ) {
-            $scope.message = null;
+        link: function ($scope, element, attrs) {
             $scope.edit = false;
 
             $scope.toggleEdit = function () {
@@ -177,25 +201,17 @@ app.directive('editableRow', ['$http', 'sharedMessage', function ($http, sharedM
             };
 
             $scope.save = function (event, source) {
-                console.log(event);
-                if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // ecsape key
+                if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // escape key
                     $scope.edit = false;
 
                 } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
-                    var url = translationCfg.url.update.replace('-id-', $scope.translation._id);
-
-                    var parameters = [];
-                    for (var name in $scope.translation) {
-                        parameters.push(name+'='+encodeURIComponent($scope.translation[name]));
-                    }
-
-                    // force content type to make SF create a Request with the PUT parameters
-                    $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} })
-                        .success(function (data, status, headers, config) {
+                    TranslationApiManager
+                        .updateTranslation($scope.translation)
+                        .success(function (data) {
                             $scope.edit = false;
                             $scope.translation = data;
                             sharedMessage.set('success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
-                        }).error(function (data, status, headers, config) {
+                        }).error(function () {
                             sharedMessage.set('danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
                         });
                 }
