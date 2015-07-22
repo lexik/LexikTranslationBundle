@@ -16,3 +16,4 @@ translations:
     succesfully_added:   "Traduction ajouté avec succès."
     update_failed:       "Erreur lors de la mise à jour des traductions pour clé #%id%."
     back_to_list:        "Retour"
+    all_translations:    "Voir toutes les traductions"

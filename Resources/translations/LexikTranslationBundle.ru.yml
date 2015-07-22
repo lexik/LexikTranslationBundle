@@ -16,3 +16,4 @@ translations:
     succesfully_added:   "Перевод успешно добавлен."
     update_failed:       "Произошла ошибка при обновлении перевода для ключа #%id%."
     back_to_list:        "Вернуться к списку"
+    all_translations:    "Show all translations"
