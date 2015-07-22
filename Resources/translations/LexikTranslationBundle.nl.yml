@@ -16,3 +16,4 @@ translations:
     succesfully_added:   "Vertaling is succesvol toegevoegd."
     update_failed:       "Fout opgetreden bij vertalen van sleutel #%id%."
     back_to_list:        "Terug"
+    all_translations:    "Show all translations"

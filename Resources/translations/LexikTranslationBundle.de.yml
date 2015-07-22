@@ -16,3 +16,4 @@ translations:
     succesfully_added:      "Translation has been successfully added."
     update_failed:          "Fehler beim aktualisieren der Übersetzungen für schlüssel #%id%."
     back_to_list:           "Zurück"
+    all_translations:       "Show all translations"
