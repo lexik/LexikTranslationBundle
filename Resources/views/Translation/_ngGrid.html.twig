@@ -5,11 +5,11 @@
         <div class="col-md-12">
             <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm btn-manage-col">
                 <span class="glyphicon glyphicon-eye-close"></span>
-                {{ hideColBtnLabel }}
+                {{ labels.hideCol }}
             </a>
             <a ng-show="!autoCacheClean" ng-click="invalidateCache()" role="button" class="btn btn-primary btn-sm btn-invalidate-cache">
                 <span class="glyphicon glyphicon-refresh"></span>
-                {{ invalidateCacheBtnLabel }}
+                {{ labels.invalidateCache }}
             </a>
             <div ng-show="sharedMsg.content != ''" class="pull-right label label-{{ sharedMsg.css }}">
                 <span>
@@ -19,6 +19,15 @@
             </div>
         </div>
     </div>
+    <div class="row" ng-if="profilerTokens.length">
+        <div class="col-md-5">
+            <form>
+                <select ng-model="selectedToken" ng-change="changeSource(selectedToken)" ng-options="p.token as p.token for p in profilerTokens" class="form-control">
+                    <option value="">{{ labels.allTranslations }}</option>
+                </select>
+            </form>
+        </div>
+    </div>
 
     <div ng-show="hideColSelector" class="row">
         <div class="col-md-12">
@@ -26,12 +35,12 @@
                 <li class="locale">
                     <label for="toggle-all-columns" class="locale">
                         <input type="checkbox" id="toggle-all-columns" ng-model="areAllColumnsSelected" ng-checked="areAllColumnsSelected" ng-click="toggleAllColumns()"/>
-                        {{ toggleAllColBtnLabel }}
+                        {{ labels.toggleAllCol }}
                     </label>
                 </li>
             </ul>
             <ul class="list-unstyled list-inline locales-list">
-                <li ng-repeat="column in columns" class="locale">
+                <li ng-repeat="column in columns track by $index" class="locale">
                     <label for="toggle-{{ column.index }}">
                         <input type="checkbox" id="toggle-{{ column.index }}" ng-model="column.visible" ng-click="toggleSimilar(column)" />
                         {{ column.title }}
@@ -46,7 +55,7 @@
             <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th ng-repeat="column in columns"
+                        <th ng-repeat="column in columns track by $index"
                             ng-show="column.visible"
                             ng-click="sortGrid(column)"
                             class="text-center sortable col-{{ column.index }}">
@@ -54,17 +63,17 @@
                             &nbsp;
                             <span ng-if="column.sortable" class="glyphicon glyphicon-chevron-down"></span>
                         </th>
-                        <th class="col-save">{{ saveLabel }}</th>
+                        <th class="col-save">{{ labels.save }}</th>
                     </tr>
                     <tr>
-                        <th ng-repeat="column in columns" ng-show="column.visible">
+                        <th ng-repeat="column in columns track by $index" ng-show="column.visible">
                             <input ng-if="column.filter != false" ng-model="params.filter()[column.index]" type="text" name="{{ column.index }}" value="" class="form-control input-sm" />
                         </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr editable-row ng-repeat="translation in $data" translation="translation" columns="columns" edit-type="editType"></tr>
+                    <tr editable-row ng-repeat="translation in $data track by $index" translation="translation" columns="columns" edit-type="editType"></tr>
                 </tbody>
             </table>
         </div>
@@ -73,7 +82,7 @@
     <script type="text/ng-template" id="pager-template">
         <div class="ng-cloak ng-table-pager">
             <ul class="pagination ng-table-pagination pull-right">
-                <li ng-class="{'disabled': !page.active}" ng-repeat="page in pages" ng-switch="page.type">
+                <li ng-class="{'disabled': !page.active}" ng-repeat="page in pages track by $index" ng-switch="page.type">
                     <a ng-switch-when="prev" ng-click="params.changePage(page.number)" href="">&laquo;</a>
                     <a ng-switch-when="first" ng-click="params.changePage(page.number)" href=""><span ng-bind="page.number"></span></a>
                     <a ng-switch-when="page" ng-click="params.changePage(page.number)" href=""><span ng-bind="page.number"></span></a>
@@ -86,7 +95,7 @@
     </script>
 
     <script type="text/ng-template" id="editable-row-template">
-        <td ng-repeat="column in columns" ng-show="column.visible" ng-dblclick="toggleEdit()">
+        <td ng-repeat="column in columns track by $index" ng-show="column.visible" ng-dblclick="toggleEdit()">
             <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
             <div ng-switch on="editType">
                 <textarea ng-switch-when="textarea"

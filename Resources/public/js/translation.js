@@ -2,88 +2,105 @@
 
 var app = angular.module('translationApp', ['ngTable']);
 
+/**
+ * Shared object to display user messages.
+ */
 app.factory('sharedMessage', function () {
     return {
         css: '',
         icon: '',
         content: '',
+
         set: function (css, icon, content) {
             this.css = css;
             this.icon = icon;
             this.content = content;
         },
+
         reset: function () {
             this.set('', '', '');
         }
     };
 });
 
-app.service('TranslationApiManager', function ($http) {
+/**
+ * Api manager service.
+ */
+app.factory('translationApiManager', ['$http', function ($http) {
+    return {
+        token: null,
 
-    this.getPage = function (params, tableData) {
-        var parameters = {};
+        setToken: function (token) {
+            this.token = token;
+        },
 
-        if (Object.keys(params.sorting()).length) {
-            var keys = Object.keys(params.sorting());
-            parameters['sidx'] = keys[0];
-            parameters['sord'] = params.sorting()[keys[0]];
+        getPage: function (params, tableData) {
+            var parameters = {};
 
-            if (!angular.equals(tableData.currentSort, params.sorting())) {
-                params.page(1);
-                tableData.currentSort = params.sorting();
+            if (Object.keys(params.sorting()).length) {
+                var keys = Object.keys(params.sorting());
+                parameters['sidx'] = keys[0];
+                parameters['sord'] = params.sorting()[keys[0]];
+
+                if (!angular.equals(tableData.currentSort, params.sorting())) {
+                    params.page(1);
+                    tableData.currentSort = params.sorting();
+                }
             }
-        }
 
-        if (Object.keys(params.filter()).length) {
-            parameters['_search'] = true;
-            for (var key in params.filter()) {
-                parameters[key] = params.filter()[key];
+            if (Object.keys(params.filter()).length) {
+                parameters['_search'] = true;
+                for (var key in params.filter()) {
+                    parameters[key] = params.filter()[key];
+                }
+
+                if (!angular.equals(tableData.currentFilter, params.filter())) {
+                    params.page(1);
+                    tableData.currentFilter = params.filter();
+                }
             }
 
-            if (!angular.equals(tableData.currentFilter, params.filter())) {
-                params.page(1);
-                tableData.currentFilter = params.filter();
+            parameters['page'] = params.page();
+            parameters['rows'] = params.count();
+
+            var url = this.token ? translationCfg.url.listByToken.replace('-token-', this.token) : translationCfg.url.list;
+
+            return $http.get(url, {'params': parameters});
+        },
+
+        invalidateCache: function () {
+            return $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+        },
+
+        updateTranslation: function (translation) {
+            var url = translationCfg.url.update.replace('-id-', translation._id);
+
+            var parameters = [];
+            for (var name in translation) {
+                parameters.push(name+'='+encodeURIComponent(translation[name]));
             }
+
+            // force content type to make SF create a Request with the PUT parameters
+            return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
         }
-
-        parameters['page'] = params.page();
-        parameters['rows'] = params.count();
-
-        return $http.get(translationCfg.url.list, {'params': parameters});
     };
+}]);
 
-    this.invalidateCache = function () {
-        return $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
-    };
-
-    this.updateTranslation = function (translation) {
-        var url = translationCfg.url.update.replace('-id-', translation._id);
-
-        var parameters = [];
-        for (var name in translation) {
-            parameters.push(name+'='+encodeURIComponent(translation[name]));
-        }
-
-        // force content type to make SF create a Request with the PUT parameters
-        return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
-    };
-
-});
-
+/**
+ * Translation grid controller.
+ */
 app.controller('TranslationController', [
-    '$scope', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage', 'TranslationApiManager',
-    function ($scope, $location, $anchorScroll, ngTableParams, sharedMessage, TranslationApiManager) {
+    '$scope', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage', 'translationApiManager',
+    function ($scope, $location, $anchorScroll, ngTableParams, sharedMessage, translationApiManager) {
 
         $scope.locales = translationCfg.locales;
         $scope.editType = translationCfg.inputType;
         $scope.autoCacheClean = translationCfg.autoCacheClean;
-        $scope.hideColBtnLabel = translationCfg.label.hideCol;
-        $scope.toggleAllColBtnLabel = translationCfg.label.toggleAllCol;
-        $scope.invalidateCacheBtnLabel = translationCfg.label.invalidateCache;
-        $scope.saveRowBtnLabel = translationCfg.label.saveRow;
-        $scope.saveLabel = translationCfg.label.save;
+        $scope.labels = translationCfg.label;
         $scope.hideColSelector = false;
         $scope.areAllColumnsSelected = true;
+        $scope.profilerTokens = translationCfg.profilerTokens;
+        $scope.selectedToken = null;
         $scope.sharedMsg = sharedMessage;
 
         // columns definition
@@ -106,7 +123,7 @@ app.controller('TranslationController', [
             currentSort: {},
             currentFilter: {},
             getData: function($defer, params) {
-                TranslationApiManager
+                translationApiManager
                     .getPage(params, this)
                     .success(function (responseData) {
                         params.total(responseData.total);
@@ -119,7 +136,7 @@ app.controller('TranslationController', [
 
         $scope.tableParams = new ngTableParams(defaultOptions, tableData);
 
-        // scope function
+        // override default changePage function to scroll to top on change page
         $scope.tableParams.changePage = function (pageNumber) {
             $scope.tableParams.page(pageNumber);
             $location.hash('translation-grid');
@@ -151,9 +168,9 @@ app.controller('TranslationController', [
             }
         };
 
-        // invalidate the cache
+        // invalidate translation cache
         $scope.invalidateCache = function () {
-            TranslationApiManager
+            translationApiManager
                 .invalidateCache()
                 .success(function (responseData) {
                     sharedMessage.set('success', 'ok-circle', responseData.message);
@@ -171,9 +188,18 @@ app.controller('TranslationController', [
                 column.visible = $scope.areAllColumnsSelected;
             });
         };
+
+        // set the translations source
+        $scope.changeSource = function (selectedToken) {
+            translationApiManager.setToken(selectedToken);
+            $scope.tableParams.reload();
+        };
 }]);
 
-app.directive('editableRow', ['TranslationApiManager', 'sharedMessage', function (TranslationApiManager, sharedMessage) {
+/**
+ * Directive to switch table row in edit mode.
+ */
+app.directive('editableRow', ['translationApiManager', 'sharedMessage', function (translationApiManager, sharedMessage) {
     return {
         restrict: 'A',
         scope: {
@@ -205,7 +231,7 @@ app.directive('editableRow', ['TranslationApiManager', 'sharedMessage', function
                     $scope.edit = false;
 
                 } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
-                    TranslationApiManager
+                    translationApiManager
                         .updateTranslation($scope.translation)
                         .success(function (data) {
                             $scope.edit = false;
