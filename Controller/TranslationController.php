@@ -18,12 +18,18 @@ class TranslationController extends Controller
      */
     public function gridAction()
     {
+        $tokens = null;
+        if ('dev' === $this->container->getParameter('kernel.environment')) {
+            $tokens = $this->get('lexik_translation.token_finder')->find();
+        }
+
         return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
             'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
             'autoCacheClean' => $this->container->getParameter('lexik_translation.auto_cache_clean'),
             'toggleSimilar'  => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
             'locales'        => $this->getManagedLocales(),
+            'tokens'         => $tokens,
         ));
     }
 

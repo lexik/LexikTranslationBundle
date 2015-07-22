@@ -42,11 +42,19 @@ class DataGridRequestHandler
      * @param StorageInterface          $storage
      * @param array                     $managedLocales
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales, Profiler $profiler = null)
+    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales)
     {
         $this->transUnitManager = $transUnitManager;
         $this->storage = $storage;
         $this->managedLocales = $managedLocales;
+    }
+
+    /**
+     * @param Profiler $profiler
+     */
+    public function setProfiler(Profiler $profiler = null)
+    {
+        $this->profiler = $profiler;
     }
 
     /**
@@ -89,10 +97,14 @@ class DataGridRequestHandler
      */
     public function getByToken($token)
     {
+        if (null === $this->profiler) {
+            throw new \RuntimeException('This feature is only enable in DEV environment.');
+        }
+
         $profile = $this->profiler->loadProfile($token);
 
         // In case no results were found
-        if ($profile instanceof Profile == false) {
+        if (!$profile instanceof Profile) {
             return array(array(), 0);
         }
 
@@ -105,10 +117,13 @@ class DataGridRequestHandler
             foreach ($messages as $message) {
 
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($message['id'], $message['domain']);
+
+                // skip keys that does not exist in DB
                 if ($transUnit instanceof TransUnit) {
                     $transUnits[] = $transUnit;
                 }
             }
+
             return array($transUnits, count($transUnits));
 
         } catch (\InvalidArgumentException $e) {

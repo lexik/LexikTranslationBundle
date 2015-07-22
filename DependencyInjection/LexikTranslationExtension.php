@@ -54,13 +54,17 @@ class LexikTranslationExtension extends Extension
             $this->buildCacheCleanListenerDefinition($container);
         }
 
+        if ('dev' === $container->getParameter('kernel.environment')) {
+            $this->buildDevServicesDefinition($container);
+        }
+
         $this->registerTranslatorConfiguration($config, $container);
     }
 
     /**
      * @param ContainerBuilder $container
      */
-    public function buildCacheCleanListenerDefinition(ContainerBuilder $container)
+    protected function buildCacheCleanListenerDefinition(ContainerBuilder $container)
     {
         $listener = new Definition();
         $listener->setClass('%lexik_translation.listener.clean_translation_cache.class%');
@@ -139,6 +143,24 @@ class LexikTranslationExtension extends Extension
         $driverDefinition->setPublic(false);
 
         $container->setDefinition($driverId, $driverDefinition);
+    }
+
+    /**
+     * Load dev tools.
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function buildDevServicesDefinition(ContainerBuilder $container)
+    {
+        $container
+            ->getDefinition('lexik_translation.data_grid.request_handler')
+            ->addMethodCall('setProfiler', array(new Reference('profiler')));
+
+        $tokenFinderDefinition = new Definition();
+        $tokenFinderDefinition->setClass(new Parameter('lexik_translation.token_finder.class'));
+        $tokenFinderDefinition->setArguments(array(new Reference('profiler')));
+
+        $container->setDefinition('lexik_translation.token_finder', $tokenFinderDefinition);
     }
 
     /**
