@@ -58,6 +58,10 @@ class LexikTranslationExtension extends Extension
             $this->buildDevServicesDefinition($container);
         }
 
+        if ('dev' === $container->getParameter('kernel.environment')) {
+            $this->buildDevServicesDefinition($container);
+        }
+
         $this->registerTranslatorConfiguration($config, $container);
     }
 
