@@ -25,10 +25,11 @@ before_script:
 
   - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
 
+  - composer self-update
   - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
   - composer require symfony/validator:${SYMFONY_VERSION} --no-update
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
-  - composer update -vvv
+  - composer update --dev
 
 script: phpunit
