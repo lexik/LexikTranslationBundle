@@ -101,6 +101,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
             $schemaTool->createSchema($om->getMetadataFactory()->getAllMetadata());
         } elseif ($om instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
             $sm = new \Doctrine\ODM\MongoDB\SchemaManager($om, $om->getMetadataFactory());
+            $sm->dropDatabases();
             $sm->createCollections();
         }
     }

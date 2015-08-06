@@ -58,20 +58,11 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         $this->input = $input;
         $this->output = $output;
 
+        $this->checkOptions();
+
         $locales = $this->input->getOption('locales');
         if (empty($locales)) {
             $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
-        }
-
-        if ($this->input->getOption('import-path')
-            && ($this->input->getOption('globals')
-                || $this->input->getOption('merge')
-                || $this->input->getOption('only-vendors'))) {
-            throw new \LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
-        }
-
-        if ($this->input->getOption('only-vendors') && $this->input->getOption('globals')) {
-            throw new \LogicException('You cannot use "globals" and "only-vendors" at the same time.');
         }
 
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
@@ -83,11 +74,13 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             if (null !== $bundle->getParent()) {
                 // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
                 // so we tell getBundle to NOT fetch the first if a parent is present
-                $bundle = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false)[1];
+                $bundles = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false);
+                $bundle = $bundles[1];
                 $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
             }
 
             $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool) $this->input->getOption('globals'));
+
         } else if(!$this->input->getOption('import-path')) {
 
             if (!$this->input->getOption('merge') && !$this->input->getOption('only-vendors')) {
@@ -113,17 +106,42 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             }
         }
 
-        if ($this->input->getOption('import-path')) {
-            $this->importTranslationFilesFromPath($this->input->getOption('import-path'), $locales, $domains);
+        $importPath = $this->input->getOption('import-path');
+        if (!empty($importPath)) {
+            $this->output->writeln(sprintf('<info>*** Importing translations from path "%s" ***</info>', $importPath));
+            $this->importTranslationFilesFromPath($importPath, $locales, $domains);
         }
 
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
-            $this->removeTranslationCache();
+            $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);
         }
     }
 
-    protected function importTranslationFilesFromPath($path, array $locales, array $domains) {
+    /**
+     * Checks if given options are compatible.
+     */
+    protected function checkOptions()
+    {
+        if ($this->input->getOption('only-vendors') && $this->input->getOption('globals')) {
+            throw new \LogicException('You cannot use "globals" and "only-vendors" at the same time.');
+        }
+
+        if ($this->input->getOption('import-path')
+            && ($this->input->getOption('globals')
+                || $this->input->getOption('merge')
+                || $this->input->getOption('only-vendors'))) {
+            throw new \LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param array  $locales
+     * @param array  $domains
+     */
+    protected function importTranslationFilesFromPath($path, array $locales, array $domains)
+    {
         $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
         $this->importTranslationFiles($finder);
     }
@@ -212,22 +230,24 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function importTranslationFiles($finder)
     {
-        if ($finder instanceof Finder) {
-            $importer = $this->getContainer()->get('lexik_translation.importer.file');
-            $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
-
-            foreach ($finder as $file) {
-                $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
-                $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
-                $this->output->writeln(sprintf('%d translations', $number));
-
-                $skipped = $importer->getSkippedKeys();
-                if (count($skipped) > 0) {
-                    $this->output->writeln(sprintf('    <error>[!]</error> The following keys have been skipped: "%s".', implode('", "', $skipped)));
-                }
-            }
-        } else {
+        if (!$finder instanceof Finder) {
             $this->output->writeln('No file to import');
+
+            return;
+        }
+
+        $importer = $this->getContainer()->get('lexik_translation.importer.file');
+        $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
+
+        foreach ($finder as $file) {
+            $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
+            $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
+            $this->output->writeln(sprintf('%d translations', $number));
+
+            $skipped = $importer->getSkippedKeys();
+            if (count($skipped) > 0) {
+                $this->output->writeln(sprintf('    <error>[!]</error> The following keys has been skipped: "%s".', implode('", "', $skipped)));
+            }
         }
     }
 
@@ -247,7 +267,12 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
         }
 
-        $dir = true == $autocompletePath ? (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources') ? $path : $path . '/Resources/translations') : $path;
+        if (true === $autocompletePath) {
+            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+        } else {
+            $dir = $path;
+        }
+
         $this->output->writeln('<info>*** Using dir ' . $dir . ' to lookup translation files. ***</info>');
 
         if (is_dir($dir)) {
@@ -276,14 +301,5 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         }
 
         return $regex;
-    }
-
-    /**
-     * Remove translation cache files managed locales.
-     */
-    protected function removeTranslationCache()
-    {
-        $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
-        $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);
     }
 }

@@ -41,6 +41,7 @@
             <group>loader</group>
             <group>importer</group>
             <group>translator</group>
+            <group>command</group>
         </include>
     </groups>
 

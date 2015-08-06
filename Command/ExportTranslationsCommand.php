@@ -102,35 +102,37 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             ->get('lexik_translation.translation_storage')
             ->getTranslationsFromFile($file, $onlyUpdated);
 
-        if (count($translations) > 0) {
-            $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
-
-            // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-            if (false !== strpos($file->getPath(), 'vendor/') || $override) {
-                $outputPath = sprintf('%s/Resources/translations', $rootDir);
-            } else {
-                $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());
-            }
-
-            $this->output->writeln(sprintf('<info># OutputPath "%s":</info>', $outputPath));
-
-            // ensure the path exists
-            if ($this->input->getOption('export-path')) {
-                /** @var Filesystem $fs */
-                $fs = $this->getContainer()->get('filesystem');
-                if (!$fs->exists($outputPath)) {
-                    $fs->mkdir($outputPath);
-                }
-            }
-
-            $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
-            $this->output->writeln(sprintf('<info># OutputFile "%s":</info>', $outputFile));
-
-            $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
-            $this->doExport($outputFile, $translations, $format);
-        } else {
+        if (count($translations) < 1) {
             $this->output->writeln('<comment>No translations to export.</comment>');
+
+            return;
         }
+
+        $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
+
+        // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
+        if (false !== strpos($file->getPath(), 'vendor/') || $override) {
+            $outputPath = sprintf('%s/Resources/translations', $rootDir);
+        } else {
+            $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());
+        }
+
+        $this->output->writeln(sprintf('<info># OutputPath "%s":</info>', $outputPath));
+
+        // ensure the path exists
+        if ($this->input->getOption('export-path')) {
+            /** @var Filesystem $fs */
+            $fs = $this->getContainer()->get('filesystem');
+            if (!$fs->exists($outputPath)) {
+                $fs->mkdir($outputPath);
+            }
+        }
+
+        $outputFile = sprintf('%s/%s.%s.%s', $outputPath, $file->getDomain(), $file->getLocale(), $format);
+        $this->output->writeln(sprintf('<info># OutputFile "%s":</info>', $outputFile));
+
+        $translations = $this->mergeExistingTranslations($file, $outputFile, $translations);
+        $this->doExport($outputFile, $translations, $format);
     }
 
     /**
