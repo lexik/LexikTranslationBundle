@@ -40,9 +40,14 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('LexikTranslationBundle::layout.html.twig')
                 ->end()
 
-                ->scalarNode('fallback_locale')
+                ->arrayNode('fallback_locale')
                     ->isRequired()
                     ->cannotBeEmpty()
+                    ->prototype('scalar')->end()
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($value) { return array($value); })
+                    ->end()
                 ->end()
 
                 ->arrayNode('managed_locales')

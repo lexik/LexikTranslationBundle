@@ -18,8 +18,6 @@ services:
   - mongodb
 
 env:
-  - SYMFONY_VERSION=2.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-  - SYMFONY_VERSION=2.6.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
   - SYMFONY_VERSION=2.7.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 before_script:
@@ -33,6 +31,4 @@ before_script:
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
   - composer update -vvv
 
-script:
-  - phpunit
-  - phpunit --group command
+script: phpunit

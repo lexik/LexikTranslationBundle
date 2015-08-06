@@ -155,12 +155,12 @@ class LexikTranslationExtension extends Extension
         $container->setAlias('translator', 'lexik_translation.translator');
 
         $translator = $container->findDefinition('lexik_translation.translator');
-        $translator->addMethodCall('setFallbackLocales', array(array($config['fallback_locale'])));
+        $translator->addMethodCall('setFallbackLocales', array($config['fallback_locale']));
 
         $registration = $config['resources_registration'];
 
         // Discover translation directories
-        if ('all' == $registration['type'] || 'files' == $registration['type']) {
+        if ('all' === $registration['type'] || 'files' === $registration['type']) {
             $dirs = array();
 
             if (class_exists('Symfony\Component\Validator\Validation')) {
@@ -230,7 +230,7 @@ class LexikTranslationExtension extends Extension
         }
 
         // add resources from database
-        if ('all' == $registration['type'] || 'database' == $registration['type']) {
+        if ('all' === $registration['type'] || 'database' === $registration['type']) {
             $translator->addMethodCall('addDatabaseResources', array());
         }
     }
