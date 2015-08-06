@@ -19,7 +19,7 @@ class TranslationController extends Controller
     public function gridAction()
     {
         $tokens = null;
-        if ('dev' === $this->container->getParameter('kernel.environment')) {
+        if ($this->container->getParameter('lexik_translation.dev_tools_enabled')) {
             $tokens = $this->get('lexik_translation.token_finder')->find();
         }
 
