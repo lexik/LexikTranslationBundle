@@ -98,7 +98,7 @@ class ImportTranslationsCommandTest extends WebTestCase
         $resultLines = explode("\n", $commandTester->getDisplay());
 
         $this->assertEquals('# LexikTranslationBundle:', $resultLines[0]);
-        $this->assertRegExp('/Using dir (.)+\/Lexik\/Bundle\/TranslationBundle\/Resources\/translations to lookup translation files/', $resultLines[1]);
+        $this->assertRegExp('/Using dir (.)+(Lexik|Lexik\/Bundle\/)TranslationBundle\/Resources\/translations to lookup translation files/', $resultLines[1]);
         $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $resultLines[2]);
         $this->assertRegExp('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 17 translations/', $resultLines[3]);
         $this->assertEquals('Removing translations cache files ...', $resultLines[4]);
