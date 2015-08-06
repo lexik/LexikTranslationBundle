@@ -10,6 +10,14 @@ require: {
 }
 ```
 
+Or install directly through composer with:
+
+```shell
+composer.phar require lexik/translation-bundle ~2.0
+# For latest version
+composer.phar require lexik/translation-bundle dev-master
+```
+
 Then run a composer update:
 
 ```shell
