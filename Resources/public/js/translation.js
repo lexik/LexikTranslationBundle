@@ -63,7 +63,7 @@ app.factory('translationApiManager', ['$http', function ($http) {
             parameters['page'] = params.page();
             parameters['rows'] = params.count();
 
-            var url = this.token ? translationCfg.url.listByToken.replace('-token-', this.token) : translationCfg.url.list;
+            var url = (null != this.token) ? translationCfg.url.listByToken.replace('-token-', this.token) : translationCfg.url.list;
 
             return $http.get(url, {'params': parameters});
         },
@@ -150,7 +150,7 @@ app.controller('TranslationController', [
             }
         };
 
-        // go the top of the grid on page change
+        // go to the top of the grid on page change
         $scope.changePage = function (pageNumber) {
             $scope.tableParams.page(pageNumber);
             $location.hash('translation-grid');
@@ -184,15 +184,31 @@ app.controller('TranslationController', [
         // toggle all columns
         $scope.toggleAllColumns = function () {
             $scope.areAllColumnsSelected = !$scope.areAllColumnsSelected;
-            angular.forEach($scope.columns, function(column){
+            angular.forEach($scope.columns, function(column) {
                 column.visible = $scope.areAllColumnsSelected;
             });
         };
 
-        // set the translations source
-        $scope.changeSource = function (selectedToken) {
+        // use the given profile token as translations source
+        $scope.changeToken = function (selectedToken) {
             translationApiManager.setToken(selectedToken);
             $scope.tableParams.reload();
+        };
+
+        $scope.resetSource = function () {
+            $scope.selectedToken = null;
+            translationApiManager.setToken($scope.selectedToken);
+            $scope.tableParams.reload();
+        };
+
+        $scope.useTokenAsSource = function () {
+            if ($scope.profilerTokens.length) {
+                $scope.selectedToken = $scope.profilerTokens[0].token;
+                translationApiManager.setToken($scope.selectedToken);
+                $scope.tableParams.reload();
+            } else {
+                $scope.selectedToken = '';
+            }
         };
 }]);
 

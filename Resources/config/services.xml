@@ -43,6 +43,7 @@
         <parameter key="lexik_translation.token_finder.class">Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder</parameter>
 
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
+        <parameter key="lexik_translation.token_finder.limit">15</parameter>
     </parameters>
 
     <services>

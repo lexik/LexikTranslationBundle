@@ -98,7 +98,7 @@ class DataGridRequestHandler
     public function getByToken($token)
     {
         if (null === $this->profiler) {
-            throw new \RuntimeException('This feature is only enable in DEV environment.');
+            throw new \RuntimeException('Invalid profiler instance.');
         }
 
         $profile = $this->profiler->loadProfile($token);

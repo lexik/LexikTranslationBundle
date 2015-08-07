@@ -15,11 +15,18 @@ class TokenFinder
     private $profiler;
 
     /**
-     * @param Profiler $profiler
+     * @var int
      */
-    public function __construct(Profiler $profiler)
+    private $defaultLimit;
+
+    /**
+     * @param Profiler $profiler
+     * @param int      $defaultLimit
+     */
+    public function __construct(Profiler $profiler, $defaultLimit)
     {
         $this->profiler = $profiler;
+        $this->defaultLimit = $defaultLimit;
     }
 
     /**
@@ -33,8 +40,7 @@ class TokenFinder
      */
     public function find($ip = null, $url = null, $limit = null, $method = null, $start = null, $end = null)
     {
-        $limit = $limit ?: 10;
-        $method = $method ?: 'GET';
+        $limit = $limit ?: $this->defaultLimit;
 
         return $this->profiler->find($ip, $url, $limit, $method, $start, $end);
     }

@@ -1,6 +1,30 @@
 {# Raw block to display the AngularJS template #}
 {% verbatim %}
 <div id="translation-grid" ng-app="translationApp" ng-controller="TranslationController">
+    <div class="row" ng-if="profilerTokens != null">
+        <div class="col-md-2">
+            <label>{{ labels.dataSource }}:&nbsp;</label>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn" ng-class="{'btn-info': (null == selectedToken), 'btn-default': (null != selectedToken)}" ng-click="resetSource()">
+                    {{ labels.allTranslations }}
+                </button>
+                <button type="button" class="btn" ng-class="{'btn-info': (null != selectedToken), 'btn-default': (null == selectedToken)}" ng-click="useTokenAsSource()">
+                    {{ labels.profiler }}
+                </button>
+            </div>
+        </div>
+        <div class="col-md-5" ng-show="selectedToken != null">
+            <label>{{ labels.latestProfiles }}:&nbsp;</label>
+            <select ng-model="selectedToken" ng-change="changeToken(selectedToken)" ng-options="p.token as p.token+' - '+p.url for p in profilerTokens" class="form-control"></select>
+        </div>
+        <div class="col-md-2" ng-show="selectedToken != null">
+            <label>{{ labels.profile }}:&nbsp;</label>
+            <input type="text" ng-model="selectedToken" ng-change="changeToken(selectedToken)" class="form-control" />
+        </div>
+    </div>
+
+    <hr ng-if="profilerTokens != null" />
+
     <div class="row margin-row grid-action-bar">
         <div class="col-md-12">
             <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm btn-manage-col">
@@ -17,15 +41,6 @@
                     {{ sharedMsg.content }}
                 </span>
             </div>
-        </div>
-    </div>
-    <div class="row" ng-if="profilerTokens.length">
-        <div class="col-md-5">
-            <form>
-                <select ng-model="selectedToken" ng-change="changeSource(selectedToken)" ng-options="p.token as p.token for p in profilerTokens" class="form-control">
-                    <option value="">{{ labels.allTranslations }}</option>
-                </select>
-            </form>
         </div>
     </div>
 
