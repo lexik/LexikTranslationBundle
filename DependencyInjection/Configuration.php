@@ -114,8 +114,16 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
 
-                ->booleanNode('enable_dev_tools')
-                    ->defaultFalse()
+                ->arrayNode('dev_tools')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enable')
+                            ->defaultFalse()
+                        ->end()
+                        ->booleanNode('create_missing')
+                            ->defaultFalse()
+                        ->end()
+                    ->end()
                 ->end()
 
             ->end()

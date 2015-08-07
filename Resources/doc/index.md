@@ -80,7 +80,9 @@ lexik_translation:
     auto_cache_clean: false     # set to true to make the bundle automatically clear translations cache files
     auto_cache_clean_interval: 600     # The number of seconds to wait before trying to check if translations have changed in the database.
 
-    enable_dev_tools: false    # set to true to be able to list missing translation from the profiler
+    dev_tools:
+        enable: false    # set to true to be able to list missing translation from the profiler
+        create_mising: false # while getting missing translations from a profile, if a key/domain pair does not exist in DB the bundle will create it.
 ```
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*

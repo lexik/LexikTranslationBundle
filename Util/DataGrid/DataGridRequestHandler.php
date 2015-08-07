@@ -38,6 +38,11 @@ class DataGridRequestHandler
     protected $profiler;
 
     /**
+     * @var bool
+     */
+    protected $createMissing;
+
+    /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param StorageInterface          $storage
      * @param array                     $managedLocales
@@ -47,6 +52,7 @@ class DataGridRequestHandler
         $this->transUnitManager = $transUnitManager;
         $this->storage = $storage;
         $this->managedLocales = $managedLocales;
+        $this->createMissing = false;
     }
 
     /**
@@ -55,6 +61,14 @@ class DataGridRequestHandler
     public function setProfiler(Profiler $profiler = null)
     {
         $this->profiler = $profiler;
+    }
+
+    /**
+     * @param bool $createMissing
+     */
+    public function setCreateMissing($createMissing)
+    {
+        $this->createMissing = (bool) $createMissing;
     }
 
     /**
@@ -115,12 +129,12 @@ class DataGridRequestHandler
 
             $transUnits = array();
             foreach ($messages as $message) {
-
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($message['id'], $message['domain']);
 
-                // skip keys that does not exist in DB
                 if ($transUnit instanceof TransUnit) {
                     $transUnits[] = $transUnit;
+                } elseif (true === $this->createMissing) {
+                    $transUnits[] = $this->transUnitManager->create($message['id'], $message['domain'], true);
                 }
             }
 

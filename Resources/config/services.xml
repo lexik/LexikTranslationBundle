@@ -115,6 +115,9 @@
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%lexik_translation.managed_locales%</argument>
+            <call method="setCreateMissing">
+                <argument>%lexik_translation.dev_tools.create_missing%</argument>
+            </call>
         </service>
 
         <!-- Form -->
