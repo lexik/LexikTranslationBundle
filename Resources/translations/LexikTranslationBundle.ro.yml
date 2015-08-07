@@ -16,7 +16,6 @@ translations:
     succesfully_added:   "Traducerea a fost actualizat."
     update_failed:       "Eroare la actualizarea traducerei pentru cheia #%id%."
     back_to_list:        "Înapoi"
-    all_translations:    "Show all translations"
     all_translations:    "All"
     profiler:            "Profiler"
     data_source:         "Data source"
