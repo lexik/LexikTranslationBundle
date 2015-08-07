@@ -13,7 +13,9 @@ require: {
 Or install directly through composer with:
 
 ```shell
+# Latest stable
 composer.phar require lexik/translation-bundle ~2.0
+
 # For latest version
 composer.phar require lexik/translation-bundle dev-master
 ```
@@ -51,8 +53,8 @@ Minimum configuration:
 ```yml
 # app/config/config.yml
 lexik_translation:
-    fallback_locale: en      # (required) default locale to use
-    managed_locales: [en]    # (required) locales that the bundle have to manage
+    fallback_locale: [en]         # (required) default locale(s) to use
+    managed_locales: [en, fr, de] # (required) locales that the bundle have to manage
 ```
 
 Additional configuration options (default values are shown here):
@@ -61,7 +63,9 @@ Additional configuration options (default values are shown here):
 # app/config/config.yml
 lexik_translation:
     base_layout:     "LexikTranslationBundle::layout.html.twig" # layout used with the translation edition template
+
     use_yml_tree:    false    # if "true" we will print a nice tree in the yml source files. It is a little slower.
+
     grid_input_type: text     # define field type used in the grid (text|textarea)
     grid_toggle_similar: false  # if "true", on the grid if a locale colunm is shown/hidden then similar locales columns will be shown/hidden too.
                                     # so if the col "en" is shown/hidden all "en_XX" cols will be shown/hidden too. Not in the reverse order ("en_XX" clicked, no impact on "en")
@@ -72,8 +76,11 @@ lexik_translation:
     resources_registration:
         type:                 all     # resources type to register: "all", "files" or "database"
         managed_locales_only: true    # will only load resources for managed locales
+
     auto_cache_clean: false     # set to true to make the bundle automatically clear translations cache files
     auto_cache_clean_interval: 600     # The number of seconds to wait before trying to check if translations have changed in the database.
+
+    enable_dev_tools: false    # set to true to be able to list missing translation from the profiler
 ```
 
 *Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
@@ -91,7 +98,7 @@ lexik_translation_edition:
     prefix:   /my-prefix
 ```
 
-The translations edition page will be available here: /my-prefix/grid
+The translations edition page will be available here: `/my-prefix/grid`
 
 Note: The grid will be empty until you import translations in database.
 If the grid does not appear, please check your base template has a block named `javascript_footer`.
