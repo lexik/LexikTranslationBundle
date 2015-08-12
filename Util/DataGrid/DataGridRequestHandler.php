@@ -79,16 +79,7 @@ class DataGridRequestHandler
      */
     public function getPage(Request $request)
     {
-        $all = $request->query->all();
-        $parameters = array();
-
-        array_walk($all, function ($value, $key) use (&$parameters) {
-            if ($key != '_search') {
-                $key = trim($key, '_');
-                $value = trim($value, '_');
-            }
-            $parameters[$key] = $value;
-        });
+        $parameters = $this->fixParameters($request->query->all());
 
         $transUnits = $this->storage->getTransUnitList(
             $this->managedLocales,
@@ -103,7 +94,7 @@ class DataGridRequestHandler
     }
 
     /**
-     *
+     * Returns an array with the trans unit for the current profile page.
      *
      * @param Request $request
      * @param string  $token
@@ -113,22 +104,15 @@ class DataGridRequestHandler
     {
         list($transUnits, $count) = $this->getByToken($token);
 
-        if (0 === $count) {
-            return array($transUnits, $count);
-        }
+        $parameters = $this->fixParameters($request->query->all());
 
-        $page = $request->query->get('page', 1);
-        $rows = $request->query->get('rows', 20);
-
-        $transUnitsPage = array_slice($transUnits, $rows * ($page - 1), $rows);
-
-        return array($transUnitsPage, $count);
+        return $this->filterTokenTranslations($transUnits, $count, $parameters);
     }
 
     /**
      * Get a profile's translation messages based on a previous Profiler token.
      *
-     * @param $token by which a Profile can be found in the Profiler
+     * @param string $token by which a Profile can be found in the Profiler
      *
      * @return array with collection of TransUnits and it's count
      */
@@ -200,5 +184,84 @@ class DataGridRequestHandler
         $this->storage->flush();
 
         return $transUnit;
+    }
+
+    /**
+     * @param array $transUnits
+     * @param int   $count
+     * @param array $parameters
+     * @return array
+     */
+    protected function filterTokenTranslations($transUnits, $count, $parameters)
+    {
+        // filter data
+        if (isset($parameters['_search']) && $parameters['_search']) {
+            $nonFilterParams = array('rows', 'page', '_search');
+            $filters = array();
+
+            array_walk($parameters, function ($value, $key) use (&$filters, $nonFilterParams) {
+                if (!in_array($key, $nonFilterParams) && !empty($value)) {
+                    $filters[$key] = $value;
+                }
+            });
+
+            if (count($filters) > 0) {
+                $end = count($transUnits);
+
+                for ($i=0; $i<$end; $i++) {
+                    $match = true;
+
+                    foreach ($filters as $column => $str) {
+                        if (in_array($column, array('key', 'domain'))) {
+                            $value = $transUnits[$i]->{sprintf('get%s', ucfirst($column))}();
+                        } else {
+                            $translation = $transUnits[$i]->getTranslation($column);
+                            $value = $translation ? $translation->getContent() : '';
+                        }
+
+                        $match = $match && (1 === preg_match(sprintf('/.*%s.*/i', $str), $value));
+                    }
+
+                    if (!$match) {
+                        unset($transUnits[$i]);
+                    }
+                }
+
+                $transUnits = array_values($transUnits);
+                $count = count($transUnits);
+            }
+        }
+
+        // slice data according to page number and rows
+        if ($count > $parameters['rows']) {
+            $transUnitsPage = array_slice(
+                $transUnits,
+                $parameters['rows'] * ($parameters['page'] - 1),
+                $parameters['rows']
+            );
+        } else {
+            $transUnitsPage = $transUnits;
+        }
+
+        return array($transUnitsPage, $count);
+    }
+
+    /**
+     * @param array $dirtyParameters
+     * @return array
+     */
+    protected function fixParameters(array $dirtyParameters)
+    {
+        $parameters = array();
+
+        array_walk($dirtyParameters, function ($value, $key) use (&$parameters) {
+            if ($key != '_search') {
+                $key = trim($key, '_');
+                $value = trim($value, '_');
+            }
+            $parameters[$key] = $value;
+        });
+
+        return $parameters;
     }
 }
