@@ -103,6 +103,29 @@ class DataGridRequestHandler
     }
 
     /**
+     *
+     *
+     * @param Request $request
+     * @param string  $token
+     * @return array
+     */
+    public function getPageByToken(Request $request, $token)
+    {
+        list($transUnits, $count) = $this->getByToken($token);
+
+        if (0 === $count) {
+            return array($transUnits, $count);
+        }
+
+        $page = $request->query->get('page', 1);
+        $rows = $request->query->get('rows', 20);
+
+        $transUnitsPage = array_slice($transUnits, $rows * ($page - 1), $rows);
+
+        return array($transUnitsPage, $count);
+    }
+
+    /**
      * Get a profile's translation messages based on a previous Profiler token.
      *
      * @param $token by which a Profile can be found in the Profiler

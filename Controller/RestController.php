@@ -30,7 +30,7 @@ class RestController extends Controller
      */
     public function listByProfileAction(Request $request, $token)
     {
-        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getByToken($token);
+        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPageByToken($request, $token);
 
         return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
     }
