@@ -1,0 +1,66 @@
+{% extends layout %}
+
+{% trans_default_domain 'LexikTranslationBundle' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
+{% endblock %}
+
+{% block title %}{{ 'overview.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% block toolbar %}
+            <div class="page-header">
+                <h1>{{ 'overview.page_title'|trans({}, 'LexikTranslationBundle') }}</h1>
+            </div>
+        {% endblock toolbar %}
+
+        <p>{{ 'overview.msg_latest_translation'|trans({'%date%': latestTrans|date('Y-m-d H:i')}, 'LexikTranslationBundle') }}</p>
+
+        {% for domain in domains %}
+            {% if loop.first %}
+            <div id="translation-overview">
+                <div class="row margin-row">
+                    <div class="col-md-12">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="sortable col-{{ loop.index }}">
+                                        {{ 'overview.table.domain'|trans({}, 'LexikTranslationBundle') }}
+                                    </th>
+                                    {% for locale in locales %}
+                                        <th class="sortable col-{{ loop.index }}">
+                                            {{ locale|upper }}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+            {% endif %}
+
+                <tr columns="columns">
+                    <td>{{ domain }}</td>
+                    {% for locale in locales %}
+                        <td>
+                            {{ stats[domain][locale]|default(0) }}
+                        </th>
+                    {% endfor %}
+                </tr>
+
+            {% if loop.last %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block javascript_footer %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
+{% endblock %}

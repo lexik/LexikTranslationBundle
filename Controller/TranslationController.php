@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,39 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TranslationController extends Controller
 {
+
+    /**
+     * Display an overview of the translation status per domain.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function overviewAction()
+    {
+        /** @var StorageInterface $storage */
+        $storage = $this->get('lexik_translation.translation_storage');
+
+        $locales = $this->getManagedLocales();
+        $domains = $storage->getTransUnitDomains();
+
+        // Count the units for each domain
+        $stats = array();
+        foreach ($domains as $domain) {
+            $stats[$domain] = array();
+            foreach ($locales as $locale) {
+                $count = count($storage->getTransUnitsByLocaleAndDomain($locale, $domain));
+                $stats[$domain][$locale] = $count;
+            }
+        }
+
+        return $this->render('LexikTranslationBundle:Translation:overview.html.twig', array(
+            'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
+            'locales'        => $this->getManagedLocales(),
+            'domains'        => $storage->getTransUnitDomains(),
+            'latestTrans'    => $storage->getLatestUpdatedAt(),
+            'stats'          => $stats,
+        ));
+    }
+
     /**
      * Display the translation grid.
      *
