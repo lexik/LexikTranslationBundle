@@ -202,7 +202,7 @@ class TransUnitRepository extends EntityRepository
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
-                    $qb->andWhere($qb->expr()->like('t.content', sprintf("'%%%s%%'", $filters[$locale])));
+                    $qb->andWhere($qb->expr()->like('t.content', $qb->expr()->literal(sprintf("'%%%s%%'", $filters[$locale]))));
                     $qb->andWhere($qb->expr()->eq('t.locale', sprintf("'%s'", $locale)));
                 }
             }
