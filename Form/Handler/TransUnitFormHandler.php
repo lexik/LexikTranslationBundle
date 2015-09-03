@@ -33,7 +33,7 @@ class TransUnitFormHandler implements FormHandlerInterface
     /**
      * @var array
      */
-    protected $managedLoales;
+    protected $managedLocales;
 
     /**
      * @var string
@@ -44,15 +44,15 @@ class TransUnitFormHandler implements FormHandlerInterface
      * @param TransUnitManagerInterface $transUnitManager
      * @param FileManagerInterface      $fileManager
      * @param StorageInterface          $storage
-     * @param array                     $managedLoales
+     * @param array                     $managedLocales
      * @param string                    $rootDir
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, array $managedLoales, $rootDir)
+    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, array $managedLocales, $rootDir)
     {
         $this->transUnitManager = $transUnitManager;
         $this->fileManager = $fileManager;
         $this->storage = $storage;
-        $this->managedLoales = $managedLoales;
+        $this->managedLocales = $managedLocales;
         $this->rootDir = $rootDir;
     }
 
@@ -61,7 +61,7 @@ class TransUnitFormHandler implements FormHandlerInterface
      */
     public function createFormData()
     {
-        return $this->transUnitManager->newInstance($this->managedLoales);
+        return $this->transUnitManager->newInstance($this->managedLocales);
     }
 
     /**
