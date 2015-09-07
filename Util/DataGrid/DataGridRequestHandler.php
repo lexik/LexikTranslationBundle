@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Translation\DataCollector\TranslationDataCollector;
+use Symfony\Component\Translation\DataCollectorTranslator;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -141,7 +142,12 @@ class DataGridRequestHandler
                 if ($transUnit instanceof TransUnit) {
                     $transUnits[] = $transUnit;
                 } elseif (true === $this->createMissing) {
-                    $transUnits[] = $this->transUnitManager->create($message['id'], $message['domain'], true);
+                    $transUnits[] = $transUnit = $this->transUnitManager->create($message['id'], $message['domain'], true);
+                }
+                
+                // Also store the translation if profiler state was defined
+                if (!$transUnit->hasTranslation($message['locale']) && $message['state'] == DataCollectorTranslator::MESSAGE_DEFINED) {
+                    $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], null, true);
                 }
             }
 
