@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
@@ -14,9 +15,9 @@ class DataGridFormatter
     /**
      * Managed locales.
      *
-     * @var array
+     * @var LocaleManagerInterface
      */
-    protected $locales;
+    protected $localeManager;
 
     /**
      * Storage type
@@ -28,12 +29,12 @@ class DataGridFormatter
     /**
      * Constructor.
      *
-     * @param array  $locales
+     * @param LocaleManagerInterface  $localeManager
      * @param string $storage
      */
-    public function __construct(array $locales, $storage)
+    public function __construct(LocaleManagerInterface $localeManager, $storage)
     {
-        $this->locales = $locales;
+        $this->localeManager = $localeManager;
         $this->storage = $storage;
     }
 
@@ -101,13 +102,13 @@ class DataGridFormatter
         );
 
         // add locales in the same order as in managed_locales param
-        foreach ($this->locales as $locale) {
+        foreach ($this->localeManager->getLocales() as $locale) {
             $formatted[$locale] = '';
         }
 
         // then fill locales value
         foreach ($transUnit['translations'] as $translation) {
-            if (in_array($translation['locale'], $this->locales)) {
+            if (in_array($translation['locale'], $this->localeManager->getLocales())) {
                 $formatted[$translation['locale']] = $translation['content'];
             }
         }

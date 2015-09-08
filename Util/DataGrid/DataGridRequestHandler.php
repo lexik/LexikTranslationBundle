@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
@@ -24,20 +25,20 @@ class DataGridRequestHandler
     protected $storage;
 
     /**
-     * @var array
+     * @var LocaleManagerInterface
      */
-    protected $managedLocales;
+    protected $localeManager;
 
     /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param StorageInterface          $storage
-     * @param array                     $managedLocales
+     * @param LocaleManagerInterface    $localeManager
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, array $managedLocales)
+    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, LocaleManagerInterface $localeManager)
     {
         $this->transUnitManager = $transUnitManager;
         $this->storage = $storage;
-        $this->managedLocales = $managedLocales;
+        $this->localeManager = $localeManager;
     }
 
     /**
@@ -60,13 +61,13 @@ class DataGridRequestHandler
         });
 
         $transUnits = $this->storage->getTransUnitList(
-            $this->managedLocales,
+            $this->localeManager->getLocales(),
             $request->query->get('rows', 20),
             $request->query->get('page', 1),
             $parameters
         );
 
-        $count = $this->storage->countTransUnits($this->managedLocales, $parameters);
+        $count = $this->storage->countTransUnits($this->localeManager->getLocales(), $parameters);
 
         return array($transUnits, $count);
     }
@@ -88,7 +89,7 @@ class DataGridRequestHandler
         }
 
         $translationsContent = array();
-        foreach ($this->managedLocales as $locale) {
+        foreach ($this->localeManager->getLocales() as $locale) {
             $translationsContent[$locale] = $request->request->get($locale);
         }
 
