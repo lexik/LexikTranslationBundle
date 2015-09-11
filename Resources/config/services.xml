@@ -9,6 +9,7 @@
         <parameter key="lexik_translation.loader.database.class">Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader</parameter>
         <parameter key="lexik_translation.trans_unit.manager.class">Lexik\Bundle\TranslationBundle\Manager\TransUnitManager</parameter>
         <parameter key="lexik_translation.file.manager.class">Lexik\Bundle\TranslationBundle\Manager\FileManager</parameter>
+        <parameter key="lexik_translation.locale.manager.class">Lexik\Bundle\TranslationBundle\Manager\LocaleManager</parameter>
         <parameter key="lexik_translation.importer.file.class">Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter</parameter>
         <parameter key="lexik_translation.exporter_collector.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector</parameter>
         <parameter key="lexik_translation.exporter.xliff.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter</parameter>
@@ -75,6 +76,10 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
+        <service id="lexik_translation.locale.manager" class="%lexik_translation.locale.manager.class%">
+            <argument>%lexik_translation.managed_locales%</argument>
+        </service>
+
         <!-- Importer -->
         <service id="lexik_translation.importer.file" class="%lexik_translation.importer.file.class%">
             <argument type="collection" /> <!-- translation loaders -->
@@ -104,14 +109,14 @@
 
         <!-- Data grid -->
         <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%">
-            <argument>%lexik_translation.managed_locales%</argument>
+            <argument type="service" id="lexik_translation.locale.manager" />
             <argument>%lexik_translation.storage.type%</argument>
         </service>
 
         <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument>%lexik_translation.managed_locales%</argument>
+            <argument type="service" id="lexik_translation.locale.manager" />
         </service>
 
         <!-- Form -->
@@ -127,7 +132,7 @@
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument>%lexik_translation.managed_locales%</argument>
+            <argument type="service" id="lexik_translation.locale.manager" />
             <argument>%kernel.root_dir%</argument>
         </service>
 

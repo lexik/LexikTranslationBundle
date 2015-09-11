@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
@@ -62,7 +63,7 @@ class DataGridFormatterTest extends BaseUnitTestCase
             'total' => 3,
         );
 
-        $formatter = new DataGridFormatter(array('de', 'en', 'fr'), StorageInterface::STORAGE_ORM);
+        $formatter = new DataGridFormatter(new LocaleManager(array('de', 'en', 'fr')), StorageInterface::STORAGE_ORM);
         $this->assertEquals(json_encode($expected, JSON_HEX_APOS), $formatter->createListResponse($datas, $total)->getContent());
     }
 }
