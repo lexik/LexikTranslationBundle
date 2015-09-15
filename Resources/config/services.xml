@@ -13,6 +13,7 @@
         <parameter key="lexik_translation.importer.file.class">Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter</parameter>
         <parameter key="lexik_translation.exporter_collector.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector</parameter>
         <parameter key="lexik_translation.exporter.xliff.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter</parameter>
+        <parameter key="lexik_translation.exporter.json.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter</parameter>
         <parameter key="lexik_translation.exporter.yml.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter</parameter>
         <parameter key="lexik_translation.exporter.php.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter</parameter>
 
@@ -96,6 +97,10 @@
 
         <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
+        </service>
+
+        <service id="lexik_translation.exporter.json" class="%lexik_translation.exporter.json.class%">
+            <tag name="lexik_translation.exporter" alias="json" />
         </service>
 
         <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
