@@ -140,4 +140,4 @@ Command options:
 TESTING
 =======
 
-[Read the documentation for testing ](./test.md)
+[Read the documentation for testing ](./testing.md)
