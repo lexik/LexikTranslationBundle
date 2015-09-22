@@ -284,6 +284,7 @@ FCT;
             }
 
             $ids = $qb->getQuery()->execute();
+            $ids = iterator_to_array($ids);
 
             if (count($ids) > 0) {
                 $builder->field('id')->in($ids);
