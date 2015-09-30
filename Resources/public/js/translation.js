@@ -103,6 +103,10 @@ app.controller('TranslationController', [
         $scope.selectedToken = null;
         $scope.sharedMsg = sharedMessage;
 
+        $scope.defaultSourceClass = 'btn-info';
+        $scope.tokenSourceClass = 'btn-default';
+        $scope.showProfiles = false;
+
         // columns definition
         $scope.columns = [
             { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
@@ -192,16 +196,27 @@ app.controller('TranslationController', [
         // use the given profile token as translations source
         $scope.changeToken = function (selectedToken) {
             translationApiManager.setToken(selectedToken);
-            $scope.tableParams.reload();
+
+            if ('' != selectedToken) {
+                $scope.tableParams.reload();
+            }
         };
 
         $scope.resetSource = function () {
             $scope.selectedToken = null;
+            $scope.defaultSourceClass = 'btn-info';
+            $scope.tokenSourceClass = 'btn-default';
+            $scope.showProfiles = false;
+
             translationApiManager.setToken($scope.selectedToken);
             $scope.tableParams.reload();
         };
 
         $scope.useTokenAsSource = function () {
+            $scope.defaultSourceClass = 'btn-default';
+            $scope.tokenSourceClass = 'btn-info';
+            $scope.showProfiles = true;
+
             if ($scope.profilerTokens.length) {
                 $scope.selectedToken = $scope.profilerTokens[0].token;
                 translationApiManager.setToken($scope.selectedToken);

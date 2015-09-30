@@ -5,19 +5,19 @@
         <div class="col-md-2">
             <label>{{ labels.dataSource }}:&nbsp;</label>
             <div class="btn-group" role="group">
-                <button type="button" class="btn" ng-class="{'btn-info': (null == selectedToken), 'btn-default': (null != selectedToken)}" ng-click="resetSource()">
+                <button type="button" class="btn" ng-class="defaultSourceClass" ng-click="resetSource()">
                     {{ labels.allTranslations }}
                 </button>
-                <button type="button" class="btn" ng-class="{'btn-info': (null != selectedToken), 'btn-default': (null == selectedToken)}" ng-click="useTokenAsSource()">
+                <button type="button" class="btn" ng-class="tokenSourceClass" ng-click="useTokenAsSource()">
                     {{ labels.profiler }}
                 </button>
             </div>
         </div>
-        <div class="col-md-5" ng-show="selectedToken != null">
+        <div class="col-md-5" ng-show="showProfiles">
             <label>{{ labels.latestProfiles }}:&nbsp;</label>
             <select ng-model="selectedToken" ng-change="changeToken(selectedToken)" ng-options="p.token as p.token+' - '+p.url for p in profilerTokens" class="form-control"></select>
         </div>
-        <div class="col-md-2" ng-show="selectedToken != null">
+        <div class="col-md-2" ng-show="showProfiles">
             <label>{{ labels.profile }}:&nbsp;</label>
             <input type="text" ng-model="selectedToken" ng-change="changeToken(selectedToken)" class="form-control" />
         </div>

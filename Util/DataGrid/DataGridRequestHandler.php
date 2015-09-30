@@ -144,7 +144,7 @@ class DataGridRequestHandler
                 } elseif (true === $this->createMissing) {
                     $transUnits[] = $transUnit = $this->transUnitManager->create($message['id'], $message['domain'], true);
                 }
-                
+
                 // Also store the translation if profiler state was defined
                 if (!$transUnit->hasTranslation($message['locale']) && $message['state'] == DataCollectorTranslator::MESSAGE_DEFINED) {
                     $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], null, true);
