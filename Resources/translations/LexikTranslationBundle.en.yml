@@ -25,5 +25,6 @@ translations:
 
 overview:
     page_title: "Overview"
+    show_grid: "Translation grid"
     msg_latest_translation: "Latest translation was of %date% UTC."
-    table_domain: "Domain"
+    domain: "Domain"

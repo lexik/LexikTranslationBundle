@@ -22,3 +22,9 @@ translations:
     data_source:         "Source de donnée"
     latest_profiles:     "Derniers profils"
     profile:             "Profil"
+
+overview:
+    page_title: "Overview"
+    show_grid: "Grille de traductions"
+    msg_latest_translation: "Date de dernière traduction : %date% UTC."
+    domain: "Domaine"
