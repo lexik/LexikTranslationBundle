@@ -17,6 +17,7 @@ translations:
     update_failed:       "Произошла ошибка при обновлении перевода для ключа #%id%."
     back_to_list:        "Вернуться к списку"
     all_translations:    "All"
+    no_translations:     "No translations
     profiler:            "Profiler"
     data_source:         "Data source"
     latest_profiles:     "Latest profiles"

@@ -17,6 +17,7 @@ translations:
     update_failed:       "Fallo al actualizar las traducciones con clave #%id%."
     back_to_list:        "Volver"
     all_translations:    "All"
+    no_translations:     "No translations
     profiler:            "Profiler"
     data_source:         "Data source"
     latest_profiles:     "Latest profiles"

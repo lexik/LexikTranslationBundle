@@ -91,6 +91,9 @@
                     <tr editable-row ng-repeat="translation in $data track by $index" translation="translation" columns="columns" edit-type="editType"></tr>
                 </tbody>
             </table>
+            <div class="alert alert-info" role="alert" ng-if="tableParams.total() < 1">
+                {{ labels.noTranslations }}
+            </div>
         </div>
     </div>
 

@@ -17,6 +17,7 @@ translations:
     update_failed:       "Eroare la actualizarea traducerei pentru cheia #%id%."
     back_to_list:        "Înapoi"
     all_translations:    "All"
+    no_translations:     "No translations
     profiler:            "Profiler"
     data_source:         "Data source"
     latest_profiles:     "Latest profiles"
