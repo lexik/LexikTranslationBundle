@@ -1,33 +1,35 @@
 {# Raw block to display the AngularJS template #}
 {% verbatim %}
 <div id="translation-grid" ng-app="translationApp" ng-controller="TranslationController">
-    <div class="row" ng-if="profilerTokens != null">
-        <div class="col-md-2">
-            <label>{{ labels.dataSource }}:&nbsp;</label>
-            <div class="btn-group" role="group">
-                <button type="button" class="btn" ng-class="defaultSourceClass" ng-click="resetSource()">
-                    {{ labels.allTranslations }}
-                </button>
-                <button type="button" class="btn" ng-class="tokenSourceClass" ng-click="useTokenAsSource()">
-                    {{ labels.profiler }}
-                </button>
+    <div ng-if="profilerTokens != null">
+        <div class="row" ng-controller="DataSourceController" >
+            <div class="col-md-2">
+                <label>{{ labels.dataSource }}:&nbsp;</label>
+                <div class="btn-group" role="group">
+                    <button type="button" class="btn" ng-class="defaultSourceClass" ng-click="resetSource()">
+                        {{ labels.allTranslations }}
+                    </button>
+                    <button type="button" class="btn" ng-class="tokenSourceClass" ng-click="useTokenAsSource()">
+                        {{ labels.profiler }}
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-5" ng-show="showProfiles">
+                <label>{{ labels.latestProfiles }}:&nbsp;</label>
+                <select ng-model="selectedToken" ng-change="changeToken(selectedToken)" ng-options="p.token as p.token+' - '+p.url for p in profilerTokens" class="form-control"></select>
+            </div>
+            <div class="col-md-2" ng-show="showProfiles">
+                <label>{{ labels.profile }}:&nbsp;</label>
+                <input type="text" ng-model="selectedToken" ng-change="changeToken(selectedToken)" class="form-control" />
             </div>
         </div>
-        <div class="col-md-5" ng-show="showProfiles">
-            <label>{{ labels.latestProfiles }}:&nbsp;</label>
-            <select ng-model="selectedToken" ng-change="changeToken(selectedToken)" ng-options="p.token as p.token+' - '+p.url for p in profilerTokens" class="form-control"></select>
-        </div>
-        <div class="col-md-2" ng-show="showProfiles">
-            <label>{{ labels.profile }}:&nbsp;</label>
-            <input type="text" ng-model="selectedToken" ng-change="changeToken(selectedToken)" class="form-control" />
-        </div>
-    </div>
 
-    <hr ng-if="profilerTokens != null" />
+        <hr  />
+    </div>
 
     <div class="row margin-row grid-action-bar">
         <div class="col-md-12">
-            <a ng-click="hideColSelector = !hideColSelector" class="btn btn-default btn-sm btn-manage-col">
+            <a ng-click="hideColumnsSelector = !hideColumnsSelector" class="btn btn-default btn-sm btn-manage-col">
                 <span class="glyphicon glyphicon-eye-close"></span>
                 {{ labels.hideCol }}
             </a>
@@ -44,7 +46,7 @@
         </div>
     </div>
 
-    <div ng-show="hideColSelector" class="row">
+    <div ng-show="hideColumnsSelector" class="row">
         <div class="col-md-12">
             <ul class="list-unstyled list-inline locales-list">
                 <li class="locale">

@@ -87,58 +87,80 @@ app.factory('translationApiManager', ['$http', function ($http) {
 }]);
 
 /**
+ * ngTable column definition and parameters builder service.
+ */
+app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', function (ngTableParams, translationApiManager) {
+    return {
+        columns: [],
+        tableParams: null,
+        defaultOptions: { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} },
+
+        build: function (locales, labels) {
+            this.columns = [
+                { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
+                { title: labels.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
+                { title: labels.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
+            ];
+
+            for (var key in locales) {
+                var columnDef = { title: locales[key].toUpperCase(), index: locales[key], edit: true, filter: {}, sortable: false, visible: true };
+                columnDef['filter'][locales[key]] = 'text';
+
+                this.columns.push(columnDef);
+            }
+
+            // grid data
+            var tableData = {
+                total: 0,
+                currentSort: {},
+                currentFilter: {},
+                getData: function($defer, params) {
+                    translationApiManager
+                        .getPage(params, this)
+                        .success(function (responseData) {
+                            params.total(responseData.total);
+                            $defer.resolve(responseData.translations);
+                        });
+                }
+            };
+
+            this.tableParams = new ngTableParams(this.defaultOptions, tableData);
+        },
+
+        reloadTableData: function () {
+            this.tableParams.reload();
+        },
+
+        getColumnsDefinition: function () {
+            return this.columns;
+        },
+
+        getTableParams: function () {
+            return this.tableParams;
+        }
+    };
+}]);
+
+/**
  * Translation grid controller.
  */
 app.controller('TranslationController', [
-    '$scope', '$location', '$anchorScroll', 'ngTableParams', 'sharedMessage', 'translationApiManager',
-    function ($scope, $location, $anchorScroll, ngTableParams, sharedMessage, translationApiManager) {
+    '$scope', '$location', '$anchorScroll', 'sharedMessage', 'tableParamsManager', 'translationApiManager',
+    function ($scope, $location, $anchorScroll, sharedMessage, tableParamsManager, translationApiManager) {
 
         $scope.locales = translationCfg.locales;
         $scope.editType = translationCfg.inputType;
         $scope.autoCacheClean = translationCfg.autoCacheClean;
         $scope.labels = translationCfg.label;
-        $scope.hideColSelector = false;
+        $scope.hideColumnsSelector = false;
         $scope.areAllColumnsSelected = true;
         $scope.profilerTokens = translationCfg.profilerTokens;
-        $scope.selectedToken = null;
         $scope.sharedMsg = sharedMessage;
 
-        $scope.defaultSourceClass = 'btn-info';
-        $scope.tokenSourceClass = 'btn-default';
-        $scope.showProfiles = false;
+        tableParamsManager.build($scope.locales, $scope.labels);
 
-        // columns definition
-        $scope.columns = [
-            { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
-            { title: translationCfg.label.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
-            { title: translationCfg.label.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
-        ];
-
-        for (var key in $scope.locales) {
-            var columnDef = { title: $scope.locales[key].toUpperCase(), index: $scope.locales[key], edit: true, filter: {}, sortable: false, visible: true };
-            columnDef['filter'][$scope.locales[key]] = 'text';
-
-            $scope.columns.push(columnDef);
-        }
-
-        // grid data
-        var tableData = {
-            total: 0,
-            currentSort: {},
-            currentFilter: {},
-            getData: function($defer, params) {
-                translationApiManager
-                    .getPage(params, this)
-                    .success(function (responseData) {
-                        params.total(responseData.total);
-                        $defer.resolve(responseData.translations);
-                    });
-            }
-        };
-
-        var defaultOptions = { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} };
-
-        $scope.tableParams = new ngTableParams(defaultOptions, tableData);
+        $scope.columns = tableParamsManager.getColumnsDefinition();
+        $scope.tableParams = tableParamsManager.getTableParams();
 
         // override default changePage function to scroll to top on change page
         $scope.tableParams.changePage = function (pageNumber) {
@@ -192,13 +214,25 @@ app.controller('TranslationController', [
                 column.visible = $scope.areAllColumnsSelected;
             });
         };
+}]);
+
+/**
+ * Translations source controller.
+ */
+app.controller('DataSourceController', [
+    '$scope', 'tableParamsManager', 'translationApiManager',
+    function ($scope, tableParamsManager, translationApiManager) {
+        $scope.selectedToken = null;
+        $scope.defaultSourceClass = 'btn-info';
+        $scope.tokenSourceClass = 'btn-default';
+        $scope.showProfiles = false;
 
         // use the given profile token as translations source
         $scope.changeToken = function (selectedToken) {
             translationApiManager.setToken(selectedToken);
 
             if ('' != selectedToken) {
-                $scope.tableParams.reload();
+                tableParamsManager.reloadTableData();
             }
         };
 
@@ -209,7 +243,7 @@ app.controller('TranslationController', [
             $scope.showProfiles = false;
 
             translationApiManager.setToken($scope.selectedToken);
-            $scope.tableParams.reload();
+            tableParamsManager.reloadTableData();
         };
 
         $scope.useTokenAsSource = function () {
@@ -220,7 +254,7 @@ app.controller('TranslationController', [
             if ($scope.profilerTokens.length) {
                 $scope.selectedToken = $scope.profilerTokens[0].token;
                 translationApiManager.setToken($scope.selectedToken);
-                $scope.tableParams.reload();
+                tableParamsManager.reloadTableData();
             } else {
                 $scope.selectedToken = '';
             }
