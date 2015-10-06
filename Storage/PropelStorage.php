@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 use Lexik\Bundle\TranslationBundle\Propel\FileQuery;
 use Lexik\Bundle\TranslationBundle\Propel\FileRepository;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
+use Lexik\Bundle\TranslationBundle\Propel\TranslationQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Propel\TranslationRepository;
 
@@ -261,6 +262,46 @@ class PropelStorage implements StorageInterface
     public function getLatestUpdatedAt()
     {
         return $this->getTranslationRepository()->getLatestTranslationUpdatedAt();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCountTransUnitByDomains()
+    {
+        $results = TransUnitQuery::create()
+            ->withColumn('count(TransUnit.ID)', 'number')
+            ->select(array('number', 'TransUnit.Domain'))
+            ->groupBy('TransUnit.Domain')
+            ->find();
+
+        $counts = array();
+        foreach ($results as $row) {
+            $counts[$row['TransUnit.Domain']] = (int) $row['number'];
+        }
+
+        return $counts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCountTranslationByLocales($domain)
+    {
+        $results = TranslationQuery::create()
+            ->join('TransUnit')
+            ->where('TransUnit.Domain = ?', $domain)
+            ->withColumn('count(Translation.ID)', 'number')
+            ->select(array('number', 'Translation.Locale'))
+            ->groupBy('Translation.Locale')
+            ->find();
+
+        $counts = array();
+        foreach ($results as $row) {
+            $counts[$row['Translation.Locale']] = (int) $row['number'];
+        }
+
+        return $counts;
     }
 
     /**

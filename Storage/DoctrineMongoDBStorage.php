@@ -16,4 +16,20 @@ class DoctrineMongoDBStorage extends AbstractDoctrineStorage
     {
         return $this->getTransUnitRepository()->getLatestTranslationUpdatedAt();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCountTransUnitByDomains()
+    {
+        return $this->getTransUnitRepository()->countByDomains();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCountTranslationByLocales($domain)
+    {
+        return $this->getTransUnitRepository()->countTranslationsByLocales($domain);
+    }
 }

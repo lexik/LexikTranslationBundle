@@ -47,6 +47,7 @@ class TransUnitRepository extends DocumentRepository
         $reduce = <<<FCT
 function (obj, prev) {
     if (typeof(prev.couples) == 'undefined') { prev.couples = new Array(); }
+
     obj.translations.forEach(function (translation) {
         var i = 0, found = false;
         while (i<prev.couples.length && !found) {
@@ -309,5 +310,65 @@ FCT;
         }
 
         return new \DateTime(date('Y-m-d H:i:s', $result['translations'][0]['updated_at']->sec));
+    }
+
+    /**
+     * @return array
+     */
+    public function countByDomains()
+    {
+        $reduce = <<<FCT
+function (obj, prev) {
+    if (typeof(prev.count) == 'undefined') { prev.count = {}; }
+
+    if (!prev.count.hasOwnProperty(obj.domain)) {
+        prev.count[obj.domain] = 1;
+    } else {
+        prev.count[obj.domain]++;
+    }
+}
+FCT;
+
+        $results = $this->createQueryBuilder()
+            ->group(array(), array())
+            ->reduce($reduce)
+            ->hydrate(false)
+            ->getQuery()
+            ->execute();
+
+        return isset($results[0]['count']) ? $results[0]['count'] : array();
+    }
+
+    /**
+     * @param string $domain
+     * @return array
+     */
+    public function countTranslationsByLocales($domain)
+    {
+        $reduce = <<<FCT
+function (obj, prev) {
+    if (typeof(prev.count) == 'undefined') { prev.count = {}; }
+
+    if (obj.translations) {
+        obj.translations.forEach(function (translation) {
+            if (!prev.count.hasOwnProperty(translation.locale)) {
+                prev.count[translation.locale] = 1;
+            } else {
+                prev.count[translation.locale]++;
+            }
+        });
+    }
+}
+FCT;
+
+        $results = $this->createQueryBuilder()
+            ->field('domain')->equals($domain)
+            ->group(array(), array())
+            ->reduce($reduce)
+            ->hydrate(false)
+            ->getQuery()
+            ->execute();
+
+        return isset($results[0]['count']) ? $results[0]['count'] : array();
     }
 }

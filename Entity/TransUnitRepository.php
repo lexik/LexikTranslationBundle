@@ -126,8 +126,19 @@ class TransUnitRepository extends EntityRepository
         $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
-        return (int) $builder->getQuery()
-            ->getResult(Query::HYDRATE_SINGLE_SCALAR);
+        return (int) $builder->getQuery()->getResult(Query::HYDRATE_SINGLE_SCALAR);
+    }
+
+    /**
+     * @return array
+     */
+    public function countByDomains()
+    {
+        return $this->createQueryBuilder('tu')
+            ->select('COUNT(DISTINCT tu.id) AS number, tu.domain')
+            ->groupBy('tu.domain')
+            ->getQuery()
+            ->getArrayResult();
     }
 
     /**

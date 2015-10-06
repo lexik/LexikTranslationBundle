@@ -144,4 +144,19 @@ interface StorageInterface
      * @return \DateTime|null
      */
     public function getLatestUpdatedAt();
+
+    /**
+     * Returns the number or trans unit for each domain.
+     *
+     * @return array
+     */
+    public function getCountTransUnitByDomains();
+
+    /**
+     * Returns the number or translations for each locales for the given domain.
+     *
+     * @param string $domain
+     * @return array
+     */
+    public function getCountTranslationByLocales($domain);
 }

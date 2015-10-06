@@ -29,7 +29,7 @@ class TransUnitManager implements TransUnitManagerInterface
     private $kernelRootDir;
 
     /**
-     * Csontruct.
+     * Construct.
      *
      * @param StorageInterface $storage
      * @param FileManagerInterface $fm

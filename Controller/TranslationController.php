@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class TranslationController extends Controller
 {
-
     /**
      * Display an overview of the translation status per domain.
      *
@@ -24,15 +23,21 @@ class TranslationController extends Controller
         $storage = $this->get('lexik_translation.translation_storage');
 
         $locales = $this->getManagedLocales();
-        $domains = $storage->getTransUnitDomains();
+        $countByDomains = $storage->getCountTransUnitByDomains();
 
-        // Count the units for each domain
         $stats = array();
-        foreach ($domains as $domain) {
+        foreach ($countByDomains as $domain => $total) {
             $stats[$domain] = array();
+            $byLocale = $storage->getCountTranslationByLocales($domain);
+
             foreach ($locales as $locale) {
-                $count = count($storage->getTransUnitsByLocaleAndDomain($locale, $domain));
-                $stats[$domain][$locale] = $count;
+                $localeCount = isset($byLocale[$locale]) ? $byLocale[$locale] : 0;
+
+                $stats[$domain][$locale] = array(
+                    'keys'       => $total,
+                    'translated' => $localeCount,
+                    'completed'  => ($total > 0) ? floor(($localeCount / $total) * 100) : 0,
+                );
             }
         }
 
