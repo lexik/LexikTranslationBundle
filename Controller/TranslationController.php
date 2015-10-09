@@ -22,24 +22,7 @@ class TranslationController extends Controller
         /** @var StorageInterface $storage */
         $storage = $this->get('lexik_translation.translation_storage');
 
-        $locales = $this->getManagedLocales();
-        $countByDomains = $storage->getCountTransUnitByDomains();
-
-        $stats = array();
-        foreach ($countByDomains as $domain => $total) {
-            $stats[$domain] = array();
-            $byLocale = $storage->getCountTranslationByLocales($domain);
-
-            foreach ($locales as $locale) {
-                $localeCount = isset($byLocale[$locale]) ? $byLocale[$locale] : 0;
-
-                $stats[$domain][$locale] = array(
-                    'keys'       => $total,
-                    'translated' => $localeCount,
-                    'completed'  => ($total > 0) ? floor(($localeCount / $total) * 100) : 0,
-                );
-            }
-        }
+        $stats = $this->get('lexik_translation.overview.stats_aggregator')->getStats();
 
         return $this->render('LexikTranslationBundle:Translation:overview.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
