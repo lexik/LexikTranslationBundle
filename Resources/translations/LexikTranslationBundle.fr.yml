@@ -28,3 +28,4 @@ overview:
     show_grid: "Grille de traductions"
     msg_latest_translation: "Date de dernière traduction : %date% UTC."
     domain: "Domaine"
+    no_stats: "Aucune donnée."

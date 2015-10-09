@@ -25,5 +25,7 @@ translations:
 
 overview:
     page_title: "Overzicht"
+    show_grid: "Translation grid"
     msg_latest_translation: "Laatste vertaling is van %date% UTC."
-    table_domain: "Domein"
+    domain: "Domein"
+    no_stats: "No data to display."

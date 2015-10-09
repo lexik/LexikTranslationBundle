@@ -28,3 +28,4 @@ overview:
     show_grid: "Translation grid"
     msg_latest_translation: "Latest translation was of %date% UTC."
     domain: "Domain"
+    no_stats: "No data to display."
