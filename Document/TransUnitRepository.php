@@ -48,14 +48,16 @@ class TransUnitRepository extends DocumentRepository
 function (obj, prev) {
     if (typeof(prev.couples) == 'undefined') { prev.couples = new Array(); }
 
-    obj.translations.forEach(function (translation) {
-        var i = 0, found = false;
-        while (i<prev.couples.length && !found) {
-            found = (prev.couples[i].locale == translation['locale'] && prev.couples[i].domain == obj.domain);
-            i++;
-        }
-        if (!found) { prev.couples.push({"locale": translation['locale'], "domain": obj.domain}); }
-    });
+    if (typeof(obj.translations) != 'undefined') {
+        obj.translations.forEach(function (translation) {
+            var i = 0, found = false;
+            while (i<prev.couples.length && !found) {
+                found = (prev.couples[i].locale == translation['locale'] && prev.couples[i].domain == obj.domain);
+                i++;
+            }
+            if (!found) { prev.couples.push({"locale": translation['locale'], "domain": obj.domain}); }
+        });
+    }
 }
 FCT;
 
