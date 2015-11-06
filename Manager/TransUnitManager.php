@@ -210,4 +210,21 @@ class TransUnitManager implements TransUnitManagerInterface
 
         return $file;
     }
+
+    /**
+     * @param TransUnitInterface $transUnit
+     * @return bool
+     */
+    public function delete(TransUnitInterface $transUnit)
+    {
+        try {
+            $this->storage->remove($transUnit);
+            $this->storage->flush();
+
+            return true;
+
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }

@@ -137,14 +137,18 @@
             </div>
         </td>
         <td class="text-center">
-            <button ng-show="!edit" ng-click="enableEdit()" type="button" class="btn btn-primary btn-sm">
+            <button ng-show="!edit" ng-click="enableEdit()" type="button" class="btn btn-primary btn-xs">
                 <span class="glyphicon glyphicon-pencil"></span>
             </button>
-            <button ng-show="edit" ng-click="save($event, 'btn-save')" type="button" class="btn btn-success btn-sm">
+            <button ng-show="edit" ng-click="save($event, 'btn-save')" type="button" class="btn btn-success btn-xs">
                 <span class="glyphicon glyphicon-save"></span>
             </button>
-            <button ng-show="edit" ng-click="disableEdit()" type="button" class="btn btn-danger btn-xs">
+            <button ng-show="edit" ng-click="disableEdit()" type="button" class="btn btn-warning btn-xs">
                 <span class="glyphicon glyphicon-ban-circle"></span>
+            </button>
+
+            <button ng-show="!edit" ng-click="delete(translation)" type="button" class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash"></span>
             </button>
         </td>
     </script>
