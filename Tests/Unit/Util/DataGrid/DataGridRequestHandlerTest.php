@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
 use Symfony\Component\HttpFoundation\Request;
@@ -173,6 +174,8 @@ class DataGridRequestHandlerTest extends BaseUnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        return new DataGridRequestHandler($transUnitManagerMock, $storageMock, array());
+        $localeManager = new LocaleManager(array());
+
+        return new DataGridRequestHandler($transUnitManagerMock, $storageMock, $localeManager);
     }
 }

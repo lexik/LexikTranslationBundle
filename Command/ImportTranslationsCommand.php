@@ -62,7 +62,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $locales = $this->input->getOption('locales');
         if (empty($locales)) {
-            $locales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
+            $locales = $this->getContainer()->get('lexik_translation.locale.manager')->getLocales();
         }
 
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();

@@ -75,7 +75,7 @@ class LexikTranslationExtension extends Extension
         $listener->addArgument(new Reference('lexik_translation.translation_storage'));
         $listener->addArgument(new Reference('translator'));
         $listener->addArgument(new Parameter('kernel.cache_dir'));
-        $listener->addArgument(new Parameter('lexik_translation.managed_locales'));
+        $listener->addArgument(new Reference('lexik_translation.locale.manager'));
         $listener->addArgument($cacheInterval);
 
         $listener->addTag('kernel.event_listener', array(

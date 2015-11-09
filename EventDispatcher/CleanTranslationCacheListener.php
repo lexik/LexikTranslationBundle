@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\EventDispatcher;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -30,7 +31,7 @@ class CleanTranslationCacheListener
     /**
      * @var array
      */
-    private $managedLocales;
+    private $localeManager;
 
     /**
      * @var int
@@ -43,15 +44,15 @@ class CleanTranslationCacheListener
      * @param StorageInterface    $storage
      * @param TranslatorInterface $translator
      * @param string              $cacheDirectory
-     * @param array               $managedLocales
+     * @param LocaleManager       $localeManager
      * @param int                 $cacheInterval
      */
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, $managedLocales, $cacheInterval)
+    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManager $localeManager, $cacheInterval)
     {
         $this->storage = $storage;
         $this->cacheDirectory = $cacheDirectory;
         $this->translator = $translator;
-        $this->managedLocales = $managedLocales;
+        $this->localeManager = $localeManager;
         $this->cacheInterval = $cacheInterval;
     }
 
@@ -70,7 +71,7 @@ class CleanTranslationCacheListener
                     ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
 
                 if ($finder->count() > 0) {
-                    $this->translator->removeLocalesCacheFiles($this->managedLocales);
+                    $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
                 }
             }
         }

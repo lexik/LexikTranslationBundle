@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\Overview;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 
 /**
@@ -16,18 +17,18 @@ class StatsAggregator
     private $storage;
 
     /**
-     * @var array
+     * @var LocaleManagerInterface
      */
-    private $managedLocales;
+    private $localeManager;
 
     /**
-     * @param StorageInterface $storage
-     * @param array            $managedLocales
+     * @param StorageInterface       $storage
+     * @param LocaleManagerInterface $localeManager
      */
-    public function __construct(StorageInterface $storage, array $managedLocales)
+    public function __construct(StorageInterface $storage, LocaleManagerInterface $localeManager)
     {
         $this->storage = $storage;
-        $this->managedLocales = $managedLocales;
+        $this->localeManager = $localeManager;
     }
 
     /**
@@ -42,7 +43,7 @@ class StatsAggregator
             $stats[$domain] = array();
             $byLocale = $this->storage->getCountTranslationByLocales($domain);
 
-            foreach ($this->managedLocales as $locale) {
+            foreach ($this->localeManager->getLocales() as $locale) {
                 $localeCount = isset($byLocale[$locale]) ? $byLocale[$locale] : 0;
 
                 $stats[$domain][$locale] = array(

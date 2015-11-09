@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Form\Handler;
 
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
@@ -31,9 +32,9 @@ class TransUnitFormHandler implements FormHandlerInterface
     protected $storage;
 
     /**
-     * @var array
+     * @var LocaleManagerInterface
      */
-    protected $managedLoales;
+    protected $localeManager;
 
     /**
      * @var string
@@ -44,15 +45,15 @@ class TransUnitFormHandler implements FormHandlerInterface
      * @param TransUnitManagerInterface $transUnitManager
      * @param FileManagerInterface      $fileManager
      * @param StorageInterface          $storage
-     * @param array                     $managedLoales
+     * @param LocaleManagerInterface    $localeManager
      * @param string                    $rootDir
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, array $managedLoales, $rootDir)
+    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, LocaleManagerInterface $localeManager, $rootDir)
     {
         $this->transUnitManager = $transUnitManager;
         $this->fileManager = $fileManager;
         $this->storage = $storage;
-        $this->managedLoales = $managedLoales;
+        $this->localeManager = $localeManager;
         $this->rootDir = $rootDir;
     }
 
@@ -61,7 +62,7 @@ class TransUnitFormHandler implements FormHandlerInterface
      */
     public function createFormData()
     {
-        return $this->transUnitManager->newInstance($this->managedLoales);
+        return $this->transUnitManager->newInstance($this->localeManager->getLocales());
     }
 
     /**

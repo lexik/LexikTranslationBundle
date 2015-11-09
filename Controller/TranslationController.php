@@ -109,6 +109,6 @@ class TranslationController extends Controller
      */
     protected function getManagedLocales()
     {
-        return $this->container->getParameter('lexik_translation.managed_locales');
+        return $this->get('lexik_translation.locale.manager')->getLocales();
     }
 }
