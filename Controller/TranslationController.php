@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,18 +13,45 @@ use Symfony\Component\HttpFoundation\Request;
 class TranslationController extends Controller
 {
     /**
+     * Display an overview of the translation status per domain.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function overviewAction()
+    {
+        /** @var StorageInterface $storage */
+        $storage = $this->get('lexik_translation.translation_storage');
+
+        $stats = $this->get('lexik_translation.overview.stats_aggregator')->getStats();
+
+        return $this->render('LexikTranslationBundle:Translation:overview.html.twig', array(
+            'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
+            'locales'        => $this->getManagedLocales(),
+            'domains'        => $storage->getTransUnitDomains(),
+            'latestTrans'    => $storage->getLatestUpdatedAt(),
+            'stats'          => $stats,
+        ));
+    }
+
+    /**
      * Display the translation grid.
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function gridAction()
     {
+        $tokens = null;
+        if ($this->container->getParameter('lexik_translation.dev_tools.enable')) {
+            $tokens = $this->get('lexik_translation.token_finder')->find();
+        }
+
         return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
             'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
             'autoCacheClean' => $this->container->getParameter('lexik_translation.auto_cache_clean'),
             'toggleSimilar'  => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
             'locales'        => $this->getManagedLocales(),
+            'tokens'         => $tokens,
         ));
     }
 

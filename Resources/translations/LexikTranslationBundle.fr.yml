@@ -16,3 +16,16 @@ translations:
     succesfully_added:   "Traduction ajouté avec succès."
     update_failed:       "Erreur lors de la mise à jour des traductions pour clé #%id%."
     back_to_list:        "Retour"
+    all_translations:    "Tout"
+    no_translations:     "Aucune traduction"
+    profiler:            "Profileur"
+    data_source:         "Source de donnée"
+    latest_profiles:     "Derniers profils"
+    profile:             "Profil"
+
+overview:
+    page_title: "Overview"
+    show_grid: "Grille de traductions"
+    msg_latest_translation: "Date de dernière traduction : %date% UTC."
+    domain: "Domaine"
+    no_stats: "Aucune donnée."

@@ -1,0 +1,84 @@
+{% extends layout %}
+
+{% trans_default_domain 'LexikTranslationBundle' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
+{% endblock %}
+
+{% block title %}{{ 'overview.page_title'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% block toolbar %}
+            <div class="page-header">
+                <h1>
+                    {{ 'overview.page_title'|trans }}
+                    <div class="pull-right">
+                        <a href="{{ path('lexik_translation_grid') }}" role="button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-th"></span>
+                            {{ 'overview.show_grid'|trans }}
+                        </a>
+                    </div>
+                </h1>
+            </div>
+        {% endblock toolbar %}
+
+        <p>{{ 'overview.msg_latest_translation'|trans({'%date%': latestTrans|date('Y-m-d H:i')}) }}</p>
+
+        <div id="translation-overview">
+            <div class="row margin-row">
+                <div class="col-md-12">
+                    {% if  not stats|length %}
+                        <div class="alert alert-info">{{ 'overview.no_stats'|trans }}</div>
+                    {% else %}
+                        <table class="table table-bordered table-striped table-overview">
+                            <thead>
+                                <tr>
+                                    <th class="sortable col-0">
+                                        {{ 'overview.domain'|trans }}
+                                    </th>
+                                    {% for locale in locales %}
+                                        <th class="sortable col-{{ loop.index }}">
+                                            {{ locale|upper }}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for domain in domains %}
+                                <tr columns="columns">
+                                    <td>{{ domain }}</td>
+                                    {% for locale in locales %}
+                                        <td class="text-center">
+                                            <span class="text {{ stats[domain][locale]['completed'] == 100 ? 'text-success' : 'text-danger' }}">
+                                                {{ stats[domain][locale]['translated'] }} / {{ stats[domain][locale]['keys']|default(0) }}
+                                            </span>
+                                            <div class="progress">
+                                                <div class="progress-bar {{ stats[domain][locale]['completed'] == 100 ? 'progress-bar-success' : 'progress-bar-danger' }}"
+                                                     role="progressbar"
+                                                     aria-valuenow="{{ stats[domain][locale]['completed'] }}"
+                                                     aria-valuemin="0"
+                                                     aria-valuemax="100"
+                                                     style="width: {{ stats[domain][locale]['completed'] }}%">
+                                                </div>
+                                            </div>
+                                        </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block javascript_footer %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
+{% endblock %}

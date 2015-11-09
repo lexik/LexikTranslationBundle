@@ -26,3 +26,8 @@
 .pagination {
     margin: 0;
 }
+
+.table-overview .progress {
+    margin: 0;
+    height: 12px;
+}

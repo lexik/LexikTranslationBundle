@@ -13,7 +13,9 @@ require: {
 Or install directly through composer with:
 
 ```shell
+# Latest stable
 composer.phar require lexik/translation-bundle ~2.0
+
 # For latest version
 composer.phar require lexik/translation-bundle dev-master
 ```
@@ -46,41 +48,96 @@ ___________________
 Configuration
 =============
 
-Minimum configuration:
+#### Minimum configuration
+
+You must ast least define the fallback locale(s) as for the `framework.translator` node, and define all locales you will manage.
 
 ```yml
 # app/config/config.yml
 lexik_translation:
-    fallback_locale: en      # (required) default locale to use
-    managed_locales: [en]    # (required) locales that the bundle have to manage
+    fallback_locale: [en]         # (required) default locale(s) to use
+    managed_locales: [en, fr, de] # (required) locales that the bundle have to manage
 ```
 
-Additional configuration options (default values are shown here):
+#### Additional configuration options
+
+*Default values are shown here.*
+
+Configure where to store translations, by default the bundle will use Doctrine ORM but you can also use Doctrine MongoDB or Propel ORM.
+You can also define the name of the entity / document manager which uses [different connection](http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html), when using propel, this can be used to specify the propel connection name.
+
+Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB.
 
 ```yml
-# app/config/config.yml
 lexik_translation:
-    base_layout:     "LexikTranslationBundle::layout.html.twig" # layout used with the translation edition template
-    use_yml_tree:    false    # if "true" we will print a nice tree in the yml source files. It is a little slower.
-    grid_input_type: text     # define field type used in the grid (text|textarea)
-    grid_toggle_similar: false  # if "true", on the grid if a locale colunm is shown/hidden then similar locales columns will be shown/hidden too.
-                                    # so if the col "en" is shown/hidden all "en_XX" cols will be shown/hidden too. Not in the reverse order ("en_XX" clicked, no impact on "en")
     storage:
-        type: orm                    # where to store translations: "orm", "mongodb" or "propel"
-        object_manager: something    # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
-                                     # When using propel, this can be used to specify the propel connection name
-    resources_registration:
-        type:                 all     # resources type to register: "all", "files" or "database"
-        managed_locales_only: true    # will only load resources for managed locales
-    auto_cache_clean: false     # set to true to make the bundle automatically clear translations cache files
-    auto_cache_clean_interval: 600     # The number of seconds to wait before trying to check if translations have changed in the database.
+        type: orm                  # orm | mongodb | propel
+        object_manager: something  # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
+                                   # When using propel, this can be used to specify the propel connection name
 ```
 
-*Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB to store translations.*
+Change the layout used with the bundle's template:
+
+```yml
+lexik_translation:
+    base_layout: "LexikTranslationBundle::layout.html.twig"
+```
+
+You can customize the edition grid by using input text or textarea fields.
+You can also shown/hidden similar columns on the grid. This means on the grid if a locale colunm is shown/hidden then similar locales columns will be shown/hidden too.
+(e.g.: if the col "en" is shown/hidden all "en_XX" cols will be shown/hidden too)
+
+```yml
+lexik_translation:
+    grid_input_type: text       # text|textarea
+    grid_toggle_similar: false
+```
+
+If you export translation by using YAML, you can switch the following option to `true` to  print a nice tree in the yml source files.
+(It is a little slower).
+
+```yml
+lexik_translation:
+    use_yml_tree: false
+```
+
+You can choose the resource's type you want to load, by default the bundle will load translations from files + database, but you can choose to use only one of these two resource type.
+Note that if you use files + database, if a translation exists in both resources, the value from the database will override the file one because the database is loaded after.
+By default the bundle will only load resources for managed locales.
+
+```yml
+lexik_translation:
+    resources_registration:
+        type:                 all  # all | files | database
+        managed_locales_only: true
+```
+
+The two following options can be used if yo want the bundle automatically clear translations cache files. 
+To do this the bundle will checks the latest update date among the translations (in the database).
+
+```yml
+lexik_translation:
+    auto_cache_clean: false
+    auto_cache_clean_interval: 600  # number of seconds to wait before trying to check if translations have changed in the database.
+```
+
+From the translations grid you can get untranslated keys from a given Symfony profile token. This option should be enabled only in **dev** environment.
+Note that the key must exist in the database to appear in the grid.
+If you want to force the translations keys to appear in the grid you can enable the `create_missing` option.
+If you do so, while getting missing translations from a profile, if a key/domain pair does not exist in the database the bundle will create it.
+
+```yml
+lexik_translation:
+    dev_tools:
+        enable: false
+        create_missing: false
+```
 
 If you use Doctrine ORM, you have to update your database:
 
     ./app/console doctrine:schema:update --force
+
+#### Routing
 
 To use the translation edition page, add the routing file to you application:
 
@@ -91,9 +148,13 @@ lexik_translation_edition:
     prefix:   /my-prefix
 ```
 
-The translations edition page will be available here: /my-prefix/grid
+The translations edition page will be available here:
 
-Note: The grid will be empty until you import translations in database.
+* `/my-prefix/` for the overview page
+
+* `/my-prefix/grid` for the translations grid
+
+**Note**: The grid will be empty until you import translations in database.
 If the grid does not appear, please check your base template has a block named `javascript_footer`.
 
 ___________________

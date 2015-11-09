@@ -111,7 +111,19 @@ class Configuration implements ConfigurationInterface
                 ->end()
 
                 ->booleanNode('use_yml_tree')
-                    ->defaultValue(false)
+                    ->defaultFalse()
+                ->end()
+
+                ->arrayNode('dev_tools')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('enable')
+                            ->defaultFalse()
+                        ->end()
+                        ->booleanNode('create_missing')
+                            ->defaultFalse()
+                        ->end()
+                    ->end()
                 ->end()
 
             ->end()

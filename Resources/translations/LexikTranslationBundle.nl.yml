@@ -16,3 +16,16 @@ translations:
     succesfully_added:   "Vertaling is succesvol toegevoegd."
     update_failed:       "Fout opgetreden bij vertalen van sleutel #%id%."
     back_to_list:        "Terug"
+    all_translations:    "Alle"
+    no_translations:     "No translations
+    profiler:            "Profiler"
+    data_source:         "Databron"
+    latest_profiles:     "Laatste profiel"
+    profile:             "Profiel"
+
+overview:
+    page_title: "Overzicht"
+    show_grid: "Translation grid"
+    msg_latest_translation: "Laatste vertaling is van %date% UTC."
+    domain: "Domein"
+    no_stats: "No data to display."

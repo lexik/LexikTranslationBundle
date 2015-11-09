@@ -45,6 +45,8 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
         $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
         $container->setParameter('lexik_translation.auto_cache_clean', $config['auto_cache_clean']);
+        $container->setParameter('lexik_translation.dev_tools.enable', $config['dev_tools']['enable']);
+        $container->setParameter('lexik_translation.dev_tools.create_missing', $config['dev_tools']['create_missing']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 
@@ -52,6 +54,10 @@ class LexikTranslationExtension extends Extension
 
         if (true === $config['auto_cache_clean']) {
             $this->buildCacheCleanListenerDefinition($container, $config['auto_cache_clean_interval']);
+        }
+
+        if (true === $config['dev_tools']['enable']) {
+            $this->buildDevServicesDefinition($container);
         }
 
         $this->registerTranslatorConfiguration($config, $container);
@@ -141,6 +147,27 @@ class LexikTranslationExtension extends Extension
         $driverDefinition->setPublic(false);
 
         $container->setDefinition($driverId, $driverDefinition);
+    }
+
+    /**
+     * Load dev tools.
+     *
+     * @param ContainerBuilder $container
+     */
+    protected function buildDevServicesDefinition(ContainerBuilder $container)
+    {
+        $container
+            ->getDefinition('lexik_translation.data_grid.request_handler')
+            ->addMethodCall('setProfiler', array(new Reference('profiler')));
+
+        $tokenFinderDefinition = new Definition();
+        $tokenFinderDefinition->setClass(new Parameter('lexik_translation.token_finder.class'));
+        $tokenFinderDefinition->setArguments(array(
+            new Reference('profiler'),
+            new Parameter('lexik_translation.token_finder.limit'),
+        ));
+
+        $container->setDefinition('lexik_translation.token_finder', $tokenFinderDefinition);
     }
 
     /**

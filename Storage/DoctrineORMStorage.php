@@ -37,6 +37,36 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getCountTransUnitByDomains()
+    {
+        $results = $this->getTransUnitRepository()->countByDomains();
+
+        $counts = array();
+        foreach ($results as $row) {
+            $counts[$row['domain']] = (int) $row['number'];
+        }
+
+        return $counts;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCountTranslationByLocales($domain)
+    {
+        $results = $this->getTranslationRepository()->countByLocales($domain);
+
+        $counts = array();
+        foreach ($results as $row) {
+            $counts[$row['locale']] = (int) $row['number'];
+        }
+
+        return $counts;
+    }
+
+    /**
      * Returns the TransUnit repository.
      *
      * @return object

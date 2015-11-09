@@ -1,5 +1,7 @@
 {% extends layout %}
 
+{% trans_default_domain 'LexikTranslationBundle' %}
+
 {% block stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
@@ -17,6 +19,10 @@
                         <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
                             <span class="glyphicon glyphicon-plus"></span>
                             {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+                        </a>
+                        <a href="{{ path('lexik_translation_overview') }}" role="button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-tasks"></span>
+                            {{ 'overview.page_title'|trans({}, 'LexikTranslationBundle') }}
                         </a>
                     </div>
                 </h1>
@@ -36,22 +42,30 @@
             locales: {{ locales | json_encode | raw }},
             inputType: '{{ inputType }}',
             autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
+            profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
             toggleSimilar: '{{ toggleSimilar }}',
             url: {
                 list: '{{ path('lexik_translation_list') }}',
+                listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
                 update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
                 invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
             },
             label: {
-                hideCol: '{{ 'translations.show_hide_columns'|trans({}, 'LexikTranslationBundle') }}',
-                toggleAllCol: '{{ 'translations.toggle_all_columns'|trans({}, 'LexikTranslationBundle') }}',
-                invalidateCache: '{{ 'translations.invalidate_cache'|trans({}, 'LexikTranslationBundle') }}',
-                saveRow: '{{ 'translations.save_row'|trans({}, 'LexikTranslationBundle') }}',
-                domain: '{{ 'translations.domain'|trans({}, 'LexikTranslationBundle') }}',
-                key: '{{ 'translations.key'|trans({}, 'LexikTranslationBundle') }}',
-                save: '{{ 'translations.save'|trans({}, 'LexikTranslationBundle') }}',
-                successMsg: '{{ 'translations.succesfully_updated'|trans({}, 'LexikTranslationBundle') }}',
-                errorMsg: '{{ 'translations.update_failed'|trans({}, 'LexikTranslationBundle') }}'
+                hideCol: '{{ 'translations.show_hide_columns'|trans }}',
+                toggleAllCol: '{{ 'translations.toggle_all_columns'|trans }}',
+                invalidateCache: '{{ 'translations.invalidate_cache'|trans }}',
+                allTranslations: '{{ 'translations.all_translations'|trans }}',
+                profiler: '{{ 'translations.profiler'|trans }}',
+                dataSource: '{{ 'translations.data_source'|trans }}',
+                latestProfiles: '{{ 'translations.latest_profiles'|trans }}',
+                profile: '{{ 'translations.profile'|trans }}',
+                saveRow: '{{ 'translations.save_row'|trans }}',
+                domain: '{{ 'translations.domain'|trans }}',
+                key: '{{ 'translations.key'|trans }}',
+                save: '{{ 'translations.save'|trans }}',
+                successMsg: '{{ 'translations.succesfully_updated'|trans }}',
+                errorMsg: '{{ 'translations.update_failed'|trans }}',
+                noTranslations: '{{ 'translations.no_translations'|trans }}'
             }
         };
     </script>

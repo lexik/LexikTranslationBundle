@@ -35,6 +35,8 @@
         <parameter key="lexik_translation.data_grid.formatter.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter</parameter>
         <parameter key="lexik_translation.data_grid.request_handler.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler</parameter>
 
+        <parameter key="lexik_translation.overview.stats_aggregator.class">Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator</parameter>
+
         <parameter key="lexik_translation.form.type.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType</parameter>
         <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
@@ -42,7 +44,10 @@
         <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener</parameter>
         <parameter key="lexik_translation.listener.clean_translation_cache.class">Lexik\Bundle\TranslationBundle\EventDispatcher\CleanTranslationCacheListener</parameter>
 
+        <parameter key="lexik_translation.token_finder.class">Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder</parameter>
+
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
+        <parameter key="lexik_translation.token_finder.limit">15</parameter>
     </parameters>
 
     <services>
@@ -120,6 +125,15 @@
 
         <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
+            <argument type="service" id="lexik_translation.translation_storage" />
+            <argument type="service" id="lexik_translation.locale.manager" />
+            <call method="setCreateMissing">
+                <argument>%lexik_translation.dev_tools.create_missing%</argument>
+            </call>
+        </service>
+
+        <!-- Overview -->
+        <service id="lexik_translation.overview.stats_aggregator" class="%lexik_translation.overview.stats_aggregator.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.locale.manager" />
         </service>

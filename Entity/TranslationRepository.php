@@ -23,4 +23,20 @@ class TranslationRepository extends EntityRepository
 
         return !empty($date) ? new \DateTime($date) : null;
     }
+
+    /**
+     * @param string $domain
+     * @return array
+     */
+    public function countByLocales($domain)
+    {
+        return $this->createQueryBuilder('t')
+            ->select('COUNT(DISTINCT t.id) AS number, t.locale')
+            ->innerJoin('t.transUnit', 'tu')
+            ->andWhere('tu.domain = :domain')
+            ->setParameter('domain', $domain)
+            ->groupBy('t.locale')
+            ->getQuery()
+            ->getResult();
+    }
 }

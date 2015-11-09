@@ -24,6 +24,19 @@ class RestController extends Controller
 
     /**
      * @param Request $request
+     * @param $token
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function listByProfileAction(Request $request, $token)
+    {
+        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPageByToken($request, $token);
+
+        return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
+    }
+
+    /**
+     * @param Request $request
      * @param integer $id
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse

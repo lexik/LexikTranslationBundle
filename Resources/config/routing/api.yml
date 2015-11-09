@@ -3,6 +3,11 @@ lexik_translation_list:
     defaults: { _controller: "LexikTranslationBundle:Rest:list" }
     methods:  [GET]
 
+lexik_translation_profiler:
+    path:         /translations/profiler/{token}
+    defaults:     { _controller: "LexikTranslationBundle:Rest:listByProfile" }
+    requirements: { _method: GET }
+
 lexik_translation_update:
     path:     /translations/{id}
     defaults: { _controller: "LexikTranslationBundle:Rest:update" }
