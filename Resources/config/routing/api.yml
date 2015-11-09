@@ -12,3 +12,8 @@ lexik_translation_update:
     path:     /translations/{id}
     defaults: { _controller: "LexikTranslationBundle:Rest:update" }
     methods:  [PUT]
+
+lexik_translation_delete:
+    path:     /translations/{id}
+    defaults: { _controller: "LexikTranslationBundle:Rest:delete" }
+    methods:  [DELETE]

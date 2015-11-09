@@ -48,6 +48,7 @@
                 list: '{{ path('lexik_translation_list') }}',
                 listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
                 update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
+                delete: '{{ path('lexik_translation_delete', {'id': '-id-'}) }}',
                 invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
             },
             label: {
@@ -63,8 +64,10 @@
                 domain: '{{ 'translations.domain'|trans }}',
                 key: '{{ 'translations.key'|trans }}',
                 save: '{{ 'translations.save'|trans }}',
-                successMsg: '{{ 'translations.succesfully_updated'|trans }}',
-                errorMsg: '{{ 'translations.update_failed'|trans }}',
+                updateSuccess: '{{ 'translations.successfully_updated'|trans }}',
+                updateFail: '{{ 'translations.update_failed'|trans }}',
+                deleteSuccess: '{{ 'translations.successfully_deleted'|trans }}',
+                deleteFail: '{{ 'translations.delete_failed'|trans }}',
                 noTranslations: '{{ 'translations.no_translations'|trans }}'
             }
         };

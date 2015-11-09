@@ -82,6 +82,10 @@ app.factory('translationApiManager', ['$http', function ($http) {
 
             // force content type to make SF create a Request with the PUT parameters
             return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
+        },
+
+        deleteTranslation: function (translation) {
+            return $http.delete(translationCfg.url.delete.replace('-id-', translation._id));
         }
     };
 }]);
@@ -301,11 +305,25 @@ app.directive('editableRow', ['translationApiManager', 'sharedMessage', function
                         .success(function (data) {
                             $scope.edit = false;
                             $scope.translation = data;
-                            sharedMessage.set('success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
+                            sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
                         }).error(function () {
-                            sharedMessage.set('danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
+                            sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
                         });
                 }
+            };
+
+            $scope.delete = function (translation) {
+                if (!window.confirm('Confirm delete '+translation._key)) {
+                    return;
+                }
+
+                translationApiManager
+                    .deleteTranslation(translation)
+                    .success(function (data) {
+                        sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                    }).error(function () {
+                        sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
+                    });
             };
         }
     };
