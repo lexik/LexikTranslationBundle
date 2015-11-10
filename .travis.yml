@@ -34,6 +34,6 @@ before_install:
   - composer require symfony/finder:${SYMFONY_VERSION} --no-update
   - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
 
-install: composer update --no-interaction
+install: composer update --prefer-dist --no-interaction
 
 script: phpunit
