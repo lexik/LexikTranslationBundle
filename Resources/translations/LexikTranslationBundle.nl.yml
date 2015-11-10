@@ -17,7 +17,7 @@ translations:
     update_failed:       "Fout opgetreden bij vertalen van sleutel #%id%."
     back_to_list:        "Terug"
     all_translations:    "Alle"
-    no_translations:     "No translations
+    no_translations:     "No translations"
     profiler:            "Profiler"
     data_source:         "Databron"
     latest_profiles:     "Laatste profiel"
