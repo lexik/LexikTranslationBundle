@@ -81,7 +81,7 @@ class FileImporter
     }
 
     /**
-     * Impoort the given file and return the number of inserted translations.
+     * Import the given file and return the number of inserted translations.
      *
      * @param \Symfony\Component\Finder\SplFileInfo $file
      * @param boolean                               $forceUpdate  force update of the translations
