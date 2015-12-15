@@ -280,10 +280,10 @@ app.directive('editableRow', ['translationApiManager', 'sharedMessage', function
         link: function ($scope, element, attrs) {
             $scope.edit = false;
 
-            $scope.toggleEdit = function () {
-                $scope.edit = !$scope.edit;
-                sharedMessage.reset();
-            };
+            //$scope.toggleEdit = function () {
+            //    $scope.edit = !$scope.edit;
+            //    sharedMessage.reset();
+            //};
 
             $scope.enableEdit = function () {
                 $scope.edit = true;

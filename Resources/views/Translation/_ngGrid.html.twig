@@ -115,7 +115,7 @@
     </script>
 
     <script type="text/ng-template" id="editable-row-template">
-        <td ng-repeat="column in columns track by $index" ng-show="column.visible" ng-dblclick="toggleEdit()">
+        <td ng-repeat="column in columns track by $index" ng-show="column.visible" ng-dblclick="enableEdit()">
             <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
             <div ng-switch on="editType">
                 <textarea ng-switch-when="textarea"
