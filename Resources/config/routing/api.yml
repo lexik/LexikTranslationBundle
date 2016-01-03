@@ -6,7 +6,7 @@ lexik_translation_list:
 lexik_translation_profiler:
     path:         /translations/profiler/{token}
     defaults:     { _controller: "LexikTranslationBundle:Rest:listByProfile" }
-    requirements: { _method: GET }
+    methods:  [GET]
 
 lexik_translation_update:
     path:     /translations/{id}
