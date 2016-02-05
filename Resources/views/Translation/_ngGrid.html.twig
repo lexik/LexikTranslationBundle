@@ -67,6 +67,15 @@
         </div>
     </div>
 
+    <ul class="list-unstyled list-inline locales-list">
+        <li class="locale">
+            <label for="show-only-pending-translations" class="locale">
+                <input type="checkbox" id="show-only-pending-translations" ng-model="$root.showOnlyPendingTranslations" ng-change="changeShowOnlyPendingTranslations()"/>
+                {{ labels.showOnlyPendingTranslations }}
+            </label>
+        </li>
+    </ul>
+
     <div class="row margin-row">
         <div class="col-md-12">
             <table ng-table="tableParams" show-filter="true" template-pagination="pager-template" class="table table-bordered table-striped">

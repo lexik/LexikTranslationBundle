@@ -189,6 +189,27 @@ class TransUnitRepository extends EntityRepository
                 $builder->andWhere($builder->expr()->like('tu.key', ':key'))
                     ->setParameter('key', sprintf('%%%s%%', $filters['key']));
             }
+
+        }
+
+        if (!empty($filters['show_only_pending_translations']) && $pendingTranslations = json_decode($filters['show_only_pending_translations'])) {
+
+            $idsFilter = [];
+
+            foreach ($pendingTranslations as $locale)
+            {
+                $subQueryResult = $this->createQueryBuilder('tup')
+                    ->select('tup.id')->distinct()
+                    ->leftJoin('tup.translations', 'tep', 'WITH', 'tep.locale in (:localePending)')
+                    ->andWhere("tep.content IS NULL OR tep.content = '' ")
+                    ->setParameter('localePending', $locale)
+                    ->getQuery()
+                    ->getResult('SingleColumnArrayHydrator');
+
+                $idsFilter = array_unique( array_merge($idsFilter, $subQueryResult) );
+            }
+
+            $builder->andWhere($builder->expr()->in('tu.id', $idsFilter));
         }
     }
 

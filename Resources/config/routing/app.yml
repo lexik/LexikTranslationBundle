@@ -8,6 +8,11 @@ lexik_translation_grid:
     defaults: { _controller: "LexikTranslationBundle:Translation:grid" }
     methods:  [GET]
 
+lexik_translation_grid_only_two_columns:
+    path:     /grid/{locale}
+    defaults: { _controller: "LexikTranslationBundle:Translation:gridOnlyTwoColumns" }
+    methods:  [GET]
+
 lexik_translation_new:
     path:     /new
     defaults: { _controller: "LexikTranslationBundle:Translation:new" }

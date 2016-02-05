@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -36,23 +37,37 @@ class TranslationController extends Controller
     /**
      * Display the translation grid.
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function gridAction()
+    public function gridAction(Request $request)
     {
-        $tokens = null;
-        if ($this->container->getParameter('lexik_translation.dev_tools.enable')) {
-            $tokens = $this->get('lexik_translation.token_finder')->find();
+        return $this->render('LexikTranslationBundle:Translation:grid.html.twig', $this->commonParameters($request));
+    }
+
+
+    /**
+     * Display the translation grid with only two columns, default locale + other
+     *
+     * @param $locale
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function gridOnlyTwoColumnsAction($locale, Request $request)
+    {
+        $params = $this->commonParameters($request);
+
+        if (!in_array($locale, $this->getManagedLocales())){
+            throw new BadRequestHttpException('Locale is not available');
         }
 
-        return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
-            'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
-            'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
-            'autoCacheClean' => $this->container->getParameter('lexik_translation.auto_cache_clean'),
-            'toggleSimilar'  => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
-            'locales'        => $this->getManagedLocales(),
-            'tokens'         => $tokens,
-        ));
+        $params['locales'] = array_merge(
+            $this->container->getParameter('lexik_translation.fallback_locale'),
+            [$locale]
+        );
+
+        return $this->render('LexikTranslationBundle:Translation:grid.html.twig', $params);
     }
 
     /**
@@ -102,6 +117,36 @@ class TranslationController extends Controller
         ));
     }
 
+    private function commonParameters(Request $request)
+    {
+        $tokens = null;
+
+        if ($this->container->getParameter('lexik_translation.dev_tools.enable')) {
+            $tokens = $this->get('lexik_translation.token_finder')->find();
+        }
+
+        return array_merge(
+            array(
+                'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
+                'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
+                'autoCacheClean' => $this->container->getParameter('lexik_translation.auto_cache_clean'),
+                'toggleSimilar'  => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
+                'locales'        => $this->getManagedLocales(),
+                'tokens'         => $tokens,
+                'gridListNRows'  => $this->container->getParameter('lexik_translation.grid_list_n_rows'),
+            ),
+            $this->defaultDataByRequest($request)
+        );
+    }
+
+    private function defaultDataByRequest(Request $request)
+    {
+        return array(
+            'domainSearchDefault' => $request->get('domain', ''),
+            'keySearchDefault' => $request->get('key', ''),
+        );
+    }
+
     /**
      * Returns managed locales.
      *
@@ -111,4 +156,5 @@ class TranslationController extends Controller
     {
         return $this->get('lexik_translation.locale.manager')->getLocales();
     }
+
 }

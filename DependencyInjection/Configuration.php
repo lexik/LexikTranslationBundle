@@ -69,6 +69,10 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(false)
                 ->end()
 
+                ->integerNode('grid_list_n_rows')
+                    ->defaultValue(20)
+                ->end()
+
                 ->booleanNode('auto_cache_clean')
                     ->defaultValue(false)
                 ->end()

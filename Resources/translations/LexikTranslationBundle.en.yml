@@ -22,6 +22,7 @@ translations:
     data_source:         "Data source"
     latest_profiles:     "Latest profiles"
     profile:             "Profile"
+    show_only_pending_translations: "Show only pending translations"
 
 overview:
     page_title: "Overview"
