@@ -37,8 +37,6 @@
 
         <parameter key="lexik_translation.overview.stats_aggregator.class">Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator</parameter>
 
-        <parameter key="lexik_translation.form.type.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType</parameter>
-        <parameter key="lexik_translation.form.type.translation.class">Lexik\Bundle\TranslationBundle\Form\Type\TranslationType</parameter>
         <parameter key="lexik_translation.form.handler.trans_unit.class">Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler</parameter>
 
         <parameter key="lexik_translation.listener.get_database_resources.class">Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener</parameter>
@@ -139,14 +137,6 @@
         </service>
 
         <!-- Form -->
-        <service id="lexik_translation.form.type.trans_unit" class="%lexik_translation.form.type.trans_unit.class%">
-            <tag name="form.type" alias="lxk_trans_unit" />
-        </service>
-
-        <service id="lexik_translation.form.type.translation" class="%lexik_translation.form.type.translation.class%">
-            <tag name="form.type" alias="lxk_translation" />
-        </service>
-
         <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
