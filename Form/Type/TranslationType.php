@@ -20,8 +20,8 @@ class TranslationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('locale', 'hidden');
-        $builder->add('content', 'textarea', array(
+        $builder->add('locale', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
+        $builder->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
             'required' => false,
         ));
     }
@@ -49,6 +49,14 @@ class TranslationType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return 'lxk_translation';
     }

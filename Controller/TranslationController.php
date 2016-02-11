@@ -84,7 +84,7 @@ class TranslationController extends Controller
     {
         $handler = $this->get('lexik_translation.form.handler.trans_unit');
 
-        $form = $this->createForm('lxk_trans_unit', $handler->createFormData(), $handler->getFormOptions());
+        $form = $this->createForm('Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType', $handler->createFormData(), $handler->getFormOptions());
 
         if ($handler->process($form, $request)) {
             $message = $this->get('translator')->trans('translations.succesfully_added', array(), 'LexikTranslationBundle');
