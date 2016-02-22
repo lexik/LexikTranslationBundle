@@ -94,8 +94,16 @@ class FileManager implements FileManagerInterface
     {
         $commonParts = array();
 
-        // %kernel.root_dir% is always using "/" as directory separator
-        $rootDirParts = explode('/', $this->rootDir);
+        // replace window \ to work with /
+        $rootDir = (false !== strpos($this->rootDir, '\\')) ? str_replace('\\', '/', $this->rootDir) : $this->rootDir;
+
+        $antiSlash = false;
+        if (false !== strpos($filePath, '\\')) {
+            $filePath = str_replace('\\', '/', $filePath);
+            $antiSlash = true;
+        }
+
+        $rootDirParts = explode('/', $rootDir);
         $filePathParts = explode('/', $filePath);
 
         $i = 0;
@@ -115,6 +123,6 @@ class FileManager implements FileManagerInterface
             $filePath = '../'.$filePath;
         }
 
-        return $filePath;
+        return $antiSlash ? str_replace('/', '\\', $filePath) : $filePath;
     }
 }
