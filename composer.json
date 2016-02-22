@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=5.3.2",
+        "php": ">=5.5.9",
         "symfony/framework-bundle": "~2.8|~3.0"
     },
     "require-dev": {
@@ -39,7 +39,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.x.x-dev"
+            "dev-master": "4.x.x-dev"
         }
     }
 }

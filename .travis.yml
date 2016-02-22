@@ -2,36 +2,35 @@ language: php
 sudo: false
 
 php:
-  - 5.3
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
-  - hhvm
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
 
 matrix:
-  fast_finish: true
-  allow_failures:
-    - php: hhvm
-    - php: 7.0
+    fast_finish: true
+    allow_failures:
+        - php: hhvm
+        - php: 7.0
 
 services:
-  - mongodb
+    - mongodb
 
 env:
-  - SYMFONY_VERSION=2.7.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 cache:
-  directories:
-    - $HOME/.composer/cache
+    directories:
+        - $HOME/.composer/cache
 
 before_install:
-  - phpenv config-add travis-php.ini
-  - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
-  - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
-  - composer require symfony/validator:${SYMFONY_VERSION} --no-update
-  - composer require symfony/finder:${SYMFONY_VERSION} --no-update
-  - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
+    - phpenv config-add travis-php.ini
+    - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
+    - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
+    - composer require symfony/validator:${SYMFONY_VERSION} --no-update
+    - composer require symfony/finder:${SYMFONY_VERSION} --no-update
+    - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
 
 install: composer install --prefer-dist --no-interaction
 
