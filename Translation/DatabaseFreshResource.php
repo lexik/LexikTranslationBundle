@@ -2,14 +2,14 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
-use Symfony\Component\Config\Resource\ResourceInterface;
+use Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
 
 /**
  * Class used to represent a translation resource coming from the database.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class DatabaseFreshResource implements ResourceInterface
+class DatabaseFreshResource implements SelfCheckingResourceInterface
 {
     /**
      * @var string

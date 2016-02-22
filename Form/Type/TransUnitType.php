@@ -18,25 +18,25 @@ class TransUnitType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('key', 'text', array(
+        $builder->add('key', 'Symfony\Component\Form\Extension\Core\Type\TextType', array(
             'label' => 'translations.key',
         ));
-        $builder->add('domain', 'choice', array(
+        $builder->add('domain', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'label'   => 'translations.domain',
             'choices' => array_combine($options['domains'], $options['domains']),
         ));
-        $builder->add('translations', 'collection', array(
-            'type'     => 'lxk_translation',
+        $builder->add('translations', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
+            'entry_type'     => 'Lexik\Bundle\TranslationBundle\Form\Type\TranslationType',
             'label'    => 'translations.page_title',
             'required' => false,
-            'options'  => array(
+            'entry_options'  => array(
                 'data_class' => $options['translation_class'],
             ),
         ));
-        $builder->add('save', 'submit', array(
+        $builder->add('save', 'Symfony\Component\Form\Extension\Core\Type\SubmitType', array(
             'label' => 'translations.save',
         ));
-        $builder->add('save_add', 'submit', array(
+        $builder->add('save_add', 'Symfony\Component\Form\Extension\Core\Type\SubmitType', array(
             'label' => 'translations.save_add',
         ));
     }
@@ -58,6 +58,14 @@ class TransUnitType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
     {
         return 'lxk_trans_unit';
     }
