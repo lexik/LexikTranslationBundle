@@ -70,6 +70,7 @@ class FileManagerTest extends BaseUnitTestCase
      */
     public function testORMCreate()
     {
+        // unix dir
         $manager = new FileManager($this->ormStorage, $this->rootDir);
 
         $file = $manager->create('myDomain.en.yml', '/test/root/dir/src/Project/CoolBundle/Resources/translations');
@@ -87,6 +88,25 @@ class FileManagerTest extends BaseUnitTestCase
         $this->assertEquals('xliff', $file->getExtention());
         $this->assertEquals('messages.fr.xliff', $file->getName());
         $this->assertEquals('Resources/translations', $file->getPath());
+
+        // window dir
+        $manager = new FileManager($this->ormStorage, 'C:\test\root\dir\app');
+
+        $file = $manager->create('myDomain.en.yml', 'C:\test\root\dir\src\Project\CoolBundle\Resources\translations');
+        $this->assertEquals(ORMUnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($file));
+        $this->assertEquals('myDomain', $file->getDomain());
+        $this->assertEquals('en', $file->getLocale());
+        $this->assertEquals('yml', $file->getExtention());
+        $this->assertEquals('myDomain.en.yml', $file->getName());
+        $this->assertEquals('..\src\Project\CoolBundle\Resources\translations', $file->getPath());
+
+        $file = $manager->create('messages.fr.xliff', 'C:\test\root\dir\app\Resources\translations', true);
+        $this->assertEquals(ORMUnitOfWork::STATE_MANAGED, $this->em->getUnitOfWork()->getEntityState($file));
+        $this->assertEquals('messages', $file->getDomain());
+        $this->assertEquals('fr', $file->getLocale());
+        $this->assertEquals('xliff', $file->getExtention());
+        $this->assertEquals('messages.fr.xliff', $file->getName());
+        $this->assertEquals('Resources\translations', $file->getPath());
     }
 
     /**
