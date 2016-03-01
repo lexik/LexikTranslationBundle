@@ -45,6 +45,11 @@ class DataGridRequestHandler
     protected $createMissing;
 
     /**
+     * @var int
+     */
+    protected $gridListNRows;
+
+    /**
      * @param TransUnitManagerInterface $transUnitManager
      * @param StorageInterface          $storage
      * @param LocaleManagerInterface    $localeManager
@@ -74,6 +79,14 @@ class DataGridRequestHandler
     }
 
     /**
+     * @param int $gridListNRows
+     */
+    public function setGridListNRows($gridListNRows)
+    {
+        $this->gridListNRows = (int) $gridListNRows;
+    }
+
+    /**
      * Returns an array with the trans unit for the current page and the total of trans units
      *
      * @param Request $request
@@ -85,7 +98,7 @@ class DataGridRequestHandler
 
         $transUnits = $this->storage->getTransUnitList(
             $this->localeManager->getLocales(),
-            $request->query->get('rows', 20),
+            $request->query->get('rows', $this->gridListNRows),
             $request->query->get('page', 1),
             $parameters
         );

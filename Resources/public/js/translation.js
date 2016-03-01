@@ -26,7 +26,7 @@ app.factory('sharedMessage', function () {
 /**
  * Api manager service.
  */
-app.factory('translationApiManager', ['$http', function ($http) {
+app.factory('translationApiManager', ['$http', '$rootScope', function ($http, $rootScope) {
     return {
         token: null,
 
@@ -63,6 +63,8 @@ app.factory('translationApiManager', ['$http', function ($http) {
             parameters['page'] = params.page();
             parameters['rows'] = params.count();
 
+            parameters['show_only_pending_translations'] = $rootScope.showOnlyPendingTranslations ? JSON.stringify(translationCfg.locales) : null;
+
             var url = (null != this.token) ? translationCfg.url.listByToken.replace('-token-', this.token) : translationCfg.url.list;
 
             return $http.get(url, {'params': parameters});
@@ -93,7 +95,17 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', fun
     return {
         columns: [],
         tableParams: null,
-        defaultOptions: { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} },
+        defaultOptions: {
+            page: 1,
+            count: translationCfg.rows,
+            filter: {
+                '_domain': translationCfg.domainSearchDefault,
+                '_key': translationCfg.keySearchDefault
+            },
+            sort: {
+                '_id': 'asc'
+            }
+        },
 
         build: function (locales, labels) {
             this.columns = [
@@ -115,6 +127,7 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', fun
                 currentSort: {},
                 currentFilter: {},
                 getData: function($defer, params) {
+
                     translationApiManager
                         .getPage(params, this)
                         .success(function (responseData) {
@@ -213,6 +226,10 @@ app.controller('TranslationController', [
             angular.forEach($scope.columns, function(column) {
                 column.visible = $scope.areAllColumnsSelected;
             });
+        };
+
+        $scope.changeShowOnlyPendingTranslations = function(){
+            tableParamsManager.reloadTableData();
         };
 }]);
 

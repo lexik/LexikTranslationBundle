@@ -91,6 +91,7 @@ You can also shown/hidden similar columns on the grid. This means on the grid if
 lexik_translation:
     grid_input_type: text       # text|textarea
     grid_toggle_similar: false
+    grid_list_n_rows: 20
 ```
 
 If you export translation by using YAML, you can switch the following option to `true` to  print a nice tree in the yml source files.
