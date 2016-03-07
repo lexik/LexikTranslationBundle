@@ -31,7 +31,12 @@ class Translator extends BaseTranslator
             $metadata = array();
 
             foreach ($resources as $resource) {
-                $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
+                if (interface_exists('Symfony\Component\Config\Resource\SelfCheckingResourceInterface')) {
+                    $metadata[] = new SelfCheckingDatabaseFreshResource($resource['locale'], $resource['domain']);
+                } else {
+                    // To keep BC with symfony 2.7 and lower
+                    $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
+                }
             }
 
             $content = sprintf("<?php return %s;", var_export($resources, true));
