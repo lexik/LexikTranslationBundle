@@ -74,4 +74,25 @@ class RestController extends Controller
 
         return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
     }
+
+    /**
+     * @param integer $id
+     * @param string  $locale
+     *
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function deleteTranslationAction($id, $locale)
+    {
+        $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
+
+        if (!$transUnit) {
+            throw $this->createNotFoundException(sprintf('No TransUnit found for id "%s".', $id));
+        }
+
+        $deleted = $this->get('lexik_translation.trans_unit.manager')->deleteTranslation($transUnit, $locale);
+
+        return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
+    }
 }

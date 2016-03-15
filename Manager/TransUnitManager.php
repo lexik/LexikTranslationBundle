@@ -227,4 +227,24 @@ class TransUnitManager implements TransUnitManagerInterface
             return false;
         }
     }
+
+    /**
+     * @param TransUnitInterface $transUnit
+     * @param string             $locale
+     * @return bool
+     */
+    public function deleteTranslation(TransUnitInterface $transUnit, $locale)
+    {
+        try {
+            $translation = $transUnit->getTranslation($locale);
+
+            $this->storage->remove($translation);
+            $this->storage->flush();
+
+            return true;
+
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }
