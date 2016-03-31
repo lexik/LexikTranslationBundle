@@ -82,6 +82,18 @@ app.factory('translationApiManager', ['$http', function ($http) {
 
             // force content type to make SF create a Request with the PUT parameters
             return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
+        },
+
+        deleteTranslationLocale: function (translation, locale) {
+            var url = translationCfg.url.deleteLocale
+                .replace('-id-', translation._id)
+                .replace('-locale-', locale);
+
+            return $http.delete(url);
+        },
+
+        deleteTranslation: function (translation) {
+            return $http.delete(translationCfg.url.delete.replace('-id-', translation._id));
         }
     };
 }]);
@@ -97,13 +109,13 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', fun
 
         build: function (locales, labels) {
             this.columns = [
-                { title: 'ID', index: '_id', edit: false, filter: false, sortable: true, visible: true },
-                { title: labels.domain, index: '_domain', edit: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
-                { title: labels.key, index: '_key', edit: false, filter: {'_key': 'text'}, sortable: true, visible: true }
+                { title: 'ID', index: '_id', edit: false, delete: false, filter: false, sortable: true, visible: true },
+                { title: labels.domain, index: '_domain', edit: false, delete: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
+                { title: labels.key, index: '_key', edit: false, delete: true, filter: {'_key': 'text'}, sortable: true, visible: true }
             ];
 
             for (var key in locales) {
-                var columnDef = { title: locales[key].toUpperCase(), index: locales[key], edit: true, filter: {}, sortable: false, visible: true };
+                var columnDef = { title: locales[key].toUpperCase(), index: locales[key], edit: true, delete: true, filter: {}, sortable: false, visible: true };
                 columnDef['filter'][locales[key]] = 'text';
 
                 this.columns.push(columnDef);
@@ -264,49 +276,73 @@ app.controller('DataSourceController', [
 /**
  * Directive to switch table row in edit mode.
  */
-app.directive('editableRow', ['translationApiManager', 'sharedMessage', function (translationApiManager, sharedMessage) {
-    return {
-        restrict: 'A',
-        scope: {
-            translation: '=translation',
-            columns: '=columns',
-            editType: '=editType'
-        },
-        template: $('#editable-row-template').html(),
-        link: function ($scope, element, attrs) {
-            $scope.edit = false;
+app.directive('editableRow', [
+    'translationApiManager', 'tableParamsManager', 'sharedMessage',
+    function (translationApiManager, tableParamsManager, sharedMessage) {
+        return {
+            restrict: 'A',
+            scope: {
+                translation: '=translation',
+                columns: '=columns',
+                editType: '=editType'
+            },
+            template: $('#editable-row-template').html(),
+            link: function ($scope, element, attrs) {
+                $scope.mode = null;
 
-            $scope.toggleEdit = function () {
-                $scope.edit = !$scope.edit;
-                sharedMessage.reset();
-            };
+                $scope.enableMode = function (mode) {
+                    $scope.mode = mode;
+                    sharedMessage.reset();
+                };
 
-            $scope.enableEdit = function () {
-                $scope.edit = true;
-                sharedMessage.reset();
-            };
+                $scope.disableMode = function () {
+                    $scope.mode = null;
+                    sharedMessage.reset();
+                };
 
-            $scope.disableEdit = function () {
-                $scope.edit = false;
-                sharedMessage.reset();
-            };
+                $scope.save = function (event, source) {
+                    if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // escape key
+                        $scope.mode = null;
 
-            $scope.save = function (event, source) {
-                if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // escape key
-                    $scope.edit = false;
+                    } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
+                        translationApiManager
+                            .updateTranslation($scope.translation)
+                            .success(function (data) {
+                                $scope.mode = null;
+                                $scope.translation = data;
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
+                            }).error(function () {
+                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
+                            });
+                    }
+                };
 
-                } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
-                    translationApiManager
-                        .updateTranslation($scope.translation)
-                        .success(function (data) {
-                            $scope.edit = false;
-                            $scope.translation = data;
-                            sharedMessage.set('success', 'ok-circle', translationCfg.label.successMsg.replace('%id%', data._key));
-                        }).error(function () {
-                            sharedMessage.set('danger', 'remove-circle', translationCfg.label.errorMsg.replace('%id%', $scope.translation._key));
-                        });
-                }
-            };
-        }
-    };
+                $scope.delete = function (column) {
+                    if (!window.confirm('Confirm ?')) {
+                        return;
+                    }
+
+                    if (column.index == '_key') {
+                        translationApiManager
+                            .deleteTranslation($scope.translation)
+                            .success(function (data) {
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                                $scope.mode = null;
+                                tableParamsManager.reloadTableData();
+                            }).error(function () {
+                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
+                            });
+                    } else {
+                        translationApiManager
+                            .deleteTranslationLocale($scope.translation, column.index)
+                            .success(function (data) {
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                                $scope.translation[column.index] = '';
+                            }).error(function () {
+                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
+                            });
+                    }
+                };
+            }
+        };
 }]);

@@ -31,3 +31,12 @@
     margin: 0;
     height: 12px;
 }
+
+table .actions {
+    min-width: 75px;
+    display: inline-block;
+}
+
+table button.delete {
+    padding: 2px 5px;
+}

@@ -80,7 +80,7 @@
                             &nbsp;
                             <span ng-if="column.sortable" class="glyphicon glyphicon-chevron-down"></span>
                         </th>
-                        <th class="col-save">{{ labels.save }}</th>
+                        <th class="col-save"></th>
                     </tr>
                     <tr>
                         <th ng-repeat="column in columns track by $index" ng-show="column.visible">
@@ -115,12 +115,12 @@
     </script>
 
     <script type="text/ng-template" id="editable-row-template">
-        <td ng-repeat="column in columns track by $index" ng-show="column.visible" ng-dblclick="toggleEdit()">
-            <span ng-show="!column.edit || (column.edit && !edit)">{{ translation[column.index] }}</span>
+        <td ng-repeat="column in columns track by $index" ng-show="column.visible" ng-dblclick="enableMode('edit')">
+            <span ng-show="!column.edit || (column.edit && mode != 'edit')">{{ translation[column.index] }}</span>
             <div ng-switch on="editType">
                 <textarea ng-switch-when="textarea"
                        ng-if="column.edit"
-                       ng-show="edit"
+                       ng-show="mode == 'edit'"
                        ng-model="translation[column.index]"
                        ng-keydown="save($event, 'textarea')"
                        name="column.index"
@@ -128,24 +128,34 @@
                 </textarea>
                 <input ng-switch-default
                        ng-if="column.edit"
-                       ng-show="edit"
+                       ng-show="mode == 'edit'"
                        ng-model="translation[column.index]"
                        ng-keydown="save($event, 'input')"
                        type="text"
                        name="column.index"
                        class="form-control input-sm" />
             </div>
+            <div class="text-center">
+                <button ng-show="mode == 'delete' && column.delete && translation[column.index]" type="button" class="btn btn-link delete" ng-click="delete(column)">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </button>
+            </div>
         </td>
         <td class="text-center">
-            <button ng-show="!edit" ng-click="enableEdit()" type="button" class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-pencil"></span>
-            </button>
-            <button ng-show="edit" ng-click="save($event, 'btn-save')" type="button" class="btn btn-success btn-sm">
-                <span class="glyphicon glyphicon-save"></span>
-            </button>
-            <button ng-show="edit" ng-click="disableEdit()" type="button" class="btn btn-danger btn-xs">
-                <span class="glyphicon glyphicon-ban-circle"></span>
-            </button>
+            <div class="actions">
+                <button ng-show="!mode" ng-click="enableMode('edit')" type="button" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+                <button ng-show="!mode" ng-click="enableMode('delete')" type="button" class="btn btn-danger btn-sm">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+                <button ng-show="mode == 'edit'" ng-click="save($event, 'btn-save')" type="button" class="btn btn-success btn-sm">
+                    <span class="glyphicon glyphicon-save"></span>
+                </button>
+                <button ng-show="mode != null" ng-click="disableMode()" type="button" class="btn btn-warning btn-sm">
+                    <span class="glyphicon glyphicon-ban-circle"></span>
+                </button>
+            </div>
         </td>
     </script>
 </div>
