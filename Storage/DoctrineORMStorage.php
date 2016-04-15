@@ -23,20 +23,23 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
         $em = $this->getManager();
         $connection = $em->getConnection();
 
-        // init a tmp connection without dbname/path/url in case it does not exist yet
-        $params = $connection->getParams();
-        if (isset($params['master'])) {
-            $params = $params['master'];
-        }
+        // listDatabases() is not available for SQLite
+        if ('pdo_sqlite' !== $connection->getDriver()->getName()) {
+            // init a tmp connection without dbname/path/url in case it does not exist yet
+            $params = $connection->getParams();
+            if (isset($params['master'])) {
+                $params = $params['master'];
+            }
 
-        unset($params['dbname'], $params['path'], $params['url']);
+            unset($params['dbname'], $params['path'], $params['url']);
 
-        $tmpConnection = DriverManager::getConnection($params);
-        $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
-        $tmpConnection->close();
+            $tmpConnection = DriverManager::getConnection($params);
+            $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
+            $tmpConnection->close();
 
-        if (!$dbExists) {
-            return false;
+            if (!$dbExists) {
+                return false;
+            }
         }
 
         // checks tables exist
