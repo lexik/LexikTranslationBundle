@@ -34,7 +34,13 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
             unset($params['dbname'], $params['path'], $params['url']);
 
             $tmpConnection = DriverManager::getConnection($params);
-            $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
+
+            try {
+                $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
+            } catch (\Exception $e) {
+                return false;
+            }
+
             $tmpConnection->close();
 
             if (!$dbExists) {
