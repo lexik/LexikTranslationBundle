@@ -239,7 +239,7 @@ class LexikTranslationExtension extends Extension
 
                 if (true === $registration['managed_locales_only']) {
                     // only look for managed locales
-                    $finder->name(sprintf('/(.*\.(%s)\..*)/', implode('|', $config['managed_locales'])));
+                    $finder->name(sprintf('/(.*\.(%s)\.\w+$)/', implode('|', $config['managed_locales'])));
                 } else {
                     $finder->filter(function (\SplFileInfo $file) {
                         return 2 === substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename());
