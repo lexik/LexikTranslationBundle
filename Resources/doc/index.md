@@ -195,6 +195,8 @@ Command options:
 * `--locales`: Only export files for given locales.
 * `--domains`: Only export files for given domains.
 * `--format`: Force the output format.
+* `--override`: Only export modified phrases (app/Resources/translations are exported fully anyway).
+* `--export-path`: Export files to given path.
 
 *Note that it's not required to export translations to make them appear on your website as the `DatabaseLoader` will load them.*
 
