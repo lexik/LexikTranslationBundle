@@ -169,7 +169,7 @@ To import translations files content into your database just run the following c
 This command will import all application and bundles translations files according to the `managed_locales` defined in configuration (it will also load tanslations from SF conponents).
 
 Command arguments:
-* `bundleName`: only import translations for the given bundle name.
+* `bundle`: Import translations for this specific bundle.
 
 Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
@@ -180,7 +180,8 @@ Command options:
 * `--case-insensitive` (or `-i`): Convert keys as lower case to check if a key has already been imported.
 * `--import-path` (or `-p`): Search for translations at given path. Cannot be used with globals, merge or only-vendors option. eg `--import-path=\tmp`
 * `--only-vendors` (or `-o`): Only import files from vendor-bundles. eg `--only-vendors`
-
+* `--merge` (or `-m`): Merge translation (use ones with latest updatedAt date).
+        
 Export translations
 ===================
 
