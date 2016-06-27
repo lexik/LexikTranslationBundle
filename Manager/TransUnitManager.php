@@ -192,7 +192,7 @@ class TransUnitManager implements TransUnitManagerInterface
      *
      * @return FileInterface|null
      */
-    protected function getTranslationFile(TransUnitInterface & $transUnit, $locale)
+    public function getTranslationFile(TransUnitInterface & $transUnit, $locale)
     {
         $file = null;
         foreach ($transUnit->getTranslations() as $translationModel) {
