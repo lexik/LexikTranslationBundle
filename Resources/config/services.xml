@@ -123,10 +123,14 @@
 
         <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
+            <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.locale.manager" />
             <call method="setCreateMissing">
                 <argument>%lexik_translation.dev_tools.create_missing%</argument>
+            </call>
+            <call method="setDefaultFileFormat">
+                <argument>%lexik_translation.dev_tools.file_format%</argument>
             </call>
         </service>
 

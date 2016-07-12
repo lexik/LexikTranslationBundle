@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
@@ -25,6 +26,11 @@ class DataGridRequestHandler
     protected $transUnitManager;
 
     /**
+     * @var FileManagerInterface
+     */
+    protected $fileManager;
+
+    /**
      * @var StorageInterface
      */
     protected $storage;
@@ -45,16 +51,24 @@ class DataGridRequestHandler
     protected $createMissing;
 
     /**
+     * @var string
+     */
+    protected $defaultFileFormat;
+
+    /**
      * @param TransUnitManagerInterface $transUnitManager
+     * @param FileManagerInterface      $fileManager
      * @param StorageInterface          $storage
      * @param LocaleManagerInterface    $localeManager
      */
-    public function __construct(TransUnitManagerInterface $transUnitManager, StorageInterface $storage, LocaleManagerInterface $localeManager)
+    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, LocaleManagerInterface $localeManager)
     {
         $this->transUnitManager = $transUnitManager;
+        $this->fileManager = $fileManager;
         $this->storage = $storage;
         $this->localeManager = $localeManager;
         $this->createMissing = false;
+        $this->defaultFileFormat = 'yml';
     }
 
     /**
@@ -71,6 +85,14 @@ class DataGridRequestHandler
     public function setCreateMissing($createMissing)
     {
         $this->createMissing = (bool) $createMissing;
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setDefaultFileFormat($format)
+    {
+        $this->defaultFileFormat = $format;
     }
 
     /**
@@ -147,8 +169,10 @@ class DataGridRequestHandler
                 }
 
                 // Also store the translation if profiler state was defined
-                if (!$transUnit->hasTranslation($message['locale']) && $message['state'] == DataCollectorTranslator::MESSAGE_DEFINED) {
-                    $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], null, true);
+                if (!$transUnit->hasTranslation($message['locale']) && $message['state'] === DataCollectorTranslator::MESSAGE_DEFINED) {
+                    $file = $this->fileManager->getFor(sprintf('%s.%s.%s', $message['domain'], $message['locale'], $this->defaultFileFormat));
+
+                    $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], $file, true);
                 }
             }
 

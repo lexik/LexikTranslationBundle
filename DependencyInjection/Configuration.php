@@ -123,6 +123,9 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('create_missing')
                             ->defaultFalse()
                         ->end()
+                        ->scalarNode('file_format')
+                            ->defaultValue('yml')
+                        ->end()
                     ->end()
                 ->end()
 

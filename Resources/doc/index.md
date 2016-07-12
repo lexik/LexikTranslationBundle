@@ -125,12 +125,15 @@ From the translations grid you can get untranslated keys from a given Symfony pr
 Note that the key must exist in the database to appear in the grid.
 If you want to force the translations keys to appear in the grid you can enable the `create_missing` option.
 If you do so, while getting missing translations from a profile, if a key/domain pair does not exist in the database the bundle will create it.
+During this process some new keys and translations can be created in the database. Each new translation will be associated to a file according to the tanslation's domain and locale.
+In this case the bundle will look for files in `app/Resources/translations`. You can change the default format of these files by using the `file_format` option.
 
 ```yml
 lexik_translation:
     dev_tools:
         enable: false
         create_missing: false
+        file_format: yml
 ```
 
 If you use Doctrine ORM, you have to update your database:

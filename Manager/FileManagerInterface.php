@@ -20,10 +20,11 @@ interface FileManagerInterface
 
     /**
      * Returns a translation file according to the given name and path.
+     * If path is null, app/Resources/translations will be used as default path.
      *
      * @param string $name
      * @param string $path
      * @return File
      */
-    public function getFor($name, $path);
+    public function getFor($name, $path = null);
 }

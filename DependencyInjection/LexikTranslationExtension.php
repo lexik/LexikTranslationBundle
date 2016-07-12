@@ -47,6 +47,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.auto_cache_clean', $config['auto_cache_clean']);
         $container->setParameter('lexik_translation.dev_tools.enable', $config['dev_tools']['enable']);
         $container->setParameter('lexik_translation.dev_tools.create_missing', $config['dev_tools']['create_missing']);
+        $container->setParameter('lexik_translation.dev_tools.file_format', $config['dev_tools']['file_format']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 

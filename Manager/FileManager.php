@@ -37,8 +37,12 @@ class FileManager implements FileManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function getFor($name, $path)
+    public function getFor($name, $path = null)
     {
+        if (null === $path) {
+            $path = sprintf('%s/Resources/translations', $this->rootDir);
+        }
+
         $hash = $this->generateHash($name, $this->getFileRelativePath($path));
         $file = $this->storage->getFileByHash($hash);
 

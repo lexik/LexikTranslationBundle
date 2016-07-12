@@ -195,8 +195,8 @@ class TransUnitManager implements TransUnitManagerInterface
     protected function getTranslationFile(TransUnitInterface & $transUnit, $locale)
     {
         $file = null;
-        foreach ($transUnit->getTranslations() as $translationModel) {
-            if (null !== $file = $translationModel->getFile()) {
+        foreach ($transUnit->getTranslations() as $translation) {
+            if (null !== $file = $translation->getFile()) {
                 break;
             }
         }
