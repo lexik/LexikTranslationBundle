@@ -26,6 +26,7 @@ cache:
 
 before_install:
     - phpenv config-add travis-php.ini
+    - echo "memory_limit = 2G" > /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/z.ini
     - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
     - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
     - composer require symfony/validator:${SYMFONY_VERSION} --no-update
