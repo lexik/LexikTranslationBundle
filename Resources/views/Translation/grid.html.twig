@@ -31,8 +31,9 @@
                 </a>
             {% endset %}
             
-            {% set toolbarButtons = toolbarButtons|merge([newTranslationButton, overviewButton]) %}
-        	
+            {% set temporaryButtons = [newTranslationButton, overviewButton] %}
+            {% set toolbarButtons = temporaryButtons|merge(toolbarButtons) %}
+
             <div class="page-header">
                 <h1>
                     {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
