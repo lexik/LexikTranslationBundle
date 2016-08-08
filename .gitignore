@@ -2,7 +2,6 @@ vendor
 composer.lock
 Propel/map
 Propel/om
-.g
 
 Tests/app/tmp/
 .idea
