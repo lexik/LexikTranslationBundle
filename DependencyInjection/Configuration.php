@@ -126,6 +126,11 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
+            ->arrayNode('paths')
+                ->prototype('scalar')->end()
+            ->end()
+
+
             ->end()
         ;
 
