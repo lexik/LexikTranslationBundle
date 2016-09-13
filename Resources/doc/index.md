@@ -84,7 +84,7 @@ lexik_translation:
 ```
 
 You can customize the edition grid by using input text or textarea fields.
-You can also shown/hidden similar columns on the grid. This means on the grid if a locale colunm is shown/hidden then similar locales columns will be shown/hidden too.
+You can also shown/hidden similar columns on the grid. This means on the grid if a locale column is shown/hidden then similar locales columns will be shown/hidden too.
 (e.g.: if the col "en" is shown/hidden all "en_XX" cols will be shown/hidden too)
 
 ```yml
