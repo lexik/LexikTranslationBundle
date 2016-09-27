@@ -9,12 +9,22 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
  */
 class JsonExporter implements ExporterInterface
 {
+    private $hierachicalFormat;
+
+    /**
+     * @param bool $hierachicalFormat
+     */
+    public function __construct($hierachicalFormat = false)
+    {
+        $this->hierachicalFormat = $hierachicalFormat;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function export($file, $translations)
     {
-        $bytes = file_put_contents($file, json_encode($translations, JSON_PRETTY_PRINT));
+        $bytes = file_put_contents($file, json_encode($this->hierachicalFormat ? $this->hierachicalFormat($translations) : $translations, JSON_PRETTY_PRINT));
 
         return ($bytes !== false);
     }
@@ -25,5 +35,38 @@ class JsonExporter implements ExporterInterface
     public function support($format)
     {
         return ('json' == $format);
+    }
+
+    protected function hierachicalFormat($translations)
+    {
+        $output = array();
+        foreach ($translations as $key => $value) {
+            $output = array_merge_recursive($output, $this->converterKeyToArray($key, $value));
+        }
+        return $output;
+    }
+
+    protected function converterKeyToArray($key, $value)
+    {
+        $keysTrad = preg_split("/\./", $key);
+
+        return $this->conertArrayToArborescence($keysTrad, $value);
+    }
+
+    protected function conertArrayToArborescence($arrayIn, $endValue)
+    {
+        $lenArray = count($arrayIn);
+
+        if ($lenArray == 0) {
+            return $endValue;
+        }
+
+        reset($arrayIn);
+        $firstKey = key($arrayIn);
+        $firstValue = $arrayIn[$firstKey];
+        unset($arrayIn[$firstKey]);
+
+        return array($firstValue => $this->conertArrayToArborescence($arrayIn, $endValue));
+
     }
 }
