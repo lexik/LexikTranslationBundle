@@ -50,10 +50,10 @@ class JsonExporter implements ExporterInterface
     {
         $keysTrad = preg_split("/\./", $key);
 
-        return $this->conertArrayToArborescence($keysTrad, $value);
+        return $this->convertArrayToArborescence($keysTrad, $value);
     }
 
-    protected function conertArrayToArborescence($arrayIn, $endValue)
+    protected function convertArrayToArborescence($arrayIn, $endValue)
     {
         $lenArray = count($arrayIn);
 
@@ -66,7 +66,7 @@ class JsonExporter implements ExporterInterface
         $firstValue = $arrayIn[$firstKey];
         unset($arrayIn[$firstKey]);
 
-        return array($firstValue => $this->conertArrayToArborescence($arrayIn, $endValue));
+        return array($firstValue => $this->convertArrayToArborescence($arrayIn, $endValue));
 
     }
 }
