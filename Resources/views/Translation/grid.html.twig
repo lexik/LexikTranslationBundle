@@ -2,16 +2,16 @@
 
 {% trans_default_domain 'LexikTranslationBundle' %}
 
-{% block stylesheets %}
+{% block lexik_stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
 {% endblock %}
 
-{% block title %}{{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
+{% block lexik_title %}{{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
 
-{% block content %}
+{% block lexik_content %}
     <div class="container">
-        {% block toolbar %}
+        {% block lexik_toolbar %}
             <div class="page-header">
                 <h1>
                     {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
@@ -27,15 +27,15 @@
                     </div>
                 </h1>
             </div>
-        {% endblock toolbar %}
+        {% endblock lexik_toolbar %}
 
-        {% block data_grid %}
+        {% block lexik_data_grid %}
             {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
-        {% endblock data_grid %}
+        {% endblock lexik_data_grid %}
     </div>
 {% endblock %}
 
-{% block javascript_footer %}
+{% block lexik_javascript_footer %}
     {{ parent() }}
     <script>
         var translationCfg = {
