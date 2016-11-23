@@ -14,7 +14,7 @@ translations:
     save_row:            "Salvați rândul curent"
     successfully_updated: "Traducerea pentru cheie #%id% a fost actualizată."
     successfully_added:   "Traducerea a fost actualizat."
-    successfully_deleted: "Translation has been successfully deleted."
+    successfully_deleted: "Translations have been successfully deleted."
     update_failed:       "Eroare la actualizarea traducerei pentru cheia #%id%."
     delete_failed:       "Failed to delete translations for key #%id%."
     back_to_list:        "Înapoi"

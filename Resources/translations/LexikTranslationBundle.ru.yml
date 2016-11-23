@@ -14,7 +14,7 @@ translations:
     save_row:            "Сохранить текущую строку"
     successfully_updated: "Перевод для ключа #%id% успешно обновлён."
     successfully_added:   "Перевод успешно добавлен."
-    successfully_deleted: "Translation has been successfully deleted."
+    successfully_deleted: "Translations have been successfully deleted."
     update_failed:       "Произошла ошибка при обновлении перевода для ключа #%id%."
     delete_failed:       "Failed to delete translations for key #%id%."
     back_to_list:        "Вернуться к списку"
