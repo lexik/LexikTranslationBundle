@@ -16,7 +16,7 @@ translations:
     successfully_added:     "Translation has been successfully added."
     successfully_deleted:   "Translation has been successfully deleted."
     update_failed:          "Klaida atnaujinant vertimus raktų #%id%."
-    delete_failed:          "Fail to delete translations for key #%id%."
+    delete_failed:          "Failed to delete translations for key #%id%."
     back_to_list:           "Atgal"
     all_translations:       "All"
     no_translations:        "No translations"
@@ -28,6 +28,6 @@ translations:
 overview:
     page_title: "Overview"
     show_grid: "Translation grid"
-    msg_latest_translation: "Latest translation was of %date% UTC."
+    msg_latest_translation: "Latest translation date: %date% UTC."
     domain: "Domain"
     no_stats: "No data to display."
