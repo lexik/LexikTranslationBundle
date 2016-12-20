@@ -37,7 +37,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
             $tmpConnection = DriverManager::getConnection($params);
             try {
                 $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
-            } catch (ConnectionException $e) {
+            } catch (\PDOException $e) {
                 $dbExists = false;
             }
             $tmpConnection->close();
