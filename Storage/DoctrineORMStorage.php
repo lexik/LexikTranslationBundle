@@ -3,7 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -37,7 +37,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
             $tmpConnection = DriverManager::getConnection($params);
             try {
                 $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
-            } catch (ConnectionException $e) {
+            } catch (DBALException $e) {
                 $dbExists = false;
             }
             $tmpConnection->close();
