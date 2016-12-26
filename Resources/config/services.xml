@@ -103,11 +103,12 @@
         </service>
 
         <service id="lexik_translation.exporter.json" class="%lexik_translation.exporter.json.class%">
+            <argument>%lexik_translation.exporter.json.hierarchical_format"%</argument>
             <tag name="lexik_translation.exporter" alias="json" />
         </service>
 
         <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
-            <argument>%lexik_translation.use_yml_tree%</argument>
+            <argument>%lexik_translation.exporter.yml.use_tree%</argument>
             <tag name="lexik_translation.exporter" alias="yml" />
         </service>
 

@@ -43,11 +43,12 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
-        $container->setParameter('lexik_translation.use_yml_tree', $config['use_yml_tree']);
         $container->setParameter('lexik_translation.auto_cache_clean', $config['auto_cache_clean']);
         $container->setParameter('lexik_translation.dev_tools.enable', $config['dev_tools']['enable']);
         $container->setParameter('lexik_translation.dev_tools.create_missing', $config['dev_tools']['create_missing']);
         $container->setParameter('lexik_translation.dev_tools.file_format', $config['dev_tools']['file_format']);
+        $container->setParameter('lexik_translation.exporter.json.hierarchical_format', $config['exporter']['json_hierarchical_format']);
+        $container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 

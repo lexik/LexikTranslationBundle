@@ -110,8 +110,16 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
-                ->booleanNode('use_yml_tree')
-                    ->defaultFalse()
+                ->arrayNode('exporter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('json_hierarchical_format')
+                            ->defaultFalse()
+                        ->end()
+                        ->booleanNode('use_yml_tree')
+                            ->defaultFalse()
+                        ->end()
+                    ->end()
                 ->end()
 
                 ->arrayNode('dev_tools')
