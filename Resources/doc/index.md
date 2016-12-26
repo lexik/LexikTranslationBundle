@@ -98,7 +98,16 @@ If you export translation by using YAML, you can switch the following option to 
 
 ```yml
 lexik_translation:
-    use_yml_tree: false
+    exporter:
+        use_yml_tree: false
+```
+
+If you export translation by using JSON, you can choose to export JSON with a hierarchical structure.
+
+```yml
+lexik_translation:
+    exporter:
+        json_hierarchical_format: false
 ```
 
 You can choose the resource's type you want to load, by default the bundle will load translations from files + database, but you can choose to use only one of these two resource types.
