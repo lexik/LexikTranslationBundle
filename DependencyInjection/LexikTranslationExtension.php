@@ -48,6 +48,7 @@ class LexikTranslationExtension extends Extension
         $container->setParameter('lexik_translation.dev_tools.enable', $config['dev_tools']['enable']);
         $container->setParameter('lexik_translation.dev_tools.create_missing', $config['dev_tools']['create_missing']);
         $container->setParameter('lexik_translation.dev_tools.file_format', $config['dev_tools']['file_format']);
+        $container->setParameter('lexik_translation.exporter.json.hierarchical_format"', $config['exporter']['json_hierarchical_format']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 

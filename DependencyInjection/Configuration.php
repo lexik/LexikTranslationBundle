@@ -114,8 +114,13 @@ class Configuration implements ConfigurationInterface
                     ->defaultFalse()
                 ->end()
 
-                ->booleanNode('hierarchical_format')
-                    ->defaultFalse()
+                ->arrayNode('exporter')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('json_hierarchical_format')
+                            ->defaultFalse()
+                        ->end()
+                    ->end()
                 ->end()
 
                 ->arrayNode('dev_tools')
