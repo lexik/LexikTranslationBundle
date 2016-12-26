@@ -9,14 +9,17 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
  */
 class JsonExporter implements ExporterInterface
 {
-    private $hierachicalFormat;
+    /**
+     * @var bool
+     */
+    private $hierarchicalFormat;
 
     /**
-     * @param bool $hierachicalFormat
+     * @param bool $hierarchicalFormat
      */
-    public function __construct($hierachicalFormat = false)
+    public function __construct($hierarchicalFormat = false)
     {
-        $this->hierachicalFormat = $hierachicalFormat;
+        $this->hierarchicalFormat = $hierarchicalFormat;
     }
 
     /**
@@ -24,7 +27,7 @@ class JsonExporter implements ExporterInterface
      */
     public function export($file, $translations)
     {
-        $bytes = file_put_contents($file, json_encode($this->hierachicalFormat ? $this->hierachicalFormat($translations) : $translations, JSON_PRETTY_PRINT));
+        $bytes = file_put_contents($file, json_encode($this->hierarchicalFormat ? $this->hierarchicalFormat($translations) : $translations, JSON_PRETTY_PRINT));
 
         return ($bytes !== false);
     }
@@ -37,15 +40,25 @@ class JsonExporter implements ExporterInterface
         return ('json' == $format);
     }
 
-    protected function hierachicalFormat($translations)
+    /**
+     * @param array $translations
+     * @return array
+     */
+    protected function hierarchicalFormat(array $translations)
     {
         $output = array();
         foreach ($translations as $key => $value) {
             $output = array_merge_recursive($output, $this->converterKeyToArray($key, $value));
         }
+
         return $output;
     }
 
+    /**
+     * @param string $key
+     * @param mixed  $value
+     * @return array
+     */
     protected function converterKeyToArray($key, $value)
     {
         $keysTrad = preg_split("/\./", $key);
@@ -53,6 +66,11 @@ class JsonExporter implements ExporterInterface
         return $this->convertArrayToArborescence($keysTrad, $value);
     }
 
+    /**
+     * @param mixed $arrayIn
+     * @param mixed $endValue
+     * @return array
+     */
     protected function convertArrayToArborescence($arrayIn, $endValue)
     {
         $lenArray = count($arrayIn);
@@ -67,6 +85,5 @@ class JsonExporter implements ExporterInterface
         unset($arrayIn[$firstKey]);
 
         return array($firstValue => $this->convertArrayToArborescence($arrayIn, $endValue));
-
     }
 }
