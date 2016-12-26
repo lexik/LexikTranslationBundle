@@ -50,13 +50,13 @@ Configuration
 
 #### Minimum configuration
 
-You must ast least define the fallback locale(s) as for the `framework.translator` node, and define all locales you will manage.
+You must at least define the fallback locale(s) as for the `framework.translator` node, and define all locales you will manage.
 
 ```yml
 # app/config/config.yml
 lexik_translation:
     fallback_locale: [en]         # (required) default locale(s) to use
-    managed_locales: [en, fr, de] # (required) locales that the bundle have to manage
+    managed_locales: [en, fr, de] # (required) locales that the bundle has to manage
 ```
 
 #### Additional configuration options
@@ -93,7 +93,7 @@ lexik_translation:
     grid_toggle_similar: false
 ```
 
-If you export translation by using YAML, you can switch the following option to `true` to  print a nice tree in the yml source files.
+If you export translation by using YAML, you can switch the following option to `true` to print a nice tree in the yml source files.
 (It is a little slower).
 
 ```yml
@@ -101,8 +101,8 @@ lexik_translation:
     use_yml_tree: false
 ```
 
-You can choose the resource's type you want to load, by default the bundle will load translations from files + database, but you can choose to use only one of these two resource type.
-Note that if you use files + database, if a translation exists in both resources, the value from the database will override the file one because the database is loaded after.
+You can choose the resource's type you want to load, by default the bundle will load translations from files + database, but you can choose to use only one of these two resource types.
+Note that if you use files + database, if a translation exists in both resources, the value from the database will override the files' translation because the database is loaded after.
 By default the bundle will only load resources for managed locales.
 
 ```yml
@@ -112,8 +112,8 @@ lexik_translation:
         managed_locales_only: true
 ```
 
-The two following options can be used if yo want the bundle automatically clear translations cache files. 
-To do this the bundle will checks the latest update date among the translations (in the database).
+The two following options can be used if you want the bundle to automatically clear translations cache files. 
+To do this, the bundle will check the latest update date among the translations (in the database).
 
 ```yml
 lexik_translation:
@@ -157,8 +157,8 @@ The translations edition page will be available here:
 
 * `/my-prefix/grid` for the translations grid
 
-**Note**: The grid will be empty until you import translations in database.
-If the grid does not appear, please check your base template has a block named `javascript_footer`.
+**Note**: The grid will be empty until you import translations in the database.
+If the grid does not appear, please check that your base template has a block named `javascript_footer`.
 
 ___________________
 
@@ -176,24 +176,24 @@ Command arguments:
 
 Command options:
 * `--cache-clear` (or `-c`): remove translations cache files (it won't clear all cache files but just files from `app/cache/[env]/translations/`).
-* `--force` (or `-f`): update the translations even if the element already exist in the database.
+* `--force` (or `-f`): update the translations even if the elements already exist in the database.
 * `--globals` (or `-g`): import only from the `app/Resources/translations`. It will ignore the option if you provide a BundleName to import.
 * `--locales` (or `-l`): import only for these locales, instead of using the managed locales from the config. eg: `--locales=fr --locales=en`
 * `--domains` (or `-d`): Only import files for given domains (comma separated). eg `--domains=messages,validators`
 * `--case-insensitive` (or `-i`): Convert keys as lower case to check if a key has already been imported.
 * `--import-path` (or `-p`): Search for translations at given path. Cannot be used with globals, merge or only-vendors option. eg `--import-path=\tmp`
 * `--only-vendors` (or `-o`): Only import files from vendor-bundles. eg `--only-vendors`
-* `--merge` (or `-m`): Merge translation (use ones with latest updatedAt date).
+* `--merge` (or `-m`): Merge translations (use ones with latest updatedAt date).
         
 Export translations
 ===================
 
-To export translations from the database in to files run the following command:
+To export translations from the database into files, run the following command:
 
     ./app/console lexik:translations:export [--locales=en,de] [--domains=messages,validators] [--format=yml] [--case-insensitive]
 
-This command will export all translations from the database in to files. A translation is exported in the same file (and format) it was imported in,
-except for vendors files which are exported in `app/Resources/translations/` and in this case the command will only export translations that changed.
+This command will export all translations from the database into files. A translation is exported in the same file (and format) it was imported in,
+except for vendors files which are exported in `app/Resources/translations/` and in this case the command will only export translations that have changed.
 
 Command options:
 * `--locales`: Only export files for given locales.

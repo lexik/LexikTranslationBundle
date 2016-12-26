@@ -36,7 +36,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     const PROPEL_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Propel\File';
 
     /**
-     * Create astorage class form doctrine ORM.
+     * Create a storage class form doctrine ORM.
      *
      * @param \Doctrine\ORM\EntityManager $em
      * @return \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
@@ -55,7 +55,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Create astorage class form doctrine Mongo DB.
+     * Create a storage class form doctrine Mongo DB.
      *
      * @param \Doctrine\ODM\MongoDB\DocumentManager $dm
      * @return \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
