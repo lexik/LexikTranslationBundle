@@ -103,7 +103,7 @@
         </service>
 
         <service id="lexik_translation.exporter.json" class="%lexik_translation.exporter.json.class%">
-            <argument>%lexik_translation.exporter.json.hierarchical_format"%</argument>
+            <argument>%lexik_translation.exporter.json.hierarchical_format%</argument>
             <tag name="lexik_translation.exporter" alias="json" />
         </service>
 
