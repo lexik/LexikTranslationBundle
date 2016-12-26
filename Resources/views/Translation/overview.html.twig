@@ -2,16 +2,16 @@
 
 {% trans_default_domain 'LexikTranslationBundle' %}
 
-{% block stylesheets %}
+{% block lexik_stylesheets %}
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/lexiktranslation/css/translation.css') }}">
 {% endblock %}
 
-{% block title %}{{ 'overview.page_title'|trans }}{% endblock %}
+{% block lexik_title %}{{ 'overview.page_title'|trans }}{% endblock %}
 
-{% block content %}
+{% block lexik_content %}
     <div class="container">
-        {% block toolbar %}
+        {% block lexik_toolbar %}
             <div class="page-header">
                 <h1>
                     {{ 'overview.page_title'|trans }}
@@ -23,7 +23,7 @@
                     </div>
                 </h1>
             </div>
-        {% endblock toolbar %}
+        {% endblock lexik_toolbar %}
 
         <p>{{ 'overview.msg_latest_translation'|trans({'%date%': latestTrans|date('Y-m-d H:i')}) }}</p>
 
@@ -78,7 +78,7 @@
     </div>
 {% endblock %}
 
-{% block javascript_footer %}
+{% block lexik_javascript_footer %}
     {{ parent() }}
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
 {% endblock %}
