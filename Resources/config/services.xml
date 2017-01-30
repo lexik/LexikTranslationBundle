@@ -18,6 +18,7 @@
         <parameter key="lexik_translation.exporter.php.class">Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter</parameter>
 
         <parameter key="lexik_translation.orm.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage</parameter>
+        <parameter key="lexik_translation.orm.listener.class">Lexik\Bundle\TranslationBundle\Storage\Listener\DoctrineORMListener</parameter>
         <parameter key="lexik_translation.orm.trans_unit.class">Lexik\Bundle\TranslationBundle\Entity\TransUnit</parameter>
         <parameter key="lexik_translation.orm.translation.class">Lexik\Bundle\TranslationBundle\Entity\Translation</parameter>
         <parameter key="lexik_translation.orm.file.class">Lexik\Bundle\TranslationBundle\Entity\File</parameter>

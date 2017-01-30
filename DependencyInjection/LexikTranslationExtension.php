@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
+use Doctrine\ORM\Events;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
@@ -107,6 +108,15 @@ class LexikTranslationExtension extends Extension
             );
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
+
+            $metadataListener = new Definition();
+            $metadataListener->setClass('%lexik_translation.orm.listener.class%');
+            $metadataListener->addTag('doctrine.event_listener', array(
+                'event' => Events::loadClassMetadata,
+            ));
+
+            $container->setDefinition('lexik_translation.orm.listener', $metadataListener);
+
         } elseif (StorageInterface::STORAGE_MONGODB == $storage) {
             $args = array(
                 new Reference('doctrine_mongodb'),
