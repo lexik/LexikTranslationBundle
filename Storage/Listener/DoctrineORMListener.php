@@ -21,6 +21,10 @@ class DoctrineORMListener
         /** @var ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
+        if (false === strpos($metadata->getName(), 'TranslationBundle')) {
+            return;
+        }
+
         foreach ($metadata->getFieldNames() as $name) {
             $fieldMapping = $metadata->getFieldMapping($name);
 
