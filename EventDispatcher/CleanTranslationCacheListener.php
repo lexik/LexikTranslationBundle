@@ -89,6 +89,14 @@ class CleanTranslationCacheListener
         }
 
         $cache_file = $this->cacheDirectory.'/translations/cache_timestamp';
+        $cache_dir  =$this->cacheDirectory.'/translations';
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            $cache_file = strtr($cache_file, '/', '\\');
+            $cache_dir = strtr($cache_dir, '/', '\\');
+        }
+        if (!\is_dir($cache_dir)) {
+            \mkdir($cache_dir);
+        }        
         if (!\file_exists($cache_file)) {
             \touch($cache_file);
             return true;
