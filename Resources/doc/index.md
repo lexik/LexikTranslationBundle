@@ -6,7 +6,7 @@ Add the bunde to your `composer.json` file:
 ```javascript
 require: {
     // ...
-    "lexik/translation-bundle": "~3.1"
+    "lexik/translation-bundle": "~4.0"
 }
 ```
 
@@ -14,7 +14,7 @@ Or install directly through composer with:
 
 ```shell
 # Latest stable
-composer require lexik/translation-bundle ~3.1
+composer require lexik/translation-bundle ~4.0
 
 # For latest unstable version
 composer require lexik/translation-bundle dev-master
