@@ -201,6 +201,8 @@ class TransUnitRepository extends EntityRepository
      */
     protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
+        $emptyValuesForLocale=[];
+
         if (null !== $locales) {
             $qb = $this->createQueryBuilder('tu');
             $qb->select('DISTINCT tu.id')
@@ -208,16 +210,33 @@ class TransUnitRepository extends EntityRepository
                 ->where($qb->expr()->in('t.locale', $locales));
 
             foreach ($locales as $locale) {
-                if (!empty($filters[$locale])) {
+                if (!empty($filters[$locale]) && $filters[$locale]!='!') {
                     $qb->andWhere($qb->expr()->like('t.content', ':content'))
                         ->setParameter('content', sprintf('%%%s%%', $filters[$locale]));
 
                     $qb->andWhere($qb->expr()->eq('t.locale', ':locale'))
                         ->setParameter('locale', sprintf('%s', $locale));
                 }
+                elseif(!empty($filters[$locale]) && $filters[$locale]=='!'){
+                    $emptyValuesForLocale[]=$locale;
+                }
             }
 
             $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
+
+            if(count($emptyValuesForLocale)>0){
+                foreach ($emptyValuesForLocale as $locale){
+                    $qb = $this->createQueryBuilder('tu');
+                    $qb->select('DISTINCT tu.id')
+                        ->leftJoin('tu.translations', 't','WITH',"tu.id=t.transUnit and t.locale='".$locale."'")
+                        ->where('t.id is null')
+                        ->andWhere($builder->expr()->in('tu.id', $ids));
+
+                    $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
+
+                }
+            }
+
 
             if (count($ids) > 0) {
                 $builder->andWhere($builder->expr()->in('tu.id', $ids));
