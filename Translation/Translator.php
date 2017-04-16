@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEve
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Translator service class.
@@ -54,17 +55,16 @@ class Translator extends BaseTranslator
     public function removeCacheFile($locale)
     {
         $localeExploded = explode('_', $locale);
-        $localePattern = sprintf('%s/catalogue.*%s*.php', $this->options['cache_dir'], $localeExploded[0]);
-        $files = glob($localePattern);
-
+        $finder = new Finder();
+        $finder->files()->in($this->options['cache_dir'])->contains(sprintf('catalogue.*%s*.php', $localeExploded[0]));
         $deleted = true;
-        foreach ($files as $file) {
-            if (file_exists($file)) {
-                $this->invalidateSystemCacheForFile($file);
-                $deleted = unlink($file);
-            }
+        foreach ($finder as $file) {
 
-            $metadata = $file.'.meta';
+            $path = $file->getRealPath();
+            $this->invalidateSystemCacheForFile($path);
+            $deleted = unlink($path);
+
+            $metadata = $path.'.meta';
             if (file_exists($metadata)) {
                 $this->invalidateSystemCacheForFile($metadata);
                 unlink($metadata);
@@ -73,7 +73,6 @@ class Translator extends BaseTranslator
 
         return $deleted;
     }
-
     /**
      * Remove the cache file corresponding to each given locale.
      *
@@ -111,7 +110,7 @@ class Translator extends BaseTranslator
                 throw new \RuntimeException(sprintf('Failed to clear APC Cache for file %s', $path));
             }
         } elseif ('cli' === php_sapi_name() ? ini_get('opcache.enable_cli') : ini_get('opcache.enable')) {
-            if (!opcache_invalidate($path, true)) {
+            if (function_exists("opcache_invalidate") && !opcache_invalidate($path, true)) {
                 throw new \RuntimeException(sprintf('Failed to clear OPCache for file %s', $path));
             }
         }
