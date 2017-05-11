@@ -1,0 +1,15 @@
+<div class="page-header">
+    <h1>
+        {{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}
+        <div class="pull-right">
+            <a href="{{ path('lexik_translation_new') }}" role="button" class="btn btn-success">
+                <span class="glyphicon glyphicon-plus"></span>
+                {{ 'translations.new_translation'|trans({}, 'LexikTranslationBundle') }}
+            </a>
+            <a href="{{ path('lexik_translation_overview') }}" role="button" class="btn btn-primary">
+                <span class="glyphicon glyphicon-tasks"></span>
+                {{ 'overview.page_title'|trans({}, 'LexikTranslationBundle') }}
+            </a>
+        </div>
+    </h1>
+</div>
