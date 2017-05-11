@@ -113,7 +113,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false, \DateTime $modifiedOn = null)
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false)
     {
         $translation = null;
         $i = 0;
@@ -129,10 +129,7 @@ class TransUnitManager implements TransUnitManagerInterface
             /* @var Translation $translation */
             $translation = $transUnit->getTranslations()->get($i - 1);
             if ($merge) {
-                if ($translation->getContent() == $content) {
-                    return null;
-                }
-                if ($translation->getCreatedAt() != $translation->getUpdatedAt() && (!$modifiedOn || $translation->getUpdatedAt() > $modifiedOn)) {
+                if ($translation->isModifiedManually() || $translation->getContent() == $content) {
                     return null;
                 }
 
@@ -144,6 +141,7 @@ class TransUnitManager implements TransUnitManagerInterface
                 $this->storage->persist($newTranslation);
                 $translation = $newTranslation;
             }
+
             $translation->setContent($content);
         }
 
@@ -165,8 +163,15 @@ class TransUnitManager implements TransUnitManagerInterface
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {
-                if ($transUnit->hasTranslation($locale)) {
-                    $this->updateTranslation($transUnit, $locale, $content);
+                /** @var TranslationInterface|null $translation */
+                $translation = $transUnit->getTranslation($locale);
+                $contentUpdated = true;
+
+                if ($translation instanceof TranslationInterface) {
+                    $originalContent = $translation->getContent();
+                    $translation = $this->updateTranslation($transUnit, $locale, $content);
+
+                    $contentUpdated = ($translation->getContent() != $originalContent);
 
                     if ($this->storage instanceof PropelStorage) {
                         $this->storage->persist($transUnit);
@@ -174,7 +179,11 @@ class TransUnitManager implements TransUnitManagerInterface
                 } else {
                     //We need to get a proper file for this translation
                     $file = $this->getTranslationFile($transUnit, $locale);
-                    $this->addTranslation($transUnit, $locale, $content, $file);
+                    $translation = $this->addTranslation($transUnit, $locale, $content, $file);
+                }
+
+                if ($translation instanceof Translation && $contentUpdated) {
+                    $translation->setModifiedManually(true);
                 }
             }
         }

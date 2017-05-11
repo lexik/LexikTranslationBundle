@@ -35,6 +35,7 @@
         <column name="file_id" type="integer" />
         <column name="trans_unit_id" type="integer" required="true" />
         <column name="locale" type="varchar" size="10" required="true" />
+        <column name="modified_manually" type="boolean" />
         <column name="content" type="longvarchar" />
 
         <unique>
