@@ -71,7 +71,11 @@ class CleanTranslationCacheListener
                     ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
 
                 if ($finder->count() > 0) {
-                    $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
+                    if (method_exists($this->translator, 'removeLocalesCacheFiles')) {
+                        /** @var Translator $translator */
+                        $translator = $this->translator;
+                        $translator->removeLocalesCacheFiles($this->localeManager->getLocales());
+                    }
                 }
             }
         }
