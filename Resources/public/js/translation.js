@@ -79,7 +79,9 @@ app.factory('translationApiManager', ['$http', function ($http) {
             for (var name in translation) {
                 parameters.push(name+'='+encodeURIComponent(translation[name]));
             }
-
+            if('' != translationCfg.csrfToken ){
+              parameters.push('csrf_token='+translationCfg.csrfToken);
+            }
             // force content type to make SF create a Request with the PUT parameters
             return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
         },

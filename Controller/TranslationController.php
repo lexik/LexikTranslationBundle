@@ -45,6 +45,12 @@ class TranslationController extends Controller
             $tokens = $this->get('lexik_translation.token_finder')->find();
         }
 
+        if( $this->has('security.csrf.token_manager') === true ) {
+            $csrfToken = $this->get('security.csrf.token_manager')->getToken('csrf_notification_token')->getValue();
+        }else{
+            $csrfToken = '';
+        }
+
         return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
             'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
@@ -52,6 +58,8 @@ class TranslationController extends Controller
             'toggleSimilar'  => $this->container->getParameter('lexik_translation.grid_toggle_similar'),
             'locales'        => $this->getManagedLocales(),
             'tokens'         => $tokens,
+            'csrfToken'     => $csrfToken
+
         ));
     }
 

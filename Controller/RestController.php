@@ -46,6 +46,13 @@ class RestController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
+        $token = $request->get('csrf_token');
+
+        if ($this->container->has('security.csrf.token_manager') &&
+            ! $this->isCsrfTokenValid('csrf_notification_token', $token)){
+            throw new \Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException('Token Security Error');
+        }
+
         if (!$request->isMethod('PUT')) {
             throw $this->createNotFoundException(sprintf('Invalid request method %s, PUT only.', $request->getMethod()));
         }
