@@ -46,11 +46,8 @@ class FileManager implements FileManagerInterface
         $hash = $this->generateHash($name, $this->getFileRelativePath($path));
         $file = $this->storage->getFileByHash($hash);
 
-        if (!($file instanceof FileInterface)) {
-            $file = $this->create($name, $path);
-        }
+        return $file instanceof FileInterface? $file : $this->create($name, $path);
 
-        return $file;
     }
 
     /**
