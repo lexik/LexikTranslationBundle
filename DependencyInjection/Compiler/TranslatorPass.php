@@ -33,7 +33,7 @@ class TranslatorPass implements CompilerPassInterface
         }
 
         if ($container->hasDefinition('lexik_translation.translator')) {
-            $container->findDefinition('lexik_translation.translator')->replaceArgument(2, $loaders);
+            $container->findDefinition('lexik_translation.translator')->replaceArgument(3, $loaders);
         }
 
         if ($container->hasDefinition('lexik_translation.importer.file')) {
