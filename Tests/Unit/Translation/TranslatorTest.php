@@ -128,7 +128,7 @@ class TranslatorTest extends BaseUnitTestCase
             'cache_dir' => $cacheDir,
         );
 
-        return new TranslatorMock($container, new MessageSelector(), $loaderIds, $options);
+        return new TranslatorMock($container, new MessageSelector(), 'en', $loaderIds, $options);
     }
 
     protected function createFakeCacheFiles($cacheDir)

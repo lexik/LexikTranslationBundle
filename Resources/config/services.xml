@@ -53,14 +53,17 @@
 
         <!-- Translator -->
         <service id="lexik_translation.translator" class="%lexik_translation.translator.class%">
-            <argument type="service" id="service_container" />
+            <argument type="service" id="service_container" /> <!-- Will be replaced by service locator in SF3.3+ -->
             <argument type="service" id="translator.selector" />
+            <argument>%kernel.default_locale%</argument>
             <argument type="collection" /> <!-- translation loaders -->
             <argument type="collection">
                 <argument key="cache_dir">%kernel.cache_dir%/translations</argument>
                 <argument key="debug">%kernel.debug%</argument>
             </argument>
-            <argument type="service" id="session" on-invalid="ignore" />
+            <call method="setConfigCacheFactory">
+                <argument type="service" id="config_cache_factory" />
+            </call>
         </service>
 
         <!-- Loader -->
