@@ -4,7 +4,9 @@ namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
+use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
 
@@ -73,6 +75,7 @@ class Translator extends BaseTranslator
 
         return $deleted;
     }
+
     /**
      * Remove the cache file corresponding to each given locale.
      *

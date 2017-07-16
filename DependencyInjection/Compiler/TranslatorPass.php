@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Translator compiler pass to automatically pass loader to the other services.
@@ -35,7 +36,7 @@ class TranslatorPass implements CompilerPassInterface
         }
 
         if ($container->hasDefinition('lexik_translation.translator')) {
-            if (\AppKernel::VERSION_ID >= 30300) {
+            if (Kernel::VERSION_ID >= 30300) {
                 $serviceRefs = array_merge($loadersReferencesById, array('event_dispatcher' => new Reference('event_dispatcher')));
 
                 $container->findDefinition('lexik_translation.translator')

@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\DependencyInjection\Container;
 
@@ -128,7 +129,11 @@ class TranslatorTest extends BaseUnitTestCase
             'cache_dir' => $cacheDir,
         );
 
-        return new TranslatorMock($container, new MessageSelector(), 'en', $loaderIds, $options);
+        if (Kernel::VERSION_ID >= 30300) {
+            return new TranslatorMock($container, new MessageSelector(), 'en', $loaderIds, $options);
+        }
+
+        return new TranslatorMock($container, new MessageSelector(), $loaderIds, $options);
     }
 
     protected function createFakeCacheFiles($cacheDir)

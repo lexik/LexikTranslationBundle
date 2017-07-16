@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -53,6 +54,7 @@ class LexikTranslationExtension extends Extension
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 
+        $this->buildTranslatorDefinition($container);
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
         if (true === $config['auto_cache_clean']) {
@@ -64,6 +66,37 @@ class LexikTranslationExtension extends Extension
         }
 
         $this->registerTranslatorConfiguration($config, $container);
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    public function buildTranslatorDefinition(ContainerBuilder $container)
+    {
+        $translator = new Definition();
+        $translator->setClass('%lexik_translation.translator.class%');
+
+        if (Kernel::VERSION_ID >= 30300) {
+            $arguments = [
+                new Reference('service_container'), // Will be replaced by service locator
+                new Reference('translator.selector'),
+                new Parameter('kernel.default_locale'),
+                [], // translation loaders
+                new Parameter('lexik_translation.translator.options')
+            ];
+        } else {
+            $arguments = [
+                new Reference('service_container'),
+                new Reference('translator.selector'),
+                [], // translation loaders
+                new Parameter('lexik_translation.translator.options')
+            ];
+        }
+
+        $translator->setArguments($arguments);
+        $translator->addMethodCall('setConfigCacheFactory', [new Reference('config_cache_factory')]);
+
+        $container->setDefinition('lexik_translation.translator', $translator);
     }
 
     /**
