@@ -170,12 +170,16 @@ class DataGridRequestHandlerTest extends BaseUnitTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $fileManagerMock = $this->getMockBuilder('Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $storageMock = $this->getMockBuilder('Lexik\Bundle\TranslationBundle\Storage\StorageInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
         $localeManager = new LocaleManager(array());
 
-        return new DataGridRequestHandler($transUnitManagerMock, $storageMock, $localeManager);
+        return new DataGridRequestHandler($transUnitManagerMock, $fileManagerMock, $storageMock, $localeManager);
     }
 }
