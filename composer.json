@@ -24,9 +24,8 @@
         "doctrine/orm": "~2.4,<2.5",
         "doctrine/doctrine-bundle": "~1.5",
         "doctrine/data-fixtures": "~1.1",
-        "doctrine/mongodb-odm": "~1.0.0-beta10@dev",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "~1.2",
+        "propel/propel-bundle": "~1.2|3.0.0-alpha1",
         "phpunit/phpunit": "~4.3"
     },
     "suggest": {

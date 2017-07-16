@@ -11,14 +11,14 @@ matrix:
     fast_finish: true
     allow_failures:
         - php: hhvm
-        - php: 7.0
 
 services:
     - mongodb
 
 env:
     - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 cache:
     directories:
