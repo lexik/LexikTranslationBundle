@@ -161,7 +161,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $format, $flush = false)
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {
@@ -173,7 +173,7 @@ class TransUnitManager implements TransUnitManagerInterface
                     }
                 } else {
                     //We need to get a proper file for this translation
-                    $file = $this->getTranslationFile($transUnit, $locale);
+                    $file = $this->getTranslationFile($transUnit, $locale, $format);
                     $this->addTranslation($transUnit, $locale, $content, $file);
                 }
             }
@@ -192,7 +192,7 @@ class TransUnitManager implements TransUnitManagerInterface
      *
      * @return FileInterface|null
      */
-    public function getTranslationFile(TransUnitInterface & $transUnit, $locale)
+    public function getTranslationFile(TransUnitInterface $transUnit, $locale, $format)
     {
         $file = null;
         foreach ($transUnit->getTranslations() as $translation) {
@@ -206,6 +206,10 @@ class TransUnitManager implements TransUnitManagerInterface
             //make sure we got the correct file for this locale and domain
             $name = sprintf('%s.%s.%s', $file->getDomain(), $locale, $file->getExtention());
             $file = $this->fileManager->getFor($name, $this->kernelRootDir.DIRECTORY_SEPARATOR.$file->getPath());
+        }
+        else {
+            $name = sprintf('%s.%s.%s', $transUnit->getDomain(), $locale, $format);
+            $file = $this->fileManager->getFor($name);
         }
 
         return $file;

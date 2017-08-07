@@ -59,5 +59,5 @@ interface TransUnitManagerInterface
      * @param array                 $translations
      * @param boolean               $flush
      */
-    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false);
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $format, $flush = false);
 }
