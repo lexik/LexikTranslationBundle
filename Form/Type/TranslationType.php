@@ -22,7 +22,7 @@ class TranslationType extends AbstractType
     {
         $builder->add('locale', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
         $builder->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
-            'required' => false,
+            'required' => true,
         ));
     }
 
