@@ -2,10 +2,9 @@ language: php
 sudo: false
 
 php:
-    - 5.5
-    - 5.6
     - 7.0
-    - hhvm
+    - 7.1
+    - 7.2
 
 matrix:
     fast_finish: true
@@ -26,6 +25,7 @@ cache:
 
 before_install:
     - phpenv config-add travis-php.ini
+    - 'echo "extension = mongodb.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini'
     - echo "memory_limit = 2G" > /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/z.ini
     - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
     - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
