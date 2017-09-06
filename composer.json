@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
+        "php": ">=5.5.9 || ^7.0",
         "symfony/framework-bundle": "~2.8|~3.0"
     },
     "require-dev": {
@@ -25,7 +25,7 @@
         "doctrine/doctrine-bundle": "~1.5",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "~1.2|3.0.0-alpha1",
+        "propel/propel-bundle": "~1.2|3.0.x-dev",
         "phpunit/phpunit": "~4.3"
     },
     "suggest": {
