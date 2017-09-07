@@ -28,6 +28,7 @@ before_install:
     - if [ -x .travis/before_install.sh ]; then .travis/before_install.sh; fi;
 
 install:
-  - if [ -x .travis/install.sh ]; then .travis/install.sh; fi;
+    - if [ -x .travis/install.sh ]; then .travis/install.sh; fi;
 
-script: phpunit
+script:
+    - php vendor/bin/phpunit -v
