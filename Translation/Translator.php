@@ -108,7 +108,7 @@ class Translator extends BaseTranslator
      */
     protected function invalidateSystemCacheForFile($path)
     {
-        if (ini_get('apc.enabled')) {
+        if (ini_get('apc.enabled') && function_exists('apc_delete_file')) {
             if (apc_exists($path) && !apc_delete_file($path)) {
                 throw new \RuntimeException(sprintf('Failed to clear APC Cache for file %s', $path));
             }
