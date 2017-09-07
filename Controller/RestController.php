@@ -114,7 +114,7 @@ class RestController extends Controller
             return;
         }
 
-        $request = $this->get('request_stack')->getMasterRequest();
+        $request = $this->get('request_stack')->getCurrentRequest();
 
         if (!$this->isCsrfTokenValid($id, $request->get($query))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
