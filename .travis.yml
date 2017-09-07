@@ -27,6 +27,6 @@ cache:
 before_install:
     - if [ -x .travis/before_install.sh ]; then .travis/before_install.sh; fi;
 
-install: composer install --prefer-dist --no-interaction
+install: composer update --prefer-dist --no-interaction --prefer-stable --quiet --ignore-platform-reqs
 
 script: phpunit
