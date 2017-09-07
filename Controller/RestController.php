@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -111,14 +110,14 @@ class RestController extends Controller
      */
     protected function checkCsrf($id, $query = '_token')
     {
-        if (!$this->container->has('security.csrf.token_manager')) {
+        if (!$this->has('security.csrf.token_manager')) {
             return;
         }
 
         $request = $this->get('request_stack')->getMasterRequest();
 
-        if (!$isCrsfTokenValid = $this->isCsrfTokenValid($id, $request->get($query))) {
-            throw new InvalidCsrfTokenException();
+        if (!$this->isCsrfTokenValid($id, $request->get($query))) {
+            throw $this->createAccessDeniedException('Invalid CSRF token');
         }
     }
 }
