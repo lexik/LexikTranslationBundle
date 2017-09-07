@@ -107,6 +107,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
      */
     public function testGetTransUnitList()
     {
+        $this->markTestIncomplete('Propel integration is currently not compatible with Symfony 3.3 / Propel 1.6');
+        
         $con = $this->loadDatabase();
         $repository = new TransUnitRepository($con);
 

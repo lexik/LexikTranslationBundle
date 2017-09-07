@@ -4,6 +4,8 @@ imports:
 framework:
     fragments: ~
     secret: afasfsf
+    translator:
+        enabled: true
 
 lexik_translation:
     fallback_locale: en
