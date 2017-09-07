@@ -1,22 +1,22 @@
 language: php
+
 sudo: false
 
 php:
-    - 5.5
     - 5.6
     - 7.0
-    - hhvm
+    - 7.1
 
 matrix:
     fast_finish: true
-    allow_failures:
-        - php: hhvm
 
 services:
     - mongodb
 
 env:
     - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
@@ -25,14 +25,9 @@ cache:
         - $HOME/.composer/cache
 
 before_install:
-    - phpenv config-add travis-php.ini
-    - echo "memory_limit = 2G" > /home/travis/.phpenv/versions/$(phpenv version-name)/etc/conf.d/z.ini
-    - sh -c "if [ '$DB' = 'pdo_mysql' ]; then mysql -e 'create database IF NOT EXISTS $DB_NAME' -u$DB_USER; fi"
-    - composer require symfony/framework-bundle:${SYMFONY_VERSION} --no-update
-    - composer require symfony/validator:${SYMFONY_VERSION} --no-update
-    - composer require symfony/finder:${SYMFONY_VERSION} --no-update
-    - composer require symfony/doctrine-bridge:${SYMFONY_VERSION} --no-update
+    - if [ -x .travis/before_install.sh ]; then .travis/before_install.sh; fi;
 
-install: composer install --prefer-dist --no-interaction
+install:
+  - if [ -x .travis/install.sh ]; then .travis/install.sh; fi;
 
 script: phpunit
