@@ -20,4 +20,5 @@ if [ "${TRAVIS_PHP_VERSION}" != "hhvm" ]; then
     fi
 fi
 
+composer require "symfony/framework-bundle:${SYMFONY_VERSION}" --no-update
 composer require "symfony/symfony:${SYMFONY_VERSION}" --no-update
