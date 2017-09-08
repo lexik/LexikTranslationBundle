@@ -206,7 +206,7 @@ class LexikTranslationExtension extends Extension
             ->addMethodCall('setProfiler', array(new Reference('profiler')));
 
         $tokenFinderDefinition = new Definition();
-        $tokenFinderDefinition->setClass(new Parameter('lexik_translation.token_finder.class'));
+        $tokenFinderDefinition->setClass($container->getParameter('lexik_translation.token_finder.class'));
         $tokenFinderDefinition->setArguments(array(
             new Reference('profiler'),
             new Parameter('lexik_translation.token_finder.limit'),
