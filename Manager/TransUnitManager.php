@@ -29,6 +29,11 @@ class TransUnitManager implements TransUnitManagerInterface
     private $kernelRootDir;
 
     /**
+     * @var string
+     */
+    protected $defaultFileFormat;
+
+    /**
      * Construct.
      *
      * @param StorageInterface $storage
@@ -40,6 +45,15 @@ class TransUnitManager implements TransUnitManagerInterface
         $this->storage = $storage;
         $this->fileManager = $fm;
         $this->kernelRootDir = $kernelRootDir;
+        $this->defaultFileFormat = 'yml';
+    }
+
+    /**
+     * @param string $format
+     */
+    public function setDefaultFileFormat($format)
+    {
+        $this->defaultFileFormat = $format;
     }
 
     /**
@@ -192,7 +206,7 @@ class TransUnitManager implements TransUnitManagerInterface
      *
      * @return FileInterface|null
      */
-    public function getTranslationFile(TransUnitInterface & $transUnit, $locale)
+    public function getTranslationFile(TransUnitInterface $transUnit, $locale)
     {
         $file = null;
         foreach ($transUnit->getTranslations() as $translation) {
@@ -206,6 +220,9 @@ class TransUnitManager implements TransUnitManagerInterface
             //make sure we got the correct file for this locale and domain
             $name = sprintf('%s.%s.%s', $file->getDomain(), $locale, $file->getExtention());
             $file = $this->fileManager->getFor($name, $this->kernelRootDir.DIRECTORY_SEPARATOR.$file->getPath());
+        } else {
+            $name = sprintf('%s.%s.%s', $transUnit->getDomain(), $locale, $this->defaultFileFormat);
+            $file = $this->fileManager->getFor($name);
         }
 
         return $file;

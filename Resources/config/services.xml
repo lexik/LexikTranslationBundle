@@ -66,6 +66,9 @@
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument>%kernel.root_dir%</argument>
+            <call method="setDefaultFileFormat">
+                <argument>%lexik_translation.dev_tools.file_format%</argument>
+            </call>
         </service>
 
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
