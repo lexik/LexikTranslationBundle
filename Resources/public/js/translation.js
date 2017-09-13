@@ -69,7 +69,10 @@ app.factory('translationApiManager', ['$http', '$httpParamSerializer', function 
         },
 
         invalidateCache: function () {
-            return $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+            return $http.get(translationCfg.url.invalidateCache, {
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                params: this.initializeParametersWithCsrf()
+            });
         },
 
         updateTranslation: function (translation) {

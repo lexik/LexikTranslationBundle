@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RestController extends Controller
 {
+    use CsrfCheckerTrait;
+
     /**
      * @param Request $request
      *
@@ -50,7 +53,7 @@ class RestController extends Controller
             throw $this->createNotFoundException(sprintf('Invalid request method %s, PUT only.', $request->getMethod()));
         }
 
-        $this->checkCsrf('lexik-translation');
+        $this->checkCsrf();
 
         $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
 
@@ -66,7 +69,7 @@ class RestController extends Controller
      */
     public function deleteAction($id)
     {
-        $this->checkCsrf('lexik-translation');
+        $this->checkCsrf();
 
         $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
 
@@ -89,7 +92,7 @@ class RestController extends Controller
      */
     public function deleteTranslationAction($id, $locale)
     {
-        $this->checkCsrf('lexik-translation');
+        $this->checkCsrf();
 
         $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
 
@@ -100,24 +103,5 @@ class RestController extends Controller
         $deleted = $this->get('lexik_translation.trans_unit.manager')->deleteTranslation($transUnit, $locale);
 
         return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
-    }
-
-    /**
-     * Checks the validity of a CSRF token.
-     *
-     * @param string $id    The id used when generating the token
-     * @param string $query
-     */
-    protected function checkCsrf($id, $query = '_token')
-    {
-        if (!$this->has('security.csrf.token_manager')) {
-            return;
-        }
-
-        $request = $this->get('request_stack')->getCurrentRequest();
-
-        if (!$this->isCsrfTokenValid($id, $request->get($query))) {
-            throw $this->createAccessDeniedException('Invalid CSRF token');
-        }
     }
 }
