@@ -206,7 +206,7 @@ class DataGridRequestHandler
             $translationsContent[$locale] = $request->request->get($locale);
         }
 
-        $this->transUnitManager->updateTranslationsContent($transUnit, $translationsContent);
+        $this->transUnitManager->updateTranslationsContent($transUnit, $translationsContent,$this->defaultFileFormat);
 
         if ($transUnit instanceof TransUnitDocument) {
             $transUnit->convertMongoTimestamp();
