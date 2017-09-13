@@ -24,7 +24,10 @@ class TransUnitType extends AbstractType
         ));
         $builder->add('domain', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             'label'   => 'translations.domain',
-            'choices' => array_combine($options['domains'], $options['domains']),
+            'choices' => array_merge(
+                array_combine($options['default_domain'], $options['default_domain']),
+                array_combine($options['domains'], $options['domains'])
+            ),
         ));
         $builder->add('translations', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
             'entry_type'     => 'Lexik\Bundle\TranslationBundle\Form\Type\TranslationType',
@@ -52,7 +55,8 @@ class TransUnitType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class'         => null,
-            'domains'            => array('messages'),
+            'default_domain'     => ['messages'],
+            'domains'            => [],
             'translation_class'  => null,
             'translation_domain' => 'LexikTranslationBundle',
         ));
