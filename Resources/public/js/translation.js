@@ -118,11 +118,11 @@ app.factory('translationApiManager', ['$http', '$httpParamSerializer', function 
 /**
  * ngTable column definition and parameters builder service.
  */
-app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', function (ngTableParams, translationApiManager) {
+app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$location', function (ngTableParams, translationApiManager, $location) {
     return {
         columns: [],
         tableParams: null,
-        defaultOptions: { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} },
+        defaultOptions: angular.extend( { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} }, $location.search()),
 
         build: function (locales, labels) {
             this.columns = [
@@ -144,6 +144,8 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', fun
                 currentSort: {},
                 currentFilter: {},
                 getData: function($defer, params) {
+                    $location.search(params.url());
+
                     translationApiManager
                         .getPage(params, this)
                         .success(function (responseData) {
