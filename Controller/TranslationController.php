@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -89,7 +90,7 @@ class TranslationController extends Controller
     {
         $handler = $this->get('lexik_translation.form.handler.trans_unit');
 
-        $form = $this->createForm('Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType', $handler->createFormData(), $handler->getFormOptions());
+        $form = $this->createForm(TransUnitType::class, $handler->createFormData(), $handler->getFormOptions());
 
         if ($handler->process($form, $request)) {
             $message = $this->get('translator')->trans('translations.successfully_added', array(), 'LexikTranslationBundle');
