@@ -30,6 +30,7 @@
             autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
             profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
             toggleSimilar: '{{ toggleSimilar }}',
+            csrfToken: '{{ csrf_token('lexik-translation') }}',
             url: {
                 list: '{{ path('lexik_translation_list') }}',
                 listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
