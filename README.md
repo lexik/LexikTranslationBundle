@@ -1,7 +1,7 @@
 Overview
 ========
 
-This Symfony2 bundle allows you to:
+This Symfony bundle allows you to:
 
 * import translation files content into the database and provide a GUI to edit translations.
 * export translations from the database into files.

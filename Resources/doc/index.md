@@ -41,7 +41,7 @@ $bundles = array(
 
 Then install the required assets:
 
-    ./app/console assets:install
+    ./bin/console assets:install
 
 ___________________
 
@@ -147,7 +147,7 @@ lexik_translation:
 
 If you use Doctrine ORM, you have to update your database:
 
-    ./app/console doctrine:schema:update --force
+    ./bin/console doctrine:schema:update --force
 
 #### Routing
 
@@ -176,7 +176,7 @@ Import translations
 
 To import translations files content into your database just run the following command:
 
-    ./app/console lexik:translations:import [bundleName] [--cache-clear] [--force] [--globals]
+    ./bin/console lexik:translations:import [bundleName] [--cache-clear] [--force] [--globals]
 
 This command will import all application and bundles translations files according to the `managed_locales` defined in configuration (it will also load tanslations from SF conponents).
 
@@ -199,7 +199,7 @@ Export translations
 
 To export translations from the database into files, run the following command:
 
-    ./app/console lexik:translations:export [--locales=en,de] [--domains=messages,validators] [--format=yml] [--case-insensitive]
+    ./bin/console lexik:translations:export [--locales=en,de] [--domains=messages,validators] [--format=yml] [--case-insensitive]
 
 This command will export all translations from the database into files. A translation is exported in the same file (and format) it was imported in,
 except for vendors files which are exported in `app/Resources/translations/` and in this case the command will only export translations that have changed.
