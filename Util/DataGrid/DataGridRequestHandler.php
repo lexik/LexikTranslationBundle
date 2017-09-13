@@ -168,8 +168,8 @@ class DataGridRequestHandler
                     $transUnits[] = $transUnit = $this->transUnitManager->create($message['id'], $message['domain'], true);
                 }
 
-                // Also store the translation if profiler state was defined
-                if (!$transUnit->hasTranslation($message['locale']) && $message['state'] === DataCollectorTranslator::MESSAGE_DEFINED) {
+                // Also store the translation
+                if (!$transUnit->hasTranslation($message['locale'])) {
                     $file = $this->fileManager->getFor(sprintf('%s.%s.%s', $message['domain'], $message['locale'], $this->defaultFileFormat));
 
                     $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], $file, true);
