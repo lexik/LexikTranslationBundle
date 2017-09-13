@@ -31,7 +31,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * @var string
      */
-    protected $defaultFileFormat;
+    private $defaultFileFormat;
 
     /**
      * Construct.
