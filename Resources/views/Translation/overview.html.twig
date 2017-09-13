@@ -49,7 +49,7 @@
                             <tbody>
                             {% for domain in domains %}
                                 <tr columns="columns">
-                                    <td>{{ domain }}</td>
+                                    <td><a href="{{ path('lexik_translation_grid') }}#?filter[_domain]={{ domain }}">{{ domain }}</a></td>
                                     {% for locale in locales %}
                                         <td class="text-center">
                                             <span class="text {{ stats[domain][locale]['completed'] == 100 ? 'text-success' : 'text-danger' }}">
