@@ -169,7 +169,7 @@ class DataGridRequestHandler
                 }
 
                 // Also store the translation
-                if (!$transUnit->hasTranslation($message['locale'])) {
+                if ($transUnit instanceof TransUnit && !$transUnit->hasTranslation($message['locale'])) {
                     $file = $this->fileManager->getFor(sprintf('%s.%s.%s', $message['domain'], $message['locale'], $this->defaultFileFormat));
 
                     $this->transUnitManager->addTranslation($transUnit, $message['locale'], $message['translation'], $file, true);
