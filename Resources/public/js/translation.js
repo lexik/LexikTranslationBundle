@@ -26,7 +26,7 @@ app.factory('sharedMessage', function () {
 /**
  * Api manager service.
  */
-app.factory('translationApiManager', ['$http', function ($http) {
+app.factory('translationApiManager', ['$http', '$httpParamSerializer', function ($http, $httpParamSerializer) {
     return {
         token: null,
 
@@ -69,19 +69,22 @@ app.factory('translationApiManager', ['$http', function ($http) {
         },
 
         invalidateCache: function () {
-            return $http.get(translationCfg.url.invalidateCache, {headers: {'X-Requested-With': 'XMLHttpRequest'}});
+            return $http.get(translationCfg.url.invalidateCache, {
+                headers: {'X-Requested-With': 'XMLHttpRequest'},
+                params: this.initializeParametersWithCsrf()
+            });
         },
 
         updateTranslation: function (translation) {
             var url = translationCfg.url.update.replace('-id-', translation._id);
 
-            var parameters = [];
+            var parameters = this.initializeParametersWithCsrf();
             for (var name in translation) {
-                parameters.push(name+'='+encodeURIComponent(translation[name]));
+                parameters[name] = encodeURIComponent(translation[name]);
             }
 
             // force content type to make SF create a Request with the PUT parameters
-            return $http({ 'url': url, 'data': parameters.join('&'), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
+            return $http({ 'url': url, 'data': $httpParamSerializer(parameters), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
         },
 
         deleteTranslationLocale: function (translation, locale) {
@@ -89,11 +92,25 @@ app.factory('translationApiManager', ['$http', function ($http) {
                 .replace('-id-', translation._id)
                 .replace('-locale-', locale);
 
-            return $http.delete(url);
+            return $http.delete(url, {
+                params: this.initializeParametersWithCsrf()
+            });
         },
 
         deleteTranslation: function (translation) {
-            return $http.delete(translationCfg.url.delete.replace('-id-', translation._id));
+            return $http.delete(translationCfg.url.delete.replace('-id-', translation._id), {
+                params: this.initializeParametersWithCsrf()
+            });
+        },
+
+        initializeParametersWithCsrf: function(parameters) {
+            var parameters = {};
+
+            if(translationCfg.csrfToken ){
+                parameters._token = translationCfg.csrfToken;
+            }
+
+            return parameters;
         }
     };
 }]);

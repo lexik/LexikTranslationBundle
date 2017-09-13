@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class RestController extends Controller
 {
+    use CsrfCheckerTrait;
+
     /**
      * @param Request $request
      *
@@ -50,6 +53,8 @@ class RestController extends Controller
             throw $this->createNotFoundException(sprintf('Invalid request method %s, PUT only.', $request->getMethod()));
         }
 
+        $this->checkCsrf();
+
         $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
 
         return $this->get('lexik_translation.data_grid.formatter')->createSingleResponse($transUnit);
@@ -64,6 +69,8 @@ class RestController extends Controller
      */
     public function deleteAction($id)
     {
+        $this->checkCsrf();
+
         $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
 
         if (!$transUnit) {
@@ -85,6 +92,8 @@ class RestController extends Controller
      */
     public function deleteTranslationAction($id, $locale)
     {
+        $this->checkCsrf();
+
         $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
 
         if (!$transUnit) {
