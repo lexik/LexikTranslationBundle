@@ -28,7 +28,7 @@ class TransUnitType extends AbstractType
         $builder->add('translations', 'Symfony\Component\Form\Extension\Core\Type\CollectionType', array(
             'entry_type'     => 'Lexik\Bundle\TranslationBundle\Form\Type\TranslationType',
             'label'    => 'translations.page_title',
-            'required' => false,
+            'required' => true,
             'entry_options'  => array(
                 'data_class' => $options['translation_class'],
             ),
