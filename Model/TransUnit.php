@@ -195,6 +195,22 @@ abstract class TransUnit
     }
 
     /**
+     * Return false if at least one translation without content.
+     *
+     * @return bool
+     */
+    public function validForBlankTranslations()
+    {
+        foreach ($this->getTranslations() as $translation) {
+            if (empty($translation->getContent())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Get createdAt
      *
      * @return datetime $createdAt

@@ -89,6 +89,9 @@ class TransUnitFormHandler implements FormHandlerInterface
 
             if ($form->isValid()) {
                 $transUnit = $form->getData();
+                if (!$transUnit->validForBlankTranslations()) {
+                    return false;
+                }
                 $translations = $transUnit->filterNotBlankTranslations(); // only keep translations with a content
 
                 // link new translations to a file to be able to export them.
