@@ -35,8 +35,6 @@ abstract class TransUnit
 
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
-     * @Assert\NotBlank()
      */
     protected $translations;
 
