@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * TransUnit form type.
@@ -29,6 +30,9 @@ class TransUnitType extends AbstractType
             'entry_type'     => 'Lexik\Bundle\TranslationBundle\Form\Type\TranslationType',
             'label'    => 'translations.page_title',
             'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            ),
             'entry_options'  => array(
                 'data_class' => $options['translation_class'],
             ),
