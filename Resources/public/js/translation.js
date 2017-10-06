@@ -80,7 +80,7 @@ app.factory('translationApiManager', ['$http', '$httpParamSerializer', function 
 
             var parameters = this.initializeParametersWithCsrf();
             for (var name in translation) {
-                parameters[name] = encodeURIComponent(translation[name]);
+                parameters[name] = translation[name];
             }
 
             // force content type to make SF create a Request with the PUT parameters
