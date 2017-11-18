@@ -6,9 +6,17 @@ php:
     - 5.6
     - 7.0
     - 7.1
+    - 7.2
 
 matrix:
     fast_finish: true
+    exclude:
+    - php: 5.6
+      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=beta
+    - php: 7.0
+      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=beta
+    - php: 7.2
+      env: SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
 
 services:
     - mongodb
@@ -19,8 +27,7 @@ env:
     - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - DEPENDENCIES=beta
+    - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=beta
 cache:
     directories:
         - $HOME/.composer/cache
