@@ -24,13 +24,13 @@
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/data-fixtures": "~1.1",
-        "doctrine/mongodb-odm-bundle": "~3.0",
+        "doctrine/mongodb-odm-bundle": "~3.4",
         "propel/propel-bundle": "~3.0@dev",
         "phpunit/phpunit": "^5.7"
     },
     "suggest": {
         "doctrine/orm": ">=2.4",
-        "doctrine/mongodb-odm-bundle": "~3.0",
+        "doctrine/mongodb-odm-bundle": "~3.4",
         "propel/propel-bundle": "~3.0@dev"
     },
     "autoload":     {
@@ -41,5 +41,5 @@
             "dev-master": "4.x.x-dev"
         }
     },
-    "minimum-stability": "beta"
+    "minimum-stability": "alpha"
 }
