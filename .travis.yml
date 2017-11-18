@@ -19,12 +19,14 @@ env:
     - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
     - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-
+    - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
+    - DEPENDENCIES=beta
 cache:
     directories:
         - $HOME/.composer/cache
 
 before_install:
+    - if [ "$DEPENDENCIES" = "beta" ]; then composer config minimum-stability beta; fi;
     - if [ -x .travis/before_install.sh ]; then .travis/before_install.sh; fi;
 
 install:
