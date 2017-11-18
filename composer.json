@@ -25,13 +25,13 @@
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "~2.0|3.0.0-alpha1@dev",
+        "propel/propel-bundle": "~3.0@dev",
         "phpunit/phpunit": "^5.7"
     },
     "suggest": {
         "doctrine/orm": ">=2.4",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "~2.0"
+        "propel/propel-bundle": "~3.0@dev"
     },
     "autoload":     {
         "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
