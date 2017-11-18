@@ -3,4 +3,4 @@
 # https://github.com/composer/composer/issues/5030
 composer update --prefer-dist --no-interaction --prefer-stable --quiet --ignore-platform-reqs
 
-#composer update --prefer-dist --no-interaction --prefer-stable
+composer update --prefer-dist --no-interaction --prefer-stable
