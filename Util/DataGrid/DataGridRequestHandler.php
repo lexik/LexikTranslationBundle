@@ -203,7 +203,7 @@ class DataGridRequestHandler
 
         $translationsContent = array();
         foreach ($this->localeManager->getLocales() as $locale) {
-            $translationsContent[$locale] = urldecode($request->request->get($locale));
+            $translationsContent[$locale] = $request->request->get($locale);
         }
 
         $this->transUnitManager->updateTranslationsContent($transUnit, $translationsContent);
