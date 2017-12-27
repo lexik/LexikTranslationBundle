@@ -10,15 +10,13 @@
 {% block lexik_title %}{{ 'translations.page_title'|trans({}, 'LexikTranslationBundle') }}{% endblock %}
 
 {% block lexik_content %}
-    <div class="container">
-        {% block lexik_toolbar %}
-            {% include 'LexikTranslationBundle:Translation:_gridToolbar.html.twig' %}
-        {% endblock lexik_toolbar %}
+    {% block lexik_toolbar %}
+        {% include 'LexikTranslationBundle:Translation:_gridToolbar.html.twig' %}
+    {% endblock lexik_toolbar %}
 
-        {% block lexik_data_grid %}
-            {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
-        {% endblock lexik_data_grid %}
-    </div>
+    {% block lexik_data_grid %}
+        {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
+    {% endblock lexik_data_grid %}
 {% endblock %}
 
 {% block lexik_javascript_footer %}
