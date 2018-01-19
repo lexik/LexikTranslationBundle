@@ -8,6 +8,7 @@ use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
 use Lexik\Bundle\TranslationBundle\Propel\File;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnit;
 use Lexik\Bundle\TranslationBundle\Propel\Translation;
+use Propel\Runtime\Connection\ConnectionWrapper;
 
 /**
  * Tests fixtures class for Propel.
@@ -20,7 +21,7 @@ class TransUnitDataPropel
      * (non-PHPdoc)
      * @see Doctrine\Common\DataFixtures.FixtureInterface::load()
      */
-    public function load(\PropelPDO $con)
+    public function load(ConnectionWrapper $con)
     {
         // add files
         $files = array();

@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Propel;
 
-use Lexik\Bundle\TranslationBundle\Propel\om\BaseFile;
+use Lexik\Bundle\TranslationBundle\Propel\Base\File as BaseFile;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 
 class File extends BaseFile implements FileInterface

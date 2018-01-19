@@ -8,6 +8,8 @@ use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TranslationQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Propel\TranslationRepository;
+use Propel\Runtime\Collection\ObjectCollection;
+use Propel\Runtime\Propel;
 
 /**
  * Doctrine ORM storage class.
@@ -76,7 +78,7 @@ class PropelStorage implements StorageInterface
 
     private function initCollection($className)
     {
-        $this->collections[$className] = new \PropelObjectCollection();
+        $this->collections[$className] = new ObjectCollection();
         $this->collections[$className]->setModel($className);
     }
 
@@ -86,7 +88,7 @@ class PropelStorage implements StorageInterface
     private function getConnection()
     {
         if (null === $this->connection) {
-            $this->connection = \Propel::getConnection($this->connectionName);
+            $this->connection = Propel::getConnection($this->connectionName);
         }
 
         return $this->connection;
@@ -329,9 +331,9 @@ class PropelStorage implements StorageInterface
         }
 
         return
-            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseFile') &&
-            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseTranslation') &&
-            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseTransUnit')
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\Base\\File') &&
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\Base\\Translation') &&
+            class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\Base\\TransUnit')
         ;
     }
 
