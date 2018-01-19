@@ -2,6 +2,11 @@
 
 namespace Lexik\Bundle\TranslationBundle\Propel;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Lexik\Bundle\TranslationBundle\Propel\Map\TranslationTableMap;
+
 /**
  * Repository for TransUnit entity.
  *
@@ -10,17 +15,17 @@ namespace Lexik\Bundle\TranslationBundle\Propel;
 class TransUnitRepository
 {
     /**
-     * @var \PDO
+     * @var ConnectionWrapper
      */
     protected $connection;
 
-    public function __construct(\PDO $connection)
+    public function __construct(ConnectionWrapper $connection)
     {
         $this->connection = $connection;
     }
 
     /**
-     * @return PDO
+     * @return ConnectionWrapper
      */
     protected function getConnection()
     {
@@ -61,7 +66,7 @@ class TransUnitRepository
             ->useTranslationQuery()
                 ->filterByLocale($locale)
             ->endUse()
-            ->setFormatter('PropelArrayFormatter')
+            ->setFormatter(ModelCriteria::FORMAT_ARRAY)
             ->find($this->getConnection())
         ;
 
@@ -78,7 +83,7 @@ class TransUnitRepository
         $domains = TransUnitQuery::create()
             ->select('Domain')
             ->setDistinct()
-            ->orderByDomain(\Criteria::ASC)
+            ->orderByDomain(Criteria::ASC)
             ->find($this->getConnection())
         ;
 
@@ -119,13 +124,13 @@ class TransUnitRepository
 
         if (count($ids) > 0) {
             $unitsData = TransUnitQuery::create()
-                ->filterById($ids, \Criteria::IN)
+                ->filterById($ids, Criteria::IN)
                 ->joinWith('Translation')
                 ->useTranslationQuery()
-                    ->filterByLocale($locales, \Criteria::IN)
+                    ->filterByLocale($locales, Criteria::IN)
                 ->endUse()
                 ->orderBy($sortColumn, $order)
-                ->setFormatter('PropelArrayFormatter')
+                ->setFormatter(ModelCriteria::FORMAT_ARRAY)
                 ->find($this->getConnection())
             ;
 
@@ -171,12 +176,12 @@ class TransUnitRepository
         ;
 
         if ($onlyUpdated) {
-            $query->add(null, TranslationPeer::UPDATED_AT.'>'.TranslationPeer::CREATED_AT, \Criteria::CUSTOM);
+            $query->add(null, TranslationTableMap::COL_UPDATED_AT.'>'.TranslationTableMap::COL_CREATED_AT, Criteria::CUSTOM);
         }
 
         $results = $query
             ->select(array('Content', 'TransUnit.Key'))
-            ->orderBy(TranslationPeer::ID, \Criteria::ASC)
+            ->orderBy(TranslationTableMap::COL_ID, Criteria::ASC)
             ->find()
         ;
 
@@ -198,11 +203,11 @@ class TransUnitRepository
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
-                $query->filterByDomain(sprintf('%%%s%%', $filters['domain']), \Criteria::LIKE);
+                $query->filterByDomain(sprintf('%%%s%%', $filters['domain']), Criteria::LIKE);
             }
 
             if (!empty($filters['key'])) {
-                $query->filterByKey(sprintf('%%%s%%', $filters['key']), \Criteria::LIKE);
+                $query->filterByKey(sprintf('%%%s%%', $filters['key']), Criteria::LIKE);
             }
         }
     }
@@ -220,15 +225,15 @@ class TransUnitRepository
             $q = TransUnitQuery::create()
                 ->select('Id')
                 ->distinct()
-                ->join('Translation', \Criteria::LEFT_JOIN)
+                ->join('Translation', Criteria::LEFT_JOIN)
                 ->useTranslationQuery()
-                    ->filterByLocale($locales, \Criteria::IN)
+                    ->filterByLocale($locales, Criteria::IN)
             ;
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
                     $q
-                        ->filterByContent(sprintf('%%%s%%', $filters[$locale]), \Criteria::LIKE)
+                        ->filterByContent(sprintf('%%%s%%', $filters[$locale]), Criteria::LIKE)
                         ->filterByLocale(sprintf('%s', $locale))
                     ;
                 }
@@ -240,7 +245,7 @@ class TransUnitRepository
             ;
 
             if (count($ids) > 0) {
-                $query->filterById($ids, \Criteria::IN);
+                $query->filterById($ids, Criteria::IN);
             }
         }
     }
