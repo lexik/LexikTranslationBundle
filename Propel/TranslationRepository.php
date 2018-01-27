@@ -2,6 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Propel;
 
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Lexik\Bundle\TranslationBundle\Propel\Map\TranslationTableMap;
+
 /**
  * Repository for Translation entity (Propel).
  *
@@ -10,20 +13,20 @@ namespace Lexik\Bundle\TranslationBundle\Propel;
 class TranslationRepository
 {
     /**
-     * @var \PDO
+     * @var ConnectionWrapper
      */
     protected $connection;
 
     /**
-     * @param \PDO $connection
+     * @param ConnectionWrapper $connection
      */
-    public function __construct(\PDO $connection)
+    public function __construct(ConnectionWrapper $connection)
     {
         $this->connection = $connection;
     }
 
     /**
-     * @return \PDO
+     * @return ConnectionWrapper
      */
     protected function getConnection()
     {
@@ -36,7 +39,7 @@ class TranslationRepository
     public function getLatestTranslationUpdatedAt()
     {
         $result = TranslationQuery::create()
-            ->withColumn(sprintf('MAX(%s)', TranslationPeer::UPDATED_AT), 'max_updated_at')
+            ->withColumn(sprintf('MAX(%s)', TranslationTableMap::COL_UPDATED_AT), 'max_updated_at')
             ->select(array('max_updated_at'))
             ->findOne($this->getConnection())
         ;

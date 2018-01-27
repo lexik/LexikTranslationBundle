@@ -15,6 +15,10 @@ use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitData;
 use Lexik\Bundle\TranslationBundle\Tests\Fixtures\TransUnitDataPropel;
 use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
+use Propel\Generator\Util\QuickBuilder;
+use Propel\Runtime\Connection\ConnectionWrapper;
+use Propel\Runtime\Connection\PdoConnection;
+use Propel\Runtime\Propel;
 
 /**
  * Base unit test class providing functions to create a mock entity manger, load schema and fixtures.
@@ -128,7 +132,7 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Load test fixtures for Propel.
      */
-    protected function loadPropelFixtures(\PropelPDO $con)
+    protected function loadPropelFixtures(ConnectionWrapper $con)
     {
         $fixtures = new TransUnitDataPropel();
         $fixtures->load($con);
@@ -243,32 +247,24 @@ abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PropelPDO
+     * @return ConnectionWrapper
      */
     protected function getMockPropelConnection()
     {
-        if (!class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\om\\BaseFile')) {
+        if (!class_exists('Lexik\\Bundle\\TranslationBundle\\Propel\\Base\\File')) {
             // classes are built in-memory.
-            $builder = new \PropelQuickBuilder();
+            $builder = new QuickBuilder();
             $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
-            $builder->setClassTargets(array('tablemap', 'peer', 'object', 'query'));
-            $con = $builder->build();
+            $con = $builder->build(null, null, null, null, array('tablemap', 'object', 'query'));
         } else {
             // in memory-classes already exist, create connection and SQL manually
             $dsn = 'sqlite::memory:';
-            $adapter = new \DBSQLite();
-            $con = new \PropelPDO($dsn, null, null);
-            $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
-            $name = 'default';
-            if (!\Propel::isInit()) {
-                \Propel::setConfiguration(array('datasources' => array('default' => $name)));
-            }
-            \Propel::setDB($name, $adapter);
-            \Propel::setConnection($name, $con, \Propel::CONNECTION_READ);
-            \Propel::setConnection($name, $con, \Propel::CONNECTION_WRITE);
+            $pdoConnection = new PdoConnection($dsn);
+            $con = new ConnectionWrapper($pdoConnection);
+            Propel::getServiceContainer()->setConnection('default', $con);
 
-            // don't rebuild classes
-            $builder = new \PropelQuickBuilder();
+            $con->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_WARNING);
+            $builder = new QuickBuilder();
             $builder->setSchema(file_get_contents(__DIR__.'/../../Resources/config/propel/schema.xml'));
             $builder->buildSQL($con);
         }

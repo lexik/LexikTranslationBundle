@@ -2,6 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Propel;
 
+use Propel\Runtime\ActiveQuery\Criteria;
+use Propel\Runtime\Connection\ConnectionWrapper;
+
 /**
  * Repository for TransUnit entity.
  *
@@ -10,17 +13,17 @@ namespace Lexik\Bundle\TranslationBundle\Propel;
 class FileRepository
 {
     /**
-     * @var \PDO
+     * @var ConnectionWrapper
      */
     protected $connection;
 
-    public function __construct(\PDO $connection)
+    public function __construct(ConnectionWrapper $connection)
     {
         $this->connection = $connection;
     }
 
     /**
-     * @return PDO
+     * @return ConnectionWrapper
      */
     protected function getConnection()
     {
@@ -38,11 +41,11 @@ class FileRepository
     {
         return FileQuery::create()
             ->_if(count($locales) > 0)
-                ->filterByLocale($locales, \Criteria::IN)
+                ->filterByLocale($locales, Criteria::IN)
             ->_endif()
 
             ->_if(count($domains) > 0)
-                ->filterByDomain($domains, \Criteria::IN)
+                ->filterByDomain($domains, Criteria::IN)
             ->_endif()
 
             ->find($this->getConnection())

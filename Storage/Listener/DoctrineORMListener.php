@@ -14,7 +14,7 @@ class DoctrineORMListener
     {
         $params = $eventArgs->getEntityManager()->getConnection()->getParams();
 
-        if ('utf8mb4' !== strtolower($params['charset'])) {
+        if (!isset($params['charset']) || 'utf8mb4' !== strtolower($params['charset'])) {
             return;
         }
 
