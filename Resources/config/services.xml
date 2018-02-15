@@ -155,6 +155,7 @@
         <!-- Command -->
         <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%" autowire="true">
             <argument type="service" id="lexik_translation.translator" />
+            <tag name="console.command" />
         </service>
     </services>
 </container>
