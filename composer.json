@@ -18,14 +18,15 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "symfony/framework-bundle": "~2.8|~3.0"
+        "symfony/framework-bundle": "~2.8|~3.0|~4.0"
     },
     "require-dev": {
         "doctrine/orm": "^2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "~3.0@dev",
+        "propel/propel-bundle": "^3.0@dev|^4.0@dev",
+        "propel/propel": "@dev",
         "phpunit/phpunit": "^5.7"
     },
     "suggest": {
@@ -34,6 +35,11 @@
     },
     "autoload":     {
         "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
+    },
+    "autoload-dev": {
+        "classmap": [
+            "Tests/app/AppKernel.php"
+        ]
     },
     "extra": {
         "branch-alias": {

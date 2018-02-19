@@ -9,6 +9,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Imports translation files content in the database.
@@ -19,6 +21,21 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
  */
 class ImportTranslationsCommand extends ContainerAwareCommand
 {
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        parent::__construct();
+
+        $this->translator = $translator;
+    }
+
     /**
      * @var \Symfony\Component\Console\Input\InputInterface
      */
@@ -71,7 +88,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
 
-            if (null !== $bundle->getParent()) {
+            if (Kernel::VERSION_ID < 40000 && null !== $bundle->getParent()) {
                 // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
                 // so we tell getBundle to NOT fetch the first if a parent is present
                 $bundles = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false);
@@ -114,7 +131,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         if ($this->input->getOption('cache-clear')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
-            $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);
+            $this->translator->removeLocalesCacheFiles($locales);
         }
     }
 
