@@ -6,25 +6,46 @@ php:
     - 5.6
     - 7.0
     - 7.1
+    - 7.2
 
 matrix:
     fast_finish: true
+    exclude:
+    - php: 5.6
+      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.0
+      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - php: 7.2
+      env: SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 
 services:
     - mongodb
 
 env:
-    - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-    - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test
-
+    - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 cache:
     directories:
         - $HOME/.composer/cache
 
 before_install:
+    - if [ "$DEPENDENCIES" = "beta" ]; then composer config minimum-stability beta; fi;
+    - if [ "$DEPENDENCIES" = "alpha" ]; then composer config minimum-stability alpha; fi;
     - if [ -x .travis/before_install.sh ]; then .travis/before_install.sh; fi;
 
 install:

@@ -34,7 +34,7 @@ class YamlExporterTest extends \PHPUnit_Framework_TestCase
         // export empty array
         $exporter->export($outFile, array());
         $expectedContent = '{  }';
-        $this->assertEquals($expectedContent, file_get_contents($outFile));
+        $this->assertEquals($expectedContent, trim(file_get_contents($outFile)));
 
         // export array with values
         $exporter->export($outFile, array(

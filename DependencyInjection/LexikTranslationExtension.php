@@ -76,7 +76,16 @@ class LexikTranslationExtension extends Extension
         $translator = new Definition();
         $translator->setClass('%lexik_translation.translator.class%');
 
-        if (Kernel::VERSION_ID >= 30300) {
+        if (Kernel::VERSION_ID >= 40000) {
+            $arguments = [
+                new Reference('service_container'), // Will be replaced by service locator
+                new Reference('translator.formatter.default'),
+                new Parameter('kernel.default_locale'),
+                [], // translation loaders
+                new Parameter('lexik_translation.translator.options')
+            ];
+            $translator->setPublic(true);
+        } elseif (Kernel::VERSION_ID >= 30300) {
             $arguments = [
                 new Reference('service_container'), // Will be replaced by service locator
                 new Reference('translator.selector'),

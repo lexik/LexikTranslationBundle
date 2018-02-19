@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
         <parameter key="lexik_translation.translator.class">Lexik\Bundle\TranslationBundle\Translation\Translator</parameter>
@@ -45,6 +45,8 @@
 
         <parameter key="lexik_translation.token_finder.class">Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder</parameter>
 
+        <parameter key="lexik_translation.command.import_translations.class">Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand</parameter>
+
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
         <parameter key="lexik_translation.token_finder.limit">15</parameter>
 
@@ -62,7 +64,7 @@
         </service>
 
         <!-- Managers -->
-        <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%">
+        <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument>%kernel.root_dir%</argument>
@@ -73,12 +75,12 @@
             <argument>%kernel.root_dir%</argument>
         </service>
 
-        <service id="lexik_translation.locale.manager" class="%lexik_translation.locale.manager.class%">
+        <service id="lexik_translation.locale.manager" class="%lexik_translation.locale.manager.class%" public="true">
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
 
         <!-- Importer -->
-        <service id="lexik_translation.importer.file" class="%lexik_translation.importer.file.class%">
+        <service id="lexik_translation.importer.file" class="%lexik_translation.importer.file.class%" public="true">
             <argument type="collection" /> <!-- translation loaders -->
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.trans_unit.manager" />
@@ -89,7 +91,7 @@
         </service>
 
         <!-- Exporter -->
-        <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" />
+        <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" public="true"/>
 
         <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
@@ -110,12 +112,12 @@
         </service>
 
         <!-- Data grid -->
-        <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%">
+        <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%" public="true">
             <argument type="service" id="lexik_translation.locale.manager" />
             <argument>%lexik_translation.storage.type%</argument>
         </service>
 
-        <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%">
+        <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%" public="true">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
@@ -129,13 +131,13 @@
         </service>
 
         <!-- Overview -->
-        <service id="lexik_translation.overview.stats_aggregator" class="%lexik_translation.overview.stats_aggregator.class%">
+        <service id="lexik_translation.overview.stats_aggregator" class="%lexik_translation.overview.stats_aggregator.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.locale.manager" />
         </service>
 
         <!-- Form -->
-        <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%">
+        <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%" public="true">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
@@ -150,5 +152,10 @@
             <tag name="kernel.event_listener" event="lexik_translation.event.get_database_resources" method="onGetDatabaseResources"  />
         </service>
 
+        <!-- Command -->
+        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%" autowire="true">
+            <argument type="service" id="lexik_translation.translator" />
+            <tag name="console.command" />
+        </service>
     </services>
 </container>
