@@ -233,7 +233,11 @@ class LexikTranslationExtension extends Extension
     protected function registerTranslatorConfiguration(array $config, ContainerBuilder $container)
     {
         // use the Lexik translator as default translator service
-        $container->setAlias('translator', 'lexik_translation.translator');
+        $alias = $container->setAlias('translator', 'lexik_translation.translator');
+
+        if (Kernel::VERSION_ID >= 30400) {
+            $alias->setPublic(true);
+        }
 
         $translator = $container->findDefinition('lexik_translation.translator');
         $translator->addMethodCall('setFallbackLocales', array($config['fallback_locale']));

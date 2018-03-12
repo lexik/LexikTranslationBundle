@@ -46,6 +46,7 @@
         <parameter key="lexik_translation.token_finder.class">Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder</parameter>
 
         <parameter key="lexik_translation.command.import_translations.class">Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand</parameter>
+        <parameter key="lexik_translation.command.export_translations.class">Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand</parameter>
 
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
         <parameter key="lexik_translation.token_finder.limit">15</parameter>
@@ -152,10 +153,16 @@
             <tag name="kernel.event_listener" event="lexik_translation.event.get_database_resources" method="onGetDatabaseResources"  />
         </service>
 
+
         <!-- Command -->
-        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%" autowire="true">
-            <argument type="service" id="lexik_translation.translator" />
+        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%">
+            <argument type="service" id="translator" />
             <tag name="console.command" />
         </service>
+
+        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.export_translations.class%">
+            <tag name="console.command" />
+        </service>
+        
     </services>
 </container>
