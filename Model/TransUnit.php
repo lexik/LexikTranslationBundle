@@ -35,6 +35,8 @@ abstract class TransUnit
 
     /**
      * @var \Doctrine\Common\Collections\Collection
+     *
+     * @Assert\NotBlank()
      */
     protected $translations;
 
@@ -190,6 +192,22 @@ abstract class TransUnit
             $content = $translation->getContent();
             return !empty($content);
         });
+    }
+
+    /**
+     * Return false if at least one translation without content.
+     *
+     * @return bool
+     */
+    public function validForBlankTranslations()
+    {
+        foreach ($this->getTranslations() as $translation) {
+            if (empty($translation->getContent())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

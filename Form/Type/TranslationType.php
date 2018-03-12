@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Translation form type.
@@ -22,7 +23,10 @@ class TranslationType extends AbstractType
     {
         $builder->add('locale', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
         $builder->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
-            'required' => false,
+            'required' => true,
+            'constraints' => array(
+                new NotBlank(),
+            ),
         ));
     }
 
