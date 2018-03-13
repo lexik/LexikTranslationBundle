@@ -76,7 +76,7 @@ class LexikTranslationExtension extends Extension
         $translator = new Definition();
         $translator->setClass('%lexik_translation.translator.class%');
 
-        if (Kernel::VERSION_ID >= 40000) {
+        if (Kernel::VERSION_ID >= 30400) {
             $arguments = [
                 new Reference('service_container'), // Will be replaced by service locator
                 new Reference('translator.formatter.default'),

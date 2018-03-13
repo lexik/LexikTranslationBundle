@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
 
                 ->arrayNode('fallback_locale')
                     ->isRequired()
-                    ->cannotBeEmpty()
+                    ->requiresAtLeastOneElement()
                     ->prototype('scalar')->end()
                     ->beforeNormalization()
                         ->ifString()
@@ -52,7 +52,7 @@ class Configuration implements ConfigurationInterface
 
                 ->arrayNode('managed_locales')
                     ->isRequired()
-                    ->cannotBeEmpty()
+                    ->requiresAtLeastOneElement()
                     ->prototype('scalar')->end()
                 ->end()
 
