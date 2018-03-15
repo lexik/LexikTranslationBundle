@@ -49,10 +49,6 @@ class RestController extends Controller
      */
     public function updateAction(Request $request, $id)
     {
-        if (!$request->isMethod('PUT')) {
-            throw $this->createNotFoundException(sprintf('Invalid request method %s, PUT only.', $request->getMethod()));
-        }
-
         $this->checkCsrf();
 
         $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
