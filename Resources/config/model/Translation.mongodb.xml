@@ -8,6 +8,8 @@
 
         <field fieldName="locale" name="locale" type="string" />
 
+        <field fieldName="modifiedManually" name="modified_manually" type="boolean" />
+
         <field fieldName="content" name="content" type="string" />
 
         <field fieldName="createdAt" name="created_at" type="timestamp" />

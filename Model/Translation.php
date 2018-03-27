@@ -41,6 +41,11 @@ abstract class Translation
     protected $updatedAt;
 
     /**
+     * @var boolean
+     */
+    protected $modifiedManually = false;
+
+    /**
      * Set locale
      *
      * @param string $locale
@@ -64,7 +69,7 @@ abstract class Translation
     /**
      * Set content
      *
-     * @param text $content
+     * @param string $content
      */
     public function setContent($content)
     {
@@ -74,7 +79,7 @@ abstract class Translation
     /**
      * Get content
      *
-     * @return text
+     * @return string
      */
     public function getContent()
     {
@@ -119,5 +124,21 @@ abstract class Translation
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isModifiedManually()
+    {
+        return $this->modifiedManually;
+    }
+
+    /**
+     * @param bool $modifiedManually
+     */
+    public function setModifiedManually($modifiedManually)
+    {
+        $this->modifiedManually = $modifiedManually;
     }
 }
