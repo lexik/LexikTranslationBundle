@@ -219,9 +219,7 @@ class TransUnitRepository extends EntityRepository
 
             $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
 
-            if (count($ids) > 0) {
-                $builder->andWhere($builder->expr()->in('tu.id', $ids));
-            }
+            $builder->andWhere($builder->expr()->in('tu.id', count($ids) > 0 ? $ids : [0]));
         }
     }
 
