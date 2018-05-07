@@ -28,7 +28,7 @@ class TranslationController extends Controller
 
         $stats = $this->get('lexik_translation.overview.stats_aggregator')->getStats();
 
-        return $this->render('LexikTranslationBundle:Translation:overview.html.twig', array(
+        return $this->render('@LexikTranslationBundle/Translation/overview.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
             'locales'        => $this->getManagedLocales(),
             'domains'        => $storage->getTransUnitDomains(),
@@ -49,7 +49,7 @@ class TranslationController extends Controller
             $tokens = $this->get('lexik_translation.token_finder')->find();
         }
 
-        return $this->render('LexikTranslationBundle:Translation:grid.html.twig', array(
+        return $this->render('@LexikTranslationBundle/Translation/grid.html.twig', array(
             'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
             'inputType'      => $this->container->getParameter('lexik_translation.grid_input_type'),
             'autoCacheClean' => $this->container->getParameter('lexik_translation.auto_cache_clean'),
@@ -102,7 +102,7 @@ class TranslationController extends Controller
             return $this->redirect($this->generateUrl($redirectUrl));
         }
 
-        return $this->render('LexikTranslationBundle:Translation:new.html.twig', array(
+        return $this->render('@LexikTranslationBundle/Translation/new.html.twig', array(
             'layout' => $this->container->getParameter('lexik_translation.base_layout'),
             'form'   => $form->createView(),
         ));
