@@ -8,6 +8,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\DirectoryResource;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Parameter;
 use Symfony\Component\DependencyInjection\Definition;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpKernel\Kernel;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class LexikTranslationExtension extends Extension
+class LexikTranslationExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * {@inheritdoc}
@@ -131,6 +132,19 @@ class LexikTranslationExtension extends Extension
         $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
 
+    public function prepend(ContainerBuilder $container)
+    {
+        if (!$container->hasExtension('twig')) {
+            return;
+        }
+
+        $container->prependExtensionConfig('twig', [
+            'paths' => [
+                '%kernel.project_dir%/vendor/lexik/translation-bundle/Resources/views' => 'LexikTranslationBundle'
+            ]
+        ]);
+    }
+
     /**
      * Build the 'lexik_translation.translation_storage' service definition.
      *
@@ -182,6 +196,7 @@ class LexikTranslationExtension extends Extension
         $storageDefinition = new Definition();
         $storageDefinition->setClass($container->getParameter(sprintf('lexik_translation.%s.translation_storage.class', $storage)));
         $storageDefinition->setArguments($args);
+        $storageDefinition->setPublic(true);
 
         $container->setDefinition('lexik_translation.translation_storage', $storageDefinition);
     }

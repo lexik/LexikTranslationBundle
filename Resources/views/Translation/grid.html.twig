@@ -12,11 +12,11 @@
 {% block lexik_content %}
     <div class="container">
         {% block lexik_toolbar %}
-            {% include 'LexikTranslationBundle:Translation:_gridToolbar.html.twig' %}
+            {% include '@LexikTranslationBundle/Translation/_gridToolbar.html.twig' %}
         {% endblock lexik_toolbar %}
 
         {% block lexik_data_grid %}
-            {% include 'LexikTranslationBundle:Translation:_ngGrid.html.twig' %}
+            {% include '@LexikTranslationBundle/Translation/_ngGrid.html.twig' %}
         {% endblock lexik_data_grid %}
     </div>
 {% endblock %}
