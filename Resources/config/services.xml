@@ -160,9 +160,9 @@
             <tag name="console.command" />
         </service>
 
-        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.export_translations.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand" class="%lexik_translation.command.export_translations.class%">
             <tag name="console.command" />
         </service>
-        
+
     </services>
 </container>
