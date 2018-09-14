@@ -3,13 +3,14 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Exporter;
 
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter;
+use PHPUnit\Framework\TestCase;
 
 /**
  * JsonExporter tests.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class JsonExporterTest extends \PHPUnit_Framework_TestCase
+class JsonExporterTest extends TestCase
 {
     private $outFileName = '/file.out';
 

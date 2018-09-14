@@ -19,13 +19,14 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Base unit test class providing functions to create a mock entity manger, load schema and fixtures.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-abstract class BaseUnitTestCase extends \PHPUnit_Framework_TestCase
+abstract class BaseUnitTestCase extends TestCase
 {
     const ENTITY_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
     const ENTITY_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';

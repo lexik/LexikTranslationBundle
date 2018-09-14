@@ -3,13 +3,14 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 
 use Lexik\Bundle\TranslationBundle\Translation\DatabaseFreshResource;
+use PHPUnit\Framework\TestCase;
 
 /**
  * DatabaseFreshResource tests.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class DatabaseFreshResourceTest extends \PHPUnit_Framework_TestCase
+class DatabaseFreshResourceTest extends TestCase
 {
     /**
      * @group translator
