@@ -8,13 +8,14 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Finder\Finder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test for CleanTranslationCacheListener class
  *
  * @author Max Milazzo maxmilazzo@timeout.com
  */
-class CleanTranslationCacheListenerTest extends \PHPUnit_Framework_TestCase
+class CleanTranslationCacheListenerTest extends TestCase
 {
 
     private $tempDir;

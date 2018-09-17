@@ -3,13 +3,14 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Exporter;
 
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter;
+use PHPUnit\Framework\TestCase;
 
 /**
  * YamlExporter tests.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class YamlExporterTest extends \PHPUnit_Framework_TestCase
+class YamlExporterTest extends TestCase
 {
     private $outFileName = '/file.out';
 

@@ -3,13 +3,14 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Exporter;
 
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter;
+use PHPUnit\Framework\TestCase;
 
 /**
  * XliffExporter tests.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class XliffExporterTest extends \PHPUnit_Framework_TestCase
+class XliffExporterTest extends TestCase
 {
     private $outFileName = '/file.en.out';
 
