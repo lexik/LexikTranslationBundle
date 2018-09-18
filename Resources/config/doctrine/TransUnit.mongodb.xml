@@ -15,7 +15,7 @@
 
         <field fieldName="id" name="id" id="true" strategy="AUTO" />
 
-        <embed-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" strategy="set" />
+        <embed-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" strategy="setArray" />
 
     </document>
 </doctrine-mongo-mapping>
