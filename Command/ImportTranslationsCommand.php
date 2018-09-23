@@ -86,7 +86,9 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
-            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+            $bundle = $this
+                ->getContainer()->get('kernel')
+                ->getBundle($bundleName);
 
             if (Kernel::VERSION_ID < 40000 && null !== $bundle->getParent()) {
                 // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
@@ -285,7 +287,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         }
 
         if (true === $autocompletePath) {
-            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (0 === strpos($path, $this->getContainer()->getParameter('kernel.root_dir') . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
