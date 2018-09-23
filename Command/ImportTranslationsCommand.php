@@ -86,12 +86,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
-            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+            $bundle = $this
+                ->getContainer()->get('kernel')
+                ->getBundle($bundleName);
 
             if (Kernel::VERSION_ID < 40000 && null !== $bundle->getParent()) {
                 // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
                 // so we tell getBundle to NOT fetch the first if a parent is present
-                $bundles = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false);
+                $bundles = $this->getContainer()->get('kernel')->getBundle($bundle->getParent(), false);
                 $bundle = $bundles[1];
                 $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
             }
@@ -199,7 +201,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function importAppTranslationFiles(array $locales, array $domains)
     {
-        $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
+        $finder = $this->findTranslationsFiles($this->getContainer()->getParameter('kernel.root_dir'), $locales, $domains);
         $this->importTranslationFiles($finder);
     }
 
@@ -212,7 +214,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function importBundlesTranslationFiles(array $locales, array $domains, $global = false)
     {
-        $bundles = $this->getApplication()->getKernel()->getBundles();
+        $bundles = $this->getContainer()->get('kernel')->getBundles();
 
         foreach ($bundles as $bundle) {
             $this->importBundleTranslationFiles($bundle, $locales, $domains, $global);
@@ -231,7 +233,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     {
         $path = $bundle->getPath();
         if ($global) {
-            $path = $this->getApplication()->getKernel()->getRootDir() . '/Resources/' . $bundle->getName() . '/translations';
+            $path = $this->getContainer()->getParameter('kernel.root_dir')) . '/Resources/' . $bundle->getName() . '/translations';
             $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
         }
 
@@ -285,7 +287,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
         }
 
         if (true === $autocompletePath) {
-            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (0 === strpos($path, $this->getContainer()->getParameter('kernel.root_dir') . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
