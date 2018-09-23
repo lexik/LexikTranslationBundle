@@ -233,7 +233,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     {
         $path = $bundle->getPath();
         if ($global) {
-            $path = $this->getContainer()->getParameter('kernel.root_dir')) . '/Resources/' . $bundle->getName() . '/translations';
+            $path = $this->getContainer()->getParameter('kernel.root_dir') . '/Resources/' . $bundle->getName() . '/translations';
             $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
         }
 
