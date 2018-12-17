@@ -65,6 +65,8 @@ class CleanTranslationCacheListener
             $lastUpdateTime = $this->storage->getLatestUpdatedAt();
 
             if ($lastUpdateTime instanceof \DateTime) {
+                $this->checkCacheFolder();
+
                 $finder = new Finder();
                 $finder->files()
                     ->in($this->cacheDirectory.'/translations')
@@ -108,5 +110,12 @@ class CleanTranslationCacheListener
         }
 
         return $expired;
+    }
+
+    private function checkCacheFolder()
+    {
+        if (!is_dir($dirName = $this->cacheDirectory.'/translations') && !mkdir($dirName) && !is_dir($dirName)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dirName));
+        }
     }
 }

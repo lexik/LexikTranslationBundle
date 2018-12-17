@@ -199,7 +199,12 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function importAppTranslationFiles(array $locales, array $domains)
     {
-        $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
+        if (Kernel::MAJOR_VERSION >= 4) {
+            $translationPath = $this->getApplication()->getKernel()->getProjectDir().'/translations';
+            $finder = $this->findTranslationsFiles($translationPath, $locales, $domains, false);
+        } else {
+            $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
+        }
         $this->importTranslationFiles($finder);
     }
 
