@@ -105,6 +105,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
         $translator->setArguments($arguments);
         $translator->addMethodCall('setConfigCacheFactory', [new Reference('config_cache_factory')]);
+        $translator->addTag('kernel.locale_aware');
 
         $container->setDefinition('lexik_translation.translator', $translator);
     }
