@@ -18,7 +18,7 @@
         </lifecycle-callbacks>
 
         <id name="id" type="integer" column="id">
-            <generator strategy="IDENTITY"/>
+            <generator strategy="AUTO"/>
         </id>
         <field name="modifiedManually" column="modified_manually" type="boolean" />
         <many-to-one field="file" target-entity="Lexik\Bundle\TranslationBundle\Entity\File" inversed-by="translations">

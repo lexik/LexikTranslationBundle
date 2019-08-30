@@ -18,7 +18,7 @@
         </lifecycle-callbacks>
 
         <id name="id" type="integer" column="id">
-            <generator strategy="IDENTITY" />
+            <generator strategy="AUTO" />
         </id>
 
         <one-to-many field="translations" target-entity="Lexik\Bundle\TranslationBundle\Entity\Translation" mapped-by="file">
