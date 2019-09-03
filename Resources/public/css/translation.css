@@ -40,3 +40,8 @@ table .actions {
 table button.delete {
     padding: 2px 5px;
 }
+
+#translation-grid textarea {
+    min-width: 400px;
+    min-height: 300px;
+}
