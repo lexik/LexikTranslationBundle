@@ -82,7 +82,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function exportFile(FileInterface $file)
     {
-        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.root_dir');
+        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') : $this->getContainer()->getParameter('kernel.root_dir');
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
         $override = $this->input->getOption('override');
