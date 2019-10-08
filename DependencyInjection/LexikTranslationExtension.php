@@ -311,7 +311,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                 $dirs[] = $dir;
             }
 
-            if (Kernel::MAJOR_VERSION >= 4 && is_dir($dir = $container->getParameter('kernel.project_dir').'/translations')) {
+            if ($container->hasParameter('translator.default_path')
+                && is_dir($dir = $container->getParameter('translator.default_path'))
+            ) {
                 $dirs[] = $dir;
             }
 
