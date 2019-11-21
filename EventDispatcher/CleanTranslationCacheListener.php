@@ -29,7 +29,7 @@ class CleanTranslationCacheListener
     private $cacheDirectory;
 
     /**
-     * @var array
+     * @var LocaleManagerInterface
      */
     private $localeManager;
 
@@ -41,13 +41,13 @@ class CleanTranslationCacheListener
     /**
      * Constructor
      *
-     * @param StorageInterface    $storage
-     * @param TranslatorInterface $translator
-     * @param string              $cacheDirectory
-     * @param LocaleManager       $localeManager
-     * @param int                 $cacheInterval
+     * @param StorageInterface             $storage
+     * @param TranslatorInterface          $translator
+     * @param string                       $cacheDirectory
+     * @param LocaleManagerInterface       $localeManager
+     * @param int                          $cacheInterval
      */
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManager $localeManager, $cacheInterval)
+    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManagerInterface $localeManager, $cacheInterval)
     {
         $this->storage = $storage;
         $this->cacheDirectory = $cacheDirectory;
