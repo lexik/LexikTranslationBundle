@@ -311,6 +311,16 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                 $dirs[] = $dir;
             }
 
+
+            foreach ($config['paths'] as $dir) {
+                if ($container->fileExists($dir)) {
+
+                    $dirs[] = $dir;
+                } else {
+                    throw new \UnexpectedValueException(sprintf('%s defined in translator.paths does not exist or is not a directory', $dir));
+                }
+            }
+
             if (Kernel::MAJOR_VERSION >= 4 && is_dir($dir = $container->getParameter('kernel.project_dir').'/translations')) {
                 $dirs[] = $dir;
             }
