@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 

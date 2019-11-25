@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 
 /**
  * Repository for TransUnit document.
