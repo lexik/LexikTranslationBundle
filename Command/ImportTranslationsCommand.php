@@ -2,7 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
+use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
+use Symfony\Bundle\FrameworkBundle\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,7 +21,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @author Cédric Girard <c.girard@lexik.fr>
  * @author Nikola Petkanski <nikola@petkanski.com>
  */
-class ImportTranslationsCommand extends ContainerAwareCommand
+class ImportTranslationsCommand extends Command
 {
     /**
      * @var TranslatorInterface
@@ -27,13 +29,25 @@ class ImportTranslationsCommand extends ContainerAwareCommand
     private $translator;
 
     /**
+     * @var LocaleManagerInterface
+     */
+    private $localeManager;
+
+    /**
+     * @var FileImporter
+     */
+    private $fileImporter;
+
+    /**
      * @param TranslatorInterface $translator
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, LocaleManagerInterface $localeManager, FileImporter $fileImporter)
     {
         parent::__construct();
 
         $this->translator = $translator;
+        $this->localeManager = $localeManager;
+        $this->fileImporter = $fileImporter;
     }
 
     /**
@@ -79,7 +93,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         $locales = $this->input->getOption('locales');
         if (empty($locales)) {
-            $locales = $this->getContainer()->get('lexik_translation.locale.manager')->getLocales();
+            $locales = $this->localeManager->getLocales();
         }
 
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
@@ -258,7 +272,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
             return;
         }
 
-        $importer = $this->getContainer()->get('lexik_translation.importer.file');
+        $importer = $this->fileImporter;
         $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
 
         foreach ($finder as $file) {
@@ -314,7 +328,7 @@ class ImportTranslationsCommand extends ContainerAwareCommand
      */
     protected function getFileNamePattern(array $locales, array $domains)
     {
-        $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
+        $formats = $this->translator->getFormats();
 
         if (count($domains)) {
             $regex = sprintf('/((%s)\.(%s)\.(%s))/', implode('|', $domains), implode('|', $locales), implode('|', $formats));

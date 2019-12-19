@@ -157,10 +157,17 @@
         <!-- Command -->
         <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%">
             <argument type="service" id="translator" />
+            <argument type="service" id="lexik_translation.locale.manager" />
+            <argument type="service" id="lexik_translation.importer.file" />
             <tag name="console.command" />
         </service>
 
         <service id="Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand" class="%lexik_translation.command.export_translations.class%">
+            <argument type="service" id="translator" />
+            <argument type="service" id="lexik_translation.translation_storage" />
+            <argument>%kernel.root_dir%</argument>
+            <argument type="service" id="filesystem" />
+            <argument type="service" id="lexik_translation.exporter_collector" />
             <tag name="console.command" />
         </service>
         
