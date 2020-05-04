@@ -4,9 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Translation\MessageSelector;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
 
@@ -28,7 +26,7 @@ class Translator extends BaseTranslator
 
         if (!$cache->isFresh()) {
             $event = new GetDatabaseResourcesEvent();
-            $this->container->get('event_dispatcher')->dispatch('lexik_translation.event.get_database_resources', $event);
+            $this->container->get('event_dispatcher')->dispatch($event, 'lexik_translation.event.get_database_resources');
 
             $resources = $event->getResources();
             $metadata = array();

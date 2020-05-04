@@ -10,7 +10,7 @@ if (ORM_TYPE == "doctrine") {
                         'type'      => 'xml',
                         'prefix'    => 'Lexik\Bundle\TranslationBundle\Entity',
                         'is_bundle' => false,
-                        'dir'       => '%kernel.root_dir%/../../Resources/config/doctrine',
+                        'dir'       => '%kernel.project_dir%/../../Resources/config/doctrine',
                     ),
                 ),
             ),

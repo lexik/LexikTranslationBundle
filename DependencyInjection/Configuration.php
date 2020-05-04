@@ -21,8 +21,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('lexik_translation');
+        $treeBuilder = new TreeBuilder('lexik_translation');
+        $rootNode = $treeBuilder->getRootNode();
 
         $storages = array(
             StorageInterface::STORAGE_ORM,

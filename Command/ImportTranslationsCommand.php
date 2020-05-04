@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,7 +19,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * @author Cédric Girard <c.girard@lexik.fr>
  * @author Nikola Petkanski <nikola@petkanski.com>
  */
-class ImportTranslationsCommand extends ContainerAwareCommand
+class ImportTranslationsCommand extends Command
 {
     /**
      * @var TranslatorInterface

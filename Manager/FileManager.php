@@ -86,7 +86,7 @@ class FileManager implements FileManagerInterface
     }
 
     /**
-     * Returns the relative according to the kernel.root_dir value.
+     * Returns the relative according to the kernel.project_dir value.
      *
      * @param string $filePath
      * @return string

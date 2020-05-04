@@ -68,12 +68,12 @@
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.file.manager" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="lexik_translation.locale.manager" class="%lexik_translation.locale.manager.class%" public="true">
@@ -143,7 +143,7 @@
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.locale.manager" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <!-- Listener -->
