@@ -1,5 +1,5 @@
 {
-    "name": "lexik/translation-bundle",
+    "name": "girayk/translation-bundle",
     "type": "symfony-bundle",
     "description": "This bundle allows to import translation files content into the database and provide a GUI to edit translations.",
     "keywords": ["Symfony2", "bundle", "translation", "i18n"],
@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^5.6 || ^7.0",
-        "symfony/framework-bundle": "~2.8|~3.0|~4.0"
+        "symfony/framework-bundle": "~2.8|~3.0|~4.0|~5.0"
     },
     "require-dev": {
         "doctrine/orm": "^2.2.3",
