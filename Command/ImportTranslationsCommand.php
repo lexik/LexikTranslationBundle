@@ -7,10 +7,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Imports translation files content in the database.
@@ -26,14 +27,20 @@ class ImportTranslationsCommand extends Command
      */
     private $translator;
 
+    private $container;
+
     /**
+     * ImportTranslationsCommand constructor.
+     *
      * @param TranslatorInterface $translator
+     * @param Container           $container
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, Container $container)
     {
         parent::__construct();
 
         $this->translator = $translator;
+        $this->container = $container;
     }
 
     /**
@@ -79,7 +86,7 @@ class ImportTranslationsCommand extends Command
 
         $locales = $this->input->getOption('locales');
         if (empty($locales)) {
-            $locales = $this->getContainer()->get('lexik_translation.locale.manager')->getLocales();
+            $locales = $this->container->get('lexik_translation.locale.manager')->getLocales();
         }
 
         $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
@@ -133,6 +140,8 @@ class ImportTranslationsCommand extends Command
             $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->translator->removeLocalesCacheFiles($locales);
         }
+
+        return 1;
     }
 
     /**
@@ -258,7 +267,7 @@ class ImportTranslationsCommand extends Command
             return;
         }
 
-        $importer = $this->getContainer()->get('lexik_translation.importer.file');
+        $importer = $this->container->get('lexik_translation.importer.file');
         $importer->setCaseInsensitiveInsert($this->input->getOption('case-insensitive'));
 
         foreach ($finder as $file) {
@@ -290,7 +299,7 @@ class ImportTranslationsCommand extends Command
         }
 
         if (true === $autocompletePath) {
-            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getRootDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
@@ -314,7 +323,7 @@ class ImportTranslationsCommand extends Command
      */
     protected function getFileNamePattern(array $locales, array $domains)
     {
-        $formats = $this->getContainer()->get('lexik_translation.translator')->getFormats();
+        $formats = $this->container->get('lexik_translation.translator')->getFormats();
 
         if (count($domains)) {
             $regex = sprintf('/((%s)\.(%s)\.(%s))/', implode('|', $domains), implode('|', $locales), implode('|', $formats));

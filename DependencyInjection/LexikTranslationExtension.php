@@ -38,6 +38,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yaml');
+
         // set parameters
         sort($config['managed_locales']);
         $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);

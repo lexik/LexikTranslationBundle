@@ -1,0 +1,6 @@
+
+services:
+  Lexik\Bundle\TranslationBundle\Controller\TranslationController:
+    autowire: true
+    public: true
+    tags: ['controller.service_arguments']

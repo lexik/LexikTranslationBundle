@@ -1,5 +1,5 @@
 {
-    "name": "girayk/translation-bundle",
+    "name": "lexik/translation-bundle",
     "type": "symfony-bundle",
     "description": "This bundle allows to import translation files content into the database and provide a GUI to edit translations.",
     "keywords": ["Symfony2", "bundle", "translation", "i18n"],

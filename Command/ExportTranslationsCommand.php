@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -25,6 +26,18 @@ class ExportTranslationsCommand extends Command
      * @var \Symfony\Component\Console\Output\OutputInterface
      */
     private $output;
+
+    private $container;
+
+    /**
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        parent::__construct();
+        $this->container = $container;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -70,7 +83,7 @@ class ExportTranslationsCommand extends Command
         $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
         $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
 
-        return $this->getContainer()
+        return $this->container
             ->get('lexik_translation.translation_storage')
             ->getFilesByLocalesAndDomains($locales, $domains);
     }
@@ -122,7 +135,7 @@ class ExportTranslationsCommand extends Command
         // ensure the path exists
         if ($this->input->getOption('export-path')) {
             /** @var Filesystem $fs */
-            $fs = $this->getContainer()->get('filesystem');
+            $fs = $this->container->get('filesystem');
             if (!$fs->exists($outputPath)) {
                 $fs->mkdir($outputPath);
             }
@@ -147,7 +160,7 @@ class ExportTranslationsCommand extends Command
     {
         if (file_exists($outputFile)) {
             $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
-            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($extension);
+            $loader = $this->container->get('lexik_translation.translator')->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);
@@ -169,7 +182,7 @@ class ExportTranslationsCommand extends Command
         $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
         try {
-            $exported = $this->getContainer()->get('lexik_translation.exporter_collector')->export(
+            $exported = $this->container->get('lexik_translation.exporter_collector')->export(
                 $format,
                 $outputFile,
                 $translations
