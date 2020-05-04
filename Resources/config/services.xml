@@ -167,6 +167,5 @@
             <argument type="service" id="service_container" />
             <tag name="console.command" />
         </service>
-        
     </services>
 </container>

@@ -1,24 +1,24 @@
 lexik_translation_list:
     path:     /translations
-    defaults: { _controller: "LexikTranslationBundle:Rest:list" }
+    defaults: { _controller: Lexik\Bundle\TranslationBundle\Controller\RestController::listAction }
     methods:  [GET]
 
 lexik_translation_profiler:
     path:     /translations/profiler/{token}
-    defaults: { _controller: "LexikTranslationBundle:Rest:listByProfile" }
+    defaults: { _controller: Lexik\Bundle\TranslationBundle\Controller\RestController::listByProfileAction }
     methods:  [GET]
 
 lexik_translation_update:
     path:     /translations/{id}
-    defaults: { _controller: "LexikTranslationBundle:Rest:update" }
+    defaults: { _controller: Lexik\Bundle\TranslationBundle\Controller\RestController::updateAction }
     methods:  [PUT]
 
 lexik_translation_delete_locale:
     path:     /translations/{id}/{locale}
-    defaults: { _controller: "LexikTranslationBundle:Rest:deleteTranslation" }
+    defaults: { _controller: Lexik\Bundle\TranslationBundle\Controller\RestController::deleteTranslationAction }
     methods:  [DELETE]
 
 lexik_translation_delete:
     path:     /translations/{id}
-    defaults: { _controller: "LexikTranslationBundle:Rest:delete" }
+    defaults: { _controller: Lexik\Bundle\TranslationBundle\Controller\RestController::deleteAction }
     methods:  [DELETE]

@@ -4,3 +4,8 @@ services:
     autowire: true
     public: true
     tags: ['controller.service_arguments']
+
+  Lexik\Bundle\TranslationBundle\Controller\RestController:
+    autowire: true
+    public: true
+    tags: ['controller.service_arguments']
