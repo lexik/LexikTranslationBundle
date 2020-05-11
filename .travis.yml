@@ -2,46 +2,32 @@ language: php
 
 sudo: false
 
+cache:
+  directories:
+    - $HOME/.composer/cache/files
+
 php:
-    - 5.6
-    - 7.0
-    - 7.1
-    - 7.2
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
+
+env:
+  global:
+    - MONGO_EXTENSION="mongodb.so"
+    - COMPOSER_FLAGS=""
 
 matrix:
-    fast_finish: true
-    exclude:
+  include:
     - php: 5.6
-      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.0
-      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+      env: MONGO_EXTENSION="mongo.so" SYMFONY_VERSION="symfony/lts:^2"
+    - php: 7.1
+      env: SYMFONY_VERSION="symfony/lts:^3"
+  fast_finish: true
 
 services:
     - mongodb
-
-env:
-    - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-cache:
-    directories:
-        - $HOME/.composer/cache
+    - mysql
 
 before_install:
     - if [ "$DEPENDENCIES" = "beta" ]; then composer config minimum-stability beta; fi;
