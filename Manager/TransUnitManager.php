@@ -162,29 +162,27 @@ class TransUnitManager implements TransUnitManagerInterface
     public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
     {
         foreach ($translations as $locale => $content) {
-            if (!empty($content)) {
-                /** @var TranslationInterface|null $translation */
-                $translation = $transUnit->getTranslation($locale);
-                $contentUpdated = true;
+            /** @var TranslationInterface|null $translation */
+            $translation = $transUnit->getTranslation($locale);
+            $contentUpdated = true;
 
-                if ($translation instanceof TranslationInterface) {
-                    $originalContent = $translation->getContent();
-                    $translation = $this->updateTranslation($transUnit, $locale, $content);
+            if ($translation instanceof TranslationInterface) {
+                $originalContent = $translation->getContent();
+                $translation = $this->updateTranslation($transUnit, $locale, $content);
 
-                    $contentUpdated = ($translation->getContent() != $originalContent);
+                $contentUpdated = ($translation->getContent() != $originalContent);
 
-                    if ($this->storage instanceof PropelStorage) {
-                        $this->storage->persist($transUnit);
-                    }
-                } else {
-                    //We need to get a proper file for this translation
-                    $file = $this->getTranslationFile($transUnit, $locale);
-                    $translation = $this->addTranslation($transUnit, $locale, $content, $file);
+                if ($this->storage instanceof PropelStorage) {
+                    $this->storage->persist($transUnit);
                 }
+            } else if(!empty($content)) { // Only create a translation if it is not blank
+                //We need to get a proper file for this translation
+                $file = $this->getTranslationFile($transUnit, $locale);
+                $translation = $this->addTranslation($transUnit, $locale, $content, $file);
+            }
 
-                if ($translation instanceof Translation && $contentUpdated) {
-                    $translation->setModifiedManually(true);
-                }
+            if ($translation instanceof Translation && $contentUpdated) {
+                $translation->setModifiedManually(true);
             }
         }
 
