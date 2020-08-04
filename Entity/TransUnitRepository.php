@@ -185,10 +185,19 @@ class TransUnitRepository extends EntityRepository
                     ->setParameter('domain', sprintf('%%%s%%', $filters['domain']));
             }
 
-            if (!empty($filters['key'])) {
-                $builder->andWhere($builder->expr()->like('tu.key', ':key'))
-                    ->setParameter('key', sprintf('%%%s%%', $filters['key']));
-            }
+			if (!empty($filters['key'])) {
+				$keys = explode('|', $filters['key']);
+
+
+				$orXExpr = $builder->expr()->orX();
+				$bKeyArr = [];
+				foreach($keys as $kk => $key) {
+					$orXExpr->add($builder->expr()->like('tu.key', ':key'.$kk));
+					$builder->setParameter('key'.$kk, sprintf('%%%s%%', $key));
+				}
+
+				$builder->andWhere($orXExpr);
+			}
         }
     }
 

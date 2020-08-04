@@ -16,5 +16,7 @@
 
         <field name="hash" column="hash" type="string" length="255" />
 
+        <field name="exportToJavascript" column="export_to_javascript" type="boolean" default="false" />
+
     </mapped-superclass>
 </doctrine-mapping>

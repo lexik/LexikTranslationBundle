@@ -162,7 +162,8 @@ class TransUnitManager implements TransUnitManagerInterface
     public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
     {
         foreach ($translations as $locale => $content) {
-            if (!empty($content)) {
+        	// Moznost ulozit i prazdny!
+            //if (!empty($content)) {
                 /** @var TranslationInterface|null $translation */
                 $translation = $transUnit->getTranslation($locale);
                 $contentUpdated = true;
@@ -185,7 +186,7 @@ class TransUnitManager implements TransUnitManagerInterface
                 if ($translation instanceof Translation && $contentUpdated) {
                     $translation->setModifiedManually(true);
                 }
-            }
+            //}
         }
 
         if ($flush) {
