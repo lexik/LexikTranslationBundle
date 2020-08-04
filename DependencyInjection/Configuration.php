@@ -137,6 +137,10 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
+				->scalarNode('export_to_javascript_path')
+					->defaultValue(null)
+				->end()
+
             ->end()
         ;
 

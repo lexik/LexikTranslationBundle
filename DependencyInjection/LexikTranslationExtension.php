@@ -52,6 +52,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.dev_tools.file_format', $config['dev_tools']['file_format']);
         $container->setParameter('lexik_translation.exporter.json.hierarchical_format', $config['exporter']['json_hierarchical_format']);
         $container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
+		$container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
+
+		$container->setParameter('lexik_translation.export_to_javascript_path', $config['export_to_javascript_path']);
 
         $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
 

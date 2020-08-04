@@ -52,6 +52,13 @@ abstract class File
      */
     protected $hash;
 
+	/**
+	 * @var string
+	 *
+	 * @Assert\NotBlank()
+	 */
+	protected $exportToJavascript = FALSE;
+
     /**
      * @var Doctrine\Common\Collections\Collection
      */
@@ -220,4 +227,12 @@ abstract class File
     {
         return $this->translations;
     }
+
+	/**
+	 * @return string
+	 */
+	public function getExportToJavascript()
+	{
+		return $this->exportToJavascript;
+	}
 }
