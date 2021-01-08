@@ -30,6 +30,7 @@ matrix:
 
 services:
     - mongodb
+    - mysql
 
 env:
     - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
