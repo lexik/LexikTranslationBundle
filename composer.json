@@ -2,7 +2,7 @@
     "name": "lexik/translation-bundle",
     "type": "symfony-bundle",
     "description": "This bundle allows to import translation files content into the database and provide a GUI to edit translations.",
-    "keywords": ["Symfony2", "bundle", "translation", "i18n"],
+    "keywords": ["Symfony", "bundle", "translation", "i18n"],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
     "prefer-stable": true,
@@ -17,21 +17,20 @@
         }
     ],
     "require": {
-        "php": "^5.6 || ^7.0",
-        "symfony/framework-bundle": "~2.8|~3.0|~4.0"
+        "php": "^7.1",
+        "symfony/symfony": "~4.4"
     },
     "require-dev": {
-        "doctrine/orm": "^2.2.3",
+        "alcaeus/mongo-php-adapter": "~1.0",
+        "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "~1.2",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "^3.0@dev|^4.0@dev",
-        "propel/propel": "@dev",
+        "propel/propel": "2.0.0-alpha10|dev-master",
         "phpunit/phpunit": "^5.7"
     },
     "suggest": {
-        "doctrine/orm": ">=2.4",
-        "doctrine/mongodb-odm-bundle": "~3.0"
+        "doctrine/orm": ">=2.4"
     },
     "autoload":     {
         "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
