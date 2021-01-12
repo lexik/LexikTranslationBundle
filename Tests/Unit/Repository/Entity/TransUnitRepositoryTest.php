@@ -102,8 +102,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
                 array('locale' => 'fr', 'content' => 'au revoir'),
             )),
             array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'de', 'content' => 'heil'),
                 array('locale' => 'fr', 'content' => 'salut'),
+                array('locale' => 'de', 'content' => 'heil'),
             )),
             array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
                 array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
@@ -133,8 +133,8 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $result = $repository->getTransUnitList(array('fr', 'en'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu'));
         $expected = array(
             array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'en', 'content' => 'hello'),
                 array('locale' => 'fr', 'content' => 'salut'),
+                array('locale' => 'en', 'content' => 'hello'),
             )),
         );
         $this->assertSameTransUnit($expected, $result);
@@ -142,12 +142,12 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 1, array('sidx' => 'domain', 'sord' => 'ASC'));
         $expected = array(
             array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'en', 'content' => 'goodbye'),
                 array('locale' => 'fr', 'content' => 'au revoir'),
+                array('locale' => 'en', 'content' => 'goodbye'),
             )),
             array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'en', 'content' => 'what the fuck !?!'),
                 array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
+                array('locale' => 'en', 'content' => 'what the fuck !?!'),
             )),
         );
         $this->assertSameTransUnit($expected, $result);
@@ -155,9 +155,9 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 2, array('sidx' => 'domain', 'sord' => 'ASC'));
         $expected = array(
             array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'de', 'content' => 'heil'),
-                array('locale' => 'en', 'content' => 'hello'),
                 array('locale' => 'fr', 'content' => 'salut'),
+                array('locale' => 'en', 'content' => 'hello'),
+                array('locale' => 'de', 'content' => 'heil'),
             )),
         );
         $this->assertSameTransUnit($expected, $result);
