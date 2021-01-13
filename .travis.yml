@@ -6,8 +6,8 @@ php:
     - 7.1
     - 7.2
     - 7.3
-    - 7.4
-    - 8.0
+#    - 7.4 # needs new version of PHPUnit because of deprecations in reflection when building mock objects
+#    - 8.0 # need to specify php version differently in composer.json ^7.1 does not allow 8
 
 matrix:
     fast_finish: true
