@@ -226,13 +226,12 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
             $translationsByLocale = [];
 
             foreach ($result[$i]['translations'] as $row) {
-                $locale = $row['locale'];
-                $translationsByLocale[$locale] = $row;
+                $translationsByLocale[$row['locale']] = $row;
             }
 
             foreach ($transUnit['translations'] as $j => $translation) {
-                $locale1 = $translation['locale'];
-                $this->assertEquals($translation['content'], $translationsByLocale[$locale1]['content']);
+                $locale = $translation['locale'];
+                $this->assertEquals($translation['content'], $translationsByLocale[$locale]['content']);
             }
         }
     }
