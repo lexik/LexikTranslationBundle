@@ -27,7 +27,7 @@
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~3.0",
         "propel/propel": "2.0.0-alpha10|dev-master",
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "~7.5.2"
     },
     "suggest": {
         "doctrine/orm": ">=2.4"
