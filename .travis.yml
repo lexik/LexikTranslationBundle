@@ -3,42 +3,22 @@ language: php
 sudo: false
 
 php:
-    - 5.6
-    - 7.0
     - 7.1
     - 7.2
+    - 7.3
+    - 7.4
+#    - 8.0  PHP 7.1 requires a version of PHPUnit (7.5.2) that is too old for 8.0
 
 matrix:
     fast_finish: true
-    exclude:
-    - php: 5.6
-      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.0
-      env: SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - php: 7.2
-      env: SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 
 services:
     - mongodb
+    - mysql
 
 env:
-    - SYMFONY_VERSION=2.8.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.1.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.3.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
-    - SYMFONY_VERSION=3.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
     - SYMFONY_VERSION=4.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
+    - SYMFONY_VERSION=4.4.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 cache:
     directories:
         - $HOME/.composer/cache

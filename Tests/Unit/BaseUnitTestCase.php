@@ -240,7 +240,8 @@ abstract class BaseUnitTestCase extends TestCase
         $config->setDefaultCommitOptions(array());
 
         $options = array();
-        $conn = new \Doctrine\MongoDB\Connection(null, $options, $config);
+        $server = getenv('MONGO_SERVER') ?: null;
+        $conn = new \Doctrine\MongoDB\Connection($server, $options, $config, null, ['']);
 
         $dm = \Doctrine\ODM\MongoDB\DocumentManager::create($conn, $config);
 

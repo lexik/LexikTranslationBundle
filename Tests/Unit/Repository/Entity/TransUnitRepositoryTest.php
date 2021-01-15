@@ -217,9 +217,21 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
             $this->assertEquals(count($transUnit['translations']), count($result[$i]['translations']));
 
+            /*
+             * $expected has a fixed order. It is unsafe to rely on the order in which
+             * items are returned from the database. Therefore, the results from the database
+             * must be indexed by locale, before making any assertions, otherwise, random false negatives
+             * will occur.
+             */
+            $translationsByLocale = [];
+
+            foreach ($result[$i]['translations'] as $row) {
+                $translationsByLocale[$row['locale']] = $row;
+            }
+
             foreach ($transUnit['translations'] as $j => $translation) {
-                $this->assertEquals($translation['locale'], $result[$i]['translations'][$j]['locale']);
-                $this->assertEquals($translation['content'], $result[$i]['translations'][$j]['content']);
+                $locale = $translation['locale'];
+                $this->assertEquals($translation['content'], $translationsByLocale[$locale]['content']);
             }
         }
     }
