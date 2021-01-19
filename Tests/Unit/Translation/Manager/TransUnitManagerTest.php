@@ -2,10 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
+use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 
 /**
@@ -16,28 +21,28 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 class TransUnitManagerTest extends BaseUnitTestCase
 {
     /**
-     * @var Doctrine\ORM\EntityManager
+     * @var EntityManager
      */
     private $em;
 
     /**
-     * @var Doctrine\ODM\MongoDB\DocumentManager
+     * @var DocumentManager
      */
     private $dm;
 
     /**
-     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
+     * @var DoctrineORMStorage
      */
     private $ormStorage;
 
     /**
-     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage
+     * @var DoctrineMongoDBStorage
      */
     private $odmStorage;
 
     /**
      *
-     * @var Lexik\Bundle\TranslationBundle\Storage\PropelStorage
+     * @var PropelStorage
      */
     private $propelStorage;
 
@@ -67,7 +72,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     public function testORMCreate()
     {
-        $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
+        $fileManager = new FileManager($this->ormStorage, $this->rootDir);
         $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
         $transUnit = $manager->create('chuck.norris', 'badass');

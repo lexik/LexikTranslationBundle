@@ -3,7 +3,12 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Fixtures;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\Persistence\ObjectManager;
+use Lexik\Bundle\TranslationBundle\Document\File;
+use Lexik\Bundle\TranslationBundle\Document\Translation;
+use Lexik\Bundle\TranslationBundle\Document\TransUnit;
 
 /**
  * Tests fixtures class.
@@ -14,7 +19,7 @@ class TransUnitData implements FixtureInterface
 {
     /**
      * (non-PHPdoc)
-     * @see Doctrine\Common\DataFixtures.FixtureInterface::load()
+     * @see \Doctrine\Common\DataFixtures.FixtureInterface::load()
      */
     public function load(ObjectManager $manager)
     {
@@ -116,9 +121,9 @@ class TransUnitData implements FixtureInterface
     {
         $instance = null;
 
-        if ($manager instanceof \Doctrine\ORM\EntityManager) {
+        if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\TransUnit();
-        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\TransUnit();
         }
 
@@ -134,9 +139,9 @@ class TransUnitData implements FixtureInterface
     {
         $instance = null;
 
-        if ($manager instanceof \Doctrine\ORM\EntityManager) {
+        if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\Translation();
-        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\Translation();
         }
 
@@ -152,9 +157,9 @@ class TransUnitData implements FixtureInterface
     {
         $instance = null;
 
-        if ($manager instanceof \Doctrine\ORM\EntityManager) {
+        if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\File();
-        } elseif ($manager instanceof \Doctrine\ODM\MongoDB\DocumentManager) {
+        } elseif ($manager instanceof DocumentManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Document\File();
         }
 

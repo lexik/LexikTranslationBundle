@@ -2,7 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Lexik\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,17 +16,25 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class ExportTranslationsCommand extends ContainerAwareCommand
+class ExportTranslationsCommand extends Command
 {
     /**
-     * @var \Symfony\Component\Console\Input\InputInterface
+     * @var InputInterface
      */
     private $input;
 
     /**
-     * @var \Symfony\Component\Console\Output\OutputInterface
+     * @var OutputInterface
      */
     private $output;
+    private StorageInterface $storage;
+    private Translator $translator;
+
+    public function __construct(StorageInterface $storage, Translator $translator)
+    {
+        $this->storage = $storage;
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -82,7 +92,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
      */
     protected function exportFile(FileInterface $file)
     {
-        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.root_dir');
+        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.project_dir');
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
         $override = $this->input->getOption('override');
@@ -98,9 +108,7 @@ class ExportTranslationsCommand extends ContainerAwareCommand
             $onlyUpdated = !$override;
         }
 
-        $translations = $this->getContainer()
-            ->get('lexik_translation.translation_storage')
-            ->getTranslationsFromFile($file, $onlyUpdated);
+        $translations = $this->storage->getTranslationsFromFile($file, $onlyUpdated);
 
         if (count($translations) < 1) {
             $this->output->writeln('<comment>No translations to export.</comment>');

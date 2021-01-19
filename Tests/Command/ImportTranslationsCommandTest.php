@@ -10,12 +10,11 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Tester\CommandTester;
 use Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Test the translations import command, with option and arguments
  *
- * @covers Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand
+ * @covers \Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand
  */
 class ImportTranslationsCommandTest extends WebTestCase
 {
@@ -79,10 +78,15 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     public function testExecute()
     {
-        static::$application->add(new ImportTranslationsCommand(self::$kernel->getContainer()->get('translator')));
+        static::$application->add(
+            new ImportTranslationsCommand(
+                self::$kernel->getContainer()->get('translator'),
+                self::$kernel->getContainer()->get('lexik_translation.locale.manager'),
+                self::$kernel->getContainer()->get('lexik_translation.importer.file')
+            )
+        );
 
         $command = static::$application->find("lexik:translations:import");
-        $command->setContainer(static::$kernel->getContainer());
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(

@@ -10,21 +10,10 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
  */
 class GetDatabaseResourcesListener
 {
-    /**
-     * @var \Lexik\Bundle\TranslationBundle\Storage\StorageInterface
-     */
-    private $storage;
+    private StorageInterface $storage;
+    private string $storageType;
 
-    /**
-     * @var string
-     */
-    private $storageType;
-
-    /**
-     * @param StorageInterface $storage
-     * @param $storageType
-     */
-    public function __construct(StorageInterface $storage, $storageType)
+    public function __construct(StorageInterface $storage, string $storageType)
     {
         $this->storage = $storage;
         $this->storageType = $storageType;

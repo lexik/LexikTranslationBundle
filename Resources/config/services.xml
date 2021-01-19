@@ -68,12 +68,12 @@
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.file.manager" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <service id="lexik_translation.locale.manager" class="%lexik_translation.locale.manager.class%" public="true">
@@ -143,16 +143,15 @@
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.locale.manager" />
-            <argument>%kernel.root_dir%</argument>
+            <argument>%kernel.project_dir%</argument>
         </service>
 
         <!-- Listener -->
-        <service id="lexik_translation.listener.get_database_resources" class="%lexik_translation.listener.get_database_resources.class%">
+        <service id="Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent" class="%lexik_translation.listener.get_database_resources.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%lexik_translation.storage.type%</argument>
-            <tag name="kernel.event_listener" event="lexik_translation.event.get_database_resources" method="onGetDatabaseResources"  />
+            <tag name="kernel.event_listener" event="Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent" method="onGetDatabaseResources"  />
         </service>
-
 
         <!-- Command -->
         <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%">
