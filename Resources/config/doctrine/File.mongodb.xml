@@ -13,7 +13,7 @@
             <lifecycle-callback type="preUpdate" method="preUpdate" />
         </lifecycle-callbacks>
 
-        <field fieldName="id" name="id" id="true" strategy="AUTO" />
+        <id field-name="id" strategy="auto" />
 
         <reference-many field="translations" target-document="Lexik\Bundle\TranslationBundle\Document\Translation" mapped-by="file">
             <cascade>

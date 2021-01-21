@@ -2,7 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\EventDispatcher\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>

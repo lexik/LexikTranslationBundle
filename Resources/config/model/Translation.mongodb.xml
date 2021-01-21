@@ -6,15 +6,15 @@
 
     <mapped-superclass name="Lexik\Bundle\TranslationBundle\Model\Translation">
 
-        <field fieldName="locale" name="locale" type="string" />
+        <field name="locale" type="string" />
 
-        <field fieldName="modifiedManually" name="modified_manually" type="boolean" />
+        <field name="modifiedManually" type="boolean" />
 
-        <field fieldName="content" name="content" type="string" />
+        <field name="content" type="string" />
 
-        <field fieldName="createdAt" name="created_at" type="timestamp" />
+        <field name="createdAt" type="timestamp" />
 
-        <field fieldName="updatedAt" name="updated_at" type="timestamp" />
+        <field name="updatedAt" type="timestamp" />
 
     </mapped-superclass>
 </doctrine-mongo-mapping>

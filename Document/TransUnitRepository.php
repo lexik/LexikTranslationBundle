@@ -2,9 +2,11 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Doctrine\ODM\MongoDB\DocumentRepository;
 use Doctrine\ODM\MongoDB\Query\Builder;
+use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
 use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
+use MongoDB\BSON\ObjectId;
+use MongoDB\BSON\Regex;
 
 /**
  * Repository for TransUnit document.
@@ -21,13 +23,13 @@ class TransUnitRepository extends DocumentRepository
     public function getAllDomains()
     {
         $results = $this->createQueryBuilder()
-            ->distinct('domain')
-            ->sort('domain', 'asc')
-            ->hydrate(false)
-            ->getQuery()
-            ->execute();
+                        ->distinct('domain')
+                        ->sort('domain', 'asc')
+                        ->hydrate(false)
+                        ->getQuery()
+                        ->execute();
 
-        $domains = array();
+        $domains = [];
         foreach ($results as $item) {
             $domains[] = $item;
         }
@@ -39,51 +41,79 @@ class TransUnitRepository extends DocumentRepository
 
     /**
      * Returns all domains for each locale.
-     *
-     * @return array
      */
-    public function getAllDomainsByLocale()
+    public function getAllDomainsByLocale(): array
     {
-        $reduce = <<<FCT
-function (obj, prev) {
-    if (typeof(prev.couples) == 'undefined') { prev.couples = new Array(); }
-
-    if (typeof(obj.translations) != 'undefined') {
-        obj.translations.forEach(function (translation) {
-            var i = 0, found = false;
-            while (i<prev.couples.length && !found) {
-                found = (prev.couples[i].locale == translation['locale'] && prev.couples[i].domain == obj.domain);
-                i++;
-            }
-            if (!found) { prev.couples.push({"locale": translation['locale'], "domain": obj.domain}); }
-        });
-    }
-}
-FCT;
-
-        $results = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->group(array(), array('couples' => array()))
-            ->reduce($reduce)
-            ->sort(array('translations.locale' => 'asc', 'domain' => 'asc'))
-            ->getQuery()
+        $aggregationBuilder = $this->createAggregationBuilder();
+        $results = $aggregationBuilder
+            ->group()
+            ->field('_id')
+            ->expression('$domain')
+            ->field('locales')
+            // @see https://docs.mongodb.com/manual/reference/operator/aggregation/addToSet/#grp._S_addToSet
+            ->expression(['$addToSet' => '$translations.locale'])
             ->execute();
 
-        $couples = array();
+        //return $results->toArray();
+        /*
+         * Example of $results->toArray():
+         *
+         * Array &0 (
+             0 => Array &1 (
+                 '_id' => 'messages'
+                 'locales' => Array &2 (
+                     0 => Array &3 (
+                         0 => 'fr'
+                         1 => 'en'
+                     )
+                     1 => Array &4 (
+                         0 => 'za'
+                         1 => 'en'
+                     )
+                 )
+             )
+             1 => Array &5 (
+                 '_id' => 'superTranslations'
+                 'locales' => Array &6 (
+                     0 => Array &7 (
+                         0 => 'fr'
+                         1 => 'en'
+                         2 => 'de'
+                     )
+                 )
+             )
+         )
+         */
 
-        if (isset($results[0], $results[0]['couples'])) {
-            $couples = $results[0]['couples'];
+        $domainGroups = $results->toArray();
 
-            usort($couples, function ($a, $b) {
-                $result = strcmp($a['locale'], $b['locale']);
-                if (0 === $result) {
-                    $result = strcmp($a['domain'], $b['domain']);
-                }
-                return $result;
-            });
+        $domainsByLocale = [];
+
+        foreach ($domainGroups as $domainGroup) {
+            if (!\is_array($domainGroup['locales'])) {
+                continue;
+            }
+
+            $domain = $domainGroup['_id'];
+            $locales = \array_merge(...$domainGroup['locales']);
+
+            foreach ($locales as $locale) {
+                $domainsByLocale[] = [
+                    'locale' => $locale,
+                    'domain' => $domain,
+                ];
+            }
         }
 
-        return $couples;
+        usort($domainsByLocale, function ($a, $b) {
+            $result = strcmp($a['locale'], $b['locale']);
+            if (0 === $result) {
+                $result = strcmp($a['domain'], $b['domain']);
+            }
+            return $result;
+        });
+
+        return $domainsByLocale;
     }
 
     /**
@@ -96,14 +126,14 @@ FCT;
     public function getAllByLocaleAndDomain($locale, $domain)
     {
         $results = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->field('domain')->equals($domain)
-            ->field('translations.locale')->equals($locale)
-            ->sort('key', 'asc')
-            ->getQuery()
-            ->execute();
+                        ->hydrate(false)
+                        ->field('domain')->equals($domain)
+                        ->field('translations.locale')->equals($locale)
+                        ->sort('key', 'asc')
+                        ->getQuery()
+                        ->execute();
 
-        $values = array();
+        $values = [];
         foreach ($results as $item) {
             $i = 0;
             $index = null;
@@ -113,7 +143,7 @@ FCT;
                 }
                 $i++;
             }
-            $item['translations'] = array($item['translations'][$i - 1]);
+            $item['translations'] = [$item['translations'][$i - 1]];
             $values[] = $item;
         }
 
@@ -122,49 +152,43 @@ FCT;
 
     /**
      * Returns some trans units with their translations.
-     *
-     * @param array $locales
-     * @param int   $rows
-     * @param int   $page
-     * @param array $filters
-     * @return array
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
+    public function getTransUnitList(array $locales = null, int $rows = 20, int $page = 1, array $filters = null): array
     {
         $sortColumn = isset($filters['sidx']) ? $filters['sidx'] : 'id';
         $order = isset($filters['sord']) ? $filters['sord'] : 'ASC';
 
         $builder = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->select('id');
+                        ->hydrate(false)
+                        ->select('id');
 
         $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $results = $builder->sort($sortColumn, $order)
-            ->skip($rows * ($page - 1))
-            ->limit($rows)
-            ->getQuery()
-            ->execute();
+                           ->skip($rows * ($page - 1))
+                           ->limit($rows)
+                           ->getQuery()
+                           ->execute();
 
-        $ids = array();
+        $ids = [];
         foreach ($results as $result) {
             $ids[] = $result['_id'];
         }
 
-        $transUnits = array();
+        $transUnits = [];
 
         if (count($ids) < 1) {
             return $transUnits;
         }
 
         $results = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->field('id')->in($ids)
-            ->field('translations.locale')->in($locales)
-            ->sort(array($sortColumn => $order, 'translations.locale' => 'asc'))
-            ->getQuery()
-            ->execute();
+                        ->hydrate(false)
+                        ->field('id')->in($ids)
+                        ->field('translations.locale')->in($locales)
+                        ->sort([$sortColumn => $order, 'translations.locale' => 'asc'])
+                        ->getQuery()
+                        ->execute();
 
         foreach ($results as $item) {
             $end = count($item['translations']);
@@ -182,12 +206,8 @@ FCT;
 
     /**
      * Count the number of trans unit.
-     *
-     * @param array $locales
-     * @param array $filters
-     * @return int
      */
-    public function count(array $locales = null,  array $filters = null)
+    public function count(array $locales = null, array $filters = null): int
     {
         $builder = $this->createQueryBuilder();
 
@@ -195,8 +215,8 @@ FCT;
         $this->addTranslationFilter($builder, $locales, $filters);
 
         $count = $builder->count()
-            ->getQuery()
-            ->execute();
+                         ->getQuery()
+                         ->execute();
 
         return $count;
     }
@@ -211,21 +231,21 @@ FCT;
     public function getTranslationsForFile(ModelFile $file, $onlyUpdated)
     {
         $builder = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->select('key', 'translations')
-            ->field('translations.file.$id')->equals(new \MongoId($file->getId()))
-            ->sort('translations.created_at', 'asc');
+                        ->hydrate(false)
+                        ->select('key', 'translations')
+                        ->field('translations.file.$id')->equals(new ObjectId($file->getId()))
+                        ->sort('translations.created_at', 'asc');
 
         $results = $builder->getQuery()->execute();
 
-        $translations = array();
+        $translations = [];
         foreach ($results as $result) {
             $content = null;
             $i = 0;
             while ($i < count($result['translations']) && null === $content) {
                 if ($file->getLocale() == $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
-                        $updated = ($result['translations'][$i]['created_at']->sec < $result['translations'][$i]['updated_at']->sec);
+                        $updated = ($result['translations'][$i]['createdAt'] < $result['translations'][$i]['updatedAt']);
                         $content = $updated ? $result['translations'][$i]['content'] : null;
                     } else {
                         $content = $result['translations'][$i]['content'];
@@ -248,46 +268,45 @@ FCT;
      * @param Builder $builder
      * @param array   $filters
      */
-    protected function addTransUnitFilters(Builder $builder,  array $filters = null)
+    protected function addTransUnitFilters(Builder $builder, array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
-                $builder->addAnd($builder->expr()->field('domain')->equals(new \MongoRegex(sprintf('/%s/i', $filters['domain']))));
+                $regex = new Regex($filters['domain'], 'i');
+                $builder->addAnd($builder->expr()->field('domain')->equals($regex));
             }
 
             if (!empty($filters['key'])) {
-                $builder->addAnd($builder->expr()->field('key')->equals(new \MongoRegex(sprintf('/%s/i', $filters['key']))));
+                $regex = new Regex($filters['key'], 'i');
+                $builder->addAnd($builder->expr()->field('key')->equals($regex));
             }
         }
     }
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param Builder $builder
-     * @param array   $locales
-     * @param array   $filters
      */
-    protected function addTranslationFilter(Builder $builder, array $locales = null,  array $filters = null)
+    protected function addTranslationFilter(Builder $builder, array $locales = null, array $filters = null)
     {
         if (null !== $locales) {
             $qb = $this->createQueryBuilder()
-                ->hydrate(false)
-                ->distinct('id')
-                ->field('translations.locale')->in($locales);
+                       ->hydrate(false)
+                       ->distinct('id')
+                       ->field('translations.locale')->in($locales);
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
+                    $regex = new Regex($filters[$locale], 'i');
                     $builder->addAnd(
                         $builder->expr()
-                            ->field('translations.content')->equals(new \MongoRegex(sprintf('/%s/i', $filters[$locale])))
-                            ->field('translations.locale')->equals($locale)
+                                ->field('translations.content')->equals($regex)
+                                ->field('translations.locale')->equals($locale)
                     );
                 }
             }
 
             $ids = $qb->getQuery()->execute();
-            $ids = iterator_to_array($ids);
+            //$ids = iterator_to_array($ids);
 
             if (count($ids) > 0) {
                 $builder->field('id')->in($ids);
@@ -301,12 +320,12 @@ FCT;
     public function getLatestTranslationUpdatedAt()
     {
         $result = $this->createQueryBuilder()
-            ->hydrate(false)
-            ->select('translations.updatedAt')
-            ->sort('translations.updatedAt', 'desc')
-            ->limit(1)
-            ->getQuery()
-            ->getSingleResult();
+                       ->hydrate(false)
+                       ->select('translations.updatedAt')
+                       ->sort('translations.updatedAt', 'desc')
+                       ->limit(1)
+                       ->getQuery()
+                       ->getSingleResult();
 
         if (!isset($result['translations'], $result['translations'][0])) {
             return null;
@@ -333,13 +352,14 @@ function (obj, prev) {
 FCT;
 
         $results = $this->createQueryBuilder()
-            ->group(array(), array())
-            ->reduce($reduce)
-            ->hydrate(false)
-            ->getQuery()
-            ->execute();
+                        ->group([],
+                            []) // @todo: group and reduce won't work anymore, but this method seems to be untested
+                        ->reduce($reduce)
+                        ->hydrate(false)
+                        ->getQuery()
+                        ->execute();
 
-        return isset($results[0]['count']) ? $results[0]['count'] : array();
+        return isset($results[0]['count']) ? $results[0]['count'] : [];
     }
 
     /**
@@ -365,13 +385,13 @@ function (obj, prev) {
 FCT;
 
         $results = $this->createQueryBuilder()
-            ->field('domain')->equals($domain)
-            ->group(array(), array())
-            ->reduce($reduce)
-            ->hydrate(false)
-            ->getQuery()
-            ->execute();
+                        ->field('domain')->equals($domain)
+                        ->group([], []) // @todo: won't work, untested
+                        ->reduce($reduce)
+                        ->hydrate(false)
+                        ->getQuery()
+                        ->execute();
 
-        return isset($results[0]['count']) ? $results[0]['count'] : array();
+        return isset($results[0]['count']) ? $results[0]['count'] : [];
     }
 }

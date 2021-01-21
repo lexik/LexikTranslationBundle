@@ -121,7 +121,7 @@ class FileManager implements FileManagerInterface
         $nbRootParts = count($rootDirParts);
 
         for ($i = $nbCommonParts; $i < $nbRootParts; $i++) {
-            $filePath = '../'.$filePath;
+             $filePath = '../'.$filePath;
         }
 
         return $antiSlash ? str_replace('/', '\\', $filePath) : $filePath;

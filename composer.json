@@ -17,17 +17,20 @@
         }
     ],
     "require": {
-        "php": "^7.1",
-        "symfony/symfony": "~4.4"
+        "php": "^7.4",
+        "symfony/symfony": "~5.0",
+        "ext-mongodb": "*"
     },
     "require-dev": {
-        "alcaeus/mongo-php-adapter": "~1.0",
         "doctrine/orm": ">=2.4",
-        "doctrine/doctrine-bundle": "~1.2",
+        "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
-        "doctrine/mongodb-odm-bundle": "~3.0",
+        "doctrine/mongodb-odm-bundle": "~4.2",
         "propel/propel": "2.0.0-alpha10|dev-master",
-        "phpunit/phpunit": "~7.5.2"
+        "phpunit/phpunit": "~7.5.2",
+        "doctrine/mongodb-odm": "^2.1",
+        "mongodb/mongodb": "^1.8",
+        "ext-pdo": "*"
     },
     "suggest": {
         "doctrine/orm": ">=2.4"
