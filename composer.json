@@ -17,11 +17,11 @@
         }
     ],
     "require": {
-        "php": "^7.4",
-        "symfony/symfony": "~5.0",
-        "ext-mongodb": "*"
+        "php": "^7.4"
     },
     "require-dev": {
+        "symfony/symfony": "~5.0",
+        "ext-mongodb": "*",
         "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
