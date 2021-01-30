@@ -4,7 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Command;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
 use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,6 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Imports translation files content in the database.
@@ -23,16 +23,16 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class ImportTranslationsCommand extends Command
 {
-    private Translator $translator;
+    private TranslatorInterface $translator;
 
     private LocaleManager $localeManager;
     private FileImporter $fileImporter;
 
     /**
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      */
     public function __construct(
-        Translator $translator,
+        TranslatorInterface $translator,
         LocaleManager $localeManager,
         FileImporter $fileImporter
     )
