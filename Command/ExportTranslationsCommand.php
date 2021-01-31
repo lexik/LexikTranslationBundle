@@ -32,6 +32,8 @@ class ExportTranslationsCommand extends Command
 
     public function __construct(StorageInterface $storage, TranslatorInterface $translator)
     {
+        parent::__construct();
+
         $this->storage = $storage;
         $this->translator = $translator;
     }
