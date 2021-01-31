@@ -3,13 +3,13 @@
 namespace Lexik\Bundle\TranslationBundle\Command;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Export translations from the database in to files.
@@ -28,9 +28,9 @@ class ExportTranslationsCommand extends Command
      */
     private $output;
     private StorageInterface $storage;
-    private Translator $translator;
+    private TranslatorInterface $translator;
 
-    public function __construct(StorageInterface $storage, Translator $translator)
+    public function __construct(StorageInterface $storage, TranslatorInterface $translator)
     {
         $this->storage = $storage;
         $this->translator = $translator;

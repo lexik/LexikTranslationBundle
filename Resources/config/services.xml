@@ -170,12 +170,11 @@
         </service>
 
         <!-- Command -->
-        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" class="%lexik_translation.command.import_translations.class%">
-            <argument type="service" id="translator" />
+        <service id="Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand" autowire="true" class="%lexik_translation.command.import_translations.class%">
             <tag name="console.command" />
         </service>
 
-        <service id="Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand" class="%lexik_translation.command.export_translations.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand" autowire="true" class="%lexik_translation.command.export_translations.class%">
             <tag name="console.command" />
         </service>
         
