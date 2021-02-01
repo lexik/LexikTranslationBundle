@@ -81,6 +81,10 @@
             <argument type="service" id="lexik_translation.translation_storage" />
             <tag name="translation.loader" alias="database" />
         </service>
+        <service id="Symfony\Component\Translation\Loader\YamlFileLoader">
+            <argument type="service" id="lexik_translation.translation_storage" />
+            <tag name="translation.loader" alias="yml" />
+        </service>
 
         <!-- Managers -->
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%" public="true">
@@ -97,10 +101,10 @@
         <service id="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" class="%lexik_translation.locale.manager.class%" public="true">
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
-        <service id="lexik_translation.locale.manager"  alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" />
+        <service id="lexik_translation.locale.manager"  alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" public="true" />
 
         <!-- Importer -->
-        <service id="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" class="%lexik_translation.importer.file.class%" public="true">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" class="%lexik_translation.importer.file.class%" >
             <argument type="collection" /> <!-- translation loaders -->
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="lexik_translation.trans_unit.manager" />
@@ -109,7 +113,6 @@
                 <argument>%lexik_translation.importer.case_insensitive%</argument>
             </call>
         </service>
-        <service id="lexik_translation.importer.file" alias="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter"/>
 
         <!-- Exporter -->
         <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" public="true"/>
