@@ -61,6 +61,10 @@
     </parameters>
 
     <services>
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Translator" autowire="true">
+            <argument key="$formatter" id="translator.formatter.default" />
+        </service>
+        <service id="lexik_translation.translator" alias="Lexik\Bundle\TranslationBundle\Translation\Translator" public="true"/>
         <service id="Lexik\Bundle\TranslationBundle\Storage\StorageInterface" alias="lexik_translation.translation_storage" />
 
         <!-- Controller -->
@@ -77,15 +81,10 @@
             <tag name="controller.service_arguments" />
         </service>
         <!-- Loader -->
-        <service id="lexik_translation.loader.database" class="%lexik_translation.loader.database.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Loader" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <tag name="translation.loader" alias="database" />
         </service>
-        <service id="Symfony\Component\Translation\Loader\YamlFileLoader">
-            <argument type="service" id="lexik_translation.translation_storage" />
-            <tag name="translation.loader" alias="yml" />
-        </service>
-
         <!-- Managers -->
         <service id="lexik_translation.trans_unit.manager" class="%lexik_translation.trans_unit.manager.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
@@ -101,7 +100,7 @@
         <service id="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" class="%lexik_translation.locale.manager.class%" public="true">
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
-        <service id="lexik_translation.locale.manager"  alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" public="true" />
+        <service id="lexik_translation.locale.manager" alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" public="true" />
 
         <!-- Importer -->
         <service id="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" class="%lexik_translation.importer.file.class%" >
@@ -113,7 +112,7 @@
                 <argument>%lexik_translation.importer.case_insensitive%</argument>
             </call>
         </service>
-
+        <service id="lexik_translation.importer.file" alias="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" public="true"/>
         <!-- Exporter -->
         <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" public="true"/>
 
