@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Command;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,24 +19,29 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ExportTranslationsCommand extends Command
 {
-    /**
-     * @var InputInterface
-     */
-    private $input;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private InputInterface $input;
+    private OutputInterface $output;
     private StorageInterface $storage;
     private TranslatorInterface $translator;
+    private string $projectDir;
+    private Filesystem $fileSystem;
+    private ExporterCollector $exporterCollector;
 
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator)
+    public function __construct(
+        StorageInterface $storage,
+        TranslatorInterface $translator,
+        FileSystem $fileSystem,
+        ExporterCollector $exporterCollector,
+        string $projectDir
+    )
     {
         parent::__construct();
 
         $this->storage = $storage;
         $this->translator = $translator;
+        $this->projectDir = $projectDir;
+        $this->fileSystem = $fileSystem;
+        $this->exporterCollector = $exporterCollector;
     }
 
     /**
@@ -82,9 +88,7 @@ class ExportTranslationsCommand extends Command
         $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
         $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
 
-        return $this->getContainer()
-            ->get('lexik_translation.translation_storage')
-            ->getFilesByLocalesAndDomains($locales, $domains);
+        return $this->storage->getFilesByLocalesAndDomains($locales, $domains);
     }
 
     /**
@@ -94,7 +98,7 @@ class ExportTranslationsCommand extends Command
      */
     protected function exportFile(FileInterface $file)
     {
-        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.project_dir');
+        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->projectDir;
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
         $override = $this->input->getOption('override');
@@ -131,10 +135,8 @@ class ExportTranslationsCommand extends Command
 
         // ensure the path exists
         if ($this->input->getOption('export-path')) {
-            /** @var Filesystem $fs */
-            $fs = $this->getContainer()->get('filesystem');
-            if (!$fs->exists($outputPath)) {
-                $fs->mkdir($outputPath);
+            if (!$this->fileSystem->exists($outputPath)) {
+                $this->fileSystem->mkdir($outputPath);
             }
         }
 
@@ -157,7 +159,7 @@ class ExportTranslationsCommand extends Command
     {
         if (file_exists($outputFile)) {
             $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
-            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($extension);
+            $loader = $this->translator->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);
@@ -179,7 +181,7 @@ class ExportTranslationsCommand extends Command
         $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
         try {
-            $exported = $this->getContainer()->get('lexik_translation.exporter_collector')->export(
+            $exported = $this->exporterCollector->export(
                 $format,
                 $outputFile,
                 $translations
