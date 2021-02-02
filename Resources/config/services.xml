@@ -114,7 +114,8 @@
         </service>
         <service id="lexik_translation.importer.file" alias="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" public="true"/>
         <!-- Exporter -->
-        <service id="lexik_translation.exporter_collector" class="%lexik_translation.exporter_collector.class%" public="true"/>
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" class="%lexik_translation.exporter_collector.class%"/>
+        <service id="lexik_translation.exporter_collector" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" public="true"/>
 
         <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
@@ -181,6 +182,7 @@
         </service>
 
         <service id="Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand" autowire="true" class="%lexik_translation.command.export_translations.class%">
+            <argument key="$projectDir" >%kernel.project_dir%</argument>
             <tag name="console.command" />
         </service>
 

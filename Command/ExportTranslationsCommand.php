@@ -2,13 +2,13 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -33,8 +33,7 @@ class ExportTranslationsCommand extends Command
         FileSystem $fileSystem,
         ExporterCollector $exporterCollector,
         string $projectDir
-    )
-    {
+    ) {
         parent::__construct();
 
         $this->storage = $storage;
@@ -52,10 +51,13 @@ class ExportTranslationsCommand extends Command
         $this->setName('lexik:translations:export');
         $this->setDescription('Export translations from the database to files.');
 
-        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
-        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
+        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL,
+            'Only export files for given locales. e.g. "--locales=en,de"', null);
+        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL,
+            'Only export files for given domains. e.g. "--domains=messages,validators"', null);
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
-        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are exported fully anyway)');
+        $this->addOption('override', 'o', InputOption::VALUE_NONE,
+            'Only export modified phrases (app/Resources/translations are exported fully anyway)');
         $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');
     }
 
@@ -73,9 +75,13 @@ class ExportTranslationsCommand extends Command
             foreach ($filesToExport as $file) {
                 $this->exportFile($file);
             }
-        } else {
-            $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
+
+            return 0;
         }
+
+        $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
+
+        return 1;
     }
 
     /**
@@ -85,8 +91,8 @@ class ExportTranslationsCommand extends Command
      */
     protected function getFilesToExport()
     {
-        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
-        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
+        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : [];
+        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : [];
 
         return $this->storage->getFilesByLocalesAndDomains($locales, $domains);
     }
@@ -151,8 +157,8 @@ class ExportTranslationsCommand extends Command
      * If the output file exists we merge existing translations with those from the database.
      *
      * @param FileInterface $file
-     * @param string $outputFile
-     * @param array $translations
+     * @param string        $outputFile
+     * @param array         $translations
      * @return array
      */
     protected function mergeExistingTranslations($file, $outputFile, $translations)
@@ -172,7 +178,7 @@ class ExportTranslationsCommand extends Command
      * Export translations.
      *
      * @param string $outputFile
-     * @param array $translations
+     * @param array  $translations
      * @param string $format
      */
     protected function doExport($outputFile, $translations, $format)
