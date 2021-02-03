@@ -18,8 +18,7 @@
     ],
     "require": {
         "php": "^7.4",
-        "symfony/framework-bundle": "~4.0|~5.0",
-        "symfony/translation": "^5.2"
+        "symfony/framework-bundle": "~4.0|~5.0"
     },
     "require-dev": {
         "ext-mongodb": "*",
