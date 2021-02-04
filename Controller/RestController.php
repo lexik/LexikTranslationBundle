@@ -3,14 +3,14 @@
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class RestController extends Controller
+class RestController extends AbstractController
 {
     use CsrfCheckerTrait;
 
@@ -21,7 +21,7 @@ class RestController extends Controller
      */
     public function listAction(Request $request)
     {
-        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPage($request);
+        [$transUnits, $count] = $this->get('lexik_translation.data_grid.request_handler')->getPage($request);
 
         return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
     }
@@ -34,7 +34,7 @@ class RestController extends Controller
      */
     public function listByProfileAction(Request $request, $token)
     {
-        list($transUnits, $count) = $this->get('lexik_translation.data_grid.request_handler')->getPageByToken($request, $token);
+        [$transUnits, $count] = $this->get('lexik_translation.data_grid.request_handler')->getPageByToken($request, $token);
 
         return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
     }

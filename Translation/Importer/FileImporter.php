@@ -93,13 +93,13 @@ class FileImporter
     {
         $this->skippedKeys = array();
         $imported = 0;
-        list($domain, $locale, $extention) = explode('.', $file->getFilename());
+        list($domain, $locale, $extension) = explode('.', $file->getFilename());
 
-        if (!isset($this->loaders[$extention])) {
-            throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
+        if (!isset($this->loaders[$extension])) {
+            throw new \RuntimeException(sprintf('No loader found for "%s" format.', $extension));
         }
 
-        $messageCatalogue = $this->loaders[$extention]->load($file->getPathname(), $locale, $domain);
+        $messageCatalogue = $this->loaders[$extension]->load($file->getPathname(), $locale, $domain);
 
         $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 

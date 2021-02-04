@@ -2,14 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Command;
 
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
+use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Export translations from the database in to files.
@@ -18,22 +19,28 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class ExportTranslationsCommand extends Command
 {
-    /**
-     * @var InputInterface
-     */
-    private $input;
-
-    /**
-     * @var OutputInterface
-     */
-    private $output;
+    private InputInterface $input;
+    private OutputInterface $output;
     private StorageInterface $storage;
-    private Translator $translator;
+    private TranslatorInterface $translator;
+    private string $projectDir;
+    private Filesystem $fileSystem;
+    private ExporterCollector $exporterCollector;
 
-    public function __construct(StorageInterface $storage, Translator $translator)
-    {
+    public function __construct(
+        StorageInterface $storage,
+        TranslatorInterface $translator,
+        FileSystem $fileSystem,
+        ExporterCollector $exporterCollector,
+        string $projectDir
+    ) {
+        parent::__construct();
+
         $this->storage = $storage;
         $this->translator = $translator;
+        $this->projectDir = $projectDir;
+        $this->fileSystem = $fileSystem;
+        $this->exporterCollector = $exporterCollector;
     }
 
     /**
@@ -44,10 +51,13 @@ class ExportTranslationsCommand extends Command
         $this->setName('lexik:translations:export');
         $this->setDescription('Export translations from the database to files.');
 
-        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL, 'Only export files for given locales. e.g. "--locales=en,de"', null);
-        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL, 'Only export files for given domains. e.g. "--domains=messages,validators"', null);
+        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL,
+            'Only export files for given locales. e.g. "--locales=en,de"', null);
+        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL,
+            'Only export files for given domains. e.g. "--domains=messages,validators"', null);
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
-        $this->addOption('override', 'o', InputOption::VALUE_NONE, 'Only export modified phrases (app/Resources/translations are exported fully anyway)');
+        $this->addOption('override', 'o', InputOption::VALUE_NONE,
+            'Only export modified phrases (app/Resources/translations are exported fully anyway)');
         $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');
     }
 
@@ -65,9 +75,13 @@ class ExportTranslationsCommand extends Command
             foreach ($filesToExport as $file) {
                 $this->exportFile($file);
             }
-        } else {
-            $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
+
+            return 0;
         }
+
+        $this->output->writeln('<comment>No translation\'s files in the database.</comment>');
+
+        return 1;
     }
 
     /**
@@ -77,12 +91,10 @@ class ExportTranslationsCommand extends Command
      */
     protected function getFilesToExport()
     {
-        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : array();
-        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : array();
+        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : [];
+        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : [];
 
-        return $this->getContainer()
-            ->get('lexik_translation.translation_storage')
-            ->getFilesByLocalesAndDomains($locales, $domains);
+        return $this->storage->getFilesByLocalesAndDomains($locales, $domains);
     }
 
     /**
@@ -92,7 +104,7 @@ class ExportTranslationsCommand extends Command
      */
     protected function exportFile(FileInterface $file)
     {
-        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->getContainer()->getParameter('kernel.project_dir');
+        $rootDir = $this->input->getOption('export-path') ? $this->input->getOption('export-path') . '/' : $this->projectDir;
 
         $this->output->writeln(sprintf('<info># Exporting "%s/%s":</info>', $file->getPath(), $file->getName()));
         $override = $this->input->getOption('override');
@@ -129,10 +141,8 @@ class ExportTranslationsCommand extends Command
 
         // ensure the path exists
         if ($this->input->getOption('export-path')) {
-            /** @var Filesystem $fs */
-            $fs = $this->getContainer()->get('filesystem');
-            if (!$fs->exists($outputPath)) {
-                $fs->mkdir($outputPath);
+            if (!$this->fileSystem->exists($outputPath)) {
+                $this->fileSystem->mkdir($outputPath);
             }
         }
 
@@ -147,15 +157,15 @@ class ExportTranslationsCommand extends Command
      * If the output file exists we merge existing translations with those from the database.
      *
      * @param FileInterface $file
-     * @param string $outputFile
-     * @param array $translations
+     * @param string        $outputFile
+     * @param array         $translations
      * @return array
      */
     protected function mergeExistingTranslations($file, $outputFile, $translations)
     {
         if (file_exists($outputFile)) {
             $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
-            $loader = $this->getContainer()->get('lexik_translation.translator')->getLoader($extension);
+            $loader = $this->translator->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());
 
             $translations = array_merge($messageCatalogue->all($file->getDomain()), $translations);
@@ -168,7 +178,7 @@ class ExportTranslationsCommand extends Command
      * Export translations.
      *
      * @param string $outputFile
-     * @param array $translations
+     * @param array  $translations
      * @param string $format
      */
     protected function doExport($outputFile, $translations, $format)
@@ -177,7 +187,7 @@ class ExportTranslationsCommand extends Command
         $this->output->write(sprintf('<comment>%d translations to export: </comment>', count($translations)));
 
         try {
-            $exported = $this->getContainer()->get('lexik_translation.exporter_collector')->export(
+            $exported = $this->exporterCollector->export(
                 $format,
                 $outputFile,
                 $translations
