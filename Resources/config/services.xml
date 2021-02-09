@@ -117,23 +117,27 @@
         <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" class="%lexik_translation.exporter_collector.class%"/>
         <service id="lexik_translation.exporter_collector" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector" public="true"/>
 
-        <service id="lexik_translation.exporter.xliff" class="%lexik_translation.exporter.xliff.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter" class="%lexik_translation.exporter.xliff.class%">
             <tag name="lexik_translation.exporter" alias="xlf" />
         </service>
+        <service id="lexik_translation.exporter.xliff" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter" public="true"/>
 
-        <service id="lexik_translation.exporter.json" class="%lexik_translation.exporter.json.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter" class="%lexik_translation.exporter.json.class%">
             <argument>%lexik_translation.exporter.json.hierarchical_format%</argument>
             <tag name="lexik_translation.exporter" alias="json" />
         </service>
+        <service id="lexik_translation.exporter.json" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter" public="true"/>
 
-        <service id="lexik_translation.exporter.yml" class="%lexik_translation.exporter.yml.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter" class="%lexik_translation.exporter.yml.class%">
             <argument>%lexik_translation.exporter.yml.use_tree%</argument>
             <tag name="lexik_translation.exporter" alias="yml" />
         </service>
+        <service id="lexik_translation.exporter.yml" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter"/>
 
-        <service id="lexik_translation.exporter.php" class="%lexik_translation.exporter.php.class%">
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter" class="%lexik_translation.exporter.php.class%">
             <tag name="lexik_translation.exporter" alias="php" />
         </service>
+        <service id="lexik_translation.exporter.php" alias="Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter"/>
 
         <!-- Data grid -->
         <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%" public="true">

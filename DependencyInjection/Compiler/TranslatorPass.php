@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 
+use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
@@ -40,7 +41,7 @@ class TranslatorPass implements CompilerPassInterface
                 $serviceRefs = array_merge($loadersReferencesById, array('event_dispatcher' => new Reference('event_dispatcher')));
 
                 $container->findDefinition('lexik_translation.translator')
-                    ->replaceArgument(0, \Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass::register($container, $serviceRefs))
+                    ->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs))
                     ->replaceArgument(3, $loaders);
             } else {
                 $container->findDefinition('lexik_translation.translator')->replaceArgument(2, $loaders);
@@ -52,9 +53,9 @@ class TranslatorPass implements CompilerPassInterface
         }
 
         // exporters
-        if ($container->hasDefinition('lexik_translation.exporter_collector')) {
+        if ($container->hasDefinition('Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector')) {
             foreach ($container->findTaggedServiceIds('lexik_translation.exporter') as $id => $attributes) {
-                $container->getDefinition('lexik_translation.exporter_collector')->addMethodCall('addExporter', array($id, new Reference($id)));
+                $container->getDefinition('Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector')->addMethodCall('addExporter', array($id, new Reference($id)));
             }
         }
     }
