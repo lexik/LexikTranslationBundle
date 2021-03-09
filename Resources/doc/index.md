@@ -80,7 +80,7 @@ Change the layout used with the bundle's template:
 
 ```yml
 lexik_translation:
-    base_layout: "LexikTranslationBundle::layout.html.twig"
+    base_layout: "@LexikTranslationBundle/layout.html.twig"
 ```
 
 You can customize the edition grid by using input text or textarea fields.
