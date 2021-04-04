@@ -17,8 +17,8 @@
         }
     ],
     "require": {
-        "php": "^7.4",
-        "symfony/framework-bundle": "~4.0|~5.0"
+        "php": "^7.4|^8.0",
+        "symfony/framework-bundle": "~5.0"
     },
     "require-dev": {
         "ext-mongodb": "*",
@@ -27,11 +27,12 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~4.2",
-        "propel/propel": "2.0.0-alpha10|dev-master",
-        "phpunit/phpunit": "~7.5.2",
+        "propel/propel": "2.0.0-alpha12|dev-master",
+        "phpunit/phpunit": "^8.3|^9.5",
         "doctrine/mongodb-odm": "^2.1",
         "mongodb/mongodb": "^1.8",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "mikey179/vfsstream": "^1.6"
     },
     "suggest": {
         "doctrine/orm": ">=2.4"

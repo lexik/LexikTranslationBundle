@@ -51,7 +51,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
      */
     private $rootDir = '/test/root/dir/app';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->em = $this->getMockSqliteEntityManager();
         $this->createSchema($this->em);
