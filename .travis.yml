@@ -4,7 +4,7 @@ sudo: false
 
 php:
     - 7.4
-#    - 8.0  PHP 7.1 requires a version of PHPUnit (7.5.2) that is too old for 8.0
+    - 8.0
 
 matrix:
     fast_finish: true
