@@ -14,7 +14,6 @@ services:
     - mysql
 
 env:
-    - SYMFONY_VERSION=5.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
     - SYMFONY_VERSION=5.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 cache:
     directories:
