@@ -4,7 +4,7 @@ sudo: false
 
 php:
     - 7.4
-#    - 8.0  PHP 7.1 requires a version of PHPUnit (7.5.2) that is too old for 8.0
+    - 8.0
 
 matrix:
     fast_finish: true
@@ -14,7 +14,6 @@ services:
     - mysql
 
 env:
-    - SYMFONY_VERSION=5.0.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
     - SYMFONY_VERSION=5.2.* DB=pdo_mysql DB_USER=root DB_NAME=lexik_test DEPENDENCIES=alpha
 cache:
     directories:

@@ -14,7 +14,7 @@ class PhpExporterTest extends TestCase
 {
     private $outFileName = '/file.out';
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $outFile = __DIR__.$this->outFileName;
 
