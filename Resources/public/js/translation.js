@@ -148,7 +148,8 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$l
 
                     translationApiManager
                         .getPage(params, this)
-                        .success(function (responseData) {
+                        .then(function successCallback(response) {
+                            var responseData = response.data;
                             params.total(responseData.total);
                             $defer.resolve(responseData.translations);
                         });
@@ -229,10 +230,10 @@ app.controller('TranslationController', [
         $scope.invalidateCache = function () {
             translationApiManager
                 .invalidateCache()
-                .success(function (responseData) {
+                .then(function successCallback(response) {
+                    var responseData = response.data;
                     sharedMessage.set('success', 'ok-circle', responseData.message);
-                })
-                .error(function () {
+                }, function errorCallback(response) {
                     sharedMessage.set('danger', 'remove-circle', 'Error');
                 })
             ;
@@ -326,11 +327,12 @@ app.directive('editableRow', [
                     } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
                         translationApiManager
                             .updateTranslation($scope.translation)
-                            .success(function (data) {
+                            .then(function successCallback(response) {
+                                var data = response.data;
                                 $scope.mode = null;
                                 $scope.translation = data;
                                 sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
-                            }).error(function () {
+                            }, function errorCallback(response) {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
                             });
                     }
@@ -344,20 +346,22 @@ app.directive('editableRow', [
                     if (column.index == '_key') {
                         translationApiManager
                             .deleteTranslation($scope.translation)
-                            .success(function (data) {
+                            .then(function successCallback(response) {
+                                var data = response.data;
                                 sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
                                 $scope.mode = null;
                                 tableParamsManager.reloadTableData();
-                            }).error(function () {
+                            }, function errorCallback(response) {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     } else {
                         translationApiManager
                             .deleteTranslationLocale($scope.translation, column.index)
-                            .success(function (data) {
+                            .then(function successCallback(response) {
+                                var data = response.data;
                                 sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
                                 $scope.translation[column.index] = '';
-                            }).error(function () {
+                            }, function errorCallback(response) {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     }
