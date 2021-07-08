@@ -128,6 +128,7 @@ class TransUnitManager implements TransUnitManagerInterface
         if ($found) {
             /* @var Translation $translation */
             $translation = $transUnit->getTranslations()->get($i - 1);
+
             if ($merge) {
                 if ($translation->isModifiedManually() || $translation->getContent() == $content) {
                     return null;
@@ -138,11 +139,13 @@ class TransUnitManager implements TransUnitManagerInterface
                 $this->storage->flush();
 
                 $newTranslation->setContent($content);
+                $transUnit->addTranslation($newTranslation);
+
                 $this->storage->persist($newTranslation);
                 $translation = $newTranslation;
+            } else {
+                $translation->setContent($content);
             }
-
-            $translation->setContent($content);
         }
 
         if (null !== $translation && $this->storage instanceof PropelStorage) {

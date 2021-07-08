@@ -123,21 +123,22 @@ class FileImporter
                 $transUnit = $this->transUnitManager->create($key, $domain);
             }
 
-                $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
+            $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
+
+            if ($translation instanceof TranslationInterface) {
+                $imported++;
+            } else if($forceUpdate) {
+                $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
+                if ($translation instanceof Translation) {
+                    $translation->setModifiedManually(false);
+                }
+                $imported++;
+            } else if($merge) {
+                $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
                 if ($translation instanceof TranslationInterface) {
                     $imported++;
-                } else if($forceUpdate) {
-                    $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
-                    if ($translation instanceof Translation) {
-                        $translation->setModifiedManually(false);
-                    }
-                    $imported++;
-                } else if($merge) {
-                    $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
-                    if ($translation instanceof TranslationInterface) {
-                        $imported++;
-                    }
                 }
+            }
 
             $keys[] = $normalizedKey;
 
