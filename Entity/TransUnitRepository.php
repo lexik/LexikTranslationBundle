@@ -73,7 +73,7 @@ class TransUnitRepository extends EntityRepository
      * @param array $filters
      * @return array
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
+    public function getTransUnitList(array $locales = null, int $rows = 20, int $page = 1, array $filters = null)
     {
         $this->loadCustomHydrator();
 
