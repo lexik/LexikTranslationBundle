@@ -26,7 +26,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
         $connection = $em->getConnection();
 
         // listDatabases() is not available for SQLite
-        if (get_class($connection->getDriver()) !== SQLiteDriver::class) {
+        if (!$connection->getDriver() instanceof SQLiteDriver::class) {
             // init a tmp connection without dbname/path/url in case it does not exist yet
             $params = $connection->getParams();
             if (isset($params['master'])) {
