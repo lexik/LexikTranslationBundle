@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Driver\PDO\SQLite\Driver as SQLiteDriver;
 use Doctrine\DBAL\DBALException;
 use Doctrine\ORM\EntityManager;
 
@@ -25,7 +26,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
         $connection = $em->getConnection();
 
         // listDatabases() is not available for SQLite
-        if ('pdo_sqlite' !== $connection->getDriver()->getName()) {
+        if (!$connection->getDriver() instanceof SQLiteDriver) {
             // init a tmp connection without dbname/path/url in case it does not exist yet
             $params = $connection->getParams();
             if (isset($params['master'])) {
