@@ -245,8 +245,16 @@ class ImportTranslationsCommand extends Command
     protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains, $global = false)
     {
         $path = $bundle->getPath();
-        if ($global) {
-            $path = $this->getApplication()->getKernel()->getRootDir() . '/Resources/' . $bundle->getName() . '/translations';
+        if ($global) {            
+            $kernel = $this->getApplication()->getKernel();
+            if (Kernel::MAJOR_VERSION >= 4) {
+                $path = $kernel->getProjectDir() . '/app';
+            } else {
+                $path = $kernel->getRootDir();
+            }
+
+            $path .= '/Resources/' . $bundle->getName() . '/translations';
+            
             $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
         }
 
