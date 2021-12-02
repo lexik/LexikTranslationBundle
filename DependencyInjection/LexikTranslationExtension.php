@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
@@ -122,7 +123,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $listener->addArgument(new Reference('lexik_translation.translation_storage'));
         $listener->addArgument(new Reference('translator'));
         $listener->addArgument(new Parameter('kernel.cache_dir'));
-        $listener->addArgument(new Reference('lexik_translation.locale.manager'));
+        $listener->addArgument(new Reference(LocaleManagerInterface::class));
         $listener->addArgument($cacheInterval);
 
         $listener->addTag('kernel.event_listener', array(
@@ -330,7 +331,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
-                    list($domain, $locale, $format) = explode('.', $file->getBasename(), 3);
+                    [$domain, $locale, $format] = explode('.', $file->getBasename(), 3);
                     $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
                 }
             }

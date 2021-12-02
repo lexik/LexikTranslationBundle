@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
 use Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -115,6 +116,6 @@ class TranslationController extends AbstractController
      */
     protected function getManagedLocales()
     {
-        return $this->get('lexik_translation.locale.manager')->getLocales();
+        return $this->get(LocaleManagerInterface::class)->getLocales();
     }
 }
