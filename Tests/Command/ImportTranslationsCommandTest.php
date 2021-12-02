@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand;
 use Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -81,7 +82,7 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::$application->add(
             new ImportTranslationsCommand(
                 self::$kernel->getContainer()->get('translator'),
-                self::$kernel->getContainer()->get('lexik_translation.locale.manager'),
+                self::$kernel->getContainer()->get(LocaleManagerInterface::class),
                 self::$kernel->getContainer()->get('lexik_translation.importer.file')
             )
         );

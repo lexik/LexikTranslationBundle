@@ -100,7 +100,7 @@
         <service id="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" class="%lexik_translation.locale.manager.class%" public="true">
             <argument>%lexik_translation.managed_locales%</argument>
         </service>
-        <service id="lexik_translation.locale.manager" alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" public="true" />
+        <service id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" alias="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" public="true" />
 
         <!-- Importer -->
         <service id="Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter" class="%lexik_translation.importer.file.class%" >
@@ -141,7 +141,7 @@
 
         <!-- Data grid -->
         <service id="lexik_translation.data_grid.formatter" class="%lexik_translation.data_grid.formatter.class%" public="true">
-            <argument type="service" id="lexik_translation.locale.manager" />
+            <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
             <argument>%lexik_translation.storage.type%</argument>
         </service>
 
@@ -149,7 +149,7 @@
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument type="service" id="lexik_translation.locale.manager" />
+            <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
             <call method="setCreateMissing">
                 <argument>%lexik_translation.dev_tools.create_missing%</argument>
             </call>
@@ -161,7 +161,7 @@
         <!-- Overview -->
         <service id="lexik_translation.overview.stats_aggregator" class="%lexik_translation.overview.stats_aggregator.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument type="service" id="lexik_translation.locale.manager" />
+            <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
         </service>
 
         <!-- Form -->
@@ -169,7 +169,7 @@
             <argument type="service" id="lexik_translation.trans_unit.manager" />
             <argument type="service" id="lexik_translation.file.manager" />
             <argument type="service" id="lexik_translation.translation_storage" />
-            <argument type="service" id="lexik_translation.locale.manager" />
+            <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
             <argument>%kernel.project_dir%</argument>
         </service>
 
