@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
     /**
      * (non-PHPdoc)
      * @see \Symfony\Component\Config\Definition.ConfigurationInterface::getConfigTreeBuilder()
+     * @return TreeBuilder
      */
     public function getConfigTreeBuilder()
     {
