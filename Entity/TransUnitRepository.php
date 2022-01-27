@@ -206,6 +206,11 @@ class TransUnitRepository extends EntityRepository
             $qb->select('DISTINCT tu.id')
                 ->leftJoin('tu.translations', 't')
                 ->where($qb->expr()->in('t.locale', $locales));
+            
+            if(!empty($filters['domain'])) {
+                $qb->andWhere('tu.domain like :domain');
+                $qb->setParameter('%'.$filters['domain'].'%');
+            }
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
