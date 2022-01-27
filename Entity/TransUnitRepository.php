@@ -208,8 +208,8 @@ class TransUnitRepository extends EntityRepository
                 ->where($qb->expr()->in('t.locale', $locales));
             
             if(!empty($filters['domain'])) {
-                $qb->andWhere('tu.domain like :domain');
-                $qb->setParameter('%'.$filters['domain'].'%');
+                $qb->andWhere('tu.domain = :domain');
+                $qb->setParameter('domain', $filters['domain']);
             }
 
             foreach ($locales as $locale) {
