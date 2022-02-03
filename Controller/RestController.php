@@ -2,10 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Controller;
 
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
+use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter;
+use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -14,6 +19,16 @@ class RestController extends AbstractController
 {
     use CsrfCheckerTrait;
 
+    public function __construct(
+        protected DataGridRequestHandler $dataGridRequestHandler,
+        protected DataGridFormatter $dataGridFormatter,
+        protected StorageInterface $translationStorage,
+        protected TransUnitManagerInterface $transUnitManager,
+        protected ?CsrfTokenManager $csrfTokenManager
+    )
+    {
+    }
+
     /**
      * @param Request $request
      *
@@ -21,9 +36,9 @@ class RestController extends AbstractController
      */
     public function listAction(Request $request)
     {
-        [$transUnits, $count] = $this->get('lexik_translation.data_grid.request_handler')->getPage($request);
+        [$transUnits, $count] = $this->dataGridRequestHandler->getPage($request);
 
-        return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
+        return $this->dataGridFormatter->createListResponse($transUnits, $count);
     }
 
     /**
@@ -34,9 +49,9 @@ class RestController extends AbstractController
      */
     public function listByProfileAction(Request $request, $token)
     {
-        [$transUnits, $count] = $this->get('lexik_translation.data_grid.request_handler')->getPageByToken($request, $token);
+        [$transUnits, $count] = $this->dataGridRequestHandler->getPageByToken($request, $token);
 
-        return $this->get('lexik_translation.data_grid.formatter')->createListResponse($transUnits, $count);
+        return $this->dataGridFormatter->createListResponse($transUnits, $count);
     }
 
     /**
@@ -49,11 +64,11 @@ class RestController extends AbstractController
      */
     public function updateAction(Request $request, $id)
     {
-        $this->checkCsrf();
+        $this->checkCsrf($this->csrfTokenManager, $request);
 
-        $transUnit = $this->get('lexik_translation.data_grid.request_handler')->updateFromRequest($id, $request);
+        $transUnit = $this->dataGridRequestHandler->updateFromRequest($id, $request);
 
-        return $this->get('lexik_translation.data_grid.formatter')->createSingleResponse($transUnit);
+        return $this->dataGridFormatter->createSingleResponse($transUnit);
     }
 
     /**
@@ -63,17 +78,17 @@ class RestController extends AbstractController
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request, $id)
     {
-        $this->checkCsrf();
+        $this->checkCsrf($this->csrfTokenManager, $request);
 
-        $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
+        $transUnit = $this->translationStorage->getTransUnitById($id);
 
         if (!$transUnit) {
             throw $this->createNotFoundException(sprintf('No TransUnit found for id "%s".', $id));
         }
 
-        $deleted = $this->get('lexik_translation.trans_unit.manager')->delete($transUnit);
+        $deleted = $this->transUnitManager->delete($transUnit);
 
         return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
     }
@@ -86,17 +101,17 @@ class RestController extends AbstractController
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteTranslationAction($id, $locale)
+    public function deleteTranslationAction(Request $request, $id, $locale)
     {
-        $this->checkCsrf();
+        $this->checkCsrf($this->csrfTokenManager, $request);
 
-        $transUnit = $this->get('lexik_translation.translation_storage')->getTransUnitById($id);
+        $transUnit = $this->translationStorage->getTransUnitById($id);
 
         if (!$transUnit) {
             throw $this->createNotFoundException(sprintf('No TransUnit found for id "%s".', $id));
         }
 
-        $deleted = $this->get('lexik_translation.trans_unit.manager')->deleteTranslation($transUnit, $locale);
+        $deleted = $this->transUnitManager->deleteTranslation($transUnit, $locale);
 
         return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
     }
