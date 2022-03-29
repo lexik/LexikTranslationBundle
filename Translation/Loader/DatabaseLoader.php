@@ -31,7 +31,7 @@ class DatabaseLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load($resource, $locale, $domain = 'messages')
+    public function load($resource, $locale, $domain = 'messages'): MessageCatalogue
     {
         $catalogue = new MessageCatalogue($locale);
 
