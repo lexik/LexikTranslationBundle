@@ -61,25 +61,18 @@
     </parameters>
 
     <services>
-        <service id="Lexik\Bundle\TranslationBundle\Translation\Translator" autowire="true">
-            <argument key="$formatter" id="translator.formatter.default" />
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Translator">
+            <argument key="$container" type="service" id="service_container"/>
+            <argument key="$formatter" type="service" id="translator.formatter.default" />
+            <argument key="$defaultLocale" id="%kernel.default_locale%" />
+            <argument key="$loaderIds" type="collection"></argument>
+            <argument key="$options" type="collection" >
+                <argument key="cache_dir">%kernel.cache_dir%</argument>
+            </argument>
         </service>
         <service id="lexik_translation.translator" alias="Lexik\Bundle\TranslationBundle\Translation\Translator" public="true"/>
         <service id="Lexik\Bundle\TranslationBundle\Storage\StorageInterface" alias="lexik_translation.translation_storage" />
 
-        <!-- Controller -->
-        <service id="Lexik\Bundle\TranslationBundle\Controller\RestController" class="%lexik_translation.controller.rest.class%" public="true" >
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-            <tag name="controller.service_arguments" />
-        </service>
-        <service id="Lexik\Bundle\TranslationBundle\Controller\TranslationController" class="%lexik_translation.controller.translation.class%" public="true">
-            <call method="setContainer">
-                <argument type="service" id="service_container" />
-            </call>
-            <tag name="controller.service_arguments" />
-        </service>
         <!-- Loader -->
         <service id="Lexik\Bundle\TranslationBundle\Translation\Loader" class="%lexik_translation.loader.database.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
@@ -91,11 +84,13 @@
             <argument type="service" id="lexik_translation.file.manager" />
             <argument>%kernel.project_dir%</argument>
         </service>
+        <service id="Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface" alias="lexik_translation.trans_unit.manager"/>
 
         <service id="lexik_translation.file.manager" class="%lexik_translation.file.manager.class%">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument>%kernel.project_dir%</argument>
         </service>
+        <service id="Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface" alias="lexik_translation.file.manager" />
 
         <service id="Lexik\Bundle\TranslationBundle\Manager\LocaleManager" class="%lexik_translation.locale.manager.class%" public="true">
             <argument>%lexik_translation.managed_locales%</argument>
@@ -144,6 +139,7 @@
             <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
             <argument>%lexik_translation.storage.type%</argument>
         </service>
+        <service id="Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter" alias="lexik_translation.data_grid.formatter" />
 
         <service id="lexik_translation.data_grid.request_handler" class="%lexik_translation.data_grid.request_handler.class%" public="true">
             <argument type="service" id="lexik_translation.trans_unit.manager" />
@@ -157,21 +153,20 @@
                 <argument>%lexik_translation.dev_tools.file_format%</argument>
             </call>
         </service>
+        <service id="Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler" alias="lexik_translation.data_grid.request_handler" />
 
         <!-- Overview -->
         <service id="lexik_translation.overview.stats_aggregator" class="%lexik_translation.overview.stats_aggregator.class%" public="true">
             <argument type="service" id="lexik_translation.translation_storage" />
             <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
         </service>
+        <service id="%lexik_translation.overview.stats_aggregator.class%" alias="lexik_translation.overview.stats_aggregator" />
 
         <!-- Form -->
-        <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%" public="true">
-            <argument type="service" id="lexik_translation.trans_unit.manager" />
-            <argument type="service" id="lexik_translation.file.manager" />
-            <argument type="service" id="lexik_translation.translation_storage" />
-            <argument type="service" id="Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface" />
-            <argument>%kernel.project_dir%</argument>
+        <service id="lexik_translation.form.handler.trans_unit" class="%lexik_translation.form.handler.trans_unit.class%" public="true" autoconfigure="true" autowire="true">
+            <argument key="$rootDir" >%kernel.project_dir%</argument>
         </service>
+        <service id="Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler" alias="lexik_translation.form.handler.trans_unit" />
 
         <!-- Listener -->
         <service id="Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent" class="%lexik_translation.listener.get_database_resources.class%">
@@ -190,5 +185,16 @@
             <tag name="console.command" />
         </service>
 
+        <service id="lexik_translation.token_finder" class="%lexik_translation.token_finder.class%" autowire="true" autoconfigure="true">
+            <argument key="$defaultLimit">%lexik_translation.token_finder.limit%</argument>
+        </service>
+        <service id="%lexik_translation.token_finder.class%" alias="lexik_translation.token_finder" />
+        <!-- Controller -->
+        <service id="Lexik\Bundle\TranslationBundle\Controller\RestController" class="%lexik_translation.controller.rest.class%" public="true" autowire="true" autoconfigure="true">
+
+        </service>
+        <service id="Lexik\Bundle\TranslationBundle\Controller\TranslationController" class="%lexik_translation.controller.translation.class%" public="true" autowire="true" autoconfigure="true">
+
+        </service>
     </services>
 </container>
