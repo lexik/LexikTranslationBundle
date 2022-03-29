@@ -43,7 +43,7 @@ class DatabaseFreshResource implements SelfCheckingResourceInterface
     /**
      * {@inheritdoc}
      */
-    public function isFresh($timestamp): bool
+    public function isFresh(int $timestamp): bool
     {
         return true; // Consider a resource comming from the database is always fresh
     }
