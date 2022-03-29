@@ -2,6 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\Csrf;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
+
 /**
  * Class CsrfChecker.
  */
@@ -13,13 +16,11 @@ trait CsrfCheckerTrait
      * @param string $id    The id used when generating the token
      * @param string $query
      */
-    protected function checkCsrf($id = 'lexik-translation', $query = '_token')
+    protected function checkCsrf(Request $request, ?CsrfTokenManager $tokenManager, $id = 'lexik-translation', $query = '_token')
     {
-        if (!$this->has('security.csrf.token_manager')) {
+        if (!tokenManager) {
             return;
         }
-
-        $request = $this->get('request_stack')->getCurrentRequest();
 
         if (!$this->isCsrfTokenValid($id, $request->get($query))) {
             throw $this->createAccessDeniedException('Invalid CSRF token');
