@@ -61,7 +61,7 @@ class CleanTranslationCacheListener
      */
     public function onKernelRequest(RequestEvent $event)
     {
-        if ($event->isMasterRequest() && $this->isCacheExpired()) {
+        if ($event->isMainRequest() && $this->isCacheExpired()) {
             $lastUpdateTime = $this->storage->getLatestUpdatedAt();
 
             if ($lastUpdateTime instanceof \DateTime) {
