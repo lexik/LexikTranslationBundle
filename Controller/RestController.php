@@ -19,14 +19,29 @@ class RestController extends AbstractController
 {
     use CsrfCheckerTrait;
 
+    protected DataGridRequestHandler $dataGridRequestHandler;
+
+    protected DataGridFormatter $dataGridFormatter;
+
+    protected StorageInterface $translationStorage;
+
+    protected TransUnitManagerInterface $transUnitManager;
+    
+    protected ?CsrfTokenManager $csrfTokenManager;
+
     public function __construct(
-        protected DataGridRequestHandler $dataGridRequestHandler,
-        protected DataGridFormatter $dataGridFormatter,
-        protected StorageInterface $translationStorage,
-        protected TransUnitManagerInterface $transUnitManager,
-        protected ?CsrfTokenManager $csrfTokenManager
+        DataGridRequestHandler $dataGridRequestHandler,
+        DataGridFormatter $dataGridFormatter,
+        StorageInterface $translationStorage,
+        TransUnitManagerInterface $transUnitManager,
+        ?CsrfTokenManager $csrfTokenManager
     )
     {
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->transUnitManager = $transUnitManager;
+        $this->translationStorage = $translationStorage;
+        $this->dataGridFormatter = $dataGridFormatter;
+        $this->dataGridRequestHandler = $dataGridRequestHandler;
     }
 
     /**

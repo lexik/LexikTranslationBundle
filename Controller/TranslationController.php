@@ -24,17 +24,41 @@ class TranslationController extends AbstractController
 {
     use CsrfCheckerTrait;
 
+    protected Translator $lexikTranslator;
+
+    protected StorageInterface $translationStorage;
+
+    protected StatsAggregator $statsAggregator;
+
+    protected TokenFinder $tokenFinder;
+
+    protected TransUnitFormHandler $transUnitFormHandler;
+
+    protected TranslatorInterface $translator;
+
+    protected LocaleManagerInterface $localeManager;
+
+    protected ?CsrfTokenManager $csrfTokenManager;
+
     public function __construct(
-        protected StorageInterface $translationStorage,
-        protected StatsAggregator $statsAggregator,
-        protected TokenFinder $tokenFinder,
-        protected TransUnitFormHandler $transUnitFormHandler,
-        protected Translator $lexikTranslator,
-        protected TranslatorInterface $translator,
-        protected LocaleManagerInterface $localeManager,
-        protected ?CsrfTokenManager $csrfTokenManager
+        StorageInterface $translationStorage,
+        StatsAggregator $statsAggregator,
+        TokenFinder $tokenFinder,
+        TransUnitFormHandler $transUnitFormHandler,
+        Translator $lexikTranslator,
+        TranslatorInterface $translator,
+        LocaleManagerInterface $localeManager,
+        ?CsrfTokenManager $csrfTokenManager
     )
     {
+        $this->csrfTokenManager = $csrfTokenManager;
+        $this->localeManager = $localeManager;
+        $this->translator = $translator;
+        $this->transUnitFormHandler = $transUnitFormHandler;
+        $this->tokenFinder = $tokenFinder;
+        $this->statsAggregator = $statsAggregator;
+        $this->translationStorage = $translationStorage;
+        $this->lexikTranslator = $lexikTranslator;
     }
 
     /**
