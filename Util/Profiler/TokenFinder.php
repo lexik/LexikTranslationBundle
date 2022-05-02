@@ -23,7 +23,7 @@ class TokenFinder
      * @param Profiler $profiler
      * @param int      $defaultLimit
      */
-    public function __construct(?Profiler $profiler, $defaultLimit)
+    public function __construct(Profiler $profiler, $defaultLimit)
     {
         $this->profiler = $profiler;
         $this->defaultLimit = $defaultLimit;
@@ -40,10 +40,6 @@ class TokenFinder
      */
     public function find($ip = null, $url = null, $limit = null, $method = null, $start = null, $end = null)
     {
-        if ($this->profiler === null) {
-            return [];
-        }
-
         $limit = $limit ?: $this->defaultLimit;
 
         return $this->profiler->find($ip, $url, $limit, $method, $start, $end);
