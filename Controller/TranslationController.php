@@ -42,21 +42,21 @@ class TranslationController extends AbstractController
     public function __construct(
         StorageInterface $translationStorage,
         StatsAggregator $statsAggregator,
-        TokenFinder $tokenFinder,
         TransUnitFormHandler $transUnitFormHandler,
         Translator $lexikTranslator,
         TranslatorInterface $translator,
         LocaleManagerInterface $localeManager,
-        ?CsrfTokenManager $csrfTokenManager
+        ?CsrfTokenManager $csrfTokenManager,
+        ?TokenFinder $tokenFinder
     ) {
         $this->translationStorage = $translationStorage;
         $this->statsAggregator = $statsAggregator;
-        $this->tokenFinder = $tokenFinder;
         $this->transUnitFormHandler = $transUnitFormHandler;
         $this->lexikTranslator = $lexikTranslator;
         $this->translator = $translator;
         $this->localeManager = $localeManager;
         $this->csrfTokenManager = $csrfTokenManager;
+        $this->tokenFinder = $tokenFinder;
     }
 
     /**
@@ -85,7 +85,7 @@ class TranslationController extends AbstractController
     public function gridAction()
     {
         $tokens = null;
-        if ($this->getParameter('lexik_translation.dev_tools.enable')) {
+        if ($this->getParameter('lexik_translation.dev_tools.enable') && $this->tokenFinder !== null) {
             $tokens = $this->tokenFinder->find();
         }
 

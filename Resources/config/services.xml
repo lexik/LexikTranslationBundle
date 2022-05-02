@@ -185,16 +185,11 @@
             <tag name="console.command" />
         </service>
 
-        <service id="lexik_translation.token_finder" class="%lexik_translation.token_finder.class%" autowire="true" autoconfigure="true">
-            <argument key="$defaultLimit">%lexik_translation.token_finder.limit%</argument>
-        </service>
-        <service id="%lexik_translation.token_finder.class%" alias="lexik_translation.token_finder" />
         <!-- Controller -->
         <service id="Lexik\Bundle\TranslationBundle\Controller\RestController" class="%lexik_translation.controller.rest.class%" public="true" autowire="true" autoconfigure="true">
-
         </service>
-        <service id="Lexik\Bundle\TranslationBundle\Controller\TranslationController" class="%lexik_translation.controller.translation.class%" public="true" autowire="true" autoconfigure="true">
 
+        <service id="Lexik\Bundle\TranslationBundle\Controller\TranslationController" class="%lexik_translation.controller.translation.class%" public="true" autowire="true" autoconfigure="true">
         </service>
     </services>
 </container>
