@@ -240,7 +240,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             new Parameter('lexik_translation.token_finder.limit'),
         ));
 
-        $container->setDefinition('lexik_translation.token_finder', $tokenFinderDefinition);
+        $container->setDefinition($container->getParameter('lexik_translation.token_finder.class'), $tokenFinderDefinition);
     }
 
     /**
