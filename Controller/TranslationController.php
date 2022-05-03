@@ -69,7 +69,7 @@ class TranslationController extends AbstractController
         $stats = $this->statsAggregator->getStats();
 
         return $this->render('@LexikTranslation/Translation/overview.html.twig', array(
-            'layout'         => $this->container->getParameter('lexik_translation.base_layout'),
+            'layout'         => $this->getParameter('lexik_translation.base_layout'),
             'locales'        => $this->getManagedLocales(),
             'domains'        => $this->translationStorage->getTransUnitDomains(),
             'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(),
