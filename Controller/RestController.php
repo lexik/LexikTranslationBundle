@@ -78,7 +78,7 @@ class RestController extends AbstractController
      */
     public function updateAction(Request $request, $id)
     {
-        $this->checkCsrf($this->csrfTokenManager, $request);
+        $this->checkCsrf();
 
         $transUnit = $this->dataGridRequestHandler->updateFromRequest($id, $request);
 
@@ -92,9 +92,9 @@ class RestController extends AbstractController
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
-        $this->checkCsrf($this->csrfTokenManager, $request);
+        $this->checkCsrf();
 
         $transUnit = $this->translationStorage->getTransUnitById($id);
 
@@ -115,9 +115,9 @@ class RestController extends AbstractController
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteTranslationAction(Request $request, $id, $locale)
+    public function deleteTranslationAction($id, $locale)
     {
-        $this->checkCsrf($this->csrfTokenManager, $request);
+        $this->checkCsrf();
 
         $transUnit = $this->translationStorage->getTransUnitById($id);
 
