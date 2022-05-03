@@ -13,7 +13,6 @@ use Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -37,8 +36,6 @@ class TranslationController extends AbstractController
 
     private $localeManager;
 
-    private $csrfTokenManager;
-
     public function __construct(
         StorageInterface $translationStorage,
         StatsAggregator $statsAggregator,
@@ -46,7 +43,6 @@ class TranslationController extends AbstractController
         Translator $lexikTranslator,
         TranslatorInterface $translator,
         LocaleManagerInterface $localeManager,
-        ?CsrfTokenManager $csrfTokenManager,
         ?TokenFinder $tokenFinder
     ) {
         $this->translationStorage = $translationStorage;
@@ -55,7 +51,6 @@ class TranslationController extends AbstractController
         $this->lexikTranslator = $lexikTranslator;
         $this->translator = $translator;
         $this->localeManager = $localeManager;
-        $this->csrfTokenManager = $csrfTokenManager;
         $this->tokenFinder = $tokenFinder;
     }
 
