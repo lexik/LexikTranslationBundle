@@ -10,7 +10,6 @@ use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -33,14 +32,12 @@ class RestController extends AbstractController
         DataGridRequestHandler $dataGridRequestHandler,
         DataGridFormatter $dataGridFormatter,
         StorageInterface $translationStorage,
-        TransUnitManagerInterface $transUnitManager,
-        ?CsrfTokenManager $csrfTokenManager
+        TransUnitManagerInterface $transUnitManager
     ) {
         $this->dataGridRequestHandler = $dataGridRequestHandler;
         $this->dataGridFormatter = $dataGridFormatter;
         $this->translationStorage = $translationStorage;
         $this->transUnitManager = $transUnitManager;
-        $this->csrfTokenManager = $csrfTokenManager;
     }
 
     /**
