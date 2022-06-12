@@ -3,7 +3,6 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
 use Doctrine\Bundle\MongoDBBundle\Mapping\Driver\XmlDriver;
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
@@ -13,6 +12,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
 use Doctrine\ODM\MongoDB\SchemaManager;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\Persistence\ObjectManager;
@@ -28,6 +28,7 @@ use Propel\Generator\Util\QuickBuilder;
 use Propel\Runtime\Connection\ConnectionWrapper;
 use Propel\Runtime\Connection\PdoConnection;
 use Propel\Runtime\Propel;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 /**
  * Base unit test class providing functions to create a mock entity manger, load schema and fixtures.
@@ -177,10 +178,10 @@ abstract class BaseUnitTestCase extends TestCase
      */
     protected function getMockSqliteEntityManager($mockCustomHydrator = false)
     {
-        $cache = new ArrayCache();
+        $cache = new ArrayAdapter();
 
         // xml driver
-        $xmlDriver = new \Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver(array(
+        $xmlDriver = new SimplifiedXmlDriver(array(
             __DIR__.'/../../Resources/config/model'    => 'Lexik\Bundle\TranslationBundle\Model',
             __DIR__.'/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Entity',
         ));
@@ -191,8 +192,8 @@ abstract class BaseUnitTestCase extends TestCase
         ], false, null, null, false);
 
         $config->setMetadataDriverImpl($xmlDriver);
-        $config->setMetadataCacheImpl($cache);
-        $config->setQueryCacheImpl($cache);
+        $config->setMetadataCache($cache);
+        $config->setQueryCache($cache);
         $config->setProxyDir(sys_get_temp_dir());
         $config->setProxyNamespace('Proxy');
         $config->setAutoGenerateProxyClasses(true);
@@ -228,10 +229,10 @@ abstract class BaseUnitTestCase extends TestCase
         );
         $xmlDriver = new XmlDriver($prefixes);
 
-        $cache = new ArrayCache();
+        $cache = new ArrayAdapter();
 
         $config = new Configuration();
-        $config->setMetadataCacheImpl($cache);
+        $config->setMetadataCache($cache);
         $config->setMetadataDriverImpl($xmlDriver);
         $config->setProxyDir(sys_get_temp_dir());
         $config->setProxyNamespace('Proxy');
