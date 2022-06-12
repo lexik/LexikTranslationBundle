@@ -27,12 +27,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     protected $classes;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param array           $managerName
-     * @param array           $classes
-     */
-    public function __construct(ManagerRegistry $registry, $managerName, array $classes)
+    public function __construct(ManagerRegistry $registry, string $managerName, array $classes)
     {
         $this->registry = $registry;
         $this->managerName = $managerName;

@@ -6,7 +6,7 @@ Add the bunde to your `composer.json` file:
 ```javascript
 require: {
     // ...
-    "lexik/translation-bundle": "~4.0"
+    "lexik/translation-bundle": "~5.3"
 }
 ```
 
@@ -14,7 +14,7 @@ Or install directly through composer with:
 
 ```shell
 # Latest stable
-composer require lexik/translation-bundle ~4.0
+composer require lexik/translation-bundle ~5.3
 
 # For latest unstable version
 composer require lexik/translation-bundle dev-master
@@ -32,11 +32,11 @@ Register the bundle with your kernel:
 
 ```php
 // in AppKernel::registerBundles()
-$bundles = array(
+$bundles = [array(]
     // ...
     new Lexik\Bundle\TranslationBundle\LexikTranslationBundle(),
     // ...
-);
+];
 ```
 
 Then install the required assets:
