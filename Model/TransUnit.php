@@ -152,7 +152,7 @@ abstract class TransUnit
      * Return the content of translation for the given locale.
      *
      * @param string $locale
-     * @return \Lexik\Bundle\TranslationBundle\Model\Translation
+     * @return \Lexik\Bundle\TranslationBundle\Model\Translation|null
      */
     public function getTranslation($locale)
     {
