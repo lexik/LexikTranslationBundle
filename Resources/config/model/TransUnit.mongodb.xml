@@ -9,19 +9,19 @@
         <indexes>
             <index>
                 <option name="unique" value="true" />
-                <option name="safe" value="true" />
+<!--                <option name="safe" value="true" />-->
                 <key name="key" order="asc" />
                 <key name="domain" order="asc" />
             </index>
         </indexes>
 
-        <field fieldName="key" name="key" type="string" />
+        <field name="key" type="string" />
 
-        <field fieldName="domain" name="domain" type="string" />
+        <field name="domain" type="string" />
 
-        <field fieldName="createdAt" name="created_at" type="timestamp" />
+        <field name="createdAt" type="timestamp" />
 
-        <field fieldName="updatedAt" name="updated_at" type="timestamp" />
+        <field name="updatedAt" type="timestamp" />
 
     </mapped-superclass>
 </doctrine-mongo-mapping>

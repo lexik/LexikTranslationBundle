@@ -20,7 +20,7 @@ class CleanTranslationCacheListenerTest extends TestCase
 
     private $tempDir;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tempDir = \sys_get_temp_dir() . '/translations';
     }
@@ -81,7 +81,7 @@ class CleanTranslationCacheListenerTest extends TestCase
         return $finder->count();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \array_map('unlink', \glob($this->tempDir . "/*"));
     }

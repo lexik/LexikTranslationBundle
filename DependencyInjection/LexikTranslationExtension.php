@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
@@ -122,7 +123,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $listener->addArgument(new Reference('lexik_translation.translation_storage'));
         $listener->addArgument(new Reference('translator'));
         $listener->addArgument(new Parameter('kernel.cache_dir'));
-        $listener->addArgument(new Reference('lexik_translation.locale.manager'));
+        $listener->addArgument(new Reference(LocaleManagerInterface::class));
         $listener->addArgument($cacheInterval);
 
         $listener->addTag('kernel.event_listener', array(
@@ -139,14 +140,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             return;
         }
 
-        $rootDir = 'vendor/lexik/translation-bundle/Resources/views';
-
-        // Only symfony versions >= 3.3 include the kernel.project_dir parameter
-        if (Kernel::VERSION_ID >= 30300) {
-            $rootDir = '%kernel.project_dir%/'.$rootDir;
-        } else {
-            $rootDir = '%kernel.root_dir%/../'.$rootDir;
-        }
+        $rootDir = '%kernel.project_dir%/vendor/lexik/translation-bundle/Resources/views';
 
         $container->prependExtensionConfig('twig', [
             'paths' => [
@@ -246,7 +240,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             new Parameter('lexik_translation.token_finder.limit'),
         ));
 
-        $container->setDefinition('lexik_translation.token_finder', $tokenFinderDefinition);
+        $container->setDefinition($container->getParameter('lexik_translation.token_finder.class'), $tokenFinderDefinition);
     }
 
     /**
@@ -293,7 +287,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                 }
             }
 
-            $overridePath = $container->getParameter('kernel.root_dir').'/Resources/%s/translations';
+            $overridePath = $container->getParameter('kernel.project_dir').'/Resources/%s/translations';
 
             foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
                 $reflection = new \ReflectionClass($class);
@@ -307,7 +301,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                 }
             }
 
-            if (is_dir($dir = $container->getParameter('kernel.root_dir').'/Resources/translations')) {
+            if (is_dir($dir = $container->getParameter('kernel.project_dir').'/Resources/translations')) {
                 $dirs[] = $dir;
             }
 
@@ -337,7 +331,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
-                    list($domain, $locale, $format) = explode('.', $file->getBasename(), 3);
+                    [$domain, $locale, $format] = explode('.', $file->getBasename(), 3);
                     $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
                 }
             }

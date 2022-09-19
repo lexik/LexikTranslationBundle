@@ -2,11 +2,11 @@
 
 namespace Lexik\Bundle\TranslationBundle\EventDispatcher;
 
-use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -29,7 +29,7 @@ class CleanTranslationCacheListener
     private $cacheDirectory;
 
     /**
-     * @var array
+     * @var LocaleManagerInterface
      */
     private $localeManager;
 
@@ -41,13 +41,13 @@ class CleanTranslationCacheListener
     /**
      * Constructor
      *
-     * @param StorageInterface    $storage
-     * @param TranslatorInterface $translator
-     * @param string              $cacheDirectory
-     * @param LocaleManager       $localeManager
-     * @param int                 $cacheInterval
+     * @param StorageInterface       $storage
+     * @param TranslatorInterface    $translator
+     * @param string                 $cacheDirectory
+     * @param LocaleManagerInterface $localeManager
+     * @param int                    $cacheInterval
      */
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManager $localeManager, $cacheInterval)
+    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManagerInterface $localeManager, $cacheInterval)
     {
         $this->storage = $storage;
         $this->cacheDirectory = $cacheDirectory;
@@ -57,11 +57,11 @@ class CleanTranslationCacheListener
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      */
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
-        if ($event->isMasterRequest() && $this->isCacheExpired()) {
+        if ($event->isMainRequest() && $this->isCacheExpired()) {
             $lastUpdateTime = $this->storage->getLatestUpdatedAt();
 
             if ($lastUpdateTime instanceof \DateTime) {

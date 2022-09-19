@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
@@ -26,24 +27,14 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     protected $classes;
 
-    /**
-     * @param ManagerRegistry $registry
-     * @param array           $managerName
-     * @param array           $classes
-     */
-    public function __construct(ManagerRegistry $registry, $managerName, array $classes)
+    public function __construct(ManagerRegistry $registry, string $managerName, array $classes)
     {
         $this->registry = $registry;
         $this->managerName = $managerName;
         $this->classes = $classes;
     }
 
-    /**
-     * Returns the File repository.
-     *
-     * @return \Doctrine\Common\Persistence\ObjectManager
-     */
-    protected function getManager()
+    protected function getManager(): ObjectManager
     {
         return $this->registry->getManager($this->managerName);
     }
@@ -89,7 +80,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function flush($entity = null)
     {
-        $this->getManager()->flush($entity);
+        $this->getManager()->flush();
     }
 
     /**
@@ -125,7 +116,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function getFileByHash($hash)
     {
-        return $this->getFileRepository()->findOneBy(array('hash' => $hash));
+        return $this->getFileRepository()->findOneBy(['hash' => $hash]);
     }
 
     /**

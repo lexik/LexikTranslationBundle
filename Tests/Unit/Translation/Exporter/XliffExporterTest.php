@@ -14,7 +14,7 @@ class XliffExporterTest extends TestCase
 {
     private $outFileName = '/file.en.out';
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $outFile = __DIR__ . $this->outFileName;
 

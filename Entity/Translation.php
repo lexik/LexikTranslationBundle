@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use DateTime;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
@@ -19,7 +20,7 @@ class Translation extends TranslationModel implements TranslationInterface
     protected $id;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Entity\TransUnit
+     * @var TransUnit
      */
     protected $transUnit;
 
@@ -36,7 +37,7 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * Set transUnit
      *
-     * @param Lexik\Bundle\TranslationBundle\Entity\TransUnit $transUnit
+     * @param TransUnit $transUnit
      */
     public function setTransUnit(\Lexik\Bundle\TranslationBundle\Model\TransUnit $transUnit)
     {
@@ -46,7 +47,7 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * Get transUnit
      *
-     * @return Lexik\Bundle\TranslationBundle\Entity\TransUnit
+     * @return TransUnit
      */
     public function getTransUnit()
     {
@@ -58,16 +59,13 @@ class Translation extends TranslationModel implements TranslationInterface
      */
     public function prePersist()
     {
-        $now             = new \DateTime("now");
+        $now             = new DateTime("now");
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preUpdate()
     {
-        $this->updatedAt = new \DateTime("now");
+        $this->updatedAt = new DateTime("now");
     }
 }

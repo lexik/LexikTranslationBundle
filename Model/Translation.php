@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
+use DateTime;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -26,17 +27,17 @@ abstract class Translation
     protected $content;
 
     /**
-     * @var Lexik\Bundle\TranslationBundle\Model\File
+     * @var File
      */
     protected $file;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
     protected $updatedAt;
 
@@ -89,9 +90,9 @@ abstract class Translation
     /**
      * Set file
      *
-     * @param \Lexik\Bundle\TranslationBundle\Model\File $file
+     * @param File $file
      */
-    public function setFile(\Lexik\Bundle\TranslationBundle\Model\File $file)
+    public function setFile(File $file)
     {
         $this->file = $file;
     }
@@ -99,7 +100,7 @@ abstract class Translation
     /**
      * Get file
      *
-     * @return \Lexik\Bundle\TranslationBundle\Model\File
+     * @return File
      */
     public function getFile()
     {

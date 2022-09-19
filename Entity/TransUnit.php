@@ -16,7 +16,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
     /**
      * Add translations
      *
-     * @param Lexik\Bundle\TranslationBundle\Entity\Translation $translations
+     * @param \Lexik\Bundle\TranslationBundle\Entity\Translation $translations
      */
     public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
     {

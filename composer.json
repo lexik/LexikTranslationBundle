@@ -2,7 +2,7 @@
     "name": "lexik/translation-bundle",
     "type": "symfony-bundle",
     "description": "This bundle allows to import translation files content into the database and provide a GUI to edit translations.",
-    "keywords": ["Symfony2", "bundle", "translation", "i18n"],
+    "keywords": ["Symfony", "bundle", "translation", "i18n"],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
     "prefer-stable": true,
@@ -17,21 +17,25 @@
         }
     ],
     "require": {
-        "php": "^5.6 || ^7.0",
-        "symfony/framework-bundle": "~2.8|~3.0|~4.0"
+        "php": "^7.4|^8.0",
+        "symfony/framework-bundle": "~5.2|~6.0"
     },
     "require-dev": {
-        "doctrine/orm": "^2.2.3",
-        "doctrine/doctrine-bundle": "~1.2",
+        "ext-mongodb": "*",
+        "symfony/symfony": "~5.0|~6.0",
+        "doctrine/orm": ">=2.4",
+        "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
-        "doctrine/mongodb-odm-bundle": "~3.0",
-        "propel/propel-bundle": "^3.0@dev|^4.0@dev",
-        "propel/propel": "@dev",
-        "phpunit/phpunit": "^5.7"
+        "doctrine/mongodb-odm-bundle": "~4.2",
+        "propel/propel": "2.0.0-alpha12|dev-master",
+        "phpunit/phpunit": "^9.5",
+        "doctrine/mongodb-odm": "^2.1",
+        "mongodb/mongodb": "^1.8",
+        "ext-pdo": "*",
+        "mikey179/vfsstream": "^1.6"
     },
     "suggest": {
-        "doctrine/orm": ">=2.4",
-        "doctrine/mongodb-odm-bundle": "~3.0"
+        "doctrine/orm": ">=2.4"
     },
     "autoload":     {
         "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }

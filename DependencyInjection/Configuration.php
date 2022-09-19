@@ -17,12 +17,12 @@ class Configuration implements ConfigurationInterface
 {
     /**
      * (non-PHPdoc)
-     * @see Symfony\Component\Config\Definition.ConfigurationInterface::getConfigTreeBuilder()
+     * @see \Symfony\Component\Config\Definition.ConfigurationInterface::getConfigTreeBuilder()
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('lexik_translation');
+        $treeBuilder = new TreeBuilder('lexik_translation');
+        $rootNode = $treeBuilder->getRootNode();
 
         $storages = array(
             StorageInterface::STORAGE_ORM,
