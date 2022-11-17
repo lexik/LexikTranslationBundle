@@ -50,5 +50,8 @@
             "dev-master": "4.x.x-dev"
         }
     },
-    "minimum-stability": "alpha"
+    "minimum-stability": "alpha",
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    }
 }
