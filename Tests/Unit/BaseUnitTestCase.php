@@ -244,7 +244,7 @@ abstract class BaseUnitTestCase extends TestCase
         $config->setAutoGenerateHydratorClasses(true);
         $config->setDefaultCommitOptions([]);
 
-        $server = getenv('MONGO_SERVER') ?: null;
+        $server = MONGO_SERVER;
         $driverOptions = [
             'typeMap' =>  ['root' => 'array', 'document' => 'array'],
         ];
