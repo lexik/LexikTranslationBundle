@@ -19,9 +19,10 @@
     "require": {
         "php": "^7.4|^8.0",
         "symfony/framework-bundle": "~5.2|~6.0",
-        "symfony/symfony": "~5.0|~6.0"
+        "symfony/monolog-bridge": "*"
     },
     "require-dev": {
+        "symfony/symfony": "~5.0|~6.0",
         "ext-mongodb": "*",
         "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "^2.2",
