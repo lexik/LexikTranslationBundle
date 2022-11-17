@@ -26,7 +26,7 @@ jobs:
       mongo:
         image: library/mongo:4.0
         ports:
-          - 27018:27017
+          - 27017:27017
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: secret
@@ -54,5 +54,4 @@ jobs:
 
     - name: Run test suite
       run: | 
-        cp .env.ci .env
         composer test
