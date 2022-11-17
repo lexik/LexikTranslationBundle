@@ -152,9 +152,8 @@ abstract class TransUnit
      * Return the content of translation for the given locale.
      *
      * @param string $locale
-     * @return \Lexik\Bundle\TranslationBundle\Model\Translation|null
      */
-    public function getTranslation($locale)
+    public function getTranslation($locale): ?Translation
     {
         foreach ($this->getTranslations() as $translation) {
             if ($translation->getLocale() == $locale) {
