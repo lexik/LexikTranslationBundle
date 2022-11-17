@@ -46,4 +46,6 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Run test suite
-      run: composer test
+      run: | 
+        cp .env.ci .env
+        composer test
