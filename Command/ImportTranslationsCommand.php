@@ -4,14 +4,19 @@ namespace Lexik\Bundle\TranslationBundle\Command;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
+use LogicException;
+use ReflectionClass;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -23,36 +28,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ImportTranslationsCommand extends Command
 {
-    private TranslatorInterface $translator;
-
-    private LocaleManagerInterface $localeManager;
-    private FileImporter $fileImporter;
-
     /**
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        TranslatorInterface $translator,
-        LocaleManagerInterface $localeManager,
-        FileImporter $fileImporter
-    )
-    {
+        private readonly TranslatorInterface $translator,
+        private readonly LocaleManagerInterface $localeManager,
+        private readonly FileImporter $fileImporter,
+    ) {
         parent::__construct();
-
-        $this->translator = $translator;
-        $this->localeManager = $localeManager;
-        $this->fileImporter = $fileImporter;
     }
 
-    /**
-     * @var \Symfony\Component\Console\Input\InputInterface
-     */
-    private $input;
+    private ?InputInterface $input = null;
 
-    /**
-     * @var \Symfony\Component\Console\Output\OutputInterface
-     */
-    private $output;
+    private ?OutputInterface $output = null;
 
     /**
      * {@inheritdoc}
@@ -90,7 +79,7 @@ class ImportTranslationsCommand extends Command
             $locales = $this->localeManager->getLocales();
         }
 
-        $domains = $input->getOption('domains') ? explode(',', $input->getOption('domains')) : array();
+        $domains = $input->getOption('domains') ? explode(',', (string)$input->getOption('domains')) : [];
 
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
@@ -104,30 +93,32 @@ class ImportTranslationsCommand extends Command
                 $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
             }
 
-            $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool) $this->input->getOption('globals'));
+            $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool)$this->input->getOption('globals'));
 
-        } else if(!$this->input->getOption('import-path')) {
+        } else {
+            if (!$this->input->getOption('import-path')) {
 
-            if (!$this->input->getOption('merge') && !$this->input->getOption('only-vendors')) {
-                $this->output->writeln('<info>*** Importing application translation files ***</info>');
-                $this->importAppTranslationFiles($locales, $domains);
-            }
+                if (!$this->input->getOption('merge') && !$this->input->getOption('only-vendors')) {
+                    $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                    $this->importAppTranslationFiles($locales, $domains);
+                }
 
-            if ($this->input->getOption('globals')) {
-                $this->importBundlesTranslationFiles($locales, $domains, true);
-            }
+                if ($this->input->getOption('globals')) {
+                    $this->importBundlesTranslationFiles($locales, $domains, true);
+                }
 
-            if (!$this->input->getOption('globals')) {
-                $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
-                $this->importBundlesTranslationFiles($locales, $domains);
+                if (!$this->input->getOption('globals')) {
+                    $this->output->writeln('<info>*** Importing bundles translation files ***</info>');
+                    $this->importBundlesTranslationFiles($locales, $domains);
 
-                $this->output->writeln('<info>*** Importing component translation files ***</info>');
-                $this->importComponentTranslationFiles($locales, $domains);
-            }
+                    $this->output->writeln('<info>*** Importing component translation files ***</info>');
+                    $this->importComponentTranslationFiles($locales, $domains);
+                }
 
-            if ($this->input->getOption('merge')) {
-                $this->output->writeln('<info>*** Importing application translation files ***</info>');
-                $this->importAppTranslationFiles($locales, $domains);
+                if ($this->input->getOption('merge')) {
+                    $this->output->writeln('<info>*** Importing application translation files ***</info>');
+                    $this->importAppTranslationFiles($locales, $domains);
+                }
             }
         }
 
@@ -151,21 +142,19 @@ class ImportTranslationsCommand extends Command
     protected function checkOptions()
     {
         if ($this->input->getOption('only-vendors') && $this->input->getOption('globals')) {
-            throw new \LogicException('You cannot use "globals" and "only-vendors" at the same time.');
+            throw new LogicException('You cannot use "globals" and "only-vendors" at the same time.');
         }
 
         if ($this->input->getOption('import-path')
             && ($this->input->getOption('globals')
                 || $this->input->getOption('merge')
                 || $this->input->getOption('only-vendors'))) {
-            throw new \LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
+            throw new LogicException('You cannot use "globals", "merge" or "only-vendors" and "import-path" at the same time.');
         }
     }
 
     /**
      * @param string $path
-     * @param array  $locales
-     * @param array  $domains
      */
     protected function importTranslationFilesFromPath($path, array $locales, array $domains)
     {
@@ -175,42 +164,36 @@ class ImportTranslationsCommand extends Command
 
     /**
      * Imports Symfony's components translation files.
-     *
-     * @param array $locales
-     * @param array $domains
      */
     protected function importComponentTranslationFiles(array $locales, array $domains)
     {
-        $classes = array(
-            'Symfony\Component\Validator\Validation'                            => '/Resources/translations',
-            'Symfony\Component\Form\Form'                                       => '/Resources/translations',
-            'Symfony\Component\Security\Core\Exception\AuthenticationException' => '/../Resources/translations',
-        );
+        $classes = [
+            Validation::class              => '/Resources/translations',
+            Form::class                    => '/Resources/translations',
+            AuthenticationException::class => '/../Resources/translations',
+        ];
 
-        $dirs = array();
+        $dirs = [];
         foreach ($classes as $namespace => $translationDir) {
-            $reflection = new \ReflectionClass($namespace);
+            $reflection = new ReflectionClass($namespace);
             $dirs[] = dirname($reflection->getFilename()) . $translationDir;
         }
 
         $finder = new Finder();
         $finder->files()
-            ->name($this->getFileNamePattern($locales, $domains))
-            ->in($dirs);
+               ->name($this->getFileNamePattern($locales, $domains))
+               ->in($dirs);
 
         $this->importTranslationFiles($finder->count() > 0 ? $finder : null);
     }
 
     /**
      * Imports application translation files.
-     *
-     * @param array $locales
-     * @param array $domains
      */
     protected function importAppTranslationFiles(array $locales, array $domains)
     {
         if (Kernel::MAJOR_VERSION >= 4) {
-            $translationPath = $this->getApplication()->getKernel()->getProjectDir().'/translations';
+            $translationPath = $this->getApplication()->getKernel()->getProjectDir() . '/translations';
             $finder = $this->findTranslationsFiles($translationPath, $locales, $domains, false);
         } else {
             $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
@@ -221,8 +204,6 @@ class ImportTranslationsCommand extends Command
     /**
      * Imports translation files form all bundles.
      *
-     * @param array $locales
-     * @param array $domains
      * @param boolean $global
      */
     protected function importBundlesTranslationFiles(array $locales, array $domains, $global = false)
@@ -237,15 +218,14 @@ class ImportTranslationsCommand extends Command
     /**
      * Imports translation files form the specific bundles.
      *
-     * @param BundleInterface $bundle
-     * @param array           $locales
-     * @param array           $domains
-     * @param boolean         $global
+     * @param array   $locales
+     * @param array   $domains
+     * @param boolean $global
      */
     protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains, $global = false)
     {
         $path = $bundle->getPath();
-        if ($global) {            
+        if ($global) {
             $kernel = $this->getApplication()->getKernel();
             if (Kernel::MAJOR_VERSION >= 4) {
                 $path = $kernel->getProjectDir() . '/app';
@@ -254,7 +234,7 @@ class ImportTranslationsCommand extends Command
             }
 
             $path .= '/Resources/' . $bundle->getName() . '/translations';
-            
+
             $this->output->writeln('<info>*** Importing ' . $bundle->getName() . '`s translation files from ' . $path . ' ***</info>');
         }
 
@@ -294,20 +274,18 @@ class ImportTranslationsCommand extends Command
      * Return a Finder object if $path has a Resources/translations folder.
      *
      * @param string $path
-     * @param array  $locales
-     * @param array  $domains
-     * @return \Symfony\Component\Finder\Finder
+     * @return Finder
      */
     protected function findTranslationsFiles($path, array $locales, array $domains, $autocompletePath = true)
     {
         $finder = null;
 
         if (preg_match('#^win#i', PHP_OS)) {
-            $path = preg_replace('#'. preg_quote(DIRECTORY_SEPARATOR, '#') .'#', '/', $path);
+            $path = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '#', '/', $path);
         }
 
         if (true === $autocompletePath) {
-            $dir = (0 === strpos($path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (str_starts_with($path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
@@ -317,16 +295,14 @@ class ImportTranslationsCommand extends Command
         if (is_dir($dir)) {
             $finder = new Finder();
             $finder->files()
-                ->name($this->getFileNamePattern($locales, $domains))
-                ->in($dir);
+                   ->name($this->getFileNamePattern($locales, $domains))
+                   ->in($dir);
         }
 
         return (null !== $finder && $finder->count() > 0) ? $finder : null;
     }
 
     /**
-     * @param array $locales
-     * @param array $domains
      * @return string
      */
     protected function getFileNamePattern(array $locales, array $domains)

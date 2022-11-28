@@ -8,8 +8,11 @@ use Lexik\Bundle\TranslationBundle\Propel\TransUnitQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TranslationQuery;
 use Lexik\Bundle\TranslationBundle\Propel\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Propel\TranslationRepository;
+use PDO;
 use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Propel;
+use PropelException;
+use RuntimeException;
 
 /**
  * Doctrine ORM storage class.
@@ -19,57 +22,31 @@ use Propel\Runtime\Propel;
 class PropelStorage implements StorageInterface
 {
     /**
-     * @var string
-     */
-    private $connectionName;
-
-    /**
-     * @var \PDO
+     * @var PDO
      */
     private $connection;
 
-    /**
-     * @var array
-     */
-    private $classes;
+    private array $collections = [];
 
-    /**
-     * @var array
-     */
-    private $collections = array();
+    private ?TransUnitRepository $transUnitRepository = null;
 
-    /**
-     * @var TransUnitRepository
-     */
-    private $transUnitRepository;
+    private ?TranslationRepository $translationRepository = null;
 
-    /**
-     * @var TranslationRepository
-     */
-    private $translationRepository;
-
-    /**
-     * @var FileRepository
-     */
-    private $fileRepository;
+    private ?FileRepository $fileRepository = null;
 
     /**
      * Constructor.
      *
      * @param string $connectionName
-     * @param array  $classes
      */
-    public function __construct($connectionName, array $classes)
+    public function __construct(private $connectionName, private array $classes)
     {
-        $this->connectionName = $connectionName;
-        $this->classes = $classes;
-
         $this->initCollections();
     }
 
     private function initCollections()
     {
-        $this->collections = array();
+        $this->collections = [];
 
         foreach ($this->classes as $className) {
             $this->initCollection($className);
@@ -83,7 +60,7 @@ class PropelStorage implements StorageInterface
     }
 
     /**
-     * @return \PDO
+     * @return PDO
      */
     private function getConnection()
     {
@@ -111,7 +88,7 @@ class PropelStorage implements StorageInterface
         }
 
         if (!$found) {
-            throw new \RuntimeException(sprintf('Invalid entity class: "%s".', get_class($entity)));
+            throw new RuntimeException(sprintf('Invalid entity class: "%s".', $entity::class));
         }
     }
 
@@ -155,7 +132,7 @@ class PropelStorage implements StorageInterface
     public function getModelClass($name)
     {
         if (!isset($this->classes[$name])) {
-            throw new \RuntimeException(sprintf('No class defined for name "%s".', $name));
+            throw new RuntimeException(sprintf('No class defined for name "%s".', $name));
         }
 
         return $this->classes[$name];
@@ -200,10 +177,7 @@ class PropelStorage implements StorageInterface
     {
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
-        $fields = array(
-            'Key'    => $key,
-            'Domain' => $domain,
-        );
+        $fields = ['Key'    => $key, 'Domain' => $domain];
 
         return TransUnitQuery::create()->findOneByArray($fields, $this->getConnection());
     }
@@ -220,7 +194,7 @@ class PropelStorage implements StorageInterface
              *
              * To make things work the easiest way is to fail silently at this point.
              */
-            return array();
+            return [];
         }
 
         return $this->getTransUnitRepository()->getAllDomainsByLocale();
@@ -273,11 +247,11 @@ class PropelStorage implements StorageInterface
     {
         $results = TransUnitQuery::create()
             ->withColumn('count(TransUnit.ID)', 'number')
-            ->select(array('number', 'TransUnit.Domain'))
+            ->select(['number', 'TransUnit.Domain'])
             ->groupBy('TransUnit.Domain')
             ->find();
 
-        $counts = array();
+        $counts = [];
         foreach ($results as $row) {
             $counts[$row['TransUnit.Domain']] = (int) $row['number'];
         }
@@ -294,11 +268,11 @@ class PropelStorage implements StorageInterface
             ->join('TransUnit')
             ->where('TransUnit.Domain = ?', $domain)
             ->withColumn('count(Translation.ID)', 'number')
-            ->select(array('number', 'Translation.Locale'))
+            ->select(['number', 'Translation.Locale'])
             ->groupBy('Translation.Locale')
             ->find();
 
-        $counts = array();
+        $counts = [];
         foreach ($results as $row) {
             $counts[$row['Translation.Locale']] = (int) $row['number'];
         }
@@ -326,7 +300,7 @@ class PropelStorage implements StorageInterface
     {
         try {
             $this->getConnection();
-        } catch (\PropelException $e) {
+        } catch (PropelException) {
             return false;
         }
 

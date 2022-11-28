@@ -19,10 +19,7 @@ use Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand;
  */
 class ImportTranslationsCommandTest extends WebTestCase
 {
-    /**
-     * @var Application
-     */
-    private static $application;
+    private static Application $application;
 
     /**
      *
@@ -55,11 +52,11 @@ class ImportTranslationsCommandTest extends WebTestCase
     {
         static::$kernel->getContainer()->get('doctrine.dbal.default_connection');
 
-        static::runCommand("doctrine:schema:drop", array('--force' => true));
+        static::runCommand("doctrine:schema:drop", ['--force' => true]);
         static::runCommand("doctrine:schema:create");
     }
 
-    private static function runCommand($commandName, $options = array())
+    private static function runCommand($commandName, $options = [])
     {
         $options["-e"] = self::$kernel->getEnvironment();
 
@@ -91,13 +88,13 @@ class ImportTranslationsCommandTest extends WebTestCase
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
-            array(
+            [
                 'command'       => $command->getName(),
                 'bundle'        => 'LexikTranslationBundle',
                 '--cache-clear' => true,
                 '--force'       => true,
-                '--locales'     => array('en', 'fr'),
-            )
+                '--locales'     => ['en', 'fr'],
+            ]
         );
 
         $resultLines = explode("\n", $commandTester->getDisplay());

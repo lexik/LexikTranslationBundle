@@ -7,9 +7,6 @@ use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 class DoctrineORMListener
 {
-    /**
-     * @param LoadClassMetadataEventArgs $eventArgs
-     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
         $params = $eventArgs->getEntityManager()->getConnection()->getParams();
@@ -21,7 +18,7 @@ class DoctrineORMListener
         /** @var ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
-        if (false === strpos($metadata->getName(), 'TranslationBundle')) {
+        if (!str_contains($metadata->getName(), 'TranslationBundle')) {
             return;
         }
 

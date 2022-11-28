@@ -54,7 +54,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.exporter.json.hierarchical_format', $config['exporter']['json_hierarchical_format']);
         $container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
 
-        $objectManager = isset($config['storage']['object_manager']) ? $config['storage']['object_manager'] : null;
+        $objectManager = $config['storage']['object_manager'] ?? null;
 
         $this->buildTranslatorDefinition($container);
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
@@ -70,9 +70,6 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $this->registerTranslatorConfiguration($config, $container);
     }
 
-    /**
-     * @param ContainerBuilder $container
-     */
     public function buildTranslatorDefinition(ContainerBuilder $container)
     {
         $translator = new Definition();
@@ -112,7 +109,6 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     }
 
     /**
-     * @param ContainerBuilder $container
      * @param int $cacheInterval
      */
     public function buildCacheCleanListenerDefinition(ContainerBuilder $container, $cacheInterval)
@@ -126,10 +122,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $listener->addArgument(new Reference(LocaleManagerInterface::class));
         $listener->addArgument($cacheInterval);
 
-        $listener->addTag('kernel.event_listener', array(
-            'event'  => 'kernel.request',
-            'method' => 'onKernelRequest',
-        ));
+        $listener->addTag('kernel.event_listener', ['event'  => 'kernel.request', 'method' => 'onKernelRequest']);
 
         $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
@@ -152,7 +145,6 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     /**
      * Build the 'lexik_translation.translation_storage' service definition.
      *
-     * @param ContainerBuilder $container
      * @param string           $storage
      * @param string           $objectManager
      * @throws \RuntimeException
@@ -162,40 +154,28 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.storage.type', $storage);
 
         if (StorageInterface::STORAGE_ORM == $storage) {
-            $args = array(
-                new Reference('doctrine'),
-                (null === $objectManager) ? 'default' : $objectManager,
-            );
+            $args = [new Reference('doctrine'), $objectManager ?? 'default'];
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
 
             $metadataListener = new Definition();
             $metadataListener->setClass('%lexik_translation.orm.listener.class%');
-            $metadataListener->addTag('doctrine.event_listener', array(
-                'event' => Events::loadClassMetadata,
-            ));
+            $metadataListener->addTag('doctrine.event_listener', ['event' => Events::loadClassMetadata]);
 
             $container->setDefinition('lexik_translation.orm.listener', $metadataListener);
 
         } elseif (StorageInterface::STORAGE_MONGODB == $storage) {
-            $args = array(
-                new Reference('doctrine_mongodb'),
-                (null === $objectManager) ? 'default' : $objectManager,
-            );
+            $args = [new Reference('doctrine_mongodb'), $objectManager ?? 'default'];
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
         } elseif (StorageInterface::STORAGE_PROPEL == $storage) {
             // In the Propel case the object_manager setting is used for the connection name
-            $args = array($objectManager);
+            $args = [$objectManager];
         } else {
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
 
-        $args[] = array(
-            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
-            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
-            'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage)),
-        );
+        $args[] = ['trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)), 'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)), 'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))];
 
         $storageDefinition = new Definition();
         $storageDefinition->setClass($container->getParameter(sprintf('lexik_translation.%s.translation_storage.class', $storage)));
@@ -208,15 +188,12 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     /**
      * Add a driver to load mapping of model classes.
      *
-     * @param ContainerBuilder $container
      * @param string           $driverId
      * @param string           $driverClass
      */
     protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
     {
-        $driverDefinition = new Definition($driverClass, array(
-            array(realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'),
-        ));
+        $driverDefinition = new Definition($driverClass, [[realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model']]);
         $driverDefinition->setPublic(false);
 
         $container->setDefinition($driverId, $driverDefinition);
@@ -224,30 +201,22 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
     /**
      * Load dev tools.
-     *
-     * @param ContainerBuilder $container
      */
     protected function buildDevServicesDefinition(ContainerBuilder $container)
     {
         $container
             ->getDefinition('lexik_translation.data_grid.request_handler')
-            ->addMethodCall('setProfiler', array(new Reference('profiler')));
+            ->addMethodCall('setProfiler', [new Reference('profiler')]);
 
         $tokenFinderDefinition = new Definition();
         $tokenFinderDefinition->setClass($container->getParameter('lexik_translation.token_finder.class'));
-        $tokenFinderDefinition->setArguments(array(
-            new Reference('profiler'),
-            new Parameter('lexik_translation.token_finder.limit'),
-        ));
+        $tokenFinderDefinition->setArguments([new Reference('profiler'), new Parameter('lexik_translation.token_finder.limit')]);
 
         $container->setDefinition($container->getParameter('lexik_translation.token_finder.class'), $tokenFinderDefinition);
     }
 
     /**
      * Register the "lexik_translation.translator" service configuration.
-     *
-     * @param array $config
-     * @param ContainerBuilder $container
      */
     protected function registerTranslatorConfiguration(array $config, ContainerBuilder $container)
     {
@@ -259,28 +228,28 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         }
 
         $translator = $container->findDefinition('lexik_translation.translator');
-        $translator->addMethodCall('setFallbackLocales', array($config['fallback_locale']));
+        $translator->addMethodCall('setFallbackLocales', [$config['fallback_locale']]);
 
         $registration = $config['resources_registration'];
 
         // Discover translation directories
         if ('all' === $registration['type'] || 'files' === $registration['type']) {
-            $dirs = array();
+            $dirs = [];
 
-            if (class_exists('Symfony\Component\Validator\Validation')) {
-                $r = new \ReflectionClass('Symfony\Component\Validator\Validation');
-
-                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
-            }
-
-            if (class_exists('Symfony\Component\Form\Form')) {
-                $r = new \ReflectionClass('Symfony\Component\Form\Form');
+            if (class_exists(\Symfony\Component\Validator\Validation::class)) {
+                $r = new \ReflectionClass(\Symfony\Component\Validator\Validation::class);
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
 
-            if (class_exists('Symfony\Component\Security\Core\Exception\AuthenticationException')) {
-                $r = new \ReflectionClass('Symfony\Component\Security\Core\Exception\AuthenticationException');
+            if (class_exists(\Symfony\Component\Form\Form::class)) {
+                $r = new \ReflectionClass(\Symfony\Component\Form\Form::class);
+
+                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
+            }
+
+            if (class_exists(\Symfony\Component\Security\Core\Exception\AuthenticationException::class)) {
+                $r = new \ReflectionClass(\Symfony\Component\Security\Core\Exception\AuthenticationException::class);
 
                 if (is_dir($dir = dirname($r->getFilename()).'/../Resources/translations')) {
                     $dirs[] = $dir;
@@ -322,9 +291,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                     // only look for managed locales
                     $finder->name(sprintf('/(.*\.(%s)\.\w+$)/', implode('|', $config['managed_locales'])));
                 } else {
-                    $finder->filter(function (\SplFileInfo $file) {
-                        return 2 === substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename());
-                    });
+                    $finder->filter(fn(\SplFileInfo $file) => 2 === substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename()));
                 }
 
                 $finder->in($dirs);
@@ -332,14 +299,14 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                 foreach ($finder as $file) {
                     // filename is domain.locale.format
                     [$domain, $locale, $format] = explode('.', $file->getBasename(), 3);
-                    $translator->addMethodCall('addResource', array($format, (string) $file, $locale, $domain));
+                    $translator->addMethodCall('addResource', [$format, (string) $file, $locale, $domain]);
                 }
             }
         }
 
         // add resources from database
         if ('all' === $registration['type'] || 'database' === $registration['type']) {
-            $translator->addMethodCall('addDatabaseResources', array());
+            $translator->addMethodCall('addDatabaseResources', []);
         }
     }
 }

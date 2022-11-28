@@ -39,9 +39,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
                 $tmpConnection = DriverManager::getConnection($params);
                 $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
                 $tmpConnection->close();
-            } catch (ConnectionException $e) {
-                $dbExists = false;
-            } catch (\Exception $e) {
+            } catch (ConnectionException|\Exception $e) {
                 $dbExists = false;
             }
 
@@ -51,10 +49,10 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
         }
 
         // checks tables exist
-        $tables = array(
+        $tables = [
             $em->getClassMetadata($this->getModelClass('trans_unit'))->getTableName(),
             $em->getClassMetadata($this->getModelClass('translation'))->getTableName(),
-        );
+        ];
 
         return $connection->getSchemaManager()->tablesExist($tables);
     }
@@ -74,9 +72,9 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     {
         $results = $this->getTransUnitRepository()->countByDomains();
 
-        $counts = array();
+        $counts = [];
         foreach ($results as $row) {
-            $counts[$row['domain']] = (int) $row['number'];
+            $counts[$row['domain']] = (int)$row['number'];
         }
 
         return $counts;
@@ -89,9 +87,9 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     {
         $results = $this->getTranslationRepository()->countByLocales($domain);
 
-        $counts = array();
+        $counts = [];
         foreach ($results as $row) {
-            $counts[$row['locale']] = (int) $row['number'];
+            $counts[$row['locale']] = (int)$row['number'];
         }
 
         return $counts;

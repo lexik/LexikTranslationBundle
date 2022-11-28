@@ -6,6 +6,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
+use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Manager\FileManager;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
@@ -20,36 +21,17 @@ use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
  */
 class TransUnitManagerTest extends BaseUnitTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
+    private EntityManager $em;
 
-    /**
-     * @var DocumentManager
-     */
-    private $dm;
+    private DocumentManager $dm;
 
-    /**
-     * @var DoctrineORMStorage
-     */
-    private $ormStorage;
+    private DoctrineORMStorage $ormStorage;
 
-    /**
-     * @var DoctrineMongoDBStorage
-     */
-    private $odmStorage;
+    private DoctrineMongoDBStorage $odmStorage;
 
-    /**
-     *
-     * @var PropelStorage
-     */
-    private $propelStorage;
+    private PropelStorage $propelStorage;
 
-    /**
-     * @var string
-     */
-    private $rootDir = '/test/root/dir/app';
+    private string $rootDir = '/test/root/dir/app';
 
     public function setUp(): void
     {
@@ -132,7 +114,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $fileManager = new FileManager($this->ormStorage, self::ENTITY_FILE_CLASS, $this->rootDir);
         $manager = new TransUnitManager($this->ormStorage, $fileManager, $this->rootDir);
 
-        $class = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
+        $class = TransUnit::class;
         $transUnit = $manager->create('bwah', 'messages', true);
 
         $translation = $manager->addTranslation($transUnit, 'en', 'bwaaaAaAahhHHh', null, true);
@@ -280,7 +262,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->em->getUnitOfWork()->getEntityState($transUnit));
         $this->assertEquals(0, $transUnit->getTranslations()->count());
 
-        $transUnit = $manager->newInstance(array('fr', 'en'));
+        $transUnit = $manager->newInstance(['fr', 'en']);
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->em->getUnitOfWork()->getEntityState($transUnit));
         $this->assertEquals('fr', $transUnit->getTranslations()->get(0)->getLocale());
         $this->assertEquals('en', $transUnit->getTranslations()->get(1)->getLocale());
@@ -298,7 +280,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->dm->getUnitOfWork()->getDocumentState($transUnit));
         $this->assertEquals(0, $transUnit->getTranslations()->count());
 
-        $transUnit = $manager->newInstance(array('fr', 'en'));
+        $transUnit = $manager->newInstance(['fr', 'en']);
         $this->assertEquals(ORMUnitOfWork::STATE_NEW, $this->dm->getUnitOfWork()->getDocumentState($transUnit));
         $this->assertEquals('fr', $transUnit->getTranslations()->get(0)->getLocale());
         $this->assertEquals('en', $transUnit->getTranslations()->get(1)->getLocale());
@@ -316,7 +298,7 @@ class TransUnitManagerTest extends BaseUnitTestCase
         $this->assertTrue($transUnit->isNew());
         $this->assertEquals(0, $transUnit->getTranslations()->count());
 
-        $transUnit = $manager->newInstance(array('fr', 'en'));
+        $transUnit = $manager->newInstance(['fr', 'en']);
         $this->assertTrue($transUnit->isNew());
         $this->assertEquals('fr', $transUnit->getTranslations()->get(0)->getLocale());
         $this->assertEquals('en', $transUnit->getTranslations()->get(1)->getLocale());

@@ -24,11 +24,8 @@ class TransUnitData implements FixtureInterface
     public function load(ObjectManager $manager)
     {
         // add files
-        $files = array();
-        $domains = array(
-            'superTranslations' => array('fr', 'en', 'de'),
-            'messages'          => array('fr', 'en'),
-        );
+        $files = [];
+        $domains = ['superTranslations' => ['fr', 'en', 'de'], 'messages' => ['fr', 'en']];
 
         foreach ($domains as $name => $locales) {
             foreach ($locales as $locale) {
@@ -51,11 +48,11 @@ class TransUnitData implements FixtureInterface
         $transUnit->setKey('key.say_hello');
         $transUnit->setDomain('superTranslations');
 
-        $translations = array(
-           'fr' => 'salut',
-           'en' => 'hello',
-           'de' => 'heil',
-        );
+        $translations = [
+            'fr' => 'salut',
+            'en' => 'hello',
+            'de' => 'heil',
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = $this->createTranslationInstance($manager);
@@ -73,10 +70,10 @@ class TransUnitData implements FixtureInterface
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_goodbye');
 
-        $translations = array(
+        $translations = [
             'fr' => 'au revoir',
             'en' => 'goodbye',
-        );
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = $this->createTranslationInstance($manager);
@@ -94,10 +91,10 @@ class TransUnitData implements FixtureInterface
         $transUnit = $this->createTransUnitInstance($manager);
         $transUnit->setKey('key.say_wtf');
 
-        $translations = array(
+        $translations = [
             'fr' => 'c\'est quoi ce bordel !?!',
             'en' => 'what the fuck !?!',
-        );
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = $this->createTranslationInstance($manager);
@@ -114,8 +111,6 @@ class TransUnitData implements FixtureInterface
 
     /**
      * Create the right TransUnit instance.
-     *
-     * @param ObjectManager $manager
      */
     protected function createTransUnitInstance(ObjectManager $manager)
     {
@@ -132,8 +127,6 @@ class TransUnitData implements FixtureInterface
 
     /**
      * Create the right Translation instance.
-     *
-     * @param ObjectManager $manager
      */
     protected function createTranslationInstance(ObjectManager $manager)
     {
@@ -150,8 +143,6 @@ class TransUnitData implements FixtureInterface
 
     /**
      * Create the right File instance.
-     *
-     * @param ObjectManager $manager
      */
     protected function createFileInstance(ObjectManager $manager)
     {

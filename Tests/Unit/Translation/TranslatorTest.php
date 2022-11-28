@@ -34,19 +34,7 @@ class TranslatorTest extends BaseUnitTestCase
         $translator = $this->createTranslator($em, sys_get_temp_dir());
         $translator->addDatabaseResources();
 
-        $expected = array(
-            'de' => array(
-                array('database', 'DB', 'superTranslations'),
-            ),
-            'en' => array(
-                array('database', 'DB', 'messages'),
-                array('database', 'DB', 'superTranslations'),
-            ),
-            'fr' => array(
-                array('database', 'DB', 'messages'),
-                array('database', 'DB', 'superTranslations'),
-            ),
-        );
+        $expected = ['de' => [['database', 'DB', 'superTranslations']], 'en' => [['database', 'DB', 'messages'], ['database', 'DB', 'superTranslations']], 'fr' => [['database', 'DB', 'messages'], ['database', 'DB', 'superTranslations']]];
         $this->assertEquals($expected, $translator->dbResources);
     }
 
@@ -98,7 +86,7 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
         $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php.meta'));
 
-        $translator->removeLocalesCacheFiles(array('fr', 'en'));
+        $translator->removeLocalesCacheFiles(['fr', 'en']);
 
         $this->assertFalse(file_exists($cacheDir.'/database.resources.php'));
         $this->assertFalse(file_exists($cacheDir.'/database.resources.php.meta'));
@@ -117,7 +105,7 @@ class TranslatorTest extends BaseUnitTestCase
         $dispatcher = new EventDispatcher();
         $dispatcher->addListener(
             GetDatabaseResourcesEvent::class,
-            array($listener, 'onGetDatabaseResources')
+            $listener->onGetDatabaseResources(...)
         );
 
         $container = new Container();
@@ -125,10 +113,8 @@ class TranslatorTest extends BaseUnitTestCase
         $container->set('event_dispatcher', $dispatcher);
         $container->compile();
 
-        $loaderIds = array();
-        $options = array(
-            'cache_dir' => $cacheDir,
-        );
+        $loaderIds = [];
+        $options = ['cache_dir' => $cacheDir];
 
         return new TranslatorMock($container, new MessageFormatter(), 'en', $loaderIds, $options);
     }
@@ -155,12 +141,12 @@ class TranslatorTest extends BaseUnitTestCase
 
 class TranslatorMock extends Translator
 {
-    public $dbResources = array();
+    public $dbResources = [];
 
     public function addResource($format, $resource, $locale, $domain = 'messages')
     {
         if ('database' == $format) {
-            $this->dbResources[$locale][] = array($format, $resource, $domain);
+            $this->dbResources[$locale][] = [$format, $resource, $domain];
         }
 
         parent::addResource($format, $resource, $locale, $domain);

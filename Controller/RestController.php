@@ -18,59 +18,41 @@ class RestController extends AbstractController
 {
     use CsrfCheckerTrait;
 
-    private $dataGridRequestHandler;
-
-    private $dataGridFormatter;
-
-    private $translationStorage;
-
-    private $transUnitManager;
-
     private $csrfTokenManager;
 
     public function __construct(
-        DataGridRequestHandler $dataGridRequestHandler,
-        DataGridFormatter $dataGridFormatter,
-        StorageInterface $translationStorage,
-        TransUnitManagerInterface $transUnitManager
+        private readonly DataGridRequestHandler $dataGridRequestHandler,
+        private readonly DataGridFormatter $dataGridFormatter,
+        private readonly StorageInterface $translationStorage,
+        private readonly TransUnitManagerInterface $transUnitManager,
     ) {
-        $this->dataGridRequestHandler = $dataGridRequestHandler;
-        $this->dataGridFormatter = $dataGridFormatter;
-        $this->translationStorage = $translationStorage;
-        $this->transUnitManager = $transUnitManager;
     }
 
     /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function listAction(Request $request)
     {
-        list($transUnits, $count) = $this->dataGridRequestHandler->getPage($request);
+        [$transUnits, $count] = $this->dataGridRequestHandler->getPage($request);
 
         return $this->dataGridFormatter->createListResponse($transUnits, $count);
     }
 
     /**
-     * @param Request $request
      * @param $token
-     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function listByProfileAction(Request $request, $token)
     {
-        list($transUnits, $count) = $this->dataGridRequestHandler->getPageByToken($request, $token);
+        [$transUnits, $count] = $this->dataGridRequestHandler->getPageByToken($request, $token);
 
         return $this->dataGridFormatter->createListResponse($transUnits, $count);
     }
 
     /**
-     * @param Request $request
      * @param integer $id
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function updateAction(Request $request, $id)
@@ -101,7 +83,7 @@ class RestController extends AbstractController
 
         $deleted = $this->transUnitManager->delete($transUnit);
 
-        return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
+        return new JsonResponse(['deleted' => $deleted], $deleted ? 200 : 400);
     }
 
     /**
@@ -124,6 +106,6 @@ class RestController extends AbstractController
 
         $deleted = $this->transUnitManager->deleteTranslation($transUnit, $locale);
 
-        return new JsonResponse(array('deleted' => $deleted), $deleted ? 200 : 400);
+        return new JsonResponse(['deleted' => $deleted], $deleted ? 200 : 400);
     }
 }

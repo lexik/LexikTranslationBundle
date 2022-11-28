@@ -24,11 +24,11 @@ class TransUnitDataPropel
     public function load(ConnectionWrapper $con)
     {
         // add files
-        $files = array();
-        $domains = array(
-            'superTranslations' => array('fr', 'en', 'de'),
-            'messages'          => array('fr', 'en'),
-        );
+        $files = [];
+        $domains = [
+            'superTranslations' => ['fr', 'en', 'de'],
+            'messages'          => ['fr', 'en'],
+        ];
 
         foreach ($domains as $name => $locales) {
             foreach ($locales as $locale) {
@@ -49,11 +49,11 @@ class TransUnitDataPropel
         $transUnit->setKey('key.say_hello');
         $transUnit->setDomain('superTranslations');
 
-        $translations = array(
-           'fr' => 'salut',
-           'en' => 'hello',
-           'de' => 'heil',
-        );
+        $translations = [
+            'fr' => 'salut',
+            'en' => 'hello',
+            'de' => 'heil',
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = new Translation();
@@ -70,10 +70,10 @@ class TransUnitDataPropel
         $transUnit = new TransUnit();
         $transUnit->setKey('key.say_goodbye');
 
-        $translations = array(
+        $translations = [
             'fr' => 'au revoir',
             'en' => 'goodbye',
-        );
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = new Translation();
@@ -90,10 +90,10 @@ class TransUnitDataPropel
         $transUnit = new TransUnit();
         $transUnit->setKey('key.say_wtf');
 
-        $translations = array(
+        $translations = [
             'fr' => 'c\'est quoi ce bordel !?!',
             'en' => 'what the fuck !?!',
-        );
+        ];
 
         foreach ($translations as $locale => $content) {
             $translation = new Translation();

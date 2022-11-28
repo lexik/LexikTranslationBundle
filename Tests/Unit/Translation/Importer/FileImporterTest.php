@@ -25,10 +25,7 @@ class FileImporterTest extends BaseUnitTestCase
         $em = $this->getMockSqliteEntityManager();
         $this->createSchema($em);
 
-        $loaders = array(
-            'yml' => new YamlFileLoader(),
-            'php' => new PhpFileLoader(),
-        );
+        $loaders = ['yml' => new YamlFileLoader(), 'php' => new PhpFileLoader()];
 
         $storage = $this->getORMStorage($em);
 
@@ -40,10 +37,7 @@ class FileImporterTest extends BaseUnitTestCase
         $this->assertDatabaseEntries($em, 0);
 
         // import files
-        $files = array(
-            new SplFileInfo(__DIR__.'/../../../Fixtures/test.en.yml', '', ''),
-            new SplFileInfo(__DIR__.'/../../../Fixtures/test.fr.php', '', ''),
-        );
+        $files = [new SplFileInfo(__DIR__.'/../../../Fixtures/test.en.yml', '', ''), new SplFileInfo(__DIR__.'/../../../Fixtures/test.fr.php', '', '')];
 
         foreach ($files as $file) {
             $importer->import($file);

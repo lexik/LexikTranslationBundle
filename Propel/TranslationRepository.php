@@ -12,17 +12,9 @@ use Lexik\Bundle\TranslationBundle\Propel\Map\TranslationTableMap;
  */
 class TranslationRepository
 {
-    /**
-     * @var ConnectionWrapper
-     */
-    protected $connection;
-
-    /**
-     * @param ConnectionWrapper $connection
-     */
-    public function __construct(ConnectionWrapper $connection)
-    {
-        $this->connection = $connection;
+    public function __construct(
+        protected ConnectionWrapper $connection
+    ) {
     }
 
     /**
@@ -39,10 +31,9 @@ class TranslationRepository
     public function getLatestTranslationUpdatedAt()
     {
         $result = TranslationQuery::create()
-            ->withColumn(sprintf('MAX(%s)', TranslationTableMap::COL_UPDATED_AT), 'max_updated_at')
-            ->select(array('max_updated_at'))
-            ->findOne($this->getConnection())
-        ;
+                                  ->withColumn(sprintf('MAX(%s)', TranslationTableMap::COL_UPDATED_AT), 'max_updated_at')
+                                  ->select(['max_updated_at'])
+                                  ->findOne($this->getConnection());
 
         return !empty($result) ? new \DateTime($result) : null;
     }

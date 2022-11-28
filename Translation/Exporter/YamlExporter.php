@@ -12,14 +12,9 @@ use Symfony\Component\Yaml\Dumper;
  */
 class YamlExporter implements ExporterInterface
 {
-    private $createTree;
-
-    /**
-     * @param bool $createTree
-     */
-    public function __construct($createTree = false)
-    {
-        $this->createTree = $createTree;
+    public function __construct(
+        private bool $createTree = false
+    ) {
     }
 
     /**
@@ -51,7 +46,7 @@ class YamlExporter implements ExporterInterface
      */
     protected function createMultiArray(array $translations)
     {
-        $res = array();
+        $res = [];
 
         foreach ($translations as $keyString => $value) {
             $keys = explode('.', $keyString);
@@ -72,9 +67,7 @@ class YamlExporter implements ExporterInterface
     /**
      *
      *
-     * @param array $array
      * @param $value
-     * @param array $keys
      *
      * @throws \InvalidArgumentException
      */
@@ -90,7 +83,7 @@ class YamlExporter implements ExporterInterface
         }
 
         if (!isset($array[$key])) {
-            $array[$key] = array();
+            $array[$key] = [];
         } elseif (!is_array($array[$key])) {
             //if $array[$key] isset but is not array
             throw new \InvalidArgumentException('Found an leaf, expected a tree');
@@ -102,7 +95,7 @@ class YamlExporter implements ExporterInterface
     /**
      * Make sure we flatten the array in the begnning to make a lower tree
      *
-     * @param mixed $array
+     * @param mixed  $array
      * @param string $prefix
      *
      * @return mixed
@@ -112,7 +105,7 @@ class YamlExporter implements ExporterInterface
         if (is_array($array)) {
             foreach ($array as $key => $subarray) {
                 if (count($array) == 1) {
-                    return $this->flattenArray($subarray, ($prefix == '' ? $prefix : $prefix.'.').$key);
+                    return $this->flattenArray($subarray, ($prefix == '' ? $prefix : $prefix . '.') . $key);
                 }
 
                 $array[$key] = $this->flattenArray($subarray);
@@ -123,7 +116,7 @@ class YamlExporter implements ExporterInterface
             return $array;
         }
 
-        return array($prefix => $array);
+        return [$prefix => $array];
     }
 
     /**

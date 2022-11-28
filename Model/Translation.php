@@ -87,11 +87,6 @@ abstract class Translation
         return $this->content;
     }
 
-    /**
-     * Set file
-     *
-     * @param File $file
-     */
     public function setFile(File $file)
     {
         $this->file = $file;

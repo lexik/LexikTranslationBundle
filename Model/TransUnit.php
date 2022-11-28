@@ -166,8 +166,6 @@ abstract class TransUnit
 
     /**
      * Set translations collection
-     *
-     * @param Collection $collection
      */
     public function setTranslations(Collection $collection)
     {

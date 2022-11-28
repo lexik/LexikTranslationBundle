@@ -1,7 +1,11 @@
 <?php
 
-return array(
-    new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-    new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
-    new \Lexik\Bundle\TranslationBundle\LexikTranslationBundle(),
-);
+use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Lexik\Bundle\TranslationBundle\LexikTranslationBundle;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+
+return [
+    new FrameworkBundle(),
+    new DoctrineBundle(),
+    new LexikTranslationBundle(),
+];

@@ -38,7 +38,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
      */
     public function testGetAllDomains()
     {
-        $dm = $this->loadDatabase(true);
+        $dm = $this->loadDatabase();
         $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomains();
@@ -90,7 +90,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
      */
     public function testCount()
     {
-        $dm = $this->loadDatabase(true);
+        $dm = $this->loadDatabase();
         $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $this->assertEquals(3, $repository->count(null, []));
@@ -110,7 +110,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
      */
     public function testGetTransUnitList()
     {
-        $dm = $this->loadDatabase(true);
+        $dm = $this->loadDatabase();
         $repository = $dm->getRepository(self::DOCUMENT_TRANS_UNIT_CLASS);
 
         $result = $repository->getTransUnitList(['fr', 'de'], 10, 1, ['sidx' => 'key', 'sord' => 'ASC']);
@@ -269,13 +269,13 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
     protected function assertSameTransUnit($expected, $result)
     {
-        $this->assertEquals(count($expected), count($result));
+        $this->assertEquals(is_countable($expected) ? count($expected) : 0, is_countable($result) ? count($result) : 0);
 
         foreach ($expected as $i => $transUnit) {
             $this->assertEquals($transUnit['key'], $result[$i]['key']);
             $this->assertEquals($transUnit['domain'], $result[$i]['domain']);
 
-            $this->assertEquals(count($transUnit['translations']), count($result[$i]['translations']));
+            $this->assertEquals(is_countable($transUnit['translations']) ? count($transUnit['translations']) : 0, is_countable($result[$i]['translations']) ? count($result[$i]['translations']) : 0);
 
             foreach ($transUnit['translations'] as $j => $translation) {
                 $this->assertEquals($translation['locale'], $result[$i]['translations'][$j]['locale']);

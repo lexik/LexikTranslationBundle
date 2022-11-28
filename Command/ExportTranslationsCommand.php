@@ -21,26 +21,15 @@ class ExportTranslationsCommand extends Command
 {
     private InputInterface $input;
     private OutputInterface $output;
-    private StorageInterface $storage;
-    private TranslatorInterface $translator;
-    private string $projectDir;
-    private Filesystem $fileSystem;
-    private ExporterCollector $exporterCollector;
 
     public function __construct(
-        StorageInterface $storage,
-        TranslatorInterface $translator,
-        FileSystem $fileSystem,
-        ExporterCollector $exporterCollector,
-        string $projectDir
+        private readonly StorageInterface $storage,
+        private readonly TranslatorInterface $translator,
+        private readonly FileSystem $fileSystem,
+        private readonly ExporterCollector $exporterCollector,
+        private readonly string $projectDir,
     ) {
         parent::__construct();
-
-        $this->storage = $storage;
-        $this->translator = $translator;
-        $this->projectDir = $projectDir;
-        $this->fileSystem = $fileSystem;
-        $this->exporterCollector = $exporterCollector;
     }
 
     /**
@@ -51,13 +40,19 @@ class ExportTranslationsCommand extends Command
         $this->setName('lexik:translations:export');
         $this->setDescription('Export translations from the database to files.');
 
-        $this->addOption('locales', 'l', InputOption::VALUE_OPTIONAL,
-            'Only export files for given locales. e.g. "--locales=en,de"', null);
-        $this->addOption('domains', 'd', InputOption::VALUE_OPTIONAL,
-            'Only export files for given domains. e.g. "--domains=messages,validators"', null);
+        $this->addOption(
+            'locales', 'l', InputOption::VALUE_OPTIONAL,
+            'Only export files for given locales. e.g. "--locales=en,de"', null
+        );
+        $this->addOption(
+            'domains', 'd', InputOption::VALUE_OPTIONAL,
+            'Only export files for given domains. e.g. "--domains=messages,validators"', null
+        );
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
-        $this->addOption('override', 'o', InputOption::VALUE_NONE,
-            'Only export modified phrases (app/Resources/translations are exported fully anyway)');
+        $this->addOption(
+            'override', 'o', InputOption::VALUE_NONE,
+            'Only export modified phrases (app/Resources/translations are exported fully anyway)'
+        );
         $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');
     }
 
@@ -91,16 +86,14 @@ class ExportTranslationsCommand extends Command
      */
     protected function getFilesToExport()
     {
-        $locales = $this->input->getOption('locales') ? explode(',', $this->input->getOption('locales')) : [];
-        $domains = $this->input->getOption('domains') ? explode(',', $this->input->getOption('domains')) : [];
+        $locales = $this->input->getOption('locales') ? explode(',', (string)$this->input->getOption('locales')) : [];
+        $domains = $this->input->getOption('domains') ? explode(',', (string)$this->input->getOption('domains')) : [];
 
         return $this->storage->getFilesByLocalesAndDomains($locales, $domains);
     }
 
     /**
      * Get translations to export and export translations into a file.
-     *
-     * @param FileInterface $file
      */
     protected function exportFile(FileInterface $file)
     {
@@ -114,7 +107,7 @@ class ExportTranslationsCommand extends Command
             if ($override) {
                 $onlyUpdated = ('Resources/translations' !== $file->getPath());
             } else {
-                $onlyUpdated = (false !== strpos($file->getPath(), 'vendor/'));
+                $onlyUpdated = (str_contains((string)$file->getPath(), 'vendor/'));
             }
         } else {
             $onlyUpdated = !$override;
@@ -128,10 +121,10 @@ class ExportTranslationsCommand extends Command
             return;
         }
 
-        $format = $this->input->getOption('format') ? $this->input->getOption('format') : $file->getExtention();
+        $format = $this->input->getOption('format') ?: $file->getExtention();
 
         // we don't write vendors file, translations will be exported in %kernel.root_dir%/Resources/translations
-        if (false !== strpos($file->getPath(), 'vendor/') || $override) {
+        if (str_contains((string)$file->getPath(), 'vendor/') || $override) {
             $outputPath = sprintf('%s/Resources/translations', $rootDir);
         } else {
             $outputPath = sprintf('%s/%s', $rootDir, $file->getPath());

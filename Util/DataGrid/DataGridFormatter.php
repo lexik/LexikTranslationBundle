@@ -13,29 +13,12 @@ use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 class DataGridFormatter
 {
     /**
-     * Managed locales.
-     *
-     * @var LocaleManagerInterface
-     */
-    protected $localeManager;
-
-    /**
-     * Storage type
-     *
-     * @var string
-     */
-    protected $storage;
-
-    /**
      * Constructor.
      *
-     * @param LocaleManagerInterface  $localeManager
      * @param string $storage
      */
-    public function __construct(LocaleManagerInterface $localeManager, $storage)
+    public function __construct(protected LocaleManagerInterface $localeManager, protected $storage)
     {
-        $this->localeManager = $localeManager;
-        $this->storage = $storage;
     }
 
     /**
@@ -47,19 +30,15 @@ class DataGridFormatter
      */
     public function createListResponse($transUnits, $total)
     {
-        return new JsonResponse(array(
-            'translations' => $this->format($transUnits),
-            'total'        => $total,
-        ));
+        return new JsonResponse(['translations' => $this->format($transUnits), 'total'        => $total]);
     }
 
     /**
      * Returns a JSON response with formatted data.
      *
-     * @param mixed $transUnit
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function createSingleResponse($transUnit)
+    public function createSingleResponse(mixed $transUnit)
     {
         return new JsonResponse($this->formatOne($transUnit));
     }
@@ -72,7 +51,7 @@ class DataGridFormatter
      */
     protected function format($transUnits)
     {
-        $formatted = array();
+        $formatted = [];
 
         foreach ($transUnits as $transUnit) {
             $formatted[] = $this->formatOne($transUnit);
@@ -95,11 +74,7 @@ class DataGridFormatter
             $transUnit['id'] = $transUnit['_id']->{'$id'};
         }
 
-        $formatted = array(
-            '_id'     => $transUnit['id'],
-            '_domain' => $transUnit['domain'],
-            '_key'    => $transUnit['key'],
-        );
+        $formatted = ['_id'     => $transUnit['id'], '_domain' => $transUnit['domain'], '_key'    => $transUnit['key']];
 
         // add locales in the same order as in managed_locales param
         foreach ($this->localeManager->getLocales() as $locale) {
@@ -119,23 +94,14 @@ class DataGridFormatter
     /**
      * Convert a trans unit into an array.
      *
-     * @param TransUnitInterface $transUnit
      * @return array
      */
     protected function toArray(TransUnitInterface $transUnit)
     {
-        $data = array(
-            'id'           => $transUnit->getId(),
-            'domain'       => $transUnit->getDomain(),
-            'key'          => $transUnit->getKey(),
-            'translations' => array(),
-        );
+        $data = ['id'           => $transUnit->getId(), 'domain'       => $transUnit->getDomain(), 'key'          => $transUnit->getKey(), 'translations' => []];
 
         foreach ($transUnit->getTranslations() as $translation) {
-            $data['translations'][] = array(
-                'locale'  => $translation->getLocale(),
-                'content' => $translation->getContent(),
-            );
+            $data['translations'][] = ['locale'  => $translation->getLocale(), 'content' => $translation->getContent()];
         }
 
         return $data;
