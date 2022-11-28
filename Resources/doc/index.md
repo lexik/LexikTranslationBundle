@@ -54,6 +54,12 @@ You must at least define the fallback locale(s) as for the `framework.translator
 
 ```yml
 # app/config/config.yml
+
+framework:
+    templating:
+        engines:
+            - twig
+
 lexik_translation:
     fallback_locale: [en]         # (required) default locale(s) to use
     managed_locales: [en, fr, de] # (required) locales that the bundle has to manage
