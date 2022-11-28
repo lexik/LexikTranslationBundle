@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class YamlExporterTest extends TestCase
 {
-    private $outFileName = '/file.out';
+    private string $outFileName = '/file.out';
 
     public function tearDown(): void
     {
@@ -33,16 +33,12 @@ class YamlExporterTest extends TestCase
         $exporter = new YamlExporter();
 
         // export empty array
-        $exporter->export($outFile, array());
+        $exporter->export($outFile, []);
         $expectedContent = '{  }';
         $this->assertEquals($expectedContent, trim(file_get_contents($outFile)));
 
         // export array with values
-        $exporter->export($outFile, array(
-            'key.a' => 'aaa',
-            'key.b' => 'bbb',
-            'key.c' => 'ccc',
-        ));
+        $exporter->export($outFile, ['key.a' => 'aaa', 'key.b' => 'bbb', 'key.c' => 'ccc']);
         $expectedContent = <<<C
 key.a: aaa
 key.b: bbb
@@ -58,18 +54,12 @@ C;
     {
         $exporter = new TmpExporter();
 
-        $result = $exporter->createMultiArray(array('foo.bar.baz' => 'foobar'));
-        $expected = array('foo' => array('bar' => array('baz' => 'foobar')));
+        $result = $exporter->createMultiArray(['foo.bar.baz' => 'foobar']);
+        $expected = ['foo' => ['bar' => ['baz' => 'foobar']]];
         $this->assertEquals($expected, $result);
 
-        $result = $exporter->createMultiArray(array(
-                'foo.bar.baz' => 'foobar',
-                'foo.foobaz' => 'bazbar',
-            ));
-        $expected = array('foo' => array(
-            'foobaz' => 'bazbar',
-            'bar'   => array('baz' => 'foobar'),
-        ));
+        $result = $exporter->createMultiArray(['foo.bar.baz' => 'foobar', 'foo.foobaz' => 'bazbar']);
+        $expected = ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]];
         $this->assertEquals($expected, $result);
     }
 
@@ -80,44 +70,20 @@ C;
     {
         $exporter = new TmpExporter();
 
-        $result = $exporter->flattenArray(array('foo' => array('bar' => array('baz' => 'foobar'))));
-        $expected = array('foo.bar.baz' => 'foobar');
+        $result = $exporter->flattenArray(['foo' => ['bar' => ['baz' => 'foobar']]]);
+        $expected = ['foo.bar.baz' => 'foobar'];
         $this->assertEquals($expected, $result);
 
         $result = $exporter->flattenArray(
-            array('bundle' => array('foo' => array(
-                        'foobaz' => 'bazbar',
-                        'bar'   => array(
-                                'baz0' => 'foobar',
-                                'baz1' => 'foobaz',
-                            ),
-                    ),
-                ),
-            )
+            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz0' => 'foobar', 'baz1' => 'foobaz']]]]
         );
-        $expected = array('bundle.foo' => array(
-                'foobaz' => 'bazbar',
-                'bar'   => array(
-                        'baz0' => 'foobar',
-                        'baz1' => 'foobaz',
-                    ),
-            ),
-        );
+        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz0' => 'foobar', 'baz1' => 'foobaz']]];
         $this->assertEquals($expected, $result);
 
         $result = $exporter->flattenArray(
-            array('bundle' => array('foo' => array(
-                        'foobaz' => 'bazbar',
-                        'bar'   => array('baz' => 'foobar'),
-                    ),
-                ),
-            )
+            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]]]
         );
-        $expected = array('bundle.foo' => array(
-                'foobaz' => 'bazbar',
-                'bar'   => array('baz' => 'foobar'),
-            ),
-        );
+        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]];
         $this->assertEquals($expected, $result);
     }
 }

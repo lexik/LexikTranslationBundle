@@ -68,18 +68,16 @@ class TransUnitRepository extends EntityRepository
     /**
      * Returns some trans units with their translations.
      *
-     * @param array $locales
      * @param int   $rows
      * @param int   $page
-     * @param array $filters
      * @return array
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
     {
         $this->loadCustomHydrator();
 
-        $sortColumn = isset($filters['sidx']) ? $filters['sidx'] : 'id';
-        $order = isset($filters['sord']) ? $filters['sord'] : 'ASC';
+        $sortColumn = $filters['sidx'] ?? 'id';
+        $order = $filters['sord'] ?? 'ASC';
 
         $builder = $this->createQueryBuilder('tu')
             ->select('tu.id');
@@ -93,9 +91,9 @@ class TransUnitRepository extends EntityRepository
             ->getQuery()
             ->getResult('SingleColumnArrayHydrator');
 
-        $transUnits = array();
+        $transUnits = [];
 
-        if (count($ids) > 0) {
+        if ((is_countable($ids) ? count($ids) : 0) > 0) {
             $qb = $this->createQueryBuilder('tu');
 
             $transUnits = $qb->select('tu, te')
@@ -113,8 +111,6 @@ class TransUnitRepository extends EntityRepository
     /**
      * Count the number of trans unit.
      *
-     * @param array $locales
-     * @param array $filters
      * @return int
      */
     public function count(array $locales = null,  array $filters = null)
@@ -145,7 +141,6 @@ class TransUnitRepository extends EntityRepository
     /**
      * Returns all translations for the given file.
      *
-     * @param ModelFile $file
      * @param boolean   $onlyUpdated
      * @return array
      */
@@ -164,7 +159,7 @@ class TransUnitRepository extends EntityRepository
 
         $results = $builder->getQuery()->getArrayResult();
 
-        $translations = array();
+        $translations = [];
         foreach ($results as $result) {
             $translations[$result['key']] = $result['content'];
         }
@@ -174,9 +169,6 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param QueryBuilder $builder
-     * @param array        $filters
      */
     protected function addTransUnitFilters(QueryBuilder $builder, array $filters = null)
     {
@@ -195,10 +187,6 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param QueryBuilder $builder
-     * @param array        $locales
-     * @param array        $filters
      */
     protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
     {
@@ -220,7 +208,7 @@ class TransUnitRepository extends EntityRepository
 
             $ids = $qb->getQuery()->getResult('SingleColumnArrayHydrator');
 
-            if (count($ids) > 0) {
+            if ((is_countable($ids) ? count($ids) : 0) > 0) {
                 $builder->andWhere($builder->expr()->in('tu.id', $ids));
             }
         }
@@ -232,6 +220,6 @@ class TransUnitRepository extends EntityRepository
     protected function loadCustomHydrator()
     {
         $config = $this->getEntityManager()->getConfiguration();
-        $config->addCustomHydrationMode('SingleColumnArrayHydrator', 'Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator');
+        $config->addCustomHydrationMode('SingleColumnArrayHydrator', \Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator::class);
     }
 }

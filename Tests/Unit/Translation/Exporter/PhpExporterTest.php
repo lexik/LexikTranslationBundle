@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class PhpExporterTest extends TestCase
 {
-    private $outFileName = '/file.out';
+    private string $outFileName = '/file.out';
 
     public function tearDown(): void
     {
@@ -33,7 +33,7 @@ class PhpExporterTest extends TestCase
         $exporter = new PhpExporter();
 
         // export empty array
-        $exporter->export($outFile, array());
+        $exporter->export($outFile, []);
         $expectedContent = <<<C
 <?php
 return array (
@@ -42,11 +42,7 @@ C;
         $this->assertEquals($expectedContent, file_get_contents($outFile));
 
         // export array with values
-        $exporter->export($outFile, array(
-            'key.a' => 'aaa',
-            'key.b' => 'bbb',
-            'key.c' => 'ccc',
-        ));
+        $exporter->export($outFile, ['key.a' => 'aaa', 'key.b' => 'bbb', 'key.c' => 'ccc']);
         $expectedContent = <<<C
 <?php
 return array (

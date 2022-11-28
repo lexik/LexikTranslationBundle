@@ -15,7 +15,7 @@ interface TransUnitManagerInterface
      * @param array $locales
      * @return TransUnitInterface
      */
-    public function newInstance($locales = array());
+    public function newInstance($locales = []);
 
     /**
      * Create a new trans unit.
@@ -30,10 +30,8 @@ interface TransUnitManagerInterface
     /**
      * Add a new translation to the given trans unit.
      *
-     * @param TransUnitInterface    $transUnit
      * @param string                $locale
      * @param string                $content
-     * @param FileInterface         $file
      * @param boolean               $flush
      * @return TranslationInterface
      */
@@ -42,7 +40,6 @@ interface TransUnitManagerInterface
     /**
      * Update the translated content of a trans unit for the given locale.
      *
-     * @param TransUnitInterface    $transUnit
      * @param string                $locale
      * @param string                $content
      * @param boolean               $flush
@@ -54,8 +51,6 @@ interface TransUnitManagerInterface
     /**
      * Update the content of each translations for the given trans unit.
      *
-     * @param TransUnitInterface    $transUnit
-     * @param array                 $translations
      * @param boolean               $flush
      */
     public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false);

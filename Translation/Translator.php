@@ -28,7 +28,7 @@ class Translator extends BaseTranslator
             $this->container->get('event_dispatcher')->dispatch($event);
 
             $resources = $event->getResources();
-            $metadata = array();
+            $metadata = [];
 
             foreach ($resources as $resource) {
                 $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
@@ -75,8 +75,6 @@ class Translator extends BaseTranslator
 
     /**
      * Remove the cache file corresponding to each given locale.
-     *
-     * @param array $locales
      */
     public function removeLocalesCacheFiles(array $locales)
     {
@@ -123,7 +121,7 @@ class Translator extends BaseTranslator
      */
     public function getFormats()
     {
-        $allFormats = array();
+        $allFormats = [];
 
         foreach ($this->loaderIds as $id => $formats) {
             foreach ($formats as $format) {

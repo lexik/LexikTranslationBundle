@@ -16,7 +16,7 @@ class SingleColumnArrayHydrator extends AbstractHydrator
      */
     protected function hydrateAllData()
     {
-        $result = array();
+        $result = [];
 
         while ($data = $this->_stmt->fetch(\PDO::FETCH_NUM)) {
             $value = $data[0];

@@ -25,7 +25,6 @@ class ExporterCollector
     /**
      *
      * @param string $id
-     * @param ExporterInterface $exporter
      */
     public function addExporter($id, ExporterInterface $exporter)
     {

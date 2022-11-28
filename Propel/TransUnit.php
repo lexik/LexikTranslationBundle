@@ -6,17 +6,16 @@ use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Propel\Base\TransUnit as BaseTransUnit;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 class TransUnit extends BaseTransUnit implements TransUnitInterface
 {
-    protected $translations = array();
+    protected $translations = [];
 
     /**
      * Return translations with  not blank content.
-     *
-     * @return array
      */
-    public function filterNotBlankTranslations()
+    public function filterNotBlankTranslations(): array
     {
         return array_filter($this->getTranslations()->getArrayCopy(), function (TranslationInterface $translation) {
             $content = $translation->getContent();
@@ -28,7 +27,7 @@ class TransUnit extends BaseTransUnit implements TransUnitInterface
     /** (non-PHPdoc)
      * @see \Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface::hasTranslation()
      */
-    public function hasTranslation($locale)
+    public function hasTranslation($locale): bool
     {
         return null !== $this->getTranslation($locale);
     }

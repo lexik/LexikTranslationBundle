@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class JsonExporterTest extends TestCase
 {
-    private $outFileName = '/file.out';
+    private string $outFileName = '/file.out';
 
     public function tearDown(): void
     {
@@ -31,18 +31,14 @@ class JsonExporterTest extends TestCase
         $exporter = new JsonExporter();
 
         // export empty array
-        $exporter->export($outFile, array());
+        $exporter->export($outFile, []);
         $expectedContent = <<<C
 []
 C;
         $this->assertJsonStringEqualsJsonFile($outFile, $expectedContent);
 
         // export array with values
-        $exporter->export($outFile, array(
-            'key.a' => 'aaa',
-            'key.b' => 'bbb',
-            'key.c' => 'ccc',
-        ));
+        $exporter->export($outFile, ['key.a' => 'aaa', 'key.b' => 'bbb', 'key.c' => 'ccc']);
         $expectedContent = <<<EOL
 {
     "key.a": "aaa",

@@ -13,25 +13,14 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 class FileManager implements FileManagerInterface
 {
     /**
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var string
-     */
-    private $rootDir;
-
-    /**
      * Construct.
      *
-     * @param StorageInterface $storage
-     * @param string           $rootDir
+     * @param string $rootDir
      */
-    public function __construct(StorageInterface $storage, $rootDir)
-    {
-        $this->storage = $storage;
-        $this->rootDir = $rootDir;
+    public function __construct(
+        private readonly StorageInterface $storage,
+        private $rootDir,
+    ) {
     }
 
     /**
@@ -46,7 +35,7 @@ class FileManager implements FileManagerInterface
         $hash = $this->generateHash($name, $this->getFileRelativePath($path));
         $file = $this->storage->getFileByHash($hash);
 
-        return $file instanceof FileInterface? $file : $this->create($name, $path);
+        return $file instanceof FileInterface ? $file : $this->create($name, $path);
 
     }
 
@@ -82,7 +71,7 @@ class FileManager implements FileManagerInterface
      */
     protected function generateHash($name, $relativePath)
     {
-        return md5($relativePath.DIRECTORY_SEPARATOR.$name);
+        return md5($relativePath . DIRECTORY_SEPARATOR . $name);
     }
 
     /**
@@ -93,13 +82,13 @@ class FileManager implements FileManagerInterface
      */
     protected function getFileRelativePath($filePath)
     {
-        $commonParts = array();
+        $commonParts = [];
 
         // replace window \ to work with /
-        $rootDir = (false !== strpos($this->rootDir, '\\')) ? str_replace('\\', '/', $this->rootDir) : $this->rootDir;
+        $rootDir = (str_contains($this->rootDir, '\\')) ? str_replace('\\', '/', $this->rootDir) : $this->rootDir;
 
         $antiSlash = false;
-        if (false !== strpos($filePath, '\\')) {
+        if (str_contains($filePath, '\\')) {
             $filePath = str_replace('\\', '/', $filePath);
             $antiSlash = true;
         }
@@ -115,13 +104,13 @@ class FileManager implements FileManagerInterface
             $i++;
         }
 
-        $filePath = str_replace(implode('/', $commonParts).'/', '', $filePath);
+        $filePath = str_replace(implode('/', $commonParts) . '/', '', $filePath);
 
         $nbCommonParts = count($commonParts);
         $nbRootParts = count($rootDirParts);
 
         for ($i = $nbCommonParts; $i < $nbRootParts; $i++) {
-             $filePath = '../'.$filePath;
+            $filePath = '../' . $filePath;
         }
 
         return $antiSlash ? str_replace('/', '\\', $filePath) : $filePath;

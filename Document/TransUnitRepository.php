@@ -106,9 +106,9 @@ class TransUnitRepository extends DocumentRepository
         }
 
         usort($domainsByLocale, function ($a, $b) {
-            $result = strcmp($a['locale'], $b['locale']);
+            $result = strcmp((string) $a['locale'], (string) $b['locale']);
             if (0 === $result) {
-                $result = strcmp($a['domain'], $b['domain']);
+                $result = strcmp((string) $a['domain'], (string) $b['domain']);
             }
             return $result;
         });
@@ -155,8 +155,8 @@ class TransUnitRepository extends DocumentRepository
      */
     public function getTransUnitList(array $locales = null, int $rows = 20, int $page = 1, array $filters = null): array
     {
-        $sortColumn = isset($filters['sidx']) ? $filters['sidx'] : 'id';
-        $order = isset($filters['sord']) ? $filters['sord'] : 'ASC';
+        $sortColumn = $filters['sidx'] ?? 'id';
+        $order = $filters['sord'] ?? 'ASC';
 
         $builder = $this->createQueryBuilder()
                         ->hydrate(false)
@@ -191,7 +191,7 @@ class TransUnitRepository extends DocumentRepository
                         ->execute();
 
         foreach ($results as $item) {
-            $end = count($item['translations']);
+            $end = is_countable($item['translations']) ? count($item['translations']) : 0;
             for ($i = 0; $i < $end; $i++) {
                 if (!in_array($item['translations'][$i]['locale'], $locales)) {
                     unset($item['translations'][$i]);
@@ -224,7 +224,6 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Returns all translations for the given file.
      *
-     * @param ModelFile $file
      * @param boolean   $onlyUpdated
      * @return array
      */
@@ -242,7 +241,7 @@ class TransUnitRepository extends DocumentRepository
         foreach ($results as $result) {
             $content = null;
             $i = 0;
-            while ($i < count($result['translations']) && null === $content) {
+            while ($i < (is_countable($result['translations']) ? count($result['translations']) : 0) && null === $content) {
                 if ($file->getLocale() == $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
                         $updated = ($result['translations'][$i]['createdAt'] < $result['translations'][$i]['updatedAt']);
@@ -264,9 +263,6 @@ class TransUnitRepository extends DocumentRepository
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param Builder $builder
-     * @param array   $filters
      */
     protected function addTransUnitFilters(Builder $builder, array $filters = null)
     {
@@ -308,7 +304,7 @@ class TransUnitRepository extends DocumentRepository
             $ids = $qb->getQuery()->execute();
             //$ids = iterator_to_array($ids);
 
-            if (count($ids) > 0) {
+            if (($ids === null ? 0 : count($ids)) > 0) {
                 $builder->field('id')->in($ids);
             }
         }
@@ -359,7 +355,7 @@ FCT;
                         ->getQuery()
                         ->execute();
 
-        return isset($results[0]['count']) ? $results[0]['count'] : [];
+        return $results[0]['count'] ?? [];
     }
 
     /**
@@ -392,6 +388,6 @@ FCT;
                         ->getQuery()
                         ->execute();
 
-        return isset($results[0]['count']) ? $results[0]['count'] : [];
+        return $results[0]['count'] ?? [];
     }
 }

@@ -60,7 +60,6 @@ class XliffExporter implements ExporterInterface
     /**
      * Add root nodes to a document.
      *
-     * @param \DOMDocument $dom
      * @param string|null $targetLanguage
      * @return \DOMElement
      */
@@ -87,7 +86,6 @@ class XliffExporter implements ExporterInterface
     /**
      * Create a new trans-unit node.
      *
-     * @param \DOMDocument $dom
      * @param int $id
      * @param string $key
      * @param string $value

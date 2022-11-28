@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
  */
 class XliffExporterTest extends TestCase
 {
-    private $outFileName = '/file.en.out';
+    private string $outFileName = '/file.en.out';
 
     public function tearDown(): void
     {
@@ -33,7 +33,7 @@ class XliffExporterTest extends TestCase
         $exporter = new XliffExporter();
 
         // export empty array
-        $exporter->export($outFile, array());
+        $exporter->export($outFile, []);
         $expectedContent = <<<C
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
@@ -56,12 +56,8 @@ C;
         $exporter = new XliffExporter();
 
         // export array with values
-        $exporter->export($outFile, array(
-            'key.a' => 'aaa',
-            'key.b' => 'bbb',
-            'key.c' => 'ccc',
-        ));
-        $expectedContent = <<<C
+        $exporter->export($outFile, ['key.a' => 'aaa', 'key.b' => 'bbb', 'key.c' => 'ccc']);
+        $expectedContent = <<<C_WRAP
 <?xml version="1.0" encoding="utf-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
   <file source-language="en" datatype="plaintext" original="file.ext" target-language="en">
@@ -82,7 +78,7 @@ C;
   </file>
 </xliff>
 
-C;
+C_WRAP;
         $this->assertXmlStringEqualsXmlFile($outFile, $expectedContent);
     }
 }

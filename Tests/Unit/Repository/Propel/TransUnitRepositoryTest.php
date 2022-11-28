@@ -95,7 +95,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $con = $this->loadDatabase();
         $repository = new TransUnitRepository($con);
 
-        $count = call_user_func_array([$repository, 'count'], $arguments);
+        $count = call_user_func_array($repository->count(...), $arguments);
 
         $this->assertEquals($expectedCount, $count);
     }
@@ -291,14 +291,14 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
 
     protected function assertSameTransUnit($expected, $result)
     {
-        $this->assertEquals(count($expected), count($result));
+        $this->assertEquals(is_countable($expected) ? count($expected) : 0, is_countable($result) ? count($result) : 0);
 
         foreach ($expected as $i => $transUnit) {
             $this->assertEquals($transUnit['id'], $result[$i]['id']);
             $this->assertEquals($transUnit['key'], $result[$i]['key']);
             $this->assertEquals($transUnit['domain'], $result[$i]['domain']);
 
-            $this->assertEquals(count($transUnit['translations']), count($result[$i]['translations']));
+            $this->assertEquals(is_countable($transUnit['translations']) ? count($transUnit['translations']) : 0, is_countable($result[$i]['translations']) ? count($result[$i]['translations']) : 0);
 
             foreach ($transUnit['translations'] as $j => $translation) {
                 $this->assertEquals($translation['locale'], $result[$i]['translations'][$j]['locale']);

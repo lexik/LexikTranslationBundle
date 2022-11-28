@@ -10,16 +10,11 @@ namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 class JsonExporter implements ExporterInterface
 {
     /**
-     * @var bool
-     */
-    private $hierarchicalFormat;
-
-    /**
      * @param bool $hierarchicalFormat
      */
-    public function __construct($hierarchicalFormat = false)
-    {
-        $this->hierarchicalFormat = $hierarchicalFormat;
+    public function __construct(
+        private $hierarchicalFormat = false
+    ) {
     }
 
     /**
@@ -41,12 +36,11 @@ class JsonExporter implements ExporterInterface
     }
 
     /**
-     * @param array $translations
      * @return array
      */
     protected function hierarchicalFormat(array $translations)
     {
-        $output = array();
+        $output = [];
         foreach ($translations as $key => $value) {
             $output = array_merge_recursive($output, $this->converterKeyToArray($key, $value));
         }
@@ -56,10 +50,9 @@ class JsonExporter implements ExporterInterface
 
     /**
      * @param string $key
-     * @param mixed  $value
      * @return array
      */
-    protected function converterKeyToArray($key, $value)
+    protected function converterKeyToArray($key, mixed $value)
     {
         $keysTrad = preg_split("/\./", $key);
 
@@ -67,23 +60,19 @@ class JsonExporter implements ExporterInterface
     }
 
     /**
-     * @param mixed $arrayIn
-     * @param mixed $endValue
      * @return array
      */
-    protected function convertArrayToArborescence($arrayIn, $endValue)
+    protected function convertArrayToArborescence(mixed $arrayIn, mixed $endValue)
     {
-        $lenArray = count($arrayIn);
+        $lenArray = is_countable($arrayIn) ? count($arrayIn) : 0;
 
         if ($lenArray == 0) {
             return $endValue;
         }
-
-        reset($arrayIn);
-        $firstKey = key($arrayIn);
+        $firstKey = array_key_first($arrayIn);
         $firstValue = $arrayIn[$firstKey];
         unset($arrayIn[$firstKey]);
 
-        return array($firstValue => $this->convertArrayToArborescence($arrayIn, $endValue));
+        return [$firstValue => $this->convertArrayToArborescence($arrayIn, $endValue)];
     }
 }

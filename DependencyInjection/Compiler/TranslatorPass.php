@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 
+use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
+use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -21,9 +23,9 @@ class TranslatorPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         // loaders
-        $loaders = array();
-        $loadersReferences = array();
-        $loadersReferencesById = array();
+        $loaders = [];
+        $loadersReferences = [];
+        $loadersReferencesById = [];
 
         foreach ($container->findTaggedServiceIds('translation.loader', true) as $id => $attributes) {
             $loaders[$id][] = $attributes[0]['alias'];
@@ -38,7 +40,7 @@ class TranslatorPass implements CompilerPassInterface
 
         if ($container->hasDefinition('lexik_translation.translator')) {
             if (Kernel::VERSION_ID >= 30300) {
-                $serviceRefs = array_merge($loadersReferencesById, array('event_dispatcher' => new Reference('event_dispatcher')));
+                $serviceRefs = [...$loadersReferencesById, ...['event_dispatcher' => new Reference('event_dispatcher')]];
 
                 $container->findDefinition('lexik_translation.translator')
                     ->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs))
@@ -48,14 +50,14 @@ class TranslatorPass implements CompilerPassInterface
             }
         }
 
-        if ($container->hasDefinition('Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter')) {
-            $container->findDefinition('Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter')->replaceArgument(0, $loadersReferences);
+        if ($container->hasDefinition(FileImporter::class)) {
+            $container->findDefinition(FileImporter::class)->replaceArgument(0, $loadersReferences);
         }
 
         // exporters
-        if ($container->hasDefinition('Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector')) {
+        if ($container->hasDefinition(ExporterCollector::class)) {
             foreach ($container->findTaggedServiceIds('lexik_translation.exporter') as $id => $attributes) {
-                $container->getDefinition('Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector')->addMethodCall('addExporter', array($id, new Reference($id)));
+                $container->getDefinition(ExporterCollector::class)->addMethodCall('addExporter', [$id, new Reference($id)]);
             }
         }
     }

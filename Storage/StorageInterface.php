@@ -14,9 +14,9 @@ interface StorageInterface
     /**
      * All the available config storage types.
      */
-    const STORAGE_ORM     = 'orm';
-    const STORAGE_MONGODB = 'mongodb';
-    const STORAGE_PROPEL  = 'propel';
+    public const STORAGE_ORM     = 'orm';
+    public const STORAGE_MONGODB = 'mongodb';
+    public const STORAGE_PROPEL  = 'propel';
 
     /**
      * Persist the given object.
@@ -56,8 +56,6 @@ interface StorageInterface
     /**
      * Returns all files matching a given locale and a given domains.
      *
-     * @param array $locales
-     * @param array $domains
      * @return array
      */
     public function getFilesByLocalesAndDomains(array $locales, array $domains);
@@ -112,10 +110,8 @@ interface StorageInterface
     /**
      * Returns some trans units with their translations.
      *
-     * @param array $locales
      * @param int   $rows
      * @param int   $page
-     * @param array $filters
      * @return array
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null);
@@ -123,8 +119,6 @@ interface StorageInterface
     /**
      * Count the number of trans unit.
      *
-     * @param array $locales
-     * @param array $filters
      * @return int
      */
     public function countTransUnits(array $locales = null,  array $filters = null);

@@ -14,14 +14,9 @@ use Lexik\Bundle\TranslationBundle\Propel\Map\TranslationTableMap;
  */
 class TransUnitRepository
 {
-    /**
-     * @var ConnectionWrapper
-     */
-    protected $connection;
-
-    public function __construct(ConnectionWrapper $connection)
-    {
-        $this->connection = $connection;
+    public function __construct(
+        protected ConnectionWrapper $connection
+    ) {
     }
 
     /**
@@ -40,15 +35,14 @@ class TransUnitRepository
     public function getAllDomainsByLocale()
     {
         return TransUnitQuery::create()
-            ->joinWith('Translation')
-            ->withColumn('Translation.Locale', 'locale')
-            ->withColumn('Domain', 'domain')
-            ->select(array('locale', 'domain'))
-            ->groupBy('locale')
-            ->groupBy('domain')
-            ->find($this->getConnection())
-            ->getArrayCopy()
-        ;
+                             ->joinWith('Translation')
+                             ->withColumn('Translation.Locale', 'locale')
+                             ->withColumn('Domain', 'domain')
+                             ->select(['locale', 'domain'])
+                             ->groupBy('locale')
+                             ->groupBy('domain')
+                             ->find($this->getConnection())
+                             ->getArrayCopy();
     }
 
     /**
@@ -61,14 +55,13 @@ class TransUnitRepository
     public function getAllByLocaleAndDomain($locale, $domain)
     {
         $unitsData = TransUnitQuery::create()
-            ->filterByDomain($domain)
-            ->joinWith('Translation')
-            ->useTranslationQuery()
-                ->filterByLocale($locale)
-            ->endUse()
-            ->setFormatter(ModelCriteria::FORMAT_ARRAY)
-            ->find($this->getConnection())
-        ;
+                                   ->filterByDomain($domain)
+                                   ->joinWith('Translation')
+                                   ->useTranslationQuery()
+                                   ->filterByLocale($locale)
+                                   ->endUse()
+                                   ->setFormatter(ModelCriteria::FORMAT_ARRAY)
+                                   ->find($this->getConnection());
 
         return $this->filterTransUnitData($unitsData);
     }
@@ -81,11 +74,10 @@ class TransUnitRepository
     public function getAllDomains()
     {
         $domains = TransUnitQuery::create()
-            ->select('Domain')
-            ->setDistinct()
-            ->orderByDomain(Criteria::ASC)
-            ->find($this->getConnection())
-        ;
+                                 ->select('Domain')
+                                 ->setDistinct()
+                                 ->orderByDomain(Criteria::ASC)
+                                 ->find($this->getConnection());
 
         return array_values($domains->getArrayCopy());
     }
@@ -93,22 +85,19 @@ class TransUnitRepository
     /**
      * Returns some trans units with their translations.
      *
-     * @param array $locales
-     * @param int   $rows
-     * @param int   $page
-     * @param array $filters
+     * @param int $rows
+     * @param int $page
      * @return array
      */
     public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
     {
-        $sortColumn = isset($filters['sidx']) ? $filters['sidx'] : 'id';
-        $order = isset($filters['sord']) ? $filters['sord'] : 'ASC';
+        $sortColumn = $filters['sidx'] ?? 'id';
+        $order = $filters['sord'] ?? 'ASC';
 
-        $sortColumn = ucfirst($sortColumn);
+        $sortColumn = ucfirst((string)$sortColumn);
 
         $query = TransUnitQuery::create()
-            ->select('Id')
-        ;
+                               ->select('Id');
 
         $this->addTransUnitFilters($query, $filters);
         $this->addTranslationFilter($query, $locales, $filters);
@@ -117,22 +106,20 @@ class TransUnitRepository
             ->orderBy($sortColumn, $order)
             ->offset($rows * ($page - 1))
             ->limit($rows)
-            ->find($this->getConnection())
-        ;
+            ->find($this->getConnection());
 
-        $transUnits = array();
+        $transUnits = [];
 
-        if (count($ids) > 0) {
+        if ((is_countable($ids) ? count($ids) : 0) > 0) {
             $unitsData = TransUnitQuery::create()
-                ->filterById($ids, Criteria::IN)
-                ->joinWith('Translation')
-                ->useTranslationQuery()
-                    ->filterByLocale($locales, Criteria::IN)
-                ->endUse()
-                ->orderBy($sortColumn, $order)
-                ->setFormatter(ModelCriteria::FORMAT_ARRAY)
-                ->find($this->getConnection())
-            ;
+                                       ->filterById($ids, Criteria::IN)
+                                       ->joinWith('Translation')
+                                       ->useTranslationQuery()
+                                       ->filterByLocale($locales, Criteria::IN)
+                                       ->endUse()
+                                       ->orderBy($sortColumn, $order)
+                                       ->setFormatter(ModelCriteria::FORMAT_ARRAY)
+                                       ->find($this->getConnection());
 
             $transUnits = $this->filterTransUnitData($unitsData);
         }
@@ -143,16 +130,13 @@ class TransUnitRepository
     /**
      * Count the number of trans unit.
      *
-     * @param array $locales
-     * @param array $filters
      * @return int
      */
-    public function count(array $locales = null,  array $filters = null)
+    public function count(array $locales = null, array $filters = null)
     {
         $query = TransUnitQuery::create()
-            ->select('Id')
-            ->distinct()
-        ;
+                               ->select('Id')
+                               ->distinct();
 
         $this->addTransUnitFilters($query, $filters);
         $this->addTranslationFilter($query, $locales, $filters);
@@ -163,29 +147,27 @@ class TransUnitRepository
     /**
      * Returns all translations for the given file.
      *
-     * @param File      $file
-     * @param boolean   $onlyUpdated
+     * @param File    $file
+     * @param boolean $onlyUpdated
      *
      * @return array
      */
     public function getTranslationsForFile($file, $onlyUpdated)
     {
         $query = TranslationQuery::create()
-            ->filterByFile($file)
-            ->joinWith('TransUnit')
-        ;
+                                 ->filterByFile($file)
+                                 ->joinWith('TransUnit');
 
         if ($onlyUpdated) {
-            $query->add(null, TranslationTableMap::COL_UPDATED_AT.'>'.TranslationTableMap::COL_CREATED_AT, Criteria::CUSTOM);
+            $query->add(null, TranslationTableMap::COL_UPDATED_AT . '>' . TranslationTableMap::COL_CREATED_AT, Criteria::CUSTOM);
         }
 
         $results = $query
-            ->select(array('Content', 'TransUnit.Key'))
+            ->select(['Content', 'TransUnit.Key'])
             ->orderBy(TranslationTableMap::COL_ID, Criteria::ASC)
-            ->find()
-        ;
+            ->find();
 
-        $translations = array();
+        $translations = [];
         foreach ($results as $result) {
             $translations[$result['TransUnit.Key']] = $result['Content'];
         }
@@ -195,9 +177,6 @@ class TransUnitRepository
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param TransUnitQuery    $query
-     * @param array             $filters
      */
     protected function addTransUnitFilters(TransUnitQuery $query, array $filters = null)
     {
@@ -214,37 +193,30 @@ class TransUnitRepository
 
     /**
      * Add conditions according to given filters.
-     *
-     * @param TransUnitQuery    $query
-     * @param array             $locales
-     * @param array             $filters
      */
     protected function addTranslationFilter(TransUnitQuery $query, array $locales = null, array $filters = null)
     {
         if (null !== $locales) {
             $q = TransUnitQuery::create()
-                ->select('Id')
-                ->distinct()
-                ->join('Translation', Criteria::LEFT_JOIN)
-                ->useTranslationQuery()
-                    ->filterByLocale($locales, Criteria::IN)
-            ;
+                               ->select('Id')
+                               ->distinct()
+                               ->join('Translation', Criteria::LEFT_JOIN)
+                               ->useTranslationQuery()
+                               ->filterByLocale($locales, Criteria::IN);
 
             foreach ($locales as $locale) {
                 if (!empty($filters[$locale])) {
                     $q
                         ->filterByContent(sprintf('%%%s%%', $filters[$locale]), Criteria::LIKE)
-                        ->filterByLocale(sprintf('%s', $locale))
-                    ;
+                        ->filterByLocale(sprintf('%s', $locale));
                 }
             }
 
             $ids = $q
                 ->endUse()
-                ->find($this->getConnection())
-            ;
+                ->find($this->getConnection());
 
-            if (count($ids) > 0) {
+            if ((is_countable($ids) ? count($ids) : 0) > 0) {
                 $query->filterById($ids, Criteria::IN);
             }
         }
@@ -258,22 +230,20 @@ class TransUnitRepository
      */
     protected function filterTransUnitData($unitsData)
     {
-        $cleaned = array();
+        $cleaned = [];
 
         foreach ($unitsData as $unit) {
             /* @var $unit TransUnit */
-            $transUnit = array(
-                'id'           => $unit['Id'],
-                'key'          => $unit['Key'],
-                'domain'       => $unit['Domain'],
-                'translations' => array(),
-            );
+            $transUnit = ['id'           => $unit['Id'],
+                          'key'          => $unit['Key'],
+                          'domain'       => $unit['Domain'],
+                          'translations' => [],
+            ];
 
             foreach ($unit['Translations'] as $translation) {
-                $transUnit['translations'][] = array(
-                    'locale'  => $translation['Locale'],
-                    'content' => $translation['Content'],
-                );
+                $transUnit['translations'][] = ['locale'  => $translation['Locale'],
+                                                'content' => $translation['Content'],
+                ];
             }
 
             $cleaned[] = $transUnit;

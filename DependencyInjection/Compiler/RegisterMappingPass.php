@@ -29,14 +29,14 @@ class RegisterMappingPass implements CompilerPassInterface
         if (StorageInterface::STORAGE_ORM == $storage['type'] && $container->hasDefinition($ormDriverId)) {
             $container->getDefinition($ormDriverId)->addMethodCall(
                 'addDriver',
-                array(new Reference('lexik_translation.orm.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model')
+                [new Reference('lexik_translation.orm.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model']
             );
         }
 
         if (StorageInterface::STORAGE_MONGODB == $storage['type'] && $container->hasDefinition($mongodbDriverId)) {
             $container->getDefinition($mongodbDriverId)->addMethodCall(
                 'addDriver',
-                array(new Reference('lexik_translation.mongodb.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model')
+                [new Reference('lexik_translation.mongodb.metadata.xml'), 'Lexik\Bundle\TranslationBundle\Model']
             );
         }
     }

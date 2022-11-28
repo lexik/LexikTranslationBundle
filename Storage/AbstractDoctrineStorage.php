@@ -12,26 +12,11 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  */
 abstract class AbstractDoctrineStorage implements StorageInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $managerName;
-
-    /**
-     * @var array
-     */
-    protected $classes;
-
-    public function __construct(ManagerRegistry $registry, string $managerName, array $classes)
-    {
-        $this->registry = $registry;
-        $this->managerName = $managerName;
-        $this->classes = $classes;
+    public function __construct(
+        protected ManagerRegistry $registry,
+        protected string $managerName,
+        protected array $classes,
+    ) {
     }
 
     protected function getManager(): ObjectManager
@@ -142,10 +127,10 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     {
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
-        $fields = array(
+        $fields = [
             'key'    => $key,
             'domain' => $domain,
-        );
+        ];
 
         return $this->getTransUnitRepository()->findOneBy($fields);
     }

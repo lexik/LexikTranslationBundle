@@ -17,44 +17,15 @@ use Symfony\Component\HttpFoundation\Request;
 class TransUnitFormHandler implements FormHandlerInterface
 {
     /**
-     * @var TransUnitManagerInterface
+     * @param string $rootDir
      */
-    protected $transUnitManager;
-
-    /**
-     * @var FileManagerInterface
-     */
-    protected $fileManager;
-
-    /**
-     * @var StorageInterface
-     */
-    protected $storage;
-
-    /**
-     * @var LocaleManagerInterface
-     */
-    protected $localeManager;
-
-    /**
-     * @var string
-     */
-    protected $rootDir;
-
-    /**
-     * @param TransUnitManagerInterface $transUnitManager
-     * @param FileManagerInterface      $fileManager
-     * @param StorageInterface          $storage
-     * @param LocaleManagerInterface    $localeManager
-     * @param string                    $rootDir
-     */
-    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, LocaleManagerInterface $localeManager, $rootDir)
-    {
-        $this->transUnitManager = $transUnitManager;
-        $this->fileManager = $fileManager;
-        $this->storage = $storage;
-        $this->localeManager = $localeManager;
-        $this->rootDir = $rootDir;
+    public function __construct(
+        protected TransUnitManagerInterface $transUnitManager,
+        protected FileManagerInterface $fileManager,
+        protected StorageInterface $storage,
+        protected LocaleManagerInterface $localeManager,
+        protected string $rootDir,
+    ) {
     }
 
     /**
@@ -70,11 +41,11 @@ class TransUnitFormHandler implements FormHandlerInterface
      */
     public function getFormOptions()
     {
-        return array(
+        return [
             'domains'           => $this->storage->getTransUnitDomains(),
             'data_class'        => $this->storage->getModelClass('trans_unit'),
             'translation_class' => $this->storage->getModelClass('translation'),
-        );
+        ];
     }
 
     /**
@@ -96,7 +67,7 @@ class TransUnitFormHandler implements FormHandlerInterface
                     if (!$translation->getFile()) {
                         $file = $this->fileManager->getFor(
                             sprintf('%s.%s.yml', $transUnit->getDomain(), $translation->getLocale()),
-                            $this->rootDir.'/Resources/translations'
+                            $this->rootDir . '/Resources/translations'
                         );
 
                         if ($file instanceof FileInterface) {

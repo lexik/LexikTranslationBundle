@@ -37,20 +37,20 @@ class CleanTranslationCacheListenerTest extends TestCase
 
         \touch($this->tempDir . '/messages.en.yml', time() - 3600);
 
-        $storage = $this->getMockBuilder('Lexik\Bundle\TranslationBundle\Storage\StorageInterface')
+        $storage = $this->getMockBuilder(\Lexik\Bundle\TranslationBundle\Storage\StorageInterface::class)
                 ->disableOriginalConstructor()
-                ->setMethods(array())
+                ->setMethods([])
                 ->getMock();
 
         $storage->expects($this->any())->method('getLatestUpdatedAt')->will($this->returnValue($date));
 
-        $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->getMock(\Symfony\Component\DependencyInjection\ContainerInterface::class);
 
-        $translator = $this->getMock('Lexik\Bundle\TranslationBundle\Translation\Translator', array(), array($container, new MessageSelector));
+        $translator = $this->getMock(\Lexik\Bundle\TranslationBundle\Translation\Translator::class, [], [$container, new MessageSelector]);
 
         $translator->expects($this->any())->method('removeLocalesCacheFiles')->will($this->returnValue(true));
 
-        $listener = new CleanTranslationCacheListener($storage, $translator, \sys_get_temp_dir(), array('en'), 600);
+        $listener = new CleanTranslationCacheListener($storage, $translator, \sys_get_temp_dir(), ['en'], 600);
 
         $event = $this->getEvent($request);
 
@@ -68,7 +68,7 @@ class CleanTranslationCacheListenerTest extends TestCase
 
     private function getEvent(Request $request)
     {
-        return new GetResponseEvent($this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface'), $request, HttpKernelInterface::MASTER_REQUEST);
+        return new GetResponseEvent($this->getMock(\Symfony\Component\HttpKernel\HttpKernelInterface::class), $request, HttpKernelInterface::MASTER_REQUEST);
     }
 
     private function countFiles($lastUpdateTime)

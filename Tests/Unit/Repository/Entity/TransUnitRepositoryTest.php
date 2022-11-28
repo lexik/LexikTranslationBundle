@@ -20,13 +20,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomainsByLocale();
-        $expected = array(
-            array('locale' => 'de', 'domain' => 'superTranslations'),
-            array('locale' => 'en', 'domain' => 'messages'),
-            array('locale' => 'en', 'domain' => 'superTranslations'),
-            array('locale' => 'fr', 'domain' => 'messages'),
-            array('locale' => 'fr', 'domain' => 'superTranslations'),
-        );
+        $expected = [['locale' => 'de', 'domain' => 'superTranslations'], ['locale' => 'en', 'domain' => 'messages'], ['locale' => 'en', 'domain' => 'superTranslations'], ['locale' => 'fr', 'domain' => 'messages'], ['locale' => 'fr', 'domain' => 'superTranslations']];
 
         $this->assertSame($expected, $results);
     }
@@ -40,7 +34,7 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomains();
-        $expected = array('messages', 'superTranslations');
+        $expected = ['messages', 'superTranslations'];
 
         $this->assertSame($expected, $results);
     }
@@ -54,20 +48,15 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllByLocaleAndDomain('de', 'messages');
-        $expected = array();
+        $expected = [];
         $this->assertSameTransUnit($expected, $results);
 
         $results = $repository->getAllByLocaleAndDomain('de', 'superTranslations');
-        $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(array('locale' => 'de', 'content' => 'heil'))),
-        );
+        $expected = [['id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => [['locale' => 'de', 'content' => 'heil']]]];
         $this->assertSameTransUnit($expected, $results);
 
         $results = $repository->getAllByLocaleAndDomain('en', 'messages');
-        $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'goodbye'))),
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(array('locale' => 'en', 'content' => 'what the fuck !?!'))),
-        );
+        $expected = [['id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => [['locale' => 'en', 'content' => 'goodbye']]], ['id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => [['locale' => 'en', 'content' => 'what the fuck !?!']]]];
         $this->assertSameTransUnit($expected, $results);
     }
 
@@ -79,13 +68,13 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $em = $this->loadDatabase(true);
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
-        $this->assertEquals(3, $repository->count(array('fr', 'de', 'en'), array()));
-        $this->assertEquals(3, $repository->count(array('fr', 'it'), array()));
-        $this->assertEquals(3, $repository->count(array('fr', 'de'), array('_search' => false, 'key' => 'good')));
-        $this->assertEquals(1, $repository->count(array('fr', 'de'), array('_search' => true, 'key' => 'good')));
-        $this->assertEquals(1, $repository->count(array('en', 'de'), array('_search' => true, 'domain' => 'super')));
-        $this->assertEquals(1, $repository->count(array('en', 'fr', 'de'), array('_search' => true, 'key' => 'hel', 'domain' => 'uper')));
-        $this->assertEquals(2, $repository->count(array('en', 'de'), array('_search' => true, 'key' => 'say', 'domain' => 'ssa')));
+        $this->assertEquals(3, $repository->count(['fr', 'de', 'en'], []));
+        $this->assertEquals(3, $repository->count(['fr', 'it'], []));
+        $this->assertEquals(3, $repository->count(['fr', 'de'], ['_search' => false, 'key' => 'good']));
+        $this->assertEquals(1, $repository->count(['fr', 'de'], ['_search' => true, 'key' => 'good']));
+        $this->assertEquals(1, $repository->count(['en', 'de'], ['_search' => true, 'domain' => 'super']));
+        $this->assertEquals(1, $repository->count(['en', 'fr', 'de'], ['_search' => true, 'key' => 'hel', 'domain' => 'uper']));
+        $this->assertEquals(2, $repository->count(['en', 'de'], ['_search' => true, 'key' => 'say', 'domain' => 'ssa']));
     }
 
     /**
@@ -96,70 +85,28 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $em = $this->loadDatabase(true);
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
-        $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'ASC'));
-        $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'fr', 'content' => 'au revoir'),
-            )),
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'de', 'content' => 'heil'),
-                array('locale' => 'fr', 'content' => 'salut'),
-            )),
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'de'], 10, 1, ['sidx' => 'key', 'sord' => 'ASC']);
+        $expected = [['id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => [['locale' => 'fr', 'content' => 'au revoir']]], ['id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => [['locale' => 'de', 'content' => 'heil'], ['locale' => 'fr', 'content' => 'salut']]], ['id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => [['locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!']]]];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess'));
-        $expected = array(
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
-            )),
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'fr', 'content' => 'au revoir'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'de'], 10, 1, ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess']);
+        $expected = [['id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => [['locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!']]], ['id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => [['locale' => 'fr', 'content' => 'au revoir']]]];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(array('fr', 'de'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess', 'key' => 'oo'));
-        $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'fr', 'content' => 'au revoir'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'de'], 10, 1, ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess', 'key' => 'oo']);
+        $expected = [['id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => [['locale' => 'fr', 'content' => 'au revoir']]]];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(array('fr', 'en'), 10, 1, array('sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu'));
-        $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'en', 'content' => 'hello'),
-                array('locale' => 'fr', 'content' => 'salut'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'en'], 10, 1, ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu']);
+        $expected = [['id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => [['locale' => 'en', 'content' => 'hello'], ['locale' => 'fr', 'content' => 'salut']]]];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 1, array('sidx' => 'domain', 'sord' => 'ASC'));
-        $expected = array(
-            array('id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'en', 'content' => 'goodbye'),
-                array('locale' => 'fr', 'content' => 'au revoir'),
-            )),
-            array('id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => array(
-                array('locale' => 'en', 'content' => 'what the fuck !?!'),
-                array('locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'de', 'en'], 2, 1, ['sidx' => 'domain', 'sord' => 'ASC']);
+        $expected = [['id' => 2, 'key' => 'key.say_goodbye', 'domain' => 'messages', 'translations' => [['locale' => 'en', 'content' => 'goodbye'], ['locale' => 'fr', 'content' => 'au revoir']]], ['id' => 3, 'key' => 'key.say_wtf', 'domain' => 'messages', 'translations' => [['locale' => 'en', 'content' => 'what the fuck !?!'], ['locale' => 'fr', 'content' => 'c\'est quoi ce bordel !?!']]]];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(array('fr', 'de', 'en'), 2, 2, array('sidx' => 'domain', 'sord' => 'ASC'));
-        $expected = array(
-            array('id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => array(
-                array('locale' => 'de', 'content' => 'heil'),
-                array('locale' => 'en', 'content' => 'hello'),
-                array('locale' => 'fr', 'content' => 'salut'),
-            )),
-        );
+        $result = $repository->getTransUnitList(['fr', 'de', 'en'], 2, 2, ['sidx' => 'domain', 'sord' => 'ASC']);
+        $expected = [['id' => 1, 'key' => 'key.say_hello', 'domain' => 'superTranslations', 'translations' => [['locale' => 'de', 'content' => 'heil'], ['locale' => 'en', 'content' => 'hello'], ['locale' => 'fr', 'content' => 'salut']]]];
         $this->assertSameTransUnit($expected, $result);
     }
 
@@ -171,18 +118,11 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $em = $this->loadDatabase();
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
-        $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(array(
-            'domain'    => 'messages',
-            'locale'    => 'fr',
-            'extention' => 'yml',
-         ));
+        $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(['domain'    => 'messages', 'locale'    => 'fr', 'extention' => 'yml']);
         $this->assertInstanceOf(self::ENTITY_FILE_CLASS, $file);
 
         $result = $repository->getTranslationsForFile($file, false);
-        $expected = array(
-            'key.say_goodbye' => 'au revoir',
-            'key.say_wtf'     => 'c\'est quoi ce bordel !?!',
-        );
+        $expected = ['key.say_goodbye' => 'au revoir', 'key.say_wtf'     => 'c\'est quoi ce bordel !?!'];
         $this->assertEquals($expected, $result);
 
         // update a translation and then get translations with onlyUpdated = true
@@ -200,22 +140,20 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
             ->execute();
 
         $result = $repository->getTranslationsForFile($file, true);
-        $expected = array(
-            'key.say_goodbye' => 'au revoir',
-        );
+        $expected = ['key.say_goodbye' => 'au revoir'];
         $this->assertEquals($expected, $result);
     }
 
     protected function assertSameTransUnit($expected, $result)
     {
-        $this->assertEquals(count($expected), count($result));
+        $this->assertEquals(is_countable($expected) ? count($expected) : 0, is_countable($result) ? count($result) : 0);
 
         foreach ($expected as $i => $transUnit) {
             $this->assertEquals($transUnit['id'], $result[$i]['id']);
             $this->assertEquals($transUnit['key'], $result[$i]['key']);
             $this->assertEquals($transUnit['domain'], $result[$i]['domain']);
 
-            $this->assertEquals(count($transUnit['translations']), count($result[$i]['translations']));
+            $this->assertEquals(is_countable($transUnit['translations']) ? count($transUnit['translations']) : 0, is_countable($result[$i]['translations']) ? count($result[$i]['translations']) : 0);
 
             /*
              * $expected has a fixed order. It is unsafe to rely on the order in which

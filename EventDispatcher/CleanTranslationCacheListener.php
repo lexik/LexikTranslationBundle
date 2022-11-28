@@ -13,52 +13,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CleanTranslationCacheListener
 {
-    /**
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
-    /**
-     * @var string
-     */
-    private $cacheDirectory;
-
-    /**
-     * @var LocaleManagerInterface
-     */
-    private $localeManager;
-
-    /**
-     * @var int
-     */
-    private $cacheInterval;
-
-    /**
-     * Constructor
-     *
-     * @param StorageInterface       $storage
-     * @param TranslatorInterface    $translator
-     * @param string                 $cacheDirectory
-     * @param LocaleManagerInterface $localeManager
-     * @param int                    $cacheInterval
-     */
-    public function __construct(StorageInterface $storage, TranslatorInterface $translator, $cacheDirectory, LocaleManagerInterface $localeManager, $cacheInterval)
-    {
-        $this->storage = $storage;
-        $this->cacheDirectory = $cacheDirectory;
-        $this->translator = $translator;
-        $this->localeManager = $localeManager;
-        $this->cacheInterval = $cacheInterval;
+    public function __construct(
+        private readonly StorageInterface $storage,
+        private readonly TranslatorInterface $translator,
+        private readonly string$cacheDirectory,
+        private readonly LocaleManagerInterface $localeManager,
+        private readonly int $cacheInterval,
+    ) {
     }
 
-    /**
-     * @param RequestEvent $event
-     */
     public function onKernelRequest(RequestEvent $event)
     {
         if ($event->isMainRequest() && $this->isCacheExpired()) {
