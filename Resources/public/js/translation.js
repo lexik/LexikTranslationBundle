@@ -240,7 +240,6 @@ app.controller('TranslationController', [
 
         // toggle all columns
         $scope.toggleAllColumns = function () {
-            $scope.areAllColumnsSelected = !$scope.areAllColumnsSelected;
             angular.forEach($scope.columns, function(column) {
                 column.visible = $scope.areAllColumnsSelected;
             });
