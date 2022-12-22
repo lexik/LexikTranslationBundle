@@ -19,7 +19,7 @@
     "require": {
         "php": "^8.1",
         "symfony/framework-bundle": "~6.0",
-        "monolog/monolog": "^3.2"
+        "monolog/monolog": "^2.0|^3.0"
     },
     "require-dev": {
         "symfony/symfony": "~6.0",
