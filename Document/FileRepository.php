@@ -14,8 +14,6 @@ class FileRepository extends DocumentRepository
     /**
      * Returns all available domain/locale couples.
      *
-     * @param array $locales
-     * @param array $domains
      * @return array
      */
     public function findForLocalesAndDomains(array $locales, array $domains)
@@ -32,7 +30,7 @@ class FileRepository extends DocumentRepository
 
         $cursor = $builder->getQuery()->execute();
 
-        $files = array();
+        $files = [];
         foreach ($cursor as $result) {
             $files[] = $result;
         }

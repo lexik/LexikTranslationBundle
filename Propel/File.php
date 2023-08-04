@@ -14,7 +14,7 @@ class File extends BaseFile implements FileInterface
      */
     public function setName($name)
     {
-        list($domain, $locale, $extention) = explode('.', $name);
+        [$domain, $locale, $extention] = explode('.', $name);
 
         $this
             ->setDomain($domain)

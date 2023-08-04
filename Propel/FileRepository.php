@@ -12,14 +12,9 @@ use Propel\Runtime\Connection\ConnectionWrapper;
  */
 class FileRepository
 {
-    /**
-     * @var ConnectionWrapper
-     */
-    protected $connection;
-
-    public function __construct(ConnectionWrapper $connection)
-    {
-        $this->connection = $connection;
+    public function __construct(
+        protected ConnectionWrapper $connection
+    ) {
     }
 
     /**
@@ -33,22 +28,17 @@ class FileRepository
     /**
      * Returns all files matching a given locale and a given domains.
      *
-     * @param array $locales
-     * @param array $domains
      * @return array
      */
     public function findForLocalesAndDomains(array $locales, array $domains)
     {
         return FileQuery::create()
-            ->_if(count($locales) > 0)
-                ->filterByLocale($locales, Criteria::IN)
-            ->_endif()
-
-            ->_if(count($domains) > 0)
-                ->filterByDomain($domains, Criteria::IN)
-            ->_endif()
-
-            ->find($this->getConnection())
-        ;
+                        ->_if(count($locales) > 0)
+                        ->filterByLocale($locales, Criteria::IN)
+                        ->_endif()
+                        ->_if(count($domains) > 0)
+                        ->filterByDomain($domains, Criteria::IN)
+                        ->_endif()
+                        ->find($this->getConnection());
     }
 }

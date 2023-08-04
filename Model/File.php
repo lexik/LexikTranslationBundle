@@ -162,7 +162,7 @@ abstract class File
      */
     public function setName($name)
     {
-        list($domain, $locale, $extention) = explode('.', $name);
+        [$domain, $locale, $extention] = explode('.', $name);
 
         $this->domain = $domain;
         $this->locale = $locale;
@@ -201,8 +201,6 @@ abstract class File
 
     /**
      * Add translation
-     *
-     * @param Lexik\Bundle\TranslationBundle\Model\Translation $translation
      */
     public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
     {

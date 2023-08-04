@@ -2,9 +2,13 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Manager;
 
+use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\UnitOfWork as ODMUnitOfWork;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\UnitOfWork as ORMUnitOfWork;
 use Lexik\Bundle\TranslationBundle\Manager\FileManager;
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
+use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Lexik\Bundle\TranslationBundle\Propel\FileQuery;
 
@@ -15,25 +19,13 @@ use Lexik\Bundle\TranslationBundle\Propel\FileQuery;
  */
 class FileManagerTest extends BaseUnitTestCase
 {
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $em;
+    private EntityManager $em;
 
-    /**
-     * @var \Doctrine\ODM\MongoDB\DocumentManager
-     */
-    private $dm;
+    private DocumentManager $dm;
 
-    /**
-     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
-     */
-    private $ormStorage;
+    private DoctrineORMStorage $ormStorage;
 
-    /**
-     * @var \Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage
-     */
-    private $odmStorage;
+    private DoctrineMongoDBStorage $odmStorage;
 
     /**
      *
@@ -41,10 +33,7 @@ class FileManagerTest extends BaseUnitTestCase
      */
     private $propelStorage;
 
-    /**
-     * @var string
-     */
-    private $rootDir = '/test/root/dir/app';
+    private string $rootDir = '/test/root/dir/app';
 
     public function setUp(): void
     {

@@ -14,18 +14,11 @@ use Symfony\Component\Translation\MessageCatalogue;
 class DatabaseLoader implements LoaderInterface
 {
     /**
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
      * Construct.
-     *
-     * @param StorageInterface $storage
      */
-    public function __construct(StorageInterface $storage)
-    {
-        $this->storage = $storage;
+    public function __construct(
+        private readonly StorageInterface $storage,
+    ) {
     }
 
     /**

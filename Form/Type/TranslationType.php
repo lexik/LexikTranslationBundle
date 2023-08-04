@@ -3,6 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -20,10 +22,8 @@ class TranslationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('locale', 'Symfony\Component\Form\Extension\Core\Type\HiddenType');
-        $builder->add('content', 'Symfony\Component\Form\Extension\Core\Type\TextareaType', array(
-            'required' => false,
-        ));
+        $builder->add('locale', HiddenType::class);
+        $builder->add('content', TextareaType::class, ['required' => false]);
     }
 
     /**
@@ -39,10 +39,7 @@ class TranslationType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class'         => null,
-            'translation_domain' => 'LexikTranslationBundle',
-        ));
+        $resolver->setDefaults(['data_class'         => null, 'translation_domain' => 'LexikTranslationBundle']);
     }
 
     /**

@@ -17,52 +17,21 @@ use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
  */
 class FileImporter
 {
-    /**
-     * @var array
-     */
-    private $loaders;
+    private bool $caseInsensitiveInsert;
 
-    /**
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var TransUnitManagerInterface
-     */
-    private $transUnitManager;
-
-    /**
-     * @var FileManagerInterface
-     */
-    private $fileManager;
-
-    /**
-     * @var boolean
-     */
-    private $caseInsensitiveInsert;
-
-    /**
-     * @var array
-     */
-    private $skippedKeys;
+    private array $skippedKeys;
 
     /**
      * Construct.
-     *
-     * @param array                     $loaders
-     * @param StorageInterface          $storage
-     * @param TransUnitManagerInterface $transUnitManager
-     * @param FileManagerInterface      $fileManager
      */
-    public function __construct(array $loaders, StorageInterface $storage, TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager)
-    {
-        $this->loaders = $loaders;
-        $this->storage = $storage;
-        $this->transUnitManager = $transUnitManager;
-        $this->fileManager = $fileManager;
+    public function __construct(
+        private array $loaders,
+        private readonly StorageInterface $storage,
+        private readonly TransUnitManagerInterface $transUnitManager,
+        private readonly FileManagerInterface $fileManager,
+    ) {
         $this->caseInsensitiveInsert = false;
-        $this->skippedKeys = array();
+        $this->skippedKeys = [];
     }
 
     /**
@@ -70,7 +39,7 @@ class FileImporter
      */
     public function setCaseInsensitiveInsert($value)
     {
-        $this->caseInsensitiveInsert = (bool) $value;
+        $this->caseInsensitiveInsert = (bool)$value;
     }
 
     /**
@@ -84,16 +53,15 @@ class FileImporter
     /**
      * Import the given file and return the number of inserted translations.
      *
-     * @param \Symfony\Component\Finder\SplFileInfo $file
-     * @param boolean                               $forceUpdate  force update of the translations
-     * @param boolean                               $merge        merge translations
+     * @param boolean $forceUpdate force update of the translations
+     * @param boolean $merge merge translations
      * @return int
      */
     public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false, $merge = false)
     {
-        $this->skippedKeys = array();
+        $this->skippedKeys = [];
         $imported = 0;
-        list($domain, $locale, $extension) = explode('.', $file->getFilename());
+        [$domain, $locale, $extension] = explode('.', $file->getFilename());
 
         if (!isset($this->loaders[$extension])) {
             throw new \RuntimeException(sprintf('No loader found for "%s" format.', $extension));
@@ -103,14 +71,14 @@ class FileImporter
 
         $translationFile = $this->fileManager->getFor($file->getFilename(), $file->getPath());
 
-        $keys = array();
+        $keys = [];
 
         foreach ($messageCatalogue->all($domain) as $key => $content) {
             if (!isset($content)) {
                 continue; // skip empty translation values
             }
 
-            $normalizedKey = $this->caseInsensitiveInsert ? strtolower($key) : $key;
+            $normalizedKey = $this->caseInsensitiveInsert ? strtolower((string)$key) : $key;
 
             if (in_array($normalizedKey, $keys, true)) {
                 $this->skippedKeys[] = $key;
@@ -123,21 +91,25 @@ class FileImporter
                 $transUnit = $this->transUnitManager->create($key, $domain);
             }
 
-                $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
-                if ($translation instanceof TranslationInterface) {
-                    $imported++;
-                } else if($forceUpdate) {
+            $translation = $this->transUnitManager->addTranslation($transUnit, $locale, $content, $translationFile);
+            if ($translation instanceof TranslationInterface) {
+                $imported++;
+            } else {
+                if ($forceUpdate) {
                     $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content);
                     if ($translation instanceof Translation) {
                         $translation->setModifiedManually(false);
                     }
                     $imported++;
-                } else if($merge) {
-                    $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
-                    if ($translation instanceof TranslationInterface) {
-                        $imported++;
+                } else {
+                    if ($merge) {
+                        $translation = $this->transUnitManager->updateTranslation($transUnit, $locale, $content, false, true);
+                        if ($translation instanceof TranslationInterface) {
+                            $imported++;
+                        }
                     }
                 }
+            }
 
             $keys[] = $normalizedKey;
 
@@ -151,7 +123,7 @@ class FileImporter
         $this->storage->flush();
 
         // clear only Lexik entities
-        foreach (array('file', 'trans_unit', 'translation') as $name) {
+        foreach (['file', 'trans_unit', 'translation'] as $name) {
             $this->storage->clear($this->storage->getModelClass($name));
         }
 

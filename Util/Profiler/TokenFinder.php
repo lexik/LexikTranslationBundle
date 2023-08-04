@@ -9,24 +9,10 @@ use Symfony\Component\HttpKernel\Profiler\Profiler;
  */
 class TokenFinder
 {
-    /**
-     * @var Profiler
-     */
-    private $profiler;
-
-    /**
-     * @var int
-     */
-    private $defaultLimit;
-
-    /**
-     * @param Profiler $profiler
-     * @param int      $defaultLimit
-     */
-    public function __construct(Profiler $profiler, $defaultLimit)
-    {
-        $this->profiler = $profiler;
-        $this->defaultLimit = $defaultLimit;
+    public function __construct(
+        private readonly Profiler $profiler,
+        private readonly int $defaultLimit,
+    ) {
     }
 
     /**

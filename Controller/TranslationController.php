@@ -22,36 +22,8 @@ class TranslationController extends AbstractController
 {
     use CsrfCheckerTrait;
 
-    private $translationStorage;
-
-    private $statsAggregator;
-
-    private $tokenFinder;
-
-    private $transUnitFormHandler;
-
-    private $lexikTranslator;
-
-    private $translator;
-
-    private $localeManager;
-
-    public function __construct(
-        StorageInterface $translationStorage,
-        StatsAggregator $statsAggregator,
-        TransUnitFormHandler $transUnitFormHandler,
-        Translator $lexikTranslator,
-        TranslatorInterface $translator,
-        LocaleManagerInterface $localeManager,
-        ?TokenFinder $tokenFinder
-    ) {
-        $this->translationStorage = $translationStorage;
-        $this->statsAggregator = $statsAggregator;
-        $this->transUnitFormHandler = $transUnitFormHandler;
-        $this->lexikTranslator = $lexikTranslator;
-        $this->translator = $translator;
-        $this->localeManager = $localeManager;
-        $this->tokenFinder = $tokenFinder;
+    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly Translator $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?\Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder $tokenFinder)
+    {
     }
 
     /**
@@ -63,13 +35,7 @@ class TranslationController extends AbstractController
     {
         $stats = $this->statsAggregator->getStats();
 
-        return $this->render('@LexikTranslation/Translation/overview.html.twig', array(
-            'layout'         => $this->getParameter('lexik_translation.base_layout'),
-            'locales'        => $this->getManagedLocales(),
-            'domains'        => $this->translationStorage->getTransUnitDomains(),
-            'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(),
-            'stats'          => $stats,
-        ));
+        return $this->render('@LexikTranslation/Translation/overview.html.twig', ['layout'         => $this->getParameter('lexik_translation.base_layout'), 'locales'        => $this->getManagedLocales(), 'domains'        => $this->translationStorage->getTransUnitDomains(), 'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(), 'stats'          => $stats]);
     }
 
     /**
@@ -84,14 +50,7 @@ class TranslationController extends AbstractController
             $tokens = $this->tokenFinder->find();
         }
 
-        return $this->render('@LexikTranslation/Translation/grid.html.twig', array(
-            'layout'         => $this->getParameter('lexik_translation.base_layout'),
-            'inputType'      => $this->getParameter('lexik_translation.grid_input_type'),
-            'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'),
-            'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'),
-            'locales'        => $this->getManagedLocales(),
-            'tokens'         => $tokens,
-        ));
+        return $this->render('@LexikTranslation/Translation/grid.html.twig', ['layout'         => $this->getParameter('lexik_translation.base_layout'), 'inputType'      => $this->getParameter('lexik_translation.grid_input_type'), 'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'), 'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'), 'locales'        => $this->getManagedLocales(), 'tokens'         => $tokens]);
     }
 
     /**
@@ -103,12 +62,12 @@ class TranslationController extends AbstractController
     {
         $this->lexikTranslator->removeLocalesCacheFiles($this->getManagedLocales());
 
-        $message = $this->translator->trans('translations.cache_removed', array(), 'LexikTranslationBundle');
+        $message = $this->translator->trans('translations.cache_removed', [], 'LexikTranslationBundle');
 
         if ($request->isXmlHttpRequest()) {
             $this->checkCsrf();
 
-            return new JsonResponse(array('message' => $message));
+            return new JsonResponse(['message' => $message]);
         }
 
         $request->getSession()->getFlashBag()->add('success', $message);
@@ -126,7 +85,7 @@ class TranslationController extends AbstractController
         $form = $this->createForm(TransUnitType::class, $this->transUnitFormHandler->createFormData(), $this->transUnitFormHandler->getFormOptions());
 
         if ($this->transUnitFormHandler->process($form, $request)) {
-            $message = $this->translator->trans('translations.successfully_added', array(), 'LexikTranslationBundle');
+            $message = $this->translator->trans('translations.successfully_added', [], 'LexikTranslationBundle');
 
             $request->getSession()->getFlashBag()->add('success', $message);
 
@@ -135,10 +94,7 @@ class TranslationController extends AbstractController
             return $this->redirect($this->generateUrl($redirectUrl));
         }
 
-        return $this->render('@LexikTranslation/Translation/new.html.twig', array(
-            'layout' => $this->getParameter('lexik_translation.base_layout'),
-            'form'   => $form->createView(),
-        ));
+        return $this->render('@LexikTranslation/Translation/new.html.twig', ['layout' => $this->getParameter('lexik_translation.base_layout'), 'form'   => $form->createView()]);
     }
 
     /**

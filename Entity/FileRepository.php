@@ -14,8 +14,6 @@ class FileRepository extends EntityRepository
     /**
      * Returns all files matching a given locale and a given domains.
      *
-     * @param array $locales
-     * @param array $domains
      * @return array
      */
     public function findForLocalesAndDomains(array $locales, array $domains)

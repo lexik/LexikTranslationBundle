@@ -24,13 +24,13 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('lexik_translation');
         $rootNode = $treeBuilder->getRootNode();
 
-        $storages = array(
+        $storages = [
             StorageInterface::STORAGE_ORM,
             StorageInterface::STORAGE_MONGODB,
             StorageInterface::STORAGE_PROPEL,
-        );
-        $registrationTypes = array('all', 'files', 'database');
-        $inputTypes = array('text', 'textarea');
+        ];
+        $registrationTypes = ['all', 'files', 'database'];
+        $inputTypes = ['text', 'textarea'];
 
         $rootNode
             ->addDefaultsIfNotSet()
@@ -138,7 +138,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
 
             ->end()
-        ;
+            ->end();
 
         return $treeBuilder;
     }

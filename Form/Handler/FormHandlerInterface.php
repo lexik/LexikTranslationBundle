@@ -27,8 +27,6 @@ interface FormHandlerInterface
     /**
      * Process the form and returns true if the form is valid.
      *
-     * @param FormInterface $form
-     * @param Request $request
      * @return boolean
      */
     public function process(FormInterface $form, Request $request);

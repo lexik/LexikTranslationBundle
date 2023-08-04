@@ -9,33 +9,19 @@ use Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class DatabaseFreshResource implements SelfCheckingResourceInterface
+class DatabaseFreshResource implements SelfCheckingResourceInterface, \Stringable
 {
-    /**
-     * @var string
-     */
-    private $locale;
 
-    /**
-     * @var string
-     */
-    private $domain;
-
-    /**
-     *
-     * @param string $locale
-     * @param string $domain
-     */
-    public function __construct($locale, $domain)
-    {
-        $this->locale = $locale;
-        $this->domain = $domain;
+    public function __construct(
+        private readonly string $locale,
+        private readonly string $domain,
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getResource();
     }

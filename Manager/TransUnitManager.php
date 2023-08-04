@@ -13,39 +13,17 @@ use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
  */
 class TransUnitManager implements TransUnitManagerInterface
 {
-    /**
-     * @var StorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var FileManagerInterface
-     */
-    private $fileManager;
-
-    /**
-     * @var String
-     */
-    private $kernelRootDir;
-
-    /**
-     * Construct.
-     *
-     * @param StorageInterface $storage
-     * @param FileManagerInterface $fm
-     * @param String $kernelRootDir
-     */
-    public function __construct(StorageInterface $storage, FileManagerInterface $fm, $kernelRootDir)
-    {
-        $this->storage = $storage;
-        $this->fileManager = $fm;
-        $this->kernelRootDir = $kernelRootDir;
+    public function __construct(
+        private readonly StorageInterface $storage,
+        private readonly FileManagerInterface $fileManager,
+        private string $kernelRootDir,
+    ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function newInstance($locales = array())
+    public function newInstance($locales = [])
     {
         $transUnitClass = $this->storage->getModelClass('trans_unit');
         $translationClass = $this->storage->getModelClass('translation');
@@ -83,8 +61,13 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function addTranslation(TransUnitInterface $transUnit, $locale, $content, FileInterface $file = null, $flush = false)
-    {
+    public function addTranslation(
+        TransUnitInterface $transUnit,
+        $locale,
+        $content,
+        FileInterface $file = null,
+        $flush = false
+    ) {
         $translation = null;
 
         if (!$transUnit->hasTranslation($locale)) {
@@ -195,13 +178,8 @@ class TransUnitManager implements TransUnitManagerInterface
 
     /**
      * Get the proper File for this TransUnit and locale
-     *
-     * @param TransUnitInterface $transUnit
-     * @param string $locale
-     *
-     * @return FileInterface|null
      */
-    public function getTranslationFile(TransUnitInterface & $transUnit, $locale)
+    public function getTranslationFile(TransUnitInterface &$transUnit, string $locale)
     {
         $file = null;
         foreach ($transUnit->getTranslations() as $translation) {
@@ -214,14 +192,13 @@ class TransUnitManager implements TransUnitManagerInterface
         if ($file !== null) {
             //make sure we got the correct file for this locale and domain
             $name = sprintf('%s.%s.%s', $file->getDomain(), $locale, $file->getExtention());
-            $file = $this->fileManager->getFor($name, $this->kernelRootDir.DIRECTORY_SEPARATOR.$file->getPath());
+            $file = $this->fileManager->getFor($name, $this->kernelRootDir . DIRECTORY_SEPARATOR . $file->getPath());
         }
 
         return $file;
     }
 
     /**
-     * @param TransUnitInterface $transUnit
      * @return bool
      */
     public function delete(TransUnitInterface $transUnit)
@@ -232,14 +209,13 @@ class TransUnitManager implements TransUnitManagerInterface
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
 
     /**
-     * @param TransUnitInterface $transUnit
-     * @param string             $locale
+     * @param string $locale
      * @return bool
      */
     public function deleteTranslation(TransUnitInterface $transUnit, $locale)
@@ -252,7 +228,7 @@ class TransUnitManager implements TransUnitManagerInterface
 
             return true;
 
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }

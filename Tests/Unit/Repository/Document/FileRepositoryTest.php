@@ -22,35 +22,23 @@ class FileRepositoryTest extends BaseUnitTestCase
 
         $repository = $dm->getRepository(self::DOCUMENT_FILE_CLASS);
 
-        $result = $repository->findForLocalesAndDomains(array('de'), array());
-        $expected = array(
-            'Resources/translations/superTranslations.de.yml',
-        );
-        $this->assertEquals(1, count($result));
+        $result = $repository->findForLocalesAndDomains(['de'], []);
+        $expected = ['Resources/translations/superTranslations.de.yml'];
+        $this->assertEquals(1, is_countable($result) ? count($result) : 0);
         $this->assertFilesPath($expected, $result);
 
-        $result = $repository->findForLocalesAndDomains(array('fr'), array());
-        $expected = array(
-            'Resources/translations/superTranslations.fr.yml',
-            'Resources/translations/messages.fr.yml',
-        );
-        $this->assertEquals(2, count($result));
+        $result = $repository->findForLocalesAndDomains(['fr'], []);
+        $expected = ['Resources/translations/superTranslations.fr.yml', 'Resources/translations/messages.fr.yml'];
+        $this->assertEquals(2, is_countable($result) ? count($result) : 0);
         $this->assertFilesPath($expected, $result);
 
-        $result = $repository->findForLocalesAndDomains(array(), array('messages'));
-        $expected = array(
-            'Resources/translations/messages.fr.yml',
-            'Resources/translations/messages.en.yml',
-        );
-        $this->assertEquals(2, count($result));
+        $result = $repository->findForLocalesAndDomains([], ['messages']);
+        $expected = ['Resources/translations/messages.fr.yml', 'Resources/translations/messages.en.yml'];
+        $this->assertEquals(2, is_countable($result) ? count($result) : 0);
 
-        $result = $repository->findForLocalesAndDomains(array('en', 'de'), array('messages', 'superTranslations'));
-        $expected = array(
-            'Resources/translations/superTranslations.en.yml',
-            'Resources/translations/superTranslations.de.yml',
-            'Resources/translations/messages.en.yml',
-        );
-        $this->assertEquals(3, count($result));
+        $result = $repository->findForLocalesAndDomains(['en', 'de'], ['messages', 'superTranslations']);
+        $expected = ['Resources/translations/superTranslations.en.yml', 'Resources/translations/superTranslations.de.yml', 'Resources/translations/messages.en.yml'];
+        $this->assertEquals(3, is_countable($result) ? count($result) : 0);
         $this->assertFilesPath($expected, $result);
     }
 

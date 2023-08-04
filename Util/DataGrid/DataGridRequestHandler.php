@@ -21,26 +21,6 @@ use Symfony\Component\Translation\DataCollectorTranslator;
 class DataGridRequestHandler
 {
     /**
-     * @var TransUnitManagerInterface
-     */
-    protected $transUnitManager;
-
-    /**
-     * @var FileManagerInterface
-     */
-    protected $fileManager;
-
-    /**
-     * @var StorageInterface
-     */
-    protected $storage;
-
-    /**
-     * @var LocaleManagerInterface
-     */
-    protected $localeManager;
-
-    /**
      * @var Profiler
      */
     protected $profiler;
@@ -55,25 +35,12 @@ class DataGridRequestHandler
      */
     protected $defaultFileFormat;
 
-    /**
-     * @param TransUnitManagerInterface $transUnitManager
-     * @param FileManagerInterface      $fileManager
-     * @param StorageInterface          $storage
-     * @param LocaleManagerInterface    $localeManager
-     */
-    public function __construct(TransUnitManagerInterface $transUnitManager, FileManagerInterface $fileManager, StorageInterface $storage, LocaleManagerInterface $localeManager)
+    public function __construct(protected TransUnitManagerInterface $transUnitManager, protected FileManagerInterface $fileManager, protected StorageInterface $storage, protected LocaleManagerInterface $localeManager)
     {
-        $this->transUnitManager = $transUnitManager;
-        $this->fileManager = $fileManager;
-        $this->storage = $storage;
-        $this->localeManager = $localeManager;
         $this->createMissing = false;
         $this->defaultFileFormat = 'yml';
     }
 
-    /**
-     * @param Profiler $profiler
-     */
     public function setProfiler(Profiler $profiler = null)
     {
         $this->profiler = $profiler;
@@ -98,7 +65,6 @@ class DataGridRequestHandler
     /**
      * Returns an array with the trans unit for the current page and the total of trans units
      *
-     * @param Request $request
      * @return array
      */
     public function getPage(Request $request)
@@ -114,19 +80,18 @@ class DataGridRequestHandler
 
         $count = $this->storage->countTransUnits($this->localeManager->getLocales(), $parameters);
 
-        return array($transUnits, $count);
+        return [$transUnits, $count];
     }
 
     /**
      * Returns an array with the trans unit for the current profile page.
      *
-     * @param Request $request
      * @param string  $token
      * @return array
      */
     public function getPageByToken(Request $request, $token)
     {
-        list($transUnits, $count) = $this->getByToken($token);
+        [$transUnits, $count] = $this->getByToken($token);
 
         $parameters = $this->fixParameters($request->query->all());
 
@@ -150,7 +115,7 @@ class DataGridRequestHandler
 
         // In case no results were found
         if (!$profile instanceof Profile) {
-            return array(array(), 0);
+            return [[], 0];
         }
 
         try {
@@ -158,7 +123,7 @@ class DataGridRequestHandler
             $collector = $profile->getCollector('translation');
             $messages = $collector->getMessages();
 
-            $transUnits = array();
+            $transUnits = [];
             foreach ($messages as $message) {
                 $transUnit = $this->storage->getTransUnitByKeyAndDomain($message['id'], $message['domain']);
 
@@ -176,12 +141,12 @@ class DataGridRequestHandler
                 }
             }
 
-            return array($transUnits, count($transUnits));
+            return [$transUnits, count($transUnits)];
 
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
 
             // Translation collector is a 2.7 feature
-            return array(array(), 0);
+            return [[], 0];
         }
     }
 
@@ -189,7 +154,6 @@ class DataGridRequestHandler
      * Updates a trans unit from the request.
      *
      * @param integer $id
-     * @param Request $request
      * @throws NotFoundHttpException
      * @return \Lexik\Bundle\TranslationBundle\Model\TransUnit
      */
@@ -201,7 +165,7 @@ class DataGridRequestHandler
             throw new NotFoundHttpException(sprintf('No TransUnit found for "%s"', $id));
         }
 
-        $translationsContent = array();
+        $translationsContent = [];
         foreach ($this->localeManager->getLocales() as $locale) {
             $translationsContent[$locale] = $request->request->get($locale);
         }
@@ -227,8 +191,8 @@ class DataGridRequestHandler
     {
         // filter data
         if (isset($parameters['_search']) && $parameters['_search']) {
-            $nonFilterParams = array('rows', 'page', '_search');
-            $filters = array();
+            $nonFilterParams = ['rows', 'page', '_search'];
+            $filters = [];
 
             array_walk($parameters, function ($value, $key) use (&$filters, $nonFilterParams) {
                 if (!in_array($key, $nonFilterParams) && !empty($value)) {
@@ -243,14 +207,14 @@ class DataGridRequestHandler
                     $match = true;
 
                     foreach ($filters as $column => $str) {
-                        if (in_array($column, array('key', 'domain'))) {
+                        if (in_array($column, ['key', 'domain'])) {
                             $value = $transUnits[$i]->{sprintf('get%s', ucfirst($column))}();
                         } else {
                             $translation = $transUnits[$i]->getTranslation($column);
                             $value = $translation ? $translation->getContent() : '';
                         }
 
-                        $match = $match && (1 === preg_match(sprintf('/.*%s.*/i', $str), $value));
+                        $match = $match && (1 === preg_match(sprintf('/.*%s.*/i', $str), (string) $value));
                     }
 
                     if (!$match) {
@@ -274,16 +238,15 @@ class DataGridRequestHandler
             $transUnitsPage = $transUnits;
         }
 
-        return array($transUnitsPage, $count);
+        return [$transUnitsPage, $count];
     }
 
     /**
-     * @param array $dirtyParameters
      * @return array
      */
     protected function fixParameters(array $dirtyParameters)
     {
-        $parameters = array();
+        $parameters = [];
 
         array_walk($dirtyParameters, function ($value, $key) use (&$parameters) {
             if ($key != '_search') {
