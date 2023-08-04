@@ -34,7 +34,6 @@
         "phpunit/phpunit": "^9.5",
         "doctrine/mongodb-odm": "^2.1",
         "mongodb/mongodb": "^1.8",
-        "monolog/monolog": "^2.0",
         "ext-pdo": "*",
         "mikey179/vfsstream": "^1.6",
         "rector/rector": "^0.14.8"
