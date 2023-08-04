@@ -46,7 +46,7 @@ class ImportTranslationsCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('lexik:translations:import');
         $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
