@@ -23,6 +23,8 @@
     "require-dev": {
         "ext-mongodb": "*",
         "symfony/symfony": "~5.0|~6.0",
+        "doctrine/annotations": "^1.13",
+        "doctrine/cache": "^1.4",
         "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
@@ -31,6 +33,7 @@
         "phpunit/phpunit": "^9.5",
         "doctrine/mongodb-odm": "^2.1",
         "mongodb/mongodb": "^1.8",
+        "monolog/monolog": "^2.0",
         "ext-pdo": "*",
         "mikey179/vfsstream": "^1.6"
     },

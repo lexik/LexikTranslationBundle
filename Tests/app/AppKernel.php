@@ -47,7 +47,7 @@ class AppKernel extends Kernel
         parent::__construct($environment, $debug);
     }
 
-    public function registerBundles()
+    public function registerBundles(): iterable
     {
         if (!file_exists($filename = $this->getRootDir() . '/' . $this->testCase . '/bundles.php')) {
             throw new \RuntimeException(sprintf('The bundles file "%s" does not exist.', $filename));
@@ -61,12 +61,12 @@ class AppKernel extends Kernel
         return __DIR__;
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return $this->getRootDir() . '/tmp/' . $this->testCase . '/cache/' . $this->environment;
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return $this->getRootDir() . '/tmp/' . $this->testCase . '/logs';
     }
@@ -86,7 +86,7 @@ class AppKernel extends Kernel
         call_user_func_array(array($this, '__construct'), unserialize($str));
     }
 
-    protected function getKernelParameters()
+    protected function getKernelParameters(): array
     {
         $parameters = parent::getKernelParameters();
         $parameters['kernel.test_case'] = $this->testCase;
