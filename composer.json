@@ -24,6 +24,8 @@
     "require-dev": {
         "symfony/symfony": "~6.0",
         "ext-mongodb": "*",
+        "doctrine/annotations": "^1.13",
+        "doctrine/cache": "^1.4",
         "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
