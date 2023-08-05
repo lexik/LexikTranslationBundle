@@ -11,12 +11,3 @@ if (!$loader = include __DIR__.'/../vendor/autoload.php') {
         'php composer.phar install'.$nl);
 }
 
-AnnotationRegistry::registerAutoloadNamespace(
-    'Symfony\Component\Validator\Constraints',
-    __DIR__.'/../vendor/symfony/validator'
-);
-
-AnnotationRegistry::registerAutoloadNamespace(
-    'Symfony\Bridge\Doctrine\Validator\Constraints',
-    __DIR__.'/../vendor/symfony/doctrine-bridge'
-);
