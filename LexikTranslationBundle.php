@@ -14,7 +14,7 @@ use Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler\TranslatorPass;
  */
 class LexikTranslationBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

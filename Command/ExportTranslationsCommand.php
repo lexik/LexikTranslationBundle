@@ -35,7 +35,7 @@ class ExportTranslationsCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('lexik:translations:export');
         $this->setDescription('Export translations from the database to files.');
