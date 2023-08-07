@@ -30,7 +30,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $processor = new Processor();
         $configuration = new Configuration();
@@ -127,7 +127,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         if (!$container->hasExtension('twig')) {
             return;
