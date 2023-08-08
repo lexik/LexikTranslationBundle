@@ -2,9 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\Csrf;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Service\Attribute\Required;
 
 /**
  * Class CsrfChecker.
@@ -15,17 +15,13 @@ trait CsrfCheckerTrait
 
     private $tokenManager;
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setRequestStack(RequestStack $requestStack): void
     {
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * @required
-     */
+    #[Required]
     public function setTokenManager(?CsrfTokenManager $tokenManager): void
     {
         $this->tokenManager = $tokenManager;
