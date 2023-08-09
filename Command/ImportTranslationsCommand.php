@@ -263,7 +263,14 @@ class ImportTranslationsCommand extends ContainerAwareCommand
 
         foreach ($finder as $file) {
             $this->output->write(sprintf('Importing <comment>"%s"</comment> ... ', $file->getPathname()));
-            $number = $importer->import($file, $this->input->getOption('force'), $this->input->getOption('merge'));
+            $forceUpdate = $this->input->getOption('force');
+            list($domain, $locale, $extention) = explode('.', $file->getFilename());
+            if(strpos($domain, 'messages') !== false) {
+                if ($domain  != 'messages') {
+                    $forceUpdate = true;
+                }
+            }
+            $number = $importer->import($file, $forceUpdate, $this->input->getOption('merge'));
             $this->output->writeln(sprintf('%d translations', $number));
 
             $skipped = $importer->getSkippedKeys();

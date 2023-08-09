@@ -98,6 +98,9 @@ class FileImporter
         if (!isset($this->loaders[$extention])) {
             throw new \RuntimeException(sprintf('No load found for "%s" format.', $extention));
         }
+        if(strpos($domain, 'messages') !== false) {
+            $domain = 'messages';
+        }
 
         $messageCatalogue = $this->loaders[$extention]->load($file->getPathname(), $locale, $domain);
 
