@@ -193,7 +193,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      */
     protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
     {
-        $driverDefinition = new Definition($driverClass, [[realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model']]);
+        $driverDefinition = new Definition($driverClass, [[realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'], SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION, true]);
         $driverDefinition->setPublic(false);
 
         $container->setDefinition($driverId, $driverDefinition);
