@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
 use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
