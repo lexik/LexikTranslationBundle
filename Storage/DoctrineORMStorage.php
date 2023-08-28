@@ -5,6 +5,8 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Driver\PDO\SQLite\Driver as SQLiteDriver;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -36,8 +38,17 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
             unset($params['dbname'], $params['path'], $params['url']);
 
             try {
-                $tmpConnection = DriverManager::getConnection($params);
-                $dbExists = in_array($connection->getDatabase(), $tmpConnection->getSchemaManager()->listDatabases());
+                $configuration = new Configuration();
+                if (class_exists(DefaultSchemaManagerFactory::class)) {
+                    $configuration->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
+                }
+
+                $tmpConnection = DriverManager::getConnection($params, $configuration);
+                $schemaManager = method_exists($tmpConnection, 'createSchemaManager')
+                    ? $tmpConnection->createSchemaManager()
+                    : $tmpConnection->getSchemaManager();
+
+                $dbExists = in_array($connection->getDatabase(), $schemaManager->listDatabases());
                 $tmpConnection->close();
             } catch (ConnectionException|\Exception $e) {
                 $dbExists = false;
@@ -54,7 +65,11 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
             $em->getClassMetadata($this->getModelClass('translation'))->getTableName(),
         ];
 
-        return $connection->getSchemaManager()->tablesExist($tables);
+        $schemaManager = method_exists($connection, 'createSchemaManager')
+            ? $connection->createSchemaManager()
+            : $connection->getSchemaManager();
+
+        return $schemaManager->tablesExist($tables);
     }
 
     /**
