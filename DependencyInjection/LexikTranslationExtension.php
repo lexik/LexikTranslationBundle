@@ -176,7 +176,11 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             throw new \RuntimeException(sprintf('Unsupported storage "%s".', $storage));
         }
 
-        $args[] = ['trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)), 'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)), 'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))];
+        $args[] = [
+            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)), 
+            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)), 
+            'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
+        ];
 
         $storageDefinition = new Definition();
         $storageDefinition->setClass($container->getParameter(sprintf('lexik_translation.%s.translation_storage.class', $storage)));
@@ -194,7 +198,10 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      */
     protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
     {
-        $driverDefinition = new Definition($driverClass, [[realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'], SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION, true]);
+        $driverDefinition = new Definition($driverClass, [
+            [realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'], 
+            SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION, true
+        ]);
         $driverDefinition->setPublic(false);
 
         $container->setDefinition($driverId, $driverDefinition);
