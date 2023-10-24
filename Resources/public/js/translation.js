@@ -148,9 +148,9 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$l
 
                     translationApiManager
                         .getPage(params, this)
-                        .success(function (responseData) {
-                            params.total(responseData.total);
-                            $defer.resolve(responseData.translations);
+                        .then(function (responseData) {
+                            params.total(responseData.data.total);
+                            $defer.resolve(responseData.data.translations);
                         });
                 }
             };
@@ -229,10 +229,9 @@ app.controller('TranslationController', [
         $scope.invalidateCache = function () {
             translationApiManager
                 .invalidateCache()
-                .success(function (responseData) {
-                    sharedMessage.set('success', 'ok-circle', responseData.message);
-                })
-                .error(function () {
+                .then(function success(responseData) {
+                    sharedMessage.set('success', 'ok-circle', responseData.data.message);
+                }, function error() {
                     sharedMessage.set('danger', 'remove-circle', 'Error');
                 })
             ;
@@ -244,7 +243,7 @@ app.controller('TranslationController', [
                 column.visible = $scope.areAllColumnsSelected;
             });
         };
-}]);
+    }]);
 
 /**
  * Translations source controller.
@@ -289,7 +288,7 @@ app.controller('DataSourceController', [
                 $scope.selectedToken = '';
             }
         };
-}]);
+    }]);
 
 /**
  * Directive to switch table row in edit mode.
@@ -325,11 +324,11 @@ app.directive('editableRow', [
                     } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
                         translationApiManager
                             .updateTranslation($scope.translation)
-                            .success(function (data) {
+                            .then(function success(responseData) {
                                 $scope.mode = null;
-                                $scope.translation = data;
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
-                            }).error(function () {
+                                $scope.translation = responseData.data;
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', responseData.data._key));
+                            }, function error() {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
                             });
                     }
@@ -343,24 +342,24 @@ app.directive('editableRow', [
                     if (column.index == '_key') {
                         translationApiManager
                             .deleteTranslation($scope.translation)
-                            .success(function (data) {
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                            .then(function success(responseData) {
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', responseData.data._key));
                                 $scope.mode = null;
                                 tableParamsManager.reloadTableData();
-                            }).error(function () {
+                            }, function error() {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     } else {
                         translationApiManager
                             .deleteTranslationLocale($scope.translation, column.index)
-                            .success(function (data) {
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                            .then(function success(responseData) {
+                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', responseData.data._key));
                                 $scope.translation[column.index] = '';
-                            }).error(function () {
+                            }, function error() {
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     }
                 };
             }
         };
-}]);
+    }]);
