@@ -243,7 +243,7 @@ app.controller('TranslationController', [
                 column.visible = $scope.areAllColumnsSelected;
             });
         };
-    }]);
+}]);
 
 /**
  * Translations source controller.
@@ -288,7 +288,7 @@ app.controller('DataSourceController', [
                 $scope.selectedToken = '';
             }
         };
-    }]);
+}]);
 
 /**
  * Directive to switch table row in edit mode.
@@ -362,4 +362,4 @@ app.directive('editableRow', [
                 };
             }
         };
-    }]);
+}]);
