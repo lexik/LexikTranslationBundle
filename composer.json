@@ -22,7 +22,7 @@
         "monolog/monolog": "^3.2"
     },
     "require-dev": {
-        "symfony/symfony": "~6.0",
+        "symfony/symfony": "~6.0|~7.0",
         "ext-mongodb": "*",
         "doctrine/annotations": "^1.13",
         "doctrine/cache": "^1.4",
