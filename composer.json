@@ -19,15 +19,20 @@
     "require": {
         "php": "^8.1",
         "symfony/framework-bundle": "~6.0|~7.0",
-        "monolog/monolog": "^3.2"
+        "monolog/monolog": "^3.2",
+        "doctrine/orm": ">=2.4",
+        "doctrine/doctrine-bundle": "^2.2",
+        "symfony/asset": "7.0.*",
+        "symfony/form": "7.0.*",
+        "symfony/security-csrf": "7.0.*",
+        "symfony/translation": "7.0.*",
+        "symfony/twig-bundle": "7.0.*"
     },
     "require-dev": {
         "symfony/symfony": "~6.0|7.0",
         "ext-mongodb": "*",
         "doctrine/annotations": "^1.13",
         "doctrine/cache": "^1.4",
-        "doctrine/orm": ">=2.4",
-        "doctrine/doctrine-bundle": "^2.2",
         "doctrine/data-fixtures": "~1.1",
         "doctrine/mongodb-odm-bundle": "~4.2",
         "propel/propel": "2.0.0-alpha12|dev-master",
