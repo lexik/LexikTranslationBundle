@@ -26,6 +26,7 @@
         "symfony/form": "7.0.*",
         "symfony/security-csrf": "7.0.*",
         "symfony/translation": "7.0.*",
+        "symfony/validator": "^7.0",
         "symfony/twig-bundle": "7.0.*"
     },
     "require-dev": {
