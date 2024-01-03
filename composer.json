@@ -20,7 +20,7 @@
         "php": "^8.1",
         "symfony/framework-bundle": "~7.0",
         "monolog/monolog": "^3.2",
-        "doctrine/orm": ">=2.4",
+        "doctrine/orm": "^2.4",
         "doctrine/doctrine-bundle": "^2.2",
         "symfony/asset": "7.0.*",
         "symfony/form": "7.0.*",
@@ -43,9 +43,6 @@
         "ext-pdo": "*",
         "mikey179/vfsstream": "^1.6",
         "rector/rector": "^0.14.8"
-    },
-    "suggest": {
-        "doctrine/orm": ">=2.4"
     },
     "autoload":     {
         "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
