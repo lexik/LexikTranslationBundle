@@ -148,9 +148,11 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$l
 
                     translationApiManager
                         .getPage(params, this)
-                        .success(function (responseData) {
-                            params.total(responseData.total);
-                            $defer.resolve(responseData.translations);
+                        .then(function (responseData) {
+                            if (responseData.status === 200) {
+                                params.total(responseData.data.total);
+                                $defer.resolve(responseData.data.translations);
+                            }
                         });
                 }
             };
