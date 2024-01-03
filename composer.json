@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": "^8.1",
-        "symfony/framework-bundle": "~6.0|~7.0",
+        "symfony/framework-bundle": "~7.0",
         "monolog/monolog": "^3.2",
         "doctrine/orm": ">=2.4",
         "doctrine/doctrine-bundle": "^2.2",
@@ -30,7 +30,7 @@
         "symfony/twig-bundle": "7.0.*"
     },
     "require-dev": {
-        "symfony/symfony": "~6.0|7.0",
+        "symfony/symfony": "~7.0",
         "ext-mongodb": "*",
         "doctrine/annotations": "^1.13",
         "doctrine/cache": "^1.4",
