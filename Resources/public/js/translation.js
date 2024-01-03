@@ -148,10 +148,10 @@ app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$l
 
                     translationApiManager
                         .getPage(params, this)
-                        .then(function (responseData) {
-                            if (responseData.status === 200) {
-                                params.total(responseData.data.total);
-                                $defer.resolve(responseData.data.translations);
+                        .then(function (response) {
+                            if (response.status === 200) {
+                                params.total(response.data.total);
+                                $defer.resolve(response.data.translations);
                             }
                         });
                 }
@@ -231,10 +231,13 @@ app.controller('TranslationController', [
         $scope.invalidateCache = function () {
             translationApiManager
                 .invalidateCache()
-                .success(function (responseData) {
-                    sharedMessage.set('success', 'ok-circle', responseData.message);
-                })
-                .error(function () {
+                .then(function (response) {
+                    if(response.status === 200) {
+                        sharedMessage.set('success', 'ok-circle', response.data.message);
+
+                        return;
+                    }
+
                     sharedMessage.set('danger', 'remove-circle', 'Error');
                 })
             ;
@@ -327,11 +330,15 @@ app.directive('editableRow', [
                     } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
                         translationApiManager
                             .updateTranslation($scope.translation)
-                            .success(function (data) {
-                                $scope.mode = null;
-                                $scope.translation = data;
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
-                            }).error(function () {
+                            .then(function (response) {
+                                if (response.status === 200) {
+                                    $scope.mode = null;
+                                    $scope.translation = response.data;
+                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', response.data._key));
+
+                                    return;
+                                }
+
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
                             });
                     }
@@ -345,20 +352,28 @@ app.directive('editableRow', [
                     if (column.index == '_key') {
                         translationApiManager
                             .deleteTranslation($scope.translation)
-                            .success(function (data) {
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
-                                $scope.mode = null;
-                                tableParamsManager.reloadTableData();
-                            }).error(function () {
+                            .then(function (response) {
+                                if (response.status === 200) {
+                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', response.data._key));
+                                    $scope.mode = null;
+                                    tableParamsManager.reloadTableData();
+
+                                    return;
+                                }
+
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     } else {
                         translationApiManager
                             .deleteTranslationLocale($scope.translation, column.index)
-                            .success(function (data) {
-                                sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
-                                $scope.translation[column.index] = '';
-                            }).error(function () {
+                            .then(function (response) {
+                                if (response.status === 200) {
+                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', response.data._key));
+                                    $scope.translation[column.index] = '';
+
+                                    return;
+                                }
+
                                 sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
                             });
                     }
