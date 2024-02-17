@@ -33,7 +33,7 @@
         "symfony/translation": "7.0.*|^5.0.0",
         "symfony/validator": "^7.0",
         "symfony/twig-bundle": "7.0.*",
-        "symfony/yaml": "*"
+        "symfony/yaml": "^7.0"
     },
     "require-dev": {
         "ext-mongodb": "*",
