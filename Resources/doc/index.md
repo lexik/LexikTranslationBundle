@@ -63,15 +63,15 @@ lexik_translation:
 
 *Default values are shown here.*
 
-Configure where to store translations, by default the bundle will use Doctrine ORM but you can also use Doctrine MongoDB or Propel ORM.
-You can also define the name of the entity / document manager which uses [different connection](http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html), when using propel, this can be used to specify the propel connection name.
+Configure where to store translations, by default the bundle will use Doctrine ORM but you can also use Doctrine MongoDB.
+You can also define the name of the entity / document manager which uses [different connection](http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html).
 
 Note that MongoDB 2.0.0 or later is required if you choose to use MongoDB.
 
 ```yml
 lexik_translation:
     storage:
-        type: orm                  # orm | mongodb | propel
+        type: orm                  # orm | mongodb
         object_manager: something  # The name of the entity / document manager which uses different connection (see: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html)
                                    # When using propel, this can be used to specify the propel connection name
 ```

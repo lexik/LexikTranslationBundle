@@ -19,7 +19,6 @@
       <group>util</group>
       <group>orm</group>
       <group>odm</group>
-      <group>propel</group>
       <group>exporter</group>
       <group>loader</group>
       <group>importer</group>

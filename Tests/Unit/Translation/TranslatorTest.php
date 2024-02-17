@@ -143,7 +143,7 @@ class TranslatorMock extends Translator
 {
     public $dbResources = [];
 
-    public function addResource($format, $resource, $locale, $domain = 'messages')
+    public function addResource($format, $resource, $locale, $domain = 'messages'): void
     {
         if ('database' == $format) {
             $this->dbResources[$locale][] = [$format, $resource, $domain];

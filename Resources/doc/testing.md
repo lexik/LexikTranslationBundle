@@ -19,7 +19,7 @@ $ export DB_NAME=lexik_test && export DB_USER=root && unset DB_PASSWD && unset D
 ```
 
 Available variables are:
- - ORM - orm system, currently we support only doctrine2, we should also support propel and mongo
+ - ORM - orm system, currently we support doctrine2 and mongo
  - DB_NAME - database name (default: lexik_translation_test)
  - DB_USER - database user name (default: root)
  - DB_PASSWD - database user password (default: null)

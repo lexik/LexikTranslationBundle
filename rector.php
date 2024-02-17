@@ -17,7 +17,6 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/Form',
         __DIR__ . '/Manager',
         __DIR__ . '/Model',
-        __DIR__ . '/Propel',
         __DIR__ . '/Storage',
         __DIR__ . '/Tests',
         __DIR__ . '/Translation',
