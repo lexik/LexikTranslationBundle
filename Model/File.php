@@ -2,7 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
+
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,155 +14,90 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 abstract class File
 {
-    /**
-     * @var int
-     */
     protected $id;
 
     /**
-     * @var string
-     *
      * @Assert\NotBlank()
      */
-    protected $domain;
+    protected string $domain;
 
     /**
-     * @var string
-     *
      * @Assert\NotBlank()
      */
-    protected $locale;
+    protected string $locale;
 
     /**
-     * @var string
-     *
      * @Assert\NotBlank()
      */
-    protected $extention;
+    protected string $extention;
 
     /**
-     * @var string
-     *
      * @Assert\NotBlank()
      */
-    protected $path;
+    protected string $path;
 
     /**
-     * @var string
-     *
      * @Assert\NotBlank()
      */
-    protected $hash;
+    protected string $hash;
 
-    /**
-     * @var Doctrine\Common\Collections\Collection
-     */
-    protected $translations;
+    protected Collection $translations;
 
-    /**
-     * Construct.
-     */
+    protected $createdAt;
+
+    protected $updatedAt;
+
     public function __construct()
     {
         $this->translations = new ArrayCollection();
     }
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * Set domain
-     *
-     * @param string $domain
-     */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }
 
-    /**
-     * Get domain
-     *
-     * @return string
-     */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
 
-    /**
-     * Set locale
-     *
-     * @param string $locale
-     */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
     }
 
-    /**
-     * Get locale
-     *
-     * @return string
-     */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
 
-    /**
-     * Set extention
-     *
-     * @param string $extention
-     */
-    public function setExtention($extention)
+    public function setExtention(string $extention): void
     {
         $this->extention = $extention;
     }
 
-    /**
-     * Get extention
-     *
-     * @return string
-     */
-    public function getExtention()
+    public function getExtention(): string
     {
         return $this->extention;
     }
 
-    /**
-     * Set path
-     *
-     * @param string $path
-     */
-    public function setPath($path)
+    public function setPath(string $path): void
     {
         $this->path = $path;
     }
 
-    /**
-     * Get path
-     *
-     * @return string
-     */
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
-    /**
-     * Set file name
-     *
-     * @param string $name
-     */
-    public function setName($name)
+    public function setName(string $name): void
     {
         [$domain, $locale, $extention] = explode('.', $name);
 
@@ -169,52 +106,29 @@ abstract class File
         $this->extention = $extention;
     }
 
-    /**
-     * Get file name
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return sprintf('%s.%s.%s', $this->domain, $this->locale, $this->extention);
     }
 
-    /**
-     * Set hash
-     *
-     * @return string
-     */
-    public function setHash($hash)
+    public function setHash(string $hash): void
     {
         $this->hash = $hash;
     }
 
-    /**
-     * Get hash
-     *
-     * @return string
-     */
-    public function getHash()
+    public function getHash(): string
     {
         return $this->hash;
     }
 
-    /**
-     * Add translation
-     */
-    public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
+    public function addTranslation(Translation $translation): void
     {
         $translation->setFile($this);
 
         $this->translations[] = $translation;
     }
 
-    /**
-     * Get translations
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getTranslations()
+    public function getTranslations(): Collection
     {
         return $this->translations;
     }

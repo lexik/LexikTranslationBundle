@@ -16,7 +16,6 @@ interface StorageInterface
      */
     public const STORAGE_ORM     = 'orm';
     public const STORAGE_MONGODB = 'mongodb';
-    public const STORAGE_PROPEL  = 'propel';
 
     /**
      * Persist the given object.

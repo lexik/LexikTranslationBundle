@@ -7,7 +7,6 @@ use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Propel\TransUnit as PropelTransUnit;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -74,11 +73,6 @@ class TransUnitFormHandler implements FormHandlerInterface
                             $translation->setFile($file);
                         }
                     }
-                }
-
-                if ($transUnit instanceof PropelTransUnit) {
-                    // The setTranslations() method only accepts PropelCollections
-                    $translations = new \PropelObjectCollection($translations);
                 }
 
                 $transUnit->setTranslations($translations);

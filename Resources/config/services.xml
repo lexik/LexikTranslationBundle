@@ -28,11 +28,6 @@
         <parameter key="lexik_translation.mongodb.translation.class">Lexik\Bundle\TranslationBundle\Document\Translation</parameter>
         <parameter key="lexik_translation.mongodb.file.class">Lexik\Bundle\TranslationBundle\Document\File</parameter>
 
-        <parameter key="lexik_translation.propel.translation_storage.class">Lexik\Bundle\TranslationBundle\Storage\PropelStorage</parameter>
-        <parameter key="lexik_translation.propel.trans_unit.class">Lexik\Bundle\TranslationBundle\Propel\TransUnit</parameter>
-        <parameter key="lexik_translation.propel.translation.class">Lexik\Bundle\TranslationBundle\Propel\Translation</parameter>
-        <parameter key="lexik_translation.propel.file.class">Lexik\Bundle\TranslationBundle\Propel\File</parameter>
-
         <parameter key="lexik_translation.data_grid.formatter.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter</parameter>
         <parameter key="lexik_translation.data_grid.request_handler.class">Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler</parameter>
 

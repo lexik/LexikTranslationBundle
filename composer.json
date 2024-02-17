@@ -2,7 +2,12 @@
     "name": "lexik/translation-bundle",
     "type": "symfony-bundle",
     "description": "This bundle allows to import translation files content into the database and provide a GUI to edit translations.",
-    "keywords": ["Symfony", "bundle", "translation", "i18n"],
+    "keywords": [
+        "Symfony",
+        "bundle",
+        "translation",
+        "i18n"
+    ],
     "homepage": "https://github.com/lexik/LexikTranslationBundle",
     "license": "MIT",
     "prefer-stable": true,
@@ -25,27 +30,28 @@
         "symfony/asset": "7.0.*",
         "symfony/form": "7.0.*",
         "symfony/security-csrf": "7.0.*",
-        "symfony/translation": "7.0.*",
+        "symfony/translation": "7.0.*|^5.0.0",
         "symfony/validator": "^7.0",
-        "symfony/twig-bundle": "7.0.*"
+        "symfony/twig-bundle": "7.0.*",
+        "symfony/yaml": "*"
     },
     "require-dev": {
-        "symfony/symfony": "~7.0",
         "ext-mongodb": "*",
         "doctrine/annotations": "^1.13",
         "doctrine/cache": "^1.4",
         "doctrine/data-fixtures": "~1.1",
-        "doctrine/mongodb-odm-bundle": "~4.2",
-        "propel/propel": "2.0.0-alpha12|dev-master",
         "phpunit/phpunit": "^9.5",
-        "doctrine/mongodb-odm": "^2.1",
+        "doctrine/mongodb-odm-bundle": "^2.0",
+        "doctrine/mongodb-odm": "^2.7.x-dev",
         "mongodb/mongodb": "^1.8",
         "ext-pdo": "*",
         "mikey179/vfsstream": "^1.6",
         "rector/rector": "^0.14.8"
     },
-    "autoload":     {
-        "psr-4": { "Lexik\\Bundle\\TranslationBundle\\": "" }
+    "autoload": {
+        "psr-4": {
+            "Lexik\\Bundle\\TranslationBundle\\": ""
+        }
     },
     "autoload-dev": {
         "classmap": [

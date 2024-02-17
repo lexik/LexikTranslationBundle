@@ -27,7 +27,6 @@ class Configuration implements ConfigurationInterface
         $storages = [
             StorageInterface::STORAGE_ORM,
             StorageInterface::STORAGE_MONGODB,
-            StorageInterface::STORAGE_PROPEL,
         ];
         $registrationTypes = ['all', 'files', 'database'];
         $inputTypes = ['text', 'textarea'];
