@@ -70,8 +70,21 @@
                             <a class="prev disabled" onclick="changePage(({{ page }} - 1), {{ totalPagesRounded }})">&laquo;</a>
                         </li>
                         <li class="dynamicPages">
-                            {% for page in 1..6 %}
-                                <a class="page-{{ page }}" onclick="changePage({{ page }}, {{ totalPagesRounded }})">{{ page }}</a>
+                            {% set pagesPerBlock = 6 %}
+                            {% set currentPage = 1 %}
+                            {% set currentBlock = ((currentPage - 1) // pagesPerBlock) + 1 %}
+                            {% set startPage = (currentBlock - 1) * pagesPerBlock + 1 %}
+                            {% set endPage = startPage + pagesPerBlock - 1 %}
+                            {% if endPage > totalPagesRounded %}
+                                {% set endPage = totalPagesRounded %}
+                            {% endif %}
+
+                            {% if currentBlock > 1 %}
+                                <a class="prev-block" onclick="changePage({{ startPage - pagesPerBlock }}, {{ totalPagesRounded }})">&laquo; Previous</a>
+                            {% endif %}
+
+                            {% for page in startPage..endPage %}
+                                <a class="page-{{ page }}{% if page == currentPage %} active{% endif %}" onclick="changePage({{ page }}, {{ totalPagesRounded }})">{{ page }}</a>
                             {% endfor %}
                         </li>
                         <li>
