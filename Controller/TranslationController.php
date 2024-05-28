@@ -9,7 +9,6 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator;
-use Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,12 +44,25 @@ class TranslationController extends AbstractController
      */
     public function gridAction()
     {
+        $translations = $this->translationStorage->getTransUnitList($this->getManagedLocales());
+        $translationsCount = $this->translationStorage->countTransUnits();
+
         $tokens = null;
         if ($this->getParameter('lexik_translation.dev_tools.enable') && $this->tokenFinder !== null) {
             $tokens = $this->tokenFinder->find();
         }
 
-        return $this->render('@LexikTranslation/Translation/grid.html.twig', ['layout'         => $this->getParameter('lexik_translation.base_layout'), 'inputType'      => $this->getParameter('lexik_translation.grid_input_type'), 'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'), 'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'), 'locales'        => $this->getManagedLocales(), 'tokens'         => $tokens]);
+        return $this->render('@LexikTranslation/Translation/grid.html.twig', [
+            'layout'         => $this->getParameter('lexik_translation.base_layout'),
+            'inputType'      => $this->getParameter('lexik_translation.grid_input_type'),
+            'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'),
+            'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'),
+            'locales'        => $this->getManagedLocales(),
+            'tokens'         => $tokens,
+            'translations' => $translations,
+            'page' => 1,
+            'translationsCount' => $translationsCount
+        ]);
     }
 
     /**

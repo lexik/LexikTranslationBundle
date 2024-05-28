@@ -16,7 +16,70 @@
         {% endblock lexik_toolbar %}
 
         {% block lexik_data_grid %}
-            {% include '@LexikTranslationBundle/Translation/_ngGrid.html.twig' %}
+            {% if translations is empty %}
+                <div class="alert alert-info" role="alert">
+                    No Translations
+                </div>
+            {% endif %}
+            <div id="translation-grid">
+                {% set totalPages = translationsCount / 20 %}
+                {% set totalPagesRounded = totalPages|round(0, 'ceil') %}
+                <table class="table table-bordered table-striped">
+                    <tr>
+                        <th id='id-header' class="text-center sortable col-_id" onclick="sortColumn('id', 'asc', {{ totalPagesRounded }})" style="cursor: pointer;" data-totalPages = {{ totalPagesRounded }}>
+                            Id
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </th>
+
+                        <th id='domain-header' class="text-center sortable col-_domain" onclick="sortColumn('domain', 'asc', {{ totalPagesRounded }})" style="cursor: pointer;">
+                            {% trans %} translations.domain {% endtrans %}
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </th>
+
+                        <th id='key-header' class="text-center sortable col-_key" onclick="sortColumn('key', 'asc', {{ totalPagesRounded }})" style="cursor: pointer;">
+                            {% trans %} translations.key {% endtrans %}
+                            <span class="glyphicon glyphicon-chevron-down"></span>
+                        </th>
+
+                        {% for locale in locales %}
+                            <th class="text-center sortable col-de">
+                                {{ locale }}
+                            </th>
+                        {% endfor %}
+                        <th class="col-save"></th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>
+                            <input type="text" id="domain" onkeyup="filterColumn('domain')" class="form-control input-sm">
+                        </th>
+                        <th>
+                            <input type="text" id="key" onkeyup="filterColumn('key')" class="form-control input-sm">
+                        </th>
+                        {% for locale in locales %}
+                            <th>
+                                <input type="text" id="{{ locale }}" onkeyup="filterColumn('{{ locale }}')" class="form-control input-sm">
+                            </th>
+                        {% endfor %}
+                        <th></th>
+                    </tr>
+                </table>
+                {% if translations is not empty %}
+                    <ul class="pagination ng-table-pagination pull-right">
+                        <li>
+                            <a class="prev disabled" onclick="changePage(({{ page }} - 1), {{ totalPagesRounded }})">&laquo;</a>
+                        </li>
+                        <li class="dynamicPages">
+                            {% for page in 1..6 %}
+                                <a class="page-{{ page }}" onclick="changePage({{ page }}, {{ totalPagesRounded }})">{{ page }}</a>
+                            {% endfor %}
+                        </li>
+                        <li>
+                            <a class="next" onclick="changePage(({{ page }} + 1), {{ totalPagesRounded }})">&raquo;</a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
         {% endblock lexik_data_grid %}
     </div>
 {% endblock %}
@@ -59,6 +122,453 @@
                 noTranslations: '{{ 'translations.no_translations'|trans }}'
             }
         };
+
+        function enableMode(mode, lexikTranslationId) {
+            const editButton = document.getElementById('editButton-' + lexikTranslationId);
+            const deleteButton = document.getElementById('deleteButton-' + lexikTranslationId);
+            const saveButton = document.getElementById('saveButton-' + lexikTranslationId);
+            const cancelButton = document.getElementById('cancelButton-' + lexikTranslationId);
+
+            if (mode == 'edit') {
+                editButton.style.display = 'none';
+                deleteButton.style.display = 'none';
+                saveButton.style.display = 'block';
+                cancelButton.style.display = 'block';
+                {% for locale in locales %}
+                document.getElementById('content-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'none';
+                document.getElementById('inputContent-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'block';
+                {% endfor %}
+            } else if (mode == 'view') {
+                editButton.style.display = 'block';
+                deleteButton.style.display = 'block';
+                saveButton.style.display = 'none';
+                cancelButton.style.display = 'none';
+                {% for locale in locales %}
+                var oldValue = document.getElementById('content-' + lexikTranslationId + '-' + '{{ locale }}').textContent;
+                var newValue = document.getElementById('inputContent-' + lexikTranslationId + '-' + '{{ locale }}').value;
+
+                if (oldValue !== newValue) {
+                    saveUpdatedLexikTranslations(lexikTranslationId, '{{ locale }}', newValue, 'translation', true);
+                }
+
+                document.getElementById('content-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'block';
+                document.getElementById('inputContent-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'none';
+                document.getElementById('btnDelete-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'none';
+                document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'none';
+                {% endfor %}
+            } else if (mode == 'delete') {
+                editButton.style.display = 'none';
+                deleteButton.style.display = 'none';
+                cancelButton.style.display = 'block';
+                {% for locale in locales %}
+                document.getElementById('btnDelete-' + lexikTranslationId + '-' + '{{ locale }}').style.display = 'block';
+                document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'block';
+                {% endfor %}
+            }
+        }
+
+
+        function saveUpdatedLexikTranslations(lexikTranslationId, locale, newValue) {
+            let type = '';
+            let url = '';
+            let params = [];
+
+            document.getElementById('inputContent-' + lexikTranslationId + '-' + locale).value = newValue;
+            document.getElementById('content-' + lexikTranslationId + '-' + locale).innerText = newValue;
+            var saveButton = document.getElementById('saveButton-' + lexikTranslationId);
+            var trElement = saveButton.closest('tr.content');
+            var tdElements = trElement.querySelectorAll('td');
+            var translationsElements = trElement.querySelectorAll('td span.locale');
+
+            var spanColumnText = Array.from(tdElements).map(function (td, index) {
+                if (index <= 2) {
+                    var span = td.querySelector('span');
+                    if (span) {
+                        var th = trElement.closest('table').querySelectorAll('th')[index];
+                        return {
+                            value: span.innerText.trim(),
+                            column: th ? '_' + th.id.split('-')[0] : null
+                        };
+                    }
+                    return null;
+                }
+            }).filter(Boolean);
+
+            var translationsTexts = Array.from(translationsElements).map(function (translationElement) {
+                return translationElement.innerText.trim() + '-' + translationElement.id;
+            });
+
+            translationsTexts.forEach(function (translationText) {
+                var parts = translationText.split('-');
+                var translation = parts[0];
+                var locale = parts[3];
+                params.push({name: locale, value: translation});
+            });
+
+            spanColumnText.forEach(function (spanText) {
+                params.push({name: spanText.column, value: spanText.value});
+            });
+
+            params.push({name: '_token', value: '{{ csrf_token('lexik-translation') }}'});
+
+            url = '{{ path('lexik_translation_update', { 'id': '-id-' }) }}';
+            url = url.replace('-id-', lexikTranslationId);
+
+
+            sendRequest('PUT', url, params, false);
+        }
+
+        function deleteEntry(lexikTranslationId, locale)
+        {
+            if (confirm('{{ ('translations.element.delete.confirm')|trans|escape('js') }}')) {
+                let url = '';
+                let params = [];
+
+                if (locale !== null) {
+                    url = '{{ path('lexik_translation_delete_locale', { 'id': '-id-', 'locale': '-locale-' }) }}';
+                    url = url.replace('-locale-', locale);
+                } else {
+                    url = '{{ path('lexik_translation_delete', { 'id': '-id-' }) }}';
+                }
+
+                url = url.replace('-id-', lexikTranslationId);
+
+                sendRequest('DELETE', url, params, true);
+            }
+        }
+
+        function sendRequest(type, url, params, isReloadGrid)
+        {
+            let urlParams = params.map(function(param) {
+                return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            var xhr = new XMLHttpRequest();
+            xhr.open(type, url, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            let formData = params.map(function(param) {
+                return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText);
+                    if (isReloadGrid) {
+                        reloadGrid('id', 'asc', false, true);
+                    }
+                } else {
+                    var errorData = JSON.parse(xhr.responseText);
+                    console.error('Error: ' + errorData.status + '\n' + errorData.statusText);
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+
+            xhr.send(formData);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.page-1').forEach(function(element) {
+                element.classList.add('disabled');
+            });
+            reloadGrid('id', 'asc', false, false);
+        });
+
+        function reloadGrid(orderedBy, sort, afterSortClicked, isAfterDelete, maxPageNumber) {
+            document.getElementById(orderedBy + "-header").classList.add("column-sorted");
+            document.getElementById(orderedBy + "-header").setAttribute("sort-type", sort);
+            let table = '';
+            let params = [];
+
+            let lastRow = document.querySelector('.table tbody');
+
+            if (afterSortClicked) {
+                params.push({ name: 'sidx', value: '_' + orderedBy });
+                params.push({ name: 'sord', value: sort });
+                params.push({ name: 'page', value: 1 });
+                params.push({ name: 'rows', value: 20 });
+            }
+
+            let urlParams = params.map(function(param) {
+                return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            let url = '{{ path('lexik_translation_list') }}?' + urlParams;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText);
+                    data.translations.forEach(function(item) {
+                        table += constructHtmlTr(item);
+                    });
+
+                    if (!afterSortClicked && !isAfterDelete) {
+                        document.querySelector('.table').insertAdjacentHTML('beforeend', table);
+                    } else {
+                        lastRow.nextElementSibling.remove();
+                        lastRow.insertAdjacentHTML('afterend', table);
+                        if (afterSortClicked) {
+                            reverseNextSortOrder(sort, orderedBy, maxPageNumber);
+                            managePagesChanger(1, maxPageNumber);
+                        }
+                    }
+                } else {
+                    var errorData = JSON.parse(xhr.responseText);
+                    console.error('Error: ' + errorData.status + '\n' + errorData.statusText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
+        }
+
+        function sortColumn(column, sortOrder, maxPageNumber) {
+            document.querySelectorAll('.table .column-sorted').forEach(function(column) {
+                column.classList.remove('column-sorted');
+            });
+            reloadGrid(column, sortOrder, true, false, maxPageNumber);
+        }
+
+        function filterColumn(column) {
+            let inputColumnFiltered = document.querySelector('.table input.column-filtered');
+            if (inputColumnFiltered) {
+                document.querySelectorAll('.table .column-filtered').forEach(function (column) {
+                    column.classList.remove('column-filtered');
+                });
+            }
+            document.getElementById(column).classList.add("column-filtered");
+
+            let table = '';
+            let lastRow = document.querySelector('.table tbody');
+            let params = [];
+            let filterValue = document.getElementById(column).value;
+
+            params.push({ name: '_search', value: true });
+            params.push({ name: '_' + column, value: filterValue });
+            params.push({ name: 'page', value: 1 });
+            params.push({ name: 'rows', value: 20 });
+
+            let urlParams = params.map(function(param) {
+                return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            let url = '{{ path('lexik_translation_list') }}?' + urlParams;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText);
+                    var alert = document.querySelector('.alert');
+                    if (alert) {
+                        document.querySelector('.alert').remove();
+                    }
+
+                    if (lastRow.nextElementSibling !== null) {
+                        lastRow.nextElementSibling.remove();
+                    }
+                    if (data.total > 0) {
+                        data.translations.forEach(function(item) {
+                            table += constructHtmlTr(item);
+                        });
+                        lastRow.insertAdjacentHTML('afterend', table);
+                        document.querySelector('.pagination').style.display = 'block';
+                    } else {
+                        document.querySelector('.pagination').style.display = 'none';
+                        let noTranslationsHtml = displayNoTranslations();
+                        document.querySelector('.container').insertAdjacentHTML('afterend', noTranslationsHtml);
+                    }
+
+                    let totalPages = data.total / 20;
+                    let totalPagesRounded = Math.ceil(totalPages);
+                    if (filterValue !== '') {
+                        managePagesChanger(1, totalPagesRounded);
+                    } else {
+                        managePagesChanger(1, document.getElementById('id-header').getAttribute('data-totalpages'));
+                    }
+                } else {
+                    var errorData = JSON.parse(xhr.responseText);
+                    console.error('Error: ' + errorData.status + '\n' + errorData.statusText);
+                }
+            };
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+            xhr.send();
+        }
+
+        function reverseNextSortOrder(sort, orderedBy, maxPageNumber) {
+            var nextSortOrder = sort === 'asc' ? 'desc' : 'asc';
+            document.getElementById(orderedBy + '-header').setAttribute('onclick', "sortColumn('" + orderedBy + "', '" + nextSortOrder + "', '" + maxPageNumber + "')");
+        }
+
+        function changePage(page, maxPageNumber) {
+            let table = '';
+            let lastRow = document.querySelector('.table tbody');
+            let params = [];
+
+            let inputColumnFiltered = document.querySelector('.table input.column-filtered');
+            let thColumnFiltered = document.querySelector('.table th.column-filtered');
+            let thColumnSorted = document.querySelector('.table th.column-sorted');
+
+            if (inputColumnFiltered && thColumnFiltered && thColumnSorted) {
+                let columnFilteredId = inputColumnFiltered.getAttribute('id');
+                let columnFilteredValue = inputColumnFiltered.value;
+                let columnFilteredValueNotEmpty = thColumnFiltered.value !== '';
+                let columnSortedId = thColumnSorted.getAttribute('id').replace('-header', '');
+                let columnSortedType = thColumnSorted.getAttribute('sort-type');
+
+                params.push({ name: '_' + columnFilteredId, value: columnFilteredValue });
+                params.push({ name: '_search', value: columnFilteredValueNotEmpty });
+                params.push({ name: 'sidx', value: '_' + columnSortedId });
+                params.push({ name: 'sord', value: columnSortedType });
+            }
+
+            params.push({ name: 'page', value: page });
+            params.push({ name: 'rows', value: 20 });
+
+            let urlParams = params.map(function(param) {
+                return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
+            }).join('&');
+
+            let url = '{{ path('lexik_translation_list') }}?' + urlParams;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    var data = JSON.parse(xhr.responseText);
+                    data.translations.forEach(function(item) {
+                        table += constructHtmlTr(item);
+                    });
+                    lastRow.nextElementSibling.remove();
+                    lastRow.insertAdjacentHTML('afterend', table);
+                    managePagesChanger(page, maxPageNumber);
+                } else {
+                    var errorData = JSON.parse(xhr.responseText);
+                    console.error('Error: ' + errorData.status + '\n' + errorData.statusText);
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error('Request failed');
+            };
+
+            xhr.send();
+        }
+
+
+        function managePagesChanger(page, maxPageNumber) {
+            document.querySelector('.prev').setAttribute('onclick', "changePage(" + (page - 1) + "," + maxPageNumber + ")");
+            document.querySelector('.next').setAttribute('onclick', "changePage(" + (page + 1) + "," + maxPageNumber + ")");
+
+            if (page != 1) {
+                document.querySelector('.prev').classList.remove('disabled');
+            } else {
+                document.querySelector('.prev').classList.add('disabled');
+            }
+
+            let startPage = Math.max(page - 5, 1);
+            let endPage = Math.min(page + 5, maxPageNumber);
+
+            let additionalHTML = '';
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === page) {
+                    additionalHTML += '<a class="page-' + i + '" href="#" class="disabled">' + i + '</a>';
+                } else {
+                    additionalHTML += '<a class="page-' + i + '" onclick="changePage(' + i + ',' + maxPageNumber+')">' + i + '</a>';
+                }
+            }
+
+            document.querySelector('.dynamicPages').innerHTML = additionalHTML;
+            if (document.querySelector('.page-' + page)) {
+                document.querySelector('.page-' + page).classList.add('disabled');
+            }
+        }
+
+        function constructHtmlTr(item) {
+            let tr = `
+        <tr class="content">
+            <td>
+                <span>${item._id}</span>
+                <div on="editType">
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-link delete" style="display:none">
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    </button>
+                </div>
+            </td>
+            <td>
+                <span>${item._domain}</span>
+                <div on="editType">
+                </div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-link delete" style="display:none">
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    </button>
+                </div>
+            </td>
+            <td>
+                <span>${item._key}</span>
+                <div on="editType">
+                </div>
+                <div class="text-center">
+                    <button id="btnKeyDelete-${item._id}" onclick="deleteEntry(${item._id}, null, 'key')" type="button" class="btn btn-link delete" style="display:none">
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    </button>
+                </div>
+            </td>
+            ${Object.keys(item).filter(key => key !== '_id' && key !== '_domain' && key !== '_key').map(locale => `
+            <td>
+                <span id="content-${item._id}-${locale}" class="locale">${item[locale]}</span>
+                <div>
+                    <textarea id="inputContent-${item._id}-${locale}" name="column.index" class="form-control" style="display: none">${item[locale]}</textarea>
+                </div>
+                <div class="text-center">
+                    <button id="btnDelete-${item._id}-${locale}" onclick="deleteEntry(${item._id}, '${locale}', 'translation')" type="button" class="btn btn-link delete" style="display: none">
+                        <i class="glyphicon glyphicon-remove text-danger"></i>
+                    </button>
+                </div>
+            </td>
+            `).join('')}
+            <td>
+                <div class="actions">
+                    <button id="editButton-${item._id}" onclick="enableMode('edit', ${item._id})" type="button" class="btn btn-primary btn-sm action-button">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                    <button id="deleteButton-${item._id}" onclick="enableMode('delete', ${item._id})" type="button" class="btn btn-danger btn-sm action-button">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button id="saveButton-${item._id}" onclick="enableMode('view', ${item._id})" type="button" class="btn btn-success btn-sm action-button" style="display: none">
+                        <span class="glyphicon glyphicon-saved"></span>
+                    </button>
+                    <button id="cancelButton-${item._id}" onclick="enableMode('view', ${item._id})" type="button" class="btn btn-warning btn-sm action-button" style="display: none">
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                    </button>
+                    <div></div>
+                </div>
+            </td>
+        </tr>`;
+
+            return tr;
+        }
+
+        function displayNoTranslations()
+        {
+            let div =
+                `<div class="alert alert-info">
+                No translations
+            </div>`;
+
+            return div;
+        }
+
     </script>
-    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
 {% endblock %}
