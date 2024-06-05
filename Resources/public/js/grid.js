@@ -163,7 +163,6 @@ function reloadGrid(orderedBy, sort, afterSortClicked, isAfterDelete, maxPageNum
         params.push({ name: 'rows', value: 20 });
     }
 
-    console.log(url);
     let urlParams = params.map(function(param) {
         return encodeURIComponent(param.name) + '=' + encodeURIComponent(param.value);
     }).join('&');
@@ -190,7 +189,6 @@ function reloadGrid(orderedBy, sort, afterSortClicked, isAfterDelete, maxPageNum
                 }
             }
         } else {
-            console.log(xhr.responseText);
             var errorData = JSON.parse(xhr.responseText);
             console.error('Error: ' + errorData.status + '\n' + errorData.statusText);
         }
@@ -247,7 +245,7 @@ function filterColumn(column, url) {
             if (lastRow.nextElementSibling !== null) {
                 lastRow.nextElementSibling.remove();
             }
-            console.log(data.total);
+
             if (data.total > 0) {
                 data.translations.forEach(function(item) {
                     table += constructHtmlTr(item);
