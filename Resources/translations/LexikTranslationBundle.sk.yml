@@ -6,6 +6,7 @@ translations:
     cache_removed:       "Súbory vyrovnávacej pamäte boli odstránené"
     new_translation:     "Nový preklad"
     add_translation:     "Pridaj preklad"
+    confirm_delete:      "Naozaj chcete odstrániť tento preklad?"
     save:                "Uložiť"
     save_add:            "Uložiť a pridať"
     page_title:          "Preklady"
