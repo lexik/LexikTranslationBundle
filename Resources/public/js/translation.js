@@ -341,9 +341,9 @@ const TranslationManager = (() => {
                     });
 
                     _totalPages = getMaxPageNumber(data.total);
-                    managePagesChanger();
-
                     document.querySelector('.table tbody').innerHTML = table;
+                    document.querySelector('.info-no-translation').style.display = data.total === 0 ? 'block' : 'none';
+                    managePagesChanger();
                 });
             } else {
                 sharedMessage.show('danger', 'remove-circle', 'Error');
