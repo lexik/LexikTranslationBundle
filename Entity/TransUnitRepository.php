@@ -210,6 +210,8 @@ class TransUnitRepository extends EntityRepository
 
             if ((is_countable($ids) ? count($ids) : 0) > 0) {
                 $builder->andWhere($builder->expr()->in('tu.id', $ids));
+            } else {
+                $builder->andWhere($builder->expr()->eq(1, 0));
             }
         }
     }
