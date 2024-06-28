@@ -6,6 +6,7 @@ translations:
     cache_removed:       "I file della cache sono stati rimossi."
     new_translation:     "Nuova traduzione"
     add_translation:     "Aggiungere una traduzione"
+    confirm_delete:      "Vuoi davvero eliminare questa traduzione?"
     save:                "Salvare"
     save_add:            "Salvare e Aggiungere"
     page_title:          "Traduzioni"

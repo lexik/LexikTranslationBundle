@@ -101,8 +101,8 @@ class ImportTranslationsCommandTest extends WebTestCase
 
         $this->assertEquals('# LexikTranslationBundle:', $resultLines[0]);
         $this->assertMatchesRegularExpression('/Using dir (.)+\/Resources\/translations to lookup translation files/', $resultLines[1]);
-        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 30 translations/', $resultLines[2]);
-        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 30 translations/', $resultLines[3]);
+        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[2]);
+        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[3]);
         $this->assertEquals('Removing translations cache files ...', $resultLines[4]);
     }
 }
