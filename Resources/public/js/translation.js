@@ -229,7 +229,7 @@ const TranslationManager = (() => {
             let newValue = document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).value;
             if (oldValue !== newValue) {
                 update = true;
-                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).innerText = newValue;
+                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent = newValue;
             }
         }
         if (update) {
@@ -244,36 +244,11 @@ const TranslationManager = (() => {
         let params = {};
         let saveButton = document.getElementById('saveButton-' + lexikTranslationId);
         let trElement = saveButton.closest('tr.content');
-        let tdElements = trElement.querySelectorAll('td');
-        let translationsElements = trElement.querySelectorAll('td span.locale');
-
-        let spanColumnText = Array.from(tdElements).map(function (td, index) {
-            if (index <= 2) {
-                let span = td.querySelector('span');
-                if (span) {
-                    let th = trElement.closest('table').querySelectorAll('th')[index];
-                    return {
-                        value: span.innerText.trim(),
-                        column: th ? '_' + th.id.split('-')[0] : null
-                    };
-                }
-                return null;
-            }
-        }).filter(Boolean);
-
-        let translationsTexts = Array.from(translationsElements).map(function (translationElement) {
-            return translationElement.innerText.trim() + '-' + translationElement.id;
-        });
-
-        translationsTexts.forEach(function (translationText) {
-            let parts = translationText.split('-');
-            let translation = parts[0];
-            let locale = parts[3];
-            params[locale] = translation;
-        });
-
-        spanColumnText.forEach(function (spanText) {
-            params[spanText.column] = spanText.value;
+        let tdElements = trElement.querySelectorAll('td[class^="col-"]');
+        tdElements.forEach(function (td, index) {
+            let span = td.querySelector('span');
+            let col = td.classList[0].replace('col-', '');
+            params[col] = span.textContent;
         });
 
         translationApiManager.updateTranslation(lexikTranslationId, params).then(function (response) {
