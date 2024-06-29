@@ -55,6 +55,10 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
 
+                ->arrayNode('paths')
+                    ->prototype('scalar')->end()
+                ->end()
+
                 ->scalarNode('grid_input_type')
                     ->cannotBeEmpty()
                     ->defaultValue('text')
