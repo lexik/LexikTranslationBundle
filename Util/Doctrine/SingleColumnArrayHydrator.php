@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\Doctrine;
 
+use Doctrine\DBAL\Result;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 
 /**
@@ -14,7 +16,7 @@ class SingleColumnArrayHydrator extends AbstractHydrator
     /**
      * {@inheritdoc}
      */
-    protected function hydrateAllData()
+    protected function hydrateAllData(): mixed
     {
         $result = [];
 
@@ -33,5 +35,14 @@ class SingleColumnArrayHydrator extends AbstractHydrator
         }
 
         return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hydrateAll(Result $stmt, ResultSetMapping $resultSetMapping, array $hints = []): mixed
+    {
+        $this->_stmt = $stmt;
+        return parent::hydrateAll($stmt, $resultSetMapping, $hints);
     }
 }
