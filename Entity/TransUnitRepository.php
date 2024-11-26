@@ -110,15 +110,18 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Count the number of trans unit.
-     *
+     * @param array<string, mixed> $criteria
      * @return int
      */
-    public function count(array $locales = null,  array $filters = null): int
+    public function count(array $criteria = []): int
     {
         $this->loadCustomHydrator();
 
         $builder = $this->createQueryBuilder('tu')
             ->select('COUNT(DISTINCT tu.id) AS number');
+
+        $locales = $criteria['locales'] ?? null;
+        $filters = $criteria['filters'] ?? null;
 
         $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
