@@ -14,11 +14,11 @@ class SingleColumnArrayHydrator extends AbstractHydrator
     /**
      * {@inheritdoc}
      */
-    protected function hydrateAllData()
+    protected function hydrateAllData(): mixed
     {
         $result = [];
 
-        while ($data = $this->_stmt->fetchNumeric()) {
+        while ($data = $this->stmt->fetchNumeric()) {
             $value = $data[0];
 
             if (is_numeric($value)) {
