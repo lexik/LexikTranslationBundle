@@ -38,7 +38,7 @@
     "require-dev": {
         "ext-mongodb": "*",
         "ext-pdo": "*",
-        "doctrine/annotations": "^1.13",
+        "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4",
         "doctrine/data-fixtures": "^1.1",
         "doctrine/mongodb-odm": "^2.7",
