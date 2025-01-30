@@ -18,7 +18,9 @@ class SingleColumnArrayHydrator extends AbstractHydrator
     {
         $result = [];
 
-        while ($data = $this->_stmt->fetchNumeric()) {
+        $stmt = $this->_stmt ?? $this->stmt;
+
+        while ($data = $stmt->fetchNumeric()) {
             $value = $data[0];
 
             if (is_numeric($value)) {

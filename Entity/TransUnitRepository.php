@@ -113,7 +113,7 @@ class TransUnitRepository extends EntityRepository
      *
      * @return int
      */
-    public function count(array $locales = null,  array $filters = null)
+    public function count(array $locales = null,  array $filters = null): int
     {
         $this->loadCustomHydrator();
 
