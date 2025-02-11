@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ODM\MongoDB\Mapping\Driver\SimplifiedXmlDriver as XmlDriver;
 use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
@@ -17,7 +18,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory as DoctrineClassMetadataFactory;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\ORMSetup as Setup;
 use Doctrine\Persistence\ObjectManager;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
@@ -156,7 +157,7 @@ abstract class BaseUnitTestCase extends TestCase
             ]
         );
 
-        $config = Setup::createAnnotationMetadataConfiguration(
+        $config = Setup::createAttributeMetadataConfiguration(
             [
                 __DIR__ . '/../../Model',
                 __DIR__ . '/../../Entity',
@@ -185,7 +186,8 @@ abstract class BaseUnitTestCase extends TestCase
             'memory' => true,
         ];
 
-        $em = EntityManager::create($conn, $config);
+        $connection = DriverManager::getConnection($conn);
+        $em = new EntityManager($connection, $config);
 
         return $em;
     }
