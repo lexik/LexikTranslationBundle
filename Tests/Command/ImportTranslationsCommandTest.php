@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand;
-use Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand;
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -41,8 +41,8 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     private static function addDoctrineCommands()
     {
-        static::$application->add(new DropSchemaDoctrineCommand());
-        static::$application->add(new CreateSchemaDoctrineCommand());
+        static::$application->add(new DropCommand(static::$kernel->getContainer()->get('doctrine.orm.command.entity_manager_provider')));
+        static::$application->add(new CreateCommand(static::$kernel->getContainer()->get('doctrine.orm.command.entity_manager_provider')));
     }
 
     /**
