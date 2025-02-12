@@ -24,7 +24,7 @@
     "require": {
         "php": "^8.2",
         "doctrine/doctrine-bundle": "^2.2",
-        "doctrine/orm": "^2.4",
+        "doctrine/orm": "^3",
         "monolog/monolog": "^3.2",
         "symfony/asset": "^7.0",
         "symfony/form": "^7.0",
@@ -38,7 +38,7 @@
     "require-dev": {
         "ext-mongodb": "*",
         "ext-pdo": "*",
-        "doctrine/annotations": "^1.13",
+        "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4",
         "doctrine/data-fixtures": "^1.1",
         "doctrine/mongodb-odm": "^2.7",

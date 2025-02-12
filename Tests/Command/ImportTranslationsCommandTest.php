@@ -2,8 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
-use Doctrine\Bundle\DoctrineBundle\Command\Proxy\CreateSchemaDoctrineCommand;
-use Doctrine\Bundle\DoctrineBundle\Command\Proxy\DropSchemaDoctrineCommand;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
+use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -30,8 +32,13 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::$kernel->boot();
 
         static::$application = new Application(static::$kernel);
+        /** @var EntityManager $em */
+        $em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $emProvider = new EntityManagerProvider\SingleManagerProvider($em);
+        $dropCommand = new DropCommand($emProvider);
+        $createCommand = new CreateCommand($emProvider);
 
-        static::addDoctrineCommands();
+        static::addDoctrineCommands($dropCommand, $createCommand);
 
         static::rebuildDatabase();
     }
@@ -39,10 +46,10 @@ class ImportTranslationsCommandTest extends WebTestCase
     /**
      *
      */
-    private static function addDoctrineCommands()
+    private static function addDoctrineCommands(DropCommand $dropCommand, CreateCommand $createCommand)
     {
-        static::$application->add(new DropSchemaDoctrineCommand());
-        static::$application->add(new CreateSchemaDoctrineCommand());
+        static::$application->add($dropCommand);
+        static::$application->add($createCommand);
     }
 
     /**
