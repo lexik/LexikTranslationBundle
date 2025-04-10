@@ -113,14 +113,14 @@ interface StorageInterface
      * @param int   $page
      * @return array
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null);
+    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null);
 
     /**
      * Count the number of trans unit.
      *
      * @return int
      */
-    public function countTransUnits(array $locales = null,  array $filters = null);
+    public function countTransUnits(?array $locales = null,  ?array $filters = null);
 
     /**
      * Returns all translations for the given file.
