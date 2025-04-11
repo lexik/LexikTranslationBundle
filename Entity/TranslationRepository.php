@@ -14,7 +14,7 @@ class TranslationRepository extends EntityRepository
     /**
      * @return \DateTime|null
      */
-    public function getLatestTranslationUpdatedAt()
+    public function getLatestTranslationUpdatedAt(): \DateTime|null
     {
         $date = $this->createQueryBuilder('t')
             ->select('MAX(t.updatedAt)')
@@ -28,7 +28,7 @@ class TranslationRepository extends EntityRepository
      * @param string $domain
      * @return array
      */
-    public function countByLocales($domain)
+    public function countByLocales($domain): mixed
     {
         return $this->createQueryBuilder('t')
             ->select('COUNT(DISTINCT t.id) AS number, t.locale')
