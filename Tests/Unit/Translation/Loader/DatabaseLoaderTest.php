@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Loader;
 
+use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
 use Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Symfony\Component\Translation\MessageCatalogue;
@@ -22,7 +23,7 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        $loader = new DatabaseLoader($this->getORMStorage($em), \Lexik\Bundle\TranslationBundle\Entity\TransUnit::class);
+        $loader = new DatabaseLoader($this->getORMStorage($em), TransUnit::class);
 
         $catalogue = $loader->load(null, 'it');
         $this->assertInstanceOf(MessageCatalogue::class, $catalogue);

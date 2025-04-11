@@ -2,6 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
@@ -37,7 +41,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
         // set parameters
@@ -241,20 +245,20 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         if ('all' === $registration['type'] || 'files' === $registration['type']) {
             $dirs = [];
 
-            if (class_exists(\Symfony\Component\Validator\Validation::class)) {
-                $r = new \ReflectionClass(\Symfony\Component\Validator\Validation::class);
+            if (class_exists(Validation::class)) {
+                $r = new \ReflectionClass(Validation::class);
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
 
-            if (class_exists(\Symfony\Component\Form\Form::class)) {
-                $r = new \ReflectionClass(\Symfony\Component\Form\Form::class);
+            if (class_exists(Form::class)) {
+                $r = new \ReflectionClass(Form::class);
 
                 $dirs[] = dirname($r->getFilename()).'/Resources/translations';
             }
 
-            if (class_exists(\Symfony\Component\Security\Core\Exception\AuthenticationException::class)) {
-                $r = new \ReflectionClass(\Symfony\Component\Security\Core\Exception\AuthenticationException::class);
+            if (class_exists(AuthenticationException::class)) {
+                $r = new \ReflectionClass(AuthenticationException::class);
 
                 if (is_dir($dir = dirname($r->getFilename()).'/../Resources/translations')) {
                     $dirs[] = $dir;

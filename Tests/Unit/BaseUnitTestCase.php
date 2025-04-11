@@ -161,7 +161,7 @@ abstract class BaseUnitTestCase extends TestCase
             [
                 __DIR__ . '/../../Model',
                 __DIR__ . '/../../Entity',
-            ], false, null, null, false
+            ], false, null, null
         );
 
         $config->setMetadataDriverImpl($xmlDriver);

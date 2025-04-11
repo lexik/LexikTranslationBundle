@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
+use Symfony\Component\Finder\SplFileInfo;
 use Lexik\Bundle\TranslationBundle\Entity\Translation;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
@@ -57,7 +58,7 @@ class FileImporter
      * @param boolean $merge merge translations
      * @return int
      */
-    public function import(\Symfony\Component\Finder\SplFileInfo $file, $forceUpdate = false, $merge = false)
+    public function import(SplFileInfo $file, $forceUpdate = false, $merge = false)
     {
         $this->skippedKeys = [];
         $imported = 0;

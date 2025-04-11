@@ -285,7 +285,7 @@ class ImportTranslationsCommand extends Command
         }
 
         if (true === $autocompletePath) {
-            $dir = (str_starts_with($path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (str_starts_with((string) $path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
