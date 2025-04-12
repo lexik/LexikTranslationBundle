@@ -119,7 +119,7 @@ class TransUnitData implements FixtureInterface
         if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\TransUnit();
         } elseif ($manager instanceof DocumentManager) {
-            $instance = new \Lexik\Bundle\TranslationBundle\Document\TransUnit();
+            $instance = new TransUnit();
         }
 
         return $instance;
@@ -135,7 +135,7 @@ class TransUnitData implements FixtureInterface
         if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\Translation();
         } elseif ($manager instanceof DocumentManager) {
-            $instance = new \Lexik\Bundle\TranslationBundle\Document\Translation();
+            $instance = new Translation();
         }
 
         return $instance;
@@ -151,7 +151,7 @@ class TransUnitData implements FixtureInterface
         if ($manager instanceof EntityManager) {
             $instance = new \Lexik\Bundle\TranslationBundle\Entity\File();
         } elseif ($manager instanceof DocumentManager) {
-            $instance = new \Lexik\Bundle\TranslationBundle\Document\File();
+            $instance = new File();
         }
 
         return $instance;

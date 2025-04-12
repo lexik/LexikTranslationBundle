@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($value) { return array($value); })
+                        ->then(fn($value) => [$value])
                     ->end()
                 ->end()
 

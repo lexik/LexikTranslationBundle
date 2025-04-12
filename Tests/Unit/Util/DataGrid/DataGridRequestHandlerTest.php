@@ -2,6 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
@@ -128,7 +131,7 @@ class DataGridRequestHandlerTest extends BaseUnitTestCase
      */
     private function getReflectionMethod($name)
     {
-        $class = new \ReflectionClass(\Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler::class);
+        $class = new \ReflectionClass(DataGridRequestHandler::class);
         $method = $class->getMethod($name);
         $method->setAccessible(true);
 
@@ -140,15 +143,15 @@ class DataGridRequestHandlerTest extends BaseUnitTestCase
      */
     private function getDataGridRequestHandler()
     {
-        $transUnitManagerMock = $this->getMockBuilder(\Lexik\Bundle\TranslationBundle\Manager\TransUnitManager::class)
+        $transUnitManagerMock = $this->getMockBuilder(TransUnitManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $fileManagerMock = $this->getMockBuilder(\Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface::class)
+        $fileManagerMock = $this->getMockBuilder(FileManagerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $storageMock = $this->getMockBuilder(\Lexik\Bundle\TranslationBundle\Storage\StorageInterface::class)
+        $storageMock = $this->getMockBuilder(StorageInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

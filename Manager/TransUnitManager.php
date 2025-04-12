@@ -16,7 +16,7 @@ class TransUnitManager implements TransUnitManagerInterface
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly FileManagerInterface $fileManager,
-        private string $kernelRootDir,
+        private readonly string $kernelRootDir,
     ) {
     }
 
