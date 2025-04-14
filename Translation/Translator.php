@@ -42,6 +42,7 @@ class Translator
             }
 
             $this->baseTranslator->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $content = sprintf("<?php return %s;", var_export($resources, true));
             $cache->write($content, $metadata);
         } else {
             $resources = include $file;
