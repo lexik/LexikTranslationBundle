@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Dumper;
 class YamlExporter implements ExporterInterface
 {
     public function __construct(
-        private bool $createTree = false
+        private readonly bool $createTree = false
     ) {
     }
 

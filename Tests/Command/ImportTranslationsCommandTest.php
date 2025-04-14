@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
@@ -34,7 +35,7 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::$application = new Application(static::$kernel);
         /** @var EntityManager $em */
         $em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $emProvider = new EntityManagerProvider\SingleManagerProvider($em);
+        $emProvider = new SingleManagerProvider($em);
         $dropCommand = new DropCommand($emProvider);
         $createCommand = new CreateCommand($emProvider);
 

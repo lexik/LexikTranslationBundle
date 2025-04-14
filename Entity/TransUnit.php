@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
@@ -18,7 +19,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
      *
      * @param \Lexik\Bundle\TranslationBundle\Entity\Translation $translations
      */
-    public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation): void
+    public function addTranslation(Translation $translation): void
     {
         $translation->setTransUnit($this);
 

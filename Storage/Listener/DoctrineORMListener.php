@@ -18,7 +18,7 @@ class DoctrineORMListener
         /** @var ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
-        if (!str_contains($metadata->getName(), 'TranslationBundle')) {
+        if (!str_contains((string) $metadata->getName(), 'TranslationBundle')) {
             return;
         }
 

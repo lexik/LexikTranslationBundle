@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
@@ -225,6 +226,6 @@ class TransUnitRepository extends EntityRepository
     protected function loadCustomHydrator(): void
     {
         $config = $this->getEntityManager()->getConfiguration();
-        $config->addCustomHydrationMode('SingleColumnArrayHydrator', \Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator::class);
+        $config->addCustomHydrationMode('SingleColumnArrayHydrator', SingleColumnArrayHydrator::class);
     }
 }

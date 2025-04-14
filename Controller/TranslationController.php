@@ -22,7 +22,7 @@ class TranslationController extends AbstractController
 {
     use CsrfCheckerTrait;
 
-    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly Translator $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?\Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder $tokenFinder)
+    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly Translator $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?TokenFinder $tokenFinder)
     {
     }
 

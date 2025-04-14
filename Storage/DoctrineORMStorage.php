@@ -50,7 +50,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
 
                 $dbExists = in_array($connection->getDatabase(), $schemaManager->listDatabases());
                 $tmpConnection->close();
-            } catch (ConnectionException|\Exception $e) {
+            } catch (ConnectionException|\Exception) {
                 $dbExists = false;
             }
 

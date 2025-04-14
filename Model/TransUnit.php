@@ -112,7 +112,7 @@ abstract class TransUnit
      *
      * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
      */
-    public function addTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
+    public function addTranslation(Translation $translation)
     {
         $this->translations[] = $translation;
     }
@@ -122,7 +122,7 @@ abstract class TransUnit
      *
      * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
      */
-    public function removeTranslation(\Lexik\Bundle\TranslationBundle\Model\Translation $translation)
+    public function removeTranslation(Translation $translation)
     {
         $this->translations->removeElement($translation);
     }

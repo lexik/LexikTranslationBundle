@@ -23,7 +23,7 @@ class DatabaseFreshResource implements SelfCheckingResourceInterface, \Stringabl
      */
     public function __toString(): string
     {
-        return $this->getResource();
+        return (string) $this->getResource();
     }
 
     /**
