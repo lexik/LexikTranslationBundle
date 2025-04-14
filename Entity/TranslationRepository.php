@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Datetime;
 
 /**
  * Repository for Translation entity.
@@ -12,16 +13,16 @@ use Doctrine\ORM\EntityRepository;
 class TranslationRepository extends EntityRepository
 {
     /**
-     * @return \DateTime|null
+     * @return ?DateTime
      */
-    public function getLatestTranslationUpdatedAt(): \DateTime|null
+    public function getLatestTranslationUpdatedAt(): ?DateTime
     {
         $date = $this->createQueryBuilder('t')
             ->select('MAX(t.updatedAt)')
             ->getQuery()
             ->getSingleScalarResult();
 
-        return !empty($date) ? new \DateTime($date) : null;
+        return !empty($date) ? new DateTime($date) : null;
     }
 
     /**
