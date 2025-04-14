@@ -23,14 +23,14 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * @var TransUnit
      */
-    protected $transUnit;
+    protected TransUnit $transUnit;
 
     /**
      * Get id
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -40,7 +40,7 @@ class Translation extends TranslationModel implements TranslationInterface
      *
      * @param TransUnit $transUnit
      */
-    public function setTransUnit(TransUnit $transUnit)
+    public function setTransUnit(TransUnit $transUnit): void
     {
         $this->transUnit = $transUnit;
     }
@@ -50,7 +50,7 @@ class Translation extends TranslationModel implements TranslationInterface
      *
      * @return TransUnit
      */
-    public function getTransUnit()
+    public function getTransUnit(): TransUnit
     {
         return $this->transUnit;
     }
@@ -58,14 +58,14 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * {@inheritdoc}
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $now             = new DateTime("now");
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
 
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new DateTime("now");
     }

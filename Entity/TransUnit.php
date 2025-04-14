@@ -19,7 +19,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
      *
      * @param \Lexik\Bundle\TranslationBundle\Entity\Translation $translations
      */
-    public function addTranslation(Translation $translation)
+    public function addTranslation(Translation $translation): void
     {
         $translation->setTransUnit($this);
 
@@ -29,7 +29,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
     /**
      * {@inheritdoc}
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $this->createdAt = new \DateTime("now");
         $this->updatedAt = new \DateTime("now");
@@ -38,7 +38,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
     /**
      * {@inheritdoc}
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime("now");
     }
