@@ -16,7 +16,7 @@ class File extends FileModel implements FileInterface
     /**
      * {@inheritdoc}
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $this->createdAt = new \DateTime("now");
         $this->updatedAt = new \DateTime("now");
@@ -25,7 +25,7 @@ class File extends FileModel implements FileInterface
     /**
      * {@inheritdoc}
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $this->updatedAt = new \DateTime("now");
     }

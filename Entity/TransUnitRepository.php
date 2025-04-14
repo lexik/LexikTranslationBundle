@@ -37,7 +37,7 @@ class TransUnitRepository extends EntityRepository
      *
      * @return array
      */
-    public function getAllByLocaleAndDomain($locale, $domain)
+    public function getAllByLocaleAndDomain($locale, $domain): mixed
     {
         return $this->createQueryBuilder('tu')
             ->select('tu, te')
@@ -55,7 +55,7 @@ class TransUnitRepository extends EntityRepository
      *
      * @return array
      */
-    public function getAllDomains()
+    public function getAllDomains(): mixed
     {
         $this->loadCustomHydrator();
 
@@ -73,7 +73,7 @@ class TransUnitRepository extends EntityRepository
      * @param int   $page
      * @return array
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
+    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): mixed
     {
         $this->loadCustomHydrator();
 
@@ -133,7 +133,7 @@ class TransUnitRepository extends EntityRepository
     /**
      * @return array
      */
-    public function countByDomains()
+    public function countByDomains(): mixed
     {
         return $this->createQueryBuilder('tu')
             ->select('COUNT(DISTINCT tu.id) AS number, tu.domain')
@@ -148,7 +148,7 @@ class TransUnitRepository extends EntityRepository
      * @param boolean   $onlyUpdated
      * @return array
      */
-    public function getTranslationsForFile(ModelFile $file, $onlyUpdated)
+    public function getTranslationsForFile(ModelFile $file, $onlyUpdated): array
     {
         $builder = $this->createQueryBuilder('tu')
             ->select('tu.key, te.content')
@@ -174,7 +174,7 @@ class TransUnitRepository extends EntityRepository
     /**
      * Add conditions according to given filters.
      */
-    protected function addTransUnitFilters(QueryBuilder $builder, array $filters = null)
+    protected function addTransUnitFilters(QueryBuilder $builder, ?array $filters = null): void
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
@@ -192,7 +192,7 @@ class TransUnitRepository extends EntityRepository
     /**
      * Add conditions according to given filters.
      */
-    protected function addTranslationFilter(QueryBuilder $builder, array $locales = null, array $filters = null)
+    protected function addTranslationFilter(QueryBuilder $builder, ?array $locales = null, ?array $filters = null): void
     {
         if (null !== $locales) {
             $qb = $this->createQueryBuilder('tu');
@@ -223,7 +223,7 @@ class TransUnitRepository extends EntityRepository
     /**
      * Load custom hydrator.
      */
-    protected function loadCustomHydrator()
+    protected function loadCustomHydrator(): void
     {
         $config = $this->getEntityManager()->getConfiguration();
         $config->addCustomHydrationMode('SingleColumnArrayHydrator', SingleColumnArrayHydrator::class);

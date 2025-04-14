@@ -36,7 +36,7 @@
         "symfony/yaml": "^7.0"
     },
     "require-dev": {
-        "ext-mongodb": "*",
+        "ext-mongodb": "^1.21.0 || ^2.0.0",
         "ext-pdo": "*",
         "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4",
@@ -44,7 +44,7 @@
         "doctrine/mongodb-odm": "^2.7",
         "doctrine/mongodb-odm-bundle": "^5.0",
         "mikey179/vfsstream": "^1.6",
-        "mongodb/mongodb": "^1.8",
+        "mongodb/mongodb": "^1.21.0 || ^2.0.0",
         "phpunit/phpunit": "^9.5",
         "rector/rector": "^0.14.8"
     },
