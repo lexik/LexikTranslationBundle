@@ -3,7 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
+use Symfony\Contracts\Translation\TranslatorInterface as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
@@ -13,8 +13,15 @@ use Symfony\Component\Finder\Finder;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translator extends BaseTranslator
+class Translator
 {
+    private BaseTranslator $baseTranslator;
+
+    public function __construct(BaseTranslator $baseTranslator)
+    {
+        $this->baseTranslator = $baseTranslator;
+    }
+
     /**
      * Add all resources available in database.
      */
@@ -34,14 +41,14 @@ class Translator extends BaseTranslator
                 $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
             }
 
-            $content = sprintf("<?php return %s;", var_export($resources, true));
+            $this->baseTranslator->addResource('database', 'DB', $resource['locale'], $resource['domain']);
             $cache->write($content, $metadata);
         } else {
             $resources = include $file;
         }
 
         foreach ($resources as $resource) {
-            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $this->baseTranslator->addResource('database', 'DB', $resource['locale'], $resource['domain']);
         }
     }
 
