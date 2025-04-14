@@ -7,7 +7,6 @@ use DateTime;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 
 /**
  * @UniqueEntity(fields={"transUnit", "locale"})
