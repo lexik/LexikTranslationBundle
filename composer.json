@@ -36,7 +36,7 @@
         "symfony/yaml": "^7.0"
     },
     "require-dev": {
-        "ext-mongodb": "*",
+        "ext-mongodb": "^1.21.0 || ^2.0.0",
         "ext-pdo": "*",
         "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4",
