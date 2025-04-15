@@ -58,7 +58,7 @@
     <services>
         <service id="Lexik\Bundle\TranslationBundle\Translation\Translator">
             <argument key="$baseTranslator" type="service" id="translator.default" />
-            <argument key="$container" type="service" id="service_container"/>
+            <argument key="$container" type="service" id="service_container" />
             <argument key="$formatter" type="service" id="translator.formatter.default" />
             <argument key="$defaultLocale" id="%kernel.default_locale%" />
             <argument key="$loaderIds" type="collection"></argument>

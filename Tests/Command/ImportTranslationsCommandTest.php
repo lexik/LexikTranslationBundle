@@ -32,14 +32,14 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::$kernel = static::createKernel();
         static::$kernel->boot();
 
-        static::$application = new Application(static::$kernel);
+        static::$application = new Application(kernel: static::$kernel);
         /** @var EntityManager $em */
-        $em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $emProvider = new SingleManagerProvider($em);
-        $dropCommand = new DropCommand($emProvider);
-        $createCommand = new CreateCommand($emProvider);
+        $em = static::$kernel->getContainer()->get(id: 'doctrine.orm.entity_manager');
+        $emProvider = new SingleManagerProvider(entityManager: $em);
+        $dropCommand = new DropCommand(entityManagerProvider: $emProvider);
+        $createCommand = new CreateCommand(entityManagerProvider: $emProvider);
 
-        static::addDoctrineCommands($dropCommand, $createCommand);
+        static::addDoctrineCommands(dropCommand: $dropCommand, createCommand: $createCommand);
 
         static::rebuildDatabase();
     }
@@ -84,11 +84,12 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     public function testExecute()
     {
+        $container = self::$kernel->getContainer();
         static::$application->add(
             command: new ImportTranslationsCommand(
-                translator: self::$kernel->getContainer()->get('lexik_translation.translator'),
-                localeManager: self::$kernel->getContainer()->get(LocaleManagerInterface::class),
-                fileImporter: self::$kernel->getContainer()->get('lexik_translation.importer.file')
+                translator: $container->get('lexik_translation.translator'),
+                localeManager: $container->get(LocaleManagerInterface::class),
+                fileImporter: $container->get('lexik_translation.importer.file')
             )
         );
 

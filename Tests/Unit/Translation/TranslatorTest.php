@@ -146,7 +146,10 @@ class TranslatorTest extends BaseUnitTestCase
 class TranslatorMock extends Translator
 {
     public $dbResources = [];
-    public $options = [];
+    public $options = [
+        'cache_dir' => '', 
+        'debug' => false
+    ];
 
     public function addResource($format, $resource, $locale, $domain = 'messages'): void
     {
