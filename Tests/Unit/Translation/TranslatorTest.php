@@ -108,6 +108,9 @@ class TranslatorTest extends BaseUnitTestCase
             $listener->onGetDatabaseResources(...)
         );
 
+        $baseTranslator = $this->createMock(\Symfony\Contracts\Translation\TranslatorInterface::class);
+        $baseTranslator->method('getLocale')->willReturn('en');
+
         $container = new Container();
         $container->setParameter('kernel.default_locale', 'en');
         $container->set('event_dispatcher', $dispatcher);
@@ -116,7 +119,7 @@ class TranslatorTest extends BaseUnitTestCase
         $loaderIds = [];
         $options = ['cache_dir' => $cacheDir];
 
-        return new TranslatorMock($container, new MessageFormatter(), 'en', $loaderIds, $options);
+        return new TranslatorMock($baseTranslator, new MessageFormatter(), 'en', $loaderIds, $options);
     }
 
     protected function createFakeCacheFiles($cacheDir)
