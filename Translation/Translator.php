@@ -7,7 +7,8 @@ use Symfony\Contracts\Translation\TranslatorInterface as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
-use \Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Translation\Formatter\MessageFormatter;
 
 /**
  * Translator service class.
@@ -19,12 +20,14 @@ class Translator
     public function __construct(
         private BaseTranslator $baseTranslator,
         private ContainerInterface $container,
+        private MessageFormatter $formatter,
         private array $loaderIds,
         private string $defaultLocale,
         private array $options
     ) {
         $this->baseTranslator = $baseTranslator;
         $this->container = $container;
+        $this->formatter = $formatter;
         $this->loaderIds = $loaderIds;
         $this->defaultLocale = $defaultLocale;
         $this->options = $options;
