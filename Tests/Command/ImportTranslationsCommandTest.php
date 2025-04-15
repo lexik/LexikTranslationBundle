@@ -6,7 +6,7 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
-use Doctrine\ORM\Tools\Console\EntityManagerProvider;
+// Removed unused use directive
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -85,10 +85,10 @@ class ImportTranslationsCommandTest extends WebTestCase
     public function testExecute()
     {
         static::$application->add(
-            new ImportTranslationsCommand(
-                self::$kernel->getContainer()->get('translator'),
-                self::$kernel->getContainer()->get(LocaleManagerInterface::class),
-                self::$kernel->getContainer()->get('lexik_translation.importer.file')
+            command: new ImportTranslationsCommand(
+                translator: self::$kernel->getContainer()->get('lexik_translation.translator'),
+                localeManager: self::$kernel->getContainer()->get(LocaleManagerInterface::class),
+                fileImporter: self::$kernel->getContainer()->get('lexik_translation.importer.file')
             )
         );
 
