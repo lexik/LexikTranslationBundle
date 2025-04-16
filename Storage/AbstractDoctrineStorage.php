@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * Common doctrine storage logic.
@@ -115,13 +116,17 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitById($id): TransUnitInterface;
+    public function getTransUnitById($id): TransUnitInterface
     {
         return $this->getTransUnitRepository()->findOneById($id);
     }
 
     /**
-     * {@inheritdoc}
+     * Returns a TransUnit by its key and domain.
+     *
+     * @param string $key
+     * @param string $domain
+     * @return TransUnitInterface
      */
     public function getTransUnitByKeyAndDomain($key, $domain): TransUnitInterface
     {
@@ -154,7 +159,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null): array
+    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): array
     {
         return $this->getTransUnitRepository()->getTransUnitList($locales, $rows, $page, $filters);
     }
@@ -162,7 +167,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function countTransUnits(array $locales = null, array $filters = null): int
+    public function countTransUnits(?array $locales = null, ?array $filters = null): int
     {
         return $this->getTransUnitRepository()->count($locales, $filters);
     }
@@ -170,7 +175,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTranslationsFromFile($file, $onlyUpdated)
+    public function getTranslationsFromFile($file, $onlyUpdated): mixed
     {
         return $this->getTransUnitRepository()->getTranslationsForFile($file, $onlyUpdated);
     }

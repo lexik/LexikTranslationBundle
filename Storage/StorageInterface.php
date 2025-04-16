@@ -72,7 +72,7 @@ interface StorageInterface
      *
      * @return array
      */
-    public function getTransUnitDomains();
+    public function getTransUnitDomains(): mixed;
 
     /**
      * Returns all domains for each locale.
