@@ -57,7 +57,7 @@ class TransUnitManager implements TransUnitManagerInterface
 
         return $transUnit;
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -65,9 +65,9 @@ class TransUnitManager implements TransUnitManagerInterface
         TransUnitInterface $transUnit,
         $locale,
         $content,
-        FileInterface $file = null,
-        $flush = false
-    ) {
+        ?FileInterface $file = null,
+        bool $flush = false
+    ): TranslationInterface{
         $translation = null;
 
         if (!$transUnit->hasTranslation($locale)) {

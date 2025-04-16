@@ -30,6 +30,7 @@ interface TransUnitManagerInterface
     /**
      * Add a new translation to the given trans unit.
      *
+     * @param TransUnitInterface    $transUnit
      * @param string                $locale
      * @param string                $content
      * @param boolean               $flush
