@@ -47,7 +47,7 @@ interface TransUnitManagerInterface
      * @param boolean               $merge
      * @return TranslationInterface
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool $merge = false): TranslationInterface;
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool $merge = false): ?TranslationInterface;
 
     /**
      * Update the content of each translations for the given trans unit.

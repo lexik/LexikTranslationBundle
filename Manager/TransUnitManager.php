@@ -96,7 +96,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool$merge = false): TranslationInterface
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool$merge = false): ?TranslationInterface
     {
         $translation = null;
         $i = 0;

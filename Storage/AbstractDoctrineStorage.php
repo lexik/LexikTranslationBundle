@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Entity\FileRepository;
+use Lexik\Bundle\TranslationBundle\Document\FileRepository as DocumentFileRepository;
 
 /**
  * Common doctrine storage logic.
@@ -42,7 +43,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      *
      * @return object
      */
-    protected function getFileRepository(): FileRepository
+    protected function getFileRepository(): FileRepository|DocumentFileRepository
     {
         return $this->getManager()->getRepository($this->classes['file']);
     }
