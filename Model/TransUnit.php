@@ -42,14 +42,14 @@ abstract class TransUnit
     protected $translations;
 
     /**
-     * @var DateTime
+     * @var DateTime|string
      */
-    protected DateTime $createdAt;
+    protected DateTime|string $createdAt;
 
     /**
-     * @var DateTime
+     * @var DateTime|string
      */
-    protected DateTime $updatedAt;
+    protected DateTime|string $updatedAt;
 
     /**
      * Construct.
@@ -197,7 +197,7 @@ abstract class TransUnit
      *
      * @return datetime $createdAt
      */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): DateTime|string
     {
         return $this->createdAt;
     }
@@ -207,7 +207,7 @@ abstract class TransUnit
      *
      * @return datetime $updatedAt
      */
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): DateTime|string
     {
         return $this->updatedAt;
     }
