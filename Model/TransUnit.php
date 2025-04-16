@@ -155,7 +155,7 @@ abstract class TransUnit
      *
      * @param string $locale
      */
-    public function getTranslation($locale): ?Translation
+    public function getTranslation(string $locale): ?TranslationInterface
     {
         foreach ($this->getTranslations() as $translation) {
             if ($translation->getLocale() == $locale) {
