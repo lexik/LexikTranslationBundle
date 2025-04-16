@@ -57,7 +57,7 @@ class TransUnitManager implements TransUnitManagerInterface
 
         return $transUnit;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -96,7 +96,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false)
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool$merge = false): TranslationInterface
     {
         $translation = null;
         $i = 0;
@@ -142,7 +142,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false): void   
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {

@@ -12,21 +12,21 @@ interface TransUnitInterface
     /**
      * @return TranslationInterface[]
      */
-    public function getTranslations();
+    public function getTranslations(): array;
 
     /**
      * @param string $locale
      *
      * @return bool
      */
-    public function hasTranslation($locale);
+    public function hasTranslation($locale): bool;
 
     /**
      * @param string $locale
      *
      * @return TranslationInterface
      */
-    public function getTranslation($locale);
+    public function getTranslation($locale): TranslationInterface;
 
     /**
      * @param string $key
