@@ -7,10 +7,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
 use DateTime;
 
 /**
- * This class represent a trans unit which contain translations for a given domain and key.
+ * This class represent TransUnita trans unit which contain translations for a given domain and key.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
@@ -114,7 +115,7 @@ abstract class TransUnit
      *
      * @param Translation $translations
      */
-    public function addTranslation(Translation $translation): void
+    public function addTranslation(DocumentTranslation|Translation $translation): void
     {
         $this->translations[] = $translation;
     }
@@ -124,7 +125,7 @@ abstract class TransUnit
      *
      * @param Translation $translations
      */
-    public function removeTranslation(Translation $translation): void
+    public function removeTranslation(DocumentTranslation|Translation $translation): void
     {
         $this->translations->removeElement($translation);
     }

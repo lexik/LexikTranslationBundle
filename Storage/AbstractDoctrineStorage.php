@@ -5,6 +5,8 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository;
+use Lexik\Bundle\TranslationBundle\Entity\FileRepository;
 
 /**
  * Common doctrine storage logic.
@@ -30,7 +32,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      *
      * @return object
      */
-    protected function getTransUnitRepository(): ObjectRepository
+    protected function getTransUnitRepository(): TransUnitRepository
     {
         return $this->getManager()->getRepository($this->classes['trans_unit']);
     }
@@ -40,7 +42,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      *
      * @return object
      */
-    protected function getFileRepository(): ObjectRepository
+    protected function getFileRepository(): FileRepository
     {
         return $this->getManager()->getRepository($this->classes['file']);
     }

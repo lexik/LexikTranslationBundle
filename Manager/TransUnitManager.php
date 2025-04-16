@@ -43,7 +43,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function create($keyName, $domainName, $flush = false)
+    public function create($keyName, $domainName, $flush = false): TransUnitInterface
     {
         $transUnit = $this->newInstance();
         $transUnit->setKey($keyName);
