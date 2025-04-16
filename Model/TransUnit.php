@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use DateTime;
 
 /**
  * This class represent a trans unit which contain translations for a given domain and key.
@@ -24,14 +26,14 @@ abstract class TransUnit
      *
      * @Assert\NotBlank()
      */
-    protected $key;
+    protected string $key;
 
     /**
      * @var string
      *
      * @Assert\NotBlank()
      */
-    protected $domain;
+    protected string $domain;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -39,14 +41,14 @@ abstract class TransUnit
     protected $translations;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    protected $createdAt;
+    protected DateTime $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    protected $updatedAt;
+    protected DateTime $updatedAt;
 
     /**
      * Construct.
@@ -62,7 +64,7 @@ abstract class TransUnit
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -72,7 +74,7 @@ abstract class TransUnit
      *
      * @param string $key
      */
-    public function setKey($key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -82,7 +84,7 @@ abstract class TransUnit
      *
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -92,7 +94,7 @@ abstract class TransUnit
      *
      * @param string $domain
      */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }
@@ -102,7 +104,7 @@ abstract class TransUnit
      *
      * @return string
      */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
@@ -110,9 +112,9 @@ abstract class TransUnit
     /**
      * Add translations
      *
-     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param Translation $translations
      */
-    public function addTranslation(Translation $translation)
+    public function addTranslation(Translation $translation): void
     {
         $this->translations[] = $translation;
     }
@@ -120,9 +122,9 @@ abstract class TransUnit
     /**
      * Remove translations
      *
-     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param Translation $translations
      */
-    public function removeTranslation(Translation $translation)
+    public function removeTranslation(Translation $translation): void
     {
         $this->translations->removeElement($translation);
     }
@@ -132,7 +134,7 @@ abstract class TransUnit
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getTranslations()
+    public function getTranslations(): array|Collection
     {
         return $this->translations;
     }
