@@ -145,7 +145,7 @@ abstract class TransUnit
      * @param string $locale
      * @return boolean
      */
-    public function hasTranslation($locale)
+    public function hasTranslation(bool $locale): bool
     {
         return null !== $this->getTranslation($locale);
     }
@@ -169,7 +169,7 @@ abstract class TransUnit
     /**
      * Set translations collection
      */
-    public function setTranslations(Collection $collection)
+    public function setTranslations(Collection $collection): void
     {
         $this->translations = new ArrayCollection();
 
@@ -183,7 +183,7 @@ abstract class TransUnit
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function filterNotBlankTranslations()
+    public function filterNotBlankTranslations(): Collection
     {
         return $this->getTranslations()->filter(function (TranslationInterface $translation) {
             $content = $translation->getContent();
@@ -196,7 +196,7 @@ abstract class TransUnit
      *
      * @return datetime $createdAt
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): DateTime
     {
         return $this->createdAt;
     }
@@ -206,7 +206,7 @@ abstract class TransUnit
      *
      * @return datetime $updatedAt
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;
     }
