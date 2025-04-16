@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\Entity\Translation;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
 use DateTime;
 
 /**
@@ -20,7 +21,7 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
      *
      * @param \Lexik\Bundle\TranslationBundle\Entity\Translation $translations
      */
-    public function addTranslation(Translation $translation): void
+    public function addTranslation(DocumentTranslation|Translation $translation): void
     {
         $translation->setTransUnit(transUnit: $this);
 
