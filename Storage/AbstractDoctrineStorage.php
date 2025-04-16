@@ -29,7 +29,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      *
      * @return object
      */
-    protected function getTransUnitRepository()
+    protected function getTransUnitRepository(): ObjectRepository
     {
         return $this->getManager()->getRepository($this->classes['trans_unit']);
     }
@@ -39,7 +39,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      *
      * @return object
      */
-    protected function getFileRepository()
+    protected function getFileRepository(): ObjectRepository
     {
         return $this->getManager()->getRepository($this->classes['file']);
     }
@@ -47,7 +47,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function persist($entity)
+    public function persist($entity): void
     {
         $this->getManager()->persist($entity);
     }
@@ -55,7 +55,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function remove($entity)
+    public function remove($entity): void
     {
         $this->getManager()->remove($entity);
     }
@@ -63,7 +63,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function flush($entity = null)
+    public function flush($entity = null): void
     {
         $this->getManager()->flush();
     }
@@ -71,7 +71,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear($entityName = null)
+    public function clear($entityName = null): void
     {
         $this->getManager()->clear($entityName);
     }
@@ -79,7 +79,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getModelClass($name)
+    public function getModelClass($name): mixed
     {
         if (!isset($this->classes[$name])) {
             throw new \RuntimeException(sprintf('No class defined for name "%s".', $name));
@@ -91,7 +91,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFilesByLocalesAndDomains(array $locales, array $domains)
+    public function getFilesByLocalesAndDomains(array $locales, array $domains): mixed
     {
         return $this->getFileRepository()->findForLocalesAndDomains($locales, $domains);
     }
@@ -99,7 +99,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getFileByHash($hash)
+    public function getFileByHash($hash): mixed
     {
         return $this->getFileRepository()->findOneBy(['hash' => $hash]);
     }
@@ -107,7 +107,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitDomains()
+    public function getTransUnitDomains(): mixed
     {
         return $this->getTransUnitRepository()->getAllDomains();
     }
@@ -115,7 +115,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitById($id)
+    public function getTransUnitById($id): TransUnitInterface;
     {
         return $this->getTransUnitRepository()->findOneById($id);
     }
@@ -123,7 +123,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitByKeyAndDomain($key, $domain)
+    public function getTransUnitByKeyAndDomain($key, $domain): TransUnitInterface
     {
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
@@ -146,7 +146,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitsByLocaleAndDomain($locale, $domain)
+    public function getTransUnitsByLocaleAndDomain($locale, $domain): array
     {
         return $this->getTransUnitRepository()->getAllByLocaleAndDomain($locale, $domain);
     }
@@ -154,7 +154,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null)
+    public function getTransUnitList(array $locales = null, $rows = 20, $page = 1, array $filters = null): array
     {
         return $this->getTransUnitRepository()->getTransUnitList($locales, $rows, $page, $filters);
     }
@@ -162,7 +162,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function countTransUnits(array $locales = null, array $filters = null)
+    public function countTransUnits(array $locales = null, array $filters = null): int
     {
         return $this->getTransUnitRepository()->count($locales, $filters);
     }

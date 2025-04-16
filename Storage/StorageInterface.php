@@ -51,21 +51,21 @@ interface StorageInterface
      *
      * @param string $name
      */
-    public function getModelClass($name);
+    public function getModelClass($name): mixed;
 
     /**
      * Returns all files matching a given locale and a given domains.
      *
      * @return array
      */
-    public function getFilesByLocalesAndDomains(array $locales, array $domains);
+    public function getFilesByLocalesAndDomains(array $locales, array $domains): mixed;
 
     /**
      * Returns a File by its hash.
      *
      * @param string $hash
      */
-    public function getFileByHash($hash);
+    public function getFileByHash($hash): mixed;
 
     /**
      * Returns all domains available in database.
