@@ -16,21 +16,23 @@
         {% endblock lexik_toolbar %}
 
         {% block lexik_data_grid %}
-            {% include '@LexikTranslationBundle/Translation/_ngGrid.html.twig' %}
+            {% include '@LexikTranslationBundle/Translation/_grid.html.twig' %}
         {% endblock lexik_data_grid %}
     </div>
 {% endblock %}
 
 {% block lexik_javascript_footer %}
     {{ parent() }}
+    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
     <script>
-        var translationCfg = {
+        TranslationManager.init({
             locales: {{ locales | json_encode | raw }},
             inputType: '{{ inputType }}',
             autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
             profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
             toggleSimilar: '{{ toggleSimilar }}',
             csrfToken: '{{ csrf_token('lexik-translation') }}',
+            maxPageNumber: 20,
             url: {
                 list: '{{ path('lexik_translation_list') }}',
                 listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
@@ -54,11 +56,11 @@
                 save: '{{ 'translations.save'|trans }}',
                 updateSuccess: '{{ 'translations.successfully_updated'|trans }}',
                 updateFail: '{{ 'translations.update_failed'|trans }}',
+                deleteConfirm: '{{ ('translations.confirm_delete')|trans|escape('js') }}',
                 deleteSuccess: '{{ 'translations.successfully_deleted'|trans }}',
                 deleteFail: '{{ 'translations.delete_failed'|trans }}',
                 noTranslations: '{{ 'translations.no_translations'|trans }}'
             }
-        };
+        });
     </script>
-    <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
 {% endblock %}

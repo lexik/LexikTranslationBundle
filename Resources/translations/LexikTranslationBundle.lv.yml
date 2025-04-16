@@ -6,6 +6,7 @@ translations:
     cache_removed:       "Kešatmiņa notīrīta"
     new_translation:     "Jauns tulkojums"
     add_translation:     "Pievienot tulkojumu"
+    confirm_delete:      "Vai tiešām vēlaties dzēst šo tulkojumu?"
     save:                "Saglabāt"
     save_add:            "Saglabāt un pievienot vēl"
     page_title:          "Tulkojumi"

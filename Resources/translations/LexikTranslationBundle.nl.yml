@@ -6,6 +6,7 @@ translations:
     cache_removed:       "De gecachete bestanden zijn verwijderd."
     new_translation:     "Nieuwe vertaling"
     add_translation:     "Voeg een vertaling toe"
+    confirm_delete:      "Wilt u deze vertaling echt verwijderen?"
     save:                "Opslaan"
     save_add:            "Opslaan en nieuw"
     page_title:          "Vertalingen"

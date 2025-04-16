@@ -6,6 +6,7 @@ translations:
     cache_removed:          "Greitintuvo failai atnaujinti"
     new_translation:        "Naujas vertimas"
     add_translation:        "Sukurti vertimą"
+    confirm_delete:         "Ar tikrai norite ištrinti šį vertimą?"
     save:                   "Pridėti"
     save_add:               "Save and Add"
     page_title:             "Vertimai"
