@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use DateTime;
 
 /**
  * Translation storage interface.
@@ -84,9 +85,9 @@ interface StorageInterface
      * Returns a TransUnit by its id.
      *
      * @param int $id
-     * @return TransUnit
+     * @return TransUnitInterface
      */
-    public function getTransUnitById($id);
+    public function getTransUnitById($id): TransUnitInterface;
 
     /**
      * Returns a TransUnit by its key and domain.
@@ -95,7 +96,7 @@ interface StorageInterface
      * @param string $domain
      * @return TransUnitInterface
      */
-    public function getTransUnitByKeyAndDomain($key, $domain);
+    public function getTransUnitByKeyAndDomain($key, $domain): TransUnitInterface;
 
     /**
      * Returns all trans unit with translations for the given domain and locale.
@@ -104,7 +105,7 @@ interface StorageInterface
      * @param string $domain
      * @return array
      */
-    public function getTransUnitsByLocaleAndDomain($locale, $domain);
+    public function getTransUnitsByLocaleAndDomain($locale, $domain): array;
 
     /**
      * Returns some trans units with their translations.
@@ -113,14 +114,14 @@ interface StorageInterface
      * @param int   $page
      * @return array
      */
-    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null);
+    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): array;
 
     /**
      * Count the number of trans unit.
      *
      * @return int
      */
-    public function countTransUnits(?array $locales = null,  ?array $filters = null);
+    public function countTransUnits(?array $locales = null,  ?array $filters = null): int;
 
     /**
      * Returns all translations for the given file.
@@ -136,14 +137,14 @@ interface StorageInterface
      *
      * @return \DateTime|null
      */
-    public function getLatestUpdatedAt();
+    public function getLatestUpdatedAt(): ?DateTime;
 
     /**
      * Returns the number or trans unit for each domain.
      *
      * @return array
      */
-    public function getCountTransUnitByDomains();
+    public function getCountTransUnitByDomains(): array;
 
     /**
      * Returns the number or translations for each locales for the given domain.
@@ -151,5 +152,5 @@ interface StorageInterface
      * @param string $domain
      * @return array
      */
-    public function getCountTranslationByLocales($domain);
+    public function getCountTranslationByLocales($domain): array;
 }

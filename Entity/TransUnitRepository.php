@@ -127,7 +127,7 @@ class TransUnitRepository extends EntityRepository
         $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
 
-        return (int) $builder->getQuery()->getResult(Query::HYDRATE_SINGLE_SCALAR);
+        return (int) $builder->getQuery()->getSingleScalarResult();
     }
 
     /**

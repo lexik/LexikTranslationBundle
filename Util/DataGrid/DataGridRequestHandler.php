@@ -41,7 +41,7 @@ class DataGridRequestHandler
         $this->defaultFileFormat = 'yml';
     }
 
-    public function setProfiler(Profiler $profiler = null)
+    public function setProfiler(?Profiler $profiler = null)
     {
         $this->profiler = $profiler;
     }
