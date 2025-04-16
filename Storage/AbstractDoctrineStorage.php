@@ -130,7 +130,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      * @param string $domain
      * @return TransUnitInterface
      */
-    public function getTransUnitByKeyAndDomain($key, $domain): TransUnitInterface
+    public function getTransUnitByKeyAndDomain(string $key, string $domain): ?TransUnitInterface
     {
         $key = mb_substr($key, 0, 255, 'UTF-8');
 

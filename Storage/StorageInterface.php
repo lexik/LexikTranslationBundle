@@ -96,7 +96,7 @@ interface StorageInterface
      * @param string $domain
      * @return TransUnitInterface
      */
-    public function getTransUnitByKeyAndDomain($key, $domain): TransUnitInterface;
+    public function getTransUnitByKeyAndDomain(string $key, string $domain): ?TransUnitInterface;
 
     /**
      * Returns all trans unit with translations for the given domain and locale.
