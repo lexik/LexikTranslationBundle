@@ -152,5 +152,5 @@ interface StorageInterface
      * @param string $domain
      * @return array
      */
-    public function getCountTranslationByLocales($domain): array;
+    public function getCountTranslationByLocales(string $domain): array;
 }
