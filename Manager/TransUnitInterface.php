@@ -27,7 +27,7 @@ interface TransUnitInterface
      *
      * @return TranslationInterface
      */
-    public function getTranslation(string $locale): TranslationInterface;
+    public function getTranslation(string $locale): ?TranslationInterface;
 
     /**
      * @param string $key
