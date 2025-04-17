@@ -34,9 +34,9 @@ interface TransUnitManagerInterface
      * @param string                $locale
      * @param string                $content
      * @param boolean               $flush
-     * @return TranslationInterface
+     * @return ?TranslationInterface
      */
-    public function addTranslation(TransUnitInterface $transUnit, $locale, $content, ?FileInterface $file = null, bool $flush = false): TranslationInterface;
+    public function addTranslation(TransUnitInterface $transUnit, $locale, $content, ?FileInterface $file = null, bool $flush = false): ?TranslationInterface;
 
     /**
      * Update the translated content of a trans unit for the given locale.
