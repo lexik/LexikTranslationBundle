@@ -32,3 +32,8 @@ ___________________
 Here is a little screen shot of the edition page :)
 
 ![edition page screen](https://github.com/lexik/LexikTranslationBundle/raw/master/Resources/doc/screen/grid.jpg)
+
+TESTING
+=======
+
+[Read the documentation for testing ](./testing.md)
