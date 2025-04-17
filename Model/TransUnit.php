@@ -146,9 +146,9 @@ abstract class TransUnit
      * @param string $locale
      * @return boolean
      */
-    public function hasTranslation(bool $locale): bool
+    public function hasTranslation(string $locale): bool
     {
-        return null !== $this->getTranslation($locale);
+        return null !== $this->getTranslation(locale: $locale);
     }
 
     /**
@@ -175,7 +175,7 @@ abstract class TransUnit
         $this->translations = new ArrayCollection();
 
         foreach ($collection as $translation) {
-            $this->addTranslation($translation);
+            $this->addTranslation(translation: $translation);
         }
     }
 

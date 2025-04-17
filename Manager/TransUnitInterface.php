@@ -20,7 +20,7 @@ interface TransUnitInterface
      *
      * @return bool
      */
-    public function hasTranslation(bool $locale): bool;
+    public function hasTranslation(string $locale): bool;
 
     /**
      * @param string $locale

@@ -69,9 +69,8 @@ class TransUnitManager implements TransUnitManagerInterface
         bool $flush = false
     ): TranslationInterface{
         $translation = null;
-
-        if (!$transUnit->hasTranslation($locale)) {
-            $class = $this->storage->getModelClass('translation');
+        if (!$transUnit->hasTranslation(locale: $locale)) {
+            $class = $this->storage->getModelClass(name: 'translation');
 
             $translation = new $class();
             $translation->setLocale($locale);
@@ -81,7 +80,7 @@ class TransUnitManager implements TransUnitManagerInterface
                 $translation->setFile($file);
             }
 
-            $transUnit->addTranslation($translation);
+            $transUnit->addTranslation(translation: $translation);
 
             $this->storage->persist($translation);
 
