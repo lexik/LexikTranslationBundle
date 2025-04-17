@@ -10,6 +10,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Translator tests.
@@ -108,6 +109,9 @@ class TranslatorTest extends BaseUnitTestCase
             $listener->onGetDatabaseResources(...)
         );
 
+        $baseTranslator = $this->createMock(TranslatorInterface::class);
+        $baseTranslator->method('getLocale')->willReturn('en');
+
         $container = new Container();
         $container->setParameter('kernel.default_locale', 'en');
         $container->set('event_dispatcher', $dispatcher);
@@ -116,7 +120,7 @@ class TranslatorTest extends BaseUnitTestCase
         $loaderIds = [];
         $options = ['cache_dir' => $cacheDir];
 
-        return new TranslatorMock($container, new MessageFormatter(), 'en', $loaderIds, $options);
+        return new TranslatorMock($baseTranslator, new MessageFormatter(), 'en', $loaderIds, $options);
     }
 
     protected function createFakeCacheFiles($cacheDir)
@@ -142,6 +146,10 @@ class TranslatorTest extends BaseUnitTestCase
 class TranslatorMock extends Translator
 {
     public $dbResources = [];
+    public $options = [
+        'cache_dir' => '', 
+        'debug' => false
+    ];
 
     public function addResource($format, $resource, $locale, $domain = 'messages'): void
     {
