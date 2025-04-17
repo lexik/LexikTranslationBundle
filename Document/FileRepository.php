@@ -16,7 +16,7 @@ class FileRepository extends DocumentRepository
      *
      * @return array
      */
-    public function findForLocalesAndDomains(array $locales, array $domains)
+    public function findForLocalesAndDomains(array $locales, array $domains): array
     {
         $builder = $this->createQueryBuilder();
 

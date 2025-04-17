@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception\ConnectionException;
 use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use DateTime;
 
 /**
  * Doctrine ORM storage class.
@@ -75,7 +76,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getLatestUpdatedAt()
+    public function getLatestUpdatedAt(): ?DateTime
     {
         return $this->getTranslationRepository()->getLatestTranslationUpdatedAt();
     }
@@ -83,7 +84,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getCountTransUnitByDomains()
+    public function getCountTransUnitByDomains(): array
     {
         $results = $this->getTransUnitRepository()->countByDomains();
 
@@ -98,7 +99,7 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getCountTranslationByLocales($domain)
+    public function getCountTranslationByLocales(string $domain): array
     {
         $results = $this->getTranslationRepository()->countByLocales($domain);
 
