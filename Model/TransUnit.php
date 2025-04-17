@@ -11,7 +11,7 @@ use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
 use DateTime;
 
 /**
- * This class represent TransUnita trans unit which contain translations for a given domain and key.
+ * This class represent a trans unit which contain translations for a given domain and key.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
