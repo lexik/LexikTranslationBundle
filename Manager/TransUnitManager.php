@@ -43,7 +43,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function create($keyName, $domainName, $flush = false)
+    public function create($keyName, $domainName, $flush = false): TransUnitInterface
     {
         $transUnit = $this->newInstance();
         $transUnit->setKey($keyName);
@@ -65,13 +65,12 @@ class TransUnitManager implements TransUnitManagerInterface
         TransUnitInterface $transUnit,
         $locale,
         $content,
-        FileInterface $file = null,
-        $flush = false
-    ) {
+        ?FileInterface $file = null,
+        bool $flush = false
+    ): ?TranslationInterface{
         $translation = null;
-
-        if (!$transUnit->hasTranslation($locale)) {
-            $class = $this->storage->getModelClass('translation');
+        if (!$transUnit->hasTranslation(locale: $locale)) {
+            $class = $this->storage->getModelClass(name: 'translation');
 
             $translation = new $class();
             $translation->setLocale($locale);
@@ -81,7 +80,7 @@ class TransUnitManager implements TransUnitManagerInterface
                 $translation->setFile($file);
             }
 
-            $transUnit->addTranslation($translation);
+            $transUnit->addTranslation(translation: $translation);
 
             $this->storage->persist($translation);
 
@@ -96,7 +95,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, $merge = false)
+    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool$merge = false): ?TranslationInterface
     {
         $translation = null;
         $i = 0;
@@ -142,7 +141,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false)
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false): void   
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {

@@ -13,7 +13,7 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * Convert all MongoTimestamp object to time.
      */
-    public function convertMongoTimestamp()
+    public function convertMongoTimestamp(): void
     {
         $this->createdAt = ($this->createdAt instanceof \MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;
         $this->updatedAt = ($this->updatedAt instanceof \MongoTimestamp) ? $this->updatedAt->sec : $this->updatedAt;
@@ -22,7 +22,7 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * {@inheritdoc}
      */
-    public function prePersist()
+    public function prePersist(): void
     {
         $now = new \DateTime("now");
 
@@ -33,7 +33,7 @@ class Translation extends TranslationModel implements TranslationInterface
     /**
      * {@inheritdoc}
      */
-    public function preUpdate()
+    public function preUpdate(): void
     {
         $now = new \DateTime("now");
 

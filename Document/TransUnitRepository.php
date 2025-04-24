@@ -153,7 +153,7 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Returns some trans units with their translations.
      */
-    public function getTransUnitList(array $locales = null, int $rows = 20, int $page = 1, array $filters = null): array
+    public function getTransUnitList(?array $locales = null, int $rows = 20, int $page = 1, ?array $filters = null): array
     {
         $sortColumn = $filters['sidx'] ?? 'id';
         $order = $filters['sord'] ?? 'ASC';
@@ -207,7 +207,7 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Count the number of trans unit.
      */
-    public function count(array $locales = null, array $filters = null): int
+    public function count(?array $locales = null, ?array $filters = null): int
     {
         $builder = $this->createQueryBuilder();
 
@@ -264,7 +264,7 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Add conditions according to given filters.
      */
-    protected function addTransUnitFilters(Builder $builder, array $filters = null)
+    protected function addTransUnitFilters(Builder $builder, ?array $filters = null)
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
@@ -282,7 +282,7 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Add conditions according to given filters.
      */
-    protected function addTranslationFilter(Builder $builder, array $locales = null, array $filters = null)
+    protected function addTranslationFilter(Builder $builder, ?array $locales = null, ?array $filters = null)
     {
         if (null !== $locales) {
             $qb = $this->createQueryBuilder()
