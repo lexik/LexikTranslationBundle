@@ -25,3 +25,26 @@ Available variables are:
  - DB_PASSWD - database user password (default: null)
  - DB_ENGINE - database engine (default: pdo_mysql)
  - DB_PORT - database port (default: null)
+ - MONGO_SERVER - mongo server DNS string (default: mongodb://admin:secret@127.0.0.1:27017/admin)
+
+All these variables are injected if not provided under the `Tests/bootstrap.php` file.
+
+## Testing with Docker
+
+Direct execution of test:
+
+``` bash
+docker-compose run --rm lexik_translation composer test
+```
+
+Building the image:
+
+``` bash
+docker-compose build --no-cache
+```
+
+Run a test file for a specific test:
+
+``` bash
+docker-compose run --rm lexik_translation composer test Tests/Unit/Translation/Manager/TransUnitManagerTest.php --filter testORMAddTranslation
+```

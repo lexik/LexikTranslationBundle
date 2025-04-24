@@ -2,3 +2,4 @@ vendor
 composer.lock
 
 Tests/app/tmp/
+.phpunit.result.cache
