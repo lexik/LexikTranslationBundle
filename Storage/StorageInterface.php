@@ -114,7 +114,7 @@ interface StorageInterface
      * @param int   $page
      * @return array
      */
-    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): array;
+    public function getTransUnitList(?array $locales = null, ?int $rows = 20, ?int $page = 1, ?array $filters = null): array;
 
     /**
      * Count the number of trans unit.

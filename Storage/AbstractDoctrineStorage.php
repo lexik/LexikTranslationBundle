@@ -156,15 +156,15 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function getTransUnitsByLocaleAndDomain($locale, $domain): array
     {
-        return $this->getTransUnitRepository()->getAllByLocaleAndDomain($locale, $domain);
+        return $this->getTransUnitRepository()->getAllByLocaleAndDomain(locale: $locale, domain: $domain);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): array
+    public function getTransUnitList(?array $locales = null, ?int $rows = 20, ?int $page = 1, ?array $filters = null): array
     {
-        return $this->getTransUnitRepository()->getTransUnitList($locales, $rows, $page, $filters);
+        return $this->getTransUnitRepository()->getTransUnitList(locales: $locales, rows: $rows, page: $page, filters: $filters);
     }
 
     /**
@@ -172,7 +172,17 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function countTransUnits(?array $locales = null, ?array $filters = null): int
     {
-        return $this->getTransUnitRepository()->count($locales, $filters);
+        $criteria = [
+            'locales' => $locales,
+            'filters' => $filters,
+        ];
+        if (null === $locales) {
+            unset($criteria['locales']);
+        }
+        if (null === $filters) {
+            unset($criteria['filters']);
+        }
+        return $this->getTransUnitRepository()->count(criteria: $criteria);
     }
 
     /**
