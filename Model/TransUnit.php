@@ -6,6 +6,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
+use DateTime;
 
 /**
  * This class represent a trans unit which contain translations for a given domain and key.
@@ -24,14 +27,14 @@ abstract class TransUnit
      *
      * @Assert\NotBlank()
      */
-    protected $key;
+    protected string $key;
 
     /**
      * @var string
      *
      * @Assert\NotBlank()
      */
-    protected $domain;
+    protected string $domain;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -39,14 +42,14 @@ abstract class TransUnit
     protected $translations;
 
     /**
-     * @var \DateTime
+     * @var DateTime|string
      */
-    protected $createdAt;
+    protected DateTime|string $createdAt;
 
     /**
-     * @var \DateTime
+     * @var DateTime|string
      */
-    protected $updatedAt;
+    protected DateTime|string $updatedAt;
 
     /**
      * Construct.
@@ -62,7 +65,7 @@ abstract class TransUnit
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
@@ -72,7 +75,7 @@ abstract class TransUnit
      *
      * @param string $key
      */
-    public function setKey($key)
+    public function setKey(string $key): void
     {
         $this->key = $key;
     }
@@ -82,7 +85,7 @@ abstract class TransUnit
      *
      * @return string
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -92,7 +95,7 @@ abstract class TransUnit
      *
      * @param string $domain
      */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }
@@ -102,7 +105,7 @@ abstract class TransUnit
      *
      * @return string
      */
-    public function getDomain()
+    public function getDomain(): string
     {
         return $this->domain;
     }
@@ -110,9 +113,9 @@ abstract class TransUnit
     /**
      * Add translations
      *
-     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param Translation $translations
      */
-    public function addTranslation(Translation $translation)
+    public function addTranslation(DocumentTranslation|Translation $translation): void
     {
         $this->translations[] = $translation;
     }
@@ -120,9 +123,9 @@ abstract class TransUnit
     /**
      * Remove translations
      *
-     * @param \Lexik\Bundle\TranslationBundle\Model\Translation $translations
+     * @param Translation $translations
      */
-    public function removeTranslation(Translation $translation)
+    public function removeTranslation(DocumentTranslation|Translation $translation): void
     {
         $this->translations->removeElement($translation);
     }
@@ -132,7 +135,7 @@ abstract class TransUnit
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getTranslations()
+    public function getTranslations(): array|Collection
     {
         return $this->translations;
     }
@@ -143,9 +146,9 @@ abstract class TransUnit
      * @param string $locale
      * @return boolean
      */
-    public function hasTranslation($locale)
+    public function hasTranslation(string $locale): bool
     {
-        return null !== $this->getTranslation($locale);
+        return null !== $this->getTranslation(locale: $locale);
     }
 
     /**
@@ -153,7 +156,7 @@ abstract class TransUnit
      *
      * @param string $locale
      */
-    public function getTranslation($locale): ?Translation
+    public function getTranslation(string $locale): ?TranslationInterface
     {
         foreach ($this->getTranslations() as $translation) {
             if ($translation->getLocale() == $locale) {
@@ -167,12 +170,12 @@ abstract class TransUnit
     /**
      * Set translations collection
      */
-    public function setTranslations(Collection $collection)
+    public function setTranslations(Collection $collection): void
     {
         $this->translations = new ArrayCollection();
 
         foreach ($collection as $translation) {
-            $this->addTranslation($translation);
+            $this->addTranslation(translation: $translation);
         }
     }
 
@@ -181,7 +184,7 @@ abstract class TransUnit
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function filterNotBlankTranslations()
+    public function filterNotBlankTranslations(): Collection
     {
         return $this->getTranslations()->filter(function (TranslationInterface $translation) {
             $content = $translation->getContent();
@@ -194,7 +197,7 @@ abstract class TransUnit
      *
      * @return datetime $createdAt
      */
-    public function getCreatedAt()
+    public function getCreatedAt(): DateTime|string
     {
         return $this->createdAt;
     }
@@ -204,7 +207,7 @@ abstract class TransUnit
      *
      * @return datetime $updatedAt
      */
-    public function getUpdatedAt()
+    public function getUpdatedAt(): DateTime|string
     {
         return $this->updatedAt;
     }

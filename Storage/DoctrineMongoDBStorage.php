@@ -1,6 +1,7 @@
 <?php
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
+use Datetime;
 
 /**
  * Doctrine MongoDB storage class.
@@ -12,7 +13,7 @@ class DoctrineMongoDBStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getLatestUpdatedAt()
+    public function getLatestUpdatedAt(): ?DateTime
     {
         return $this->getTransUnitRepository()->getLatestTranslationUpdatedAt();
     }
@@ -20,7 +21,7 @@ class DoctrineMongoDBStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getCountTransUnitByDomains()
+    public function getCountTransUnitByDomains(): array 
     {
         return $this->getTransUnitRepository()->countByDomains();
     }
@@ -28,7 +29,7 @@ class DoctrineMongoDBStorage extends AbstractDoctrineStorage
     /**
      * {@inheritdoc}
      */
-    public function getCountTranslationByLocales($domain)
+    public function getCountTranslationByLocales(string $domain):array 
     {
         return $this->getTransUnitRepository()->countTranslationsByLocales($domain);
     }

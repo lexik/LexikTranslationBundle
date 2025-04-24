@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
+use Doctrine\Common\Collections\Collection;
 /**
  * TransUnit manager interface.
  *
@@ -12,29 +13,29 @@ interface TransUnitInterface
     /**
      * @return TranslationInterface[]
      */
-    public function getTranslations();
+    public function getTranslations(): array|Collection;
 
     /**
      * @param string $locale
      *
      * @return bool
      */
-    public function hasTranslation($locale);
+    public function hasTranslation(string $locale): bool;
 
     /**
      * @param string $locale
      *
      * @return TranslationInterface
      */
-    public function getTranslation($locale);
+    public function getTranslation(string $locale): ?TranslationInterface;
 
     /**
      * @param string $key
      */
-    public function setKey($key);
+    public function setKey(string $key): void;
 
     /**
      * @param string $domain
      */
-    public function setDomain($domain);
+    public function setDomain(string $domain): void;
 }
