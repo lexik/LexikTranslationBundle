@@ -6,7 +6,7 @@ Add the bunde to your `composer.json` file:
 ```javascript
 require: {
     // ...
-    "lexik/translation-bundle": "~5.3"
+    "lexik/translation-bundle": "~7.1"
 }
 ```
 
@@ -14,7 +14,7 @@ Or install directly through composer with:
 
 ```shell
 # Latest stable
-composer require lexik/translation-bundle ~5.3
+composer require lexik/translation-bundle ~7.1
 
 # For latest unstable version
 composer require lexik/translation-bundle dev-master
@@ -41,7 +41,9 @@ $bundles = [array(]
 
 Then install the required assets:
 
+```bash
     ./bin/console assets:install
+```
 
 ___________________
 
