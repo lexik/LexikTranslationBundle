@@ -6,6 +6,7 @@ translations:
     cache_removed:       "Кеш файлы были удалены"
     new_translation:     "Новый перевод"
     add_translation:     "Добавить перевод"
+    confirm_delete:      "Вы действительно хотите удалить этот перевод?"
     save:                "Сохранить"
     save_add:            "Создать и добавить новый"
     page_title:          "Переводы"
