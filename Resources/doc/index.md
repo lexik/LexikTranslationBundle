@@ -32,7 +32,7 @@ Register the bundle with your kernel:
 
 ```php
 // in AppKernel::registerBundles()
-$bundles = [array(]
+$bundles = [
     // ...
     new Lexik\Bundle\TranslationBundle\LexikTranslationBundle(),
     // ...
