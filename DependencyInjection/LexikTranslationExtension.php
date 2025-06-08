@@ -13,7 +13,7 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Resource\DirectoryResource;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Parameter;
