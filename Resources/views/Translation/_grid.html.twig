@@ -1,0 +1,101 @@
+{% trans_default_domain 'LexikTranslationBundle' %}
+
+<div id="translation-grid">
+    <div class="row margin-row grid-action-bar">
+        <div class="col-md-12">
+            <a onclick="TranslationManager.toggleColSelector()" class="btn btn-default btn-sm btn-manage-col">
+                <span class="glyphicon glyphicon-eye-close"></span>
+                {% trans %} translations.show_hide_columns {% endtrans %}
+            </a>
+            {% if not autoCacheClean %}
+                <a onclick="TranslationManager.invalidateCache()" role="button" class="btn btn-primary btn-sm btn-invalidate-cache">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    {% trans %} translations.invalidate_cache {% endtrans %}
+                </a>
+            {% endif %}
+            <div id="sharedMessage" class="pull-right label" style="display:none">
+            </div>
+        </div>
+    </div>
+    <div id="columnsSelector" class="row" style="display:none">
+        <div class="col-md-12">
+            <ul class="list-unstyled list-inline">
+                <li class="ck-all">
+                    <label for="toggle-all-columns" class="locale ng-binding">
+                        <input type="checkbox" id="toggle-all-columns" onclick="TranslationManager.toggleAllColumns(this.checked)" checked="checked">
+                        {% trans %} translations.toggle_all_columns {% endtrans %}
+                    </label>
+                </li>
+            </ul>
+            <ul id="toogle-list" class="list-unstyled list-inline">
+                <li>
+                    <label for="toggle-_id">
+                        <input type="checkbox" id="toggle-_id" onclick="TranslationManager.toggleColumn('_id', this.checked)" checked="checked">
+                        ID
+                    </label>
+                </li>
+                <li>
+                    <label for="toggle-_domain">
+                        <input type="checkbox" id="toggle-_domain" onclick="TranslationManager.toggleColumn('_domain', this.checked)" checked="checked">
+                        {% trans %} translations.domain {% endtrans %}
+                    </label>
+                </li>
+                <li>
+                    <label for="toggle-_key">
+                        <input type="checkbox" id="toggle-_key" onclick="TranslationManager.toggleColumn('_key', this.checked)" checked="checked">
+                        {% trans %} translations.key {% endtrans %}
+                    </label>
+                </li>
+                {% for locale in locales %}
+                    <li>
+                        <label for="toggle-{{ locale }}">
+                            <input type="checkbox" id="toggle-{{ locale }}" onclick="TranslationManager.toggleColumn('{{ locale }}', this.checked)" checked="checked">
+                            {{ locale|upper }}
+                        </label>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th id='header-_id' class="text-center sortable col-_id" style="cursor: pointer;">
+                    ID
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </th>
+                <th id='header-_domain' class="text-center sortable col-_domain" onclick="TranslationManager.sortColumn('_domain', 'asc')" style="cursor: pointer;">
+                    {% trans %} translations.domain {% endtrans %}
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </th>
+                <th id='header-_key' class="text-center sortable col-_key" onclick="TranslationManager.sortColumn('_key', 'asc')" style="cursor: pointer;">
+                    {% trans %} translations.key {% endtrans %}
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                </th>
+                {% for locale in locales %}
+                    <th id="header-{{ locale }}" class="text-center sortable">
+                        {{ locale|upper }}
+                    </th>
+                {% endfor %}
+                <th class="col-save"></th>
+            </tr>
+            <tr>
+                <th class="col-_id"></th>
+                <th class="col-_domain"><input type="text" id="__domain" class="form-control input-sm"></th>
+                <th class="col-_key"><input type="text" id="_key" class="form-control input-sm"></th>
+                {% for locale in locales %}
+                    <th class="col-{{ locale }}">
+                        <input type="text" id="{{ locale }}" class="form-control input-sm">
+                    </th>
+                {% endfor %}
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <ul class="pagination ng-table-pagination pull-right"></ul>
+</div>
+<div class="info-no-translation alert alert-info" role="alert" style="display:none">
+    {% trans %} translations.no_translations {% endtrans %}
+</div>

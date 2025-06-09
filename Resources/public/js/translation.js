@@ -1,12 +1,40 @@
-'use strict';
+const TranslationManager = (() => {
 
-var app = angular.module('translationApp', ['ngTable']);
+    let translationCfg = {};
+    let _currentPage = 1;
+    let _totalPages = 0;
+    let _order = 'id';
+    let _direction = 'asc';
+    let _showColSelector = false;
+    let _showCol = {};
 
-/**
- * Shared object to display user messages.
- */
-app.factory('sharedMessage', function () {
-    return {
+    const init = (config) =>
+    {
+        translationCfg = config;
+
+        const debounceTimeouts = {};
+
+        document.addEventListener('DOMContentLoaded', function () {
+            reloadGrid();
+
+            document.querySelectorAll('.input-sm').forEach(input => {
+                input.addEventListener('keyup', function() {
+                    if (debounceTimeouts[this.id]) {
+                        clearTimeout(debounceTimeouts[this.id]);
+                    }
+                    debounceTimeouts[this.id] = setTimeout(() => {
+                        _currentPage = 1;
+                        _order = 'id';
+                        _direction = 'asc';
+                        reloadGrid();
+                    }, 200);
+                });
+            });
+        });
+    };
+
+    const sharedMessage = {
+        element: document.getElementById('sharedMessage'),
         css: '',
         icon: '',
         content: '',
@@ -17,367 +45,468 @@ app.factory('sharedMessage', function () {
             this.content = content;
         },
 
+        show: function (css, icon, content) {
+            this.set(css, icon, content);
+            this.element.classList.add('label-' + this.css);
+            this.element.innerHTML = '<span><i class="glyphicon glyphicon-' + this.icon + '"></i> ' + this.content + '</span>';
+            this.element.style.display = 'block';
+        },
+
         reset: function () {
+            this.element.classList.remove('label-' + this.css);
+            this.element.style.display = 'none';
             this.set('', '', '');
         }
     };
-});
 
-/**
- * Api manager service.
- */
-app.factory('translationApiManager', ['$http', '$httpParamSerializer', function ($http, $httpParamSerializer) {
-    return {
+    const translationApiManager = {
         token: null,
 
         setToken: function (token) {
             this.token = token;
         },
 
-        getPage: function (params, tableData) {
-            var parameters = {};
+        getPage: async function () {
 
-            if (Object.keys(params.sorting()).length) {
-                var keys = Object.keys(params.sorting());
-                parameters['sidx'] = keys[0];
-                parameters['sord'] = params.sorting()[keys[0]];
+            let parameters = {
+                sidx: _order,
+                sord: _direction,
+                page: _currentPage,
+                rows: translationCfg.maxPageNumber
+            };
 
-                if (!angular.equals(tableData.currentSort, params.sorting())) {
-                    params.page(1);
-                    tableData.currentSort = params.sorting();
-                }
-            }
+            addFilteredValuesToParams(parameters);
 
-            if (Object.keys(params.filter()).length) {
-                parameters['_search'] = true;
-                for (var key in params.filter()) {
-                    parameters[key] = params.filter()[key];
-                }
-
-                if (!angular.equals(tableData.currentFilter, params.filter())) {
-                    params.page(1);
-                    tableData.currentFilter = params.filter();
-                }
-            }
-
-            parameters['page'] = params.page();
-            parameters['rows'] = params.count();
-
-            var url = (null != this.token) ? translationCfg.url.listByToken.replace('-token-', this.token) : translationCfg.url.list;
-
-            return $http.get(url, {'params': parameters});
+            return await fetch(translationCfg.url.list + '?' + new URLSearchParams(parameters));
         },
 
-        invalidateCache: function () {
-            return $http.get(translationCfg.url.invalidateCache, {
-                headers: {'X-Requested-With': 'XMLHttpRequest'},
-                params: this.initializeParametersWithCsrf()
+        invalidateCache: async function () {
+            const url = translationCfg.url.invalidateCache;
+            const parameters = this.initializeParametersWithCsrf();
+
+            return await fetch(url + '?' + new URLSearchParams(parameters), {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
             });
         },
 
-        updateTranslation: function (translation) {
-            var url = translationCfg.url.update.replace('-id-', translation._id);
+        updateTranslation: async function (translationId, params) {
+            const url = translationCfg.url.update.replace('-id-', translationId);
 
-            var parameters = this.initializeParametersWithCsrf();
-            for (var name in translation) {
-                parameters[name] = translation[name];
-            }
+            const parameters = this.initializeParametersWithCsrf();
+            Object.assign(parameters, params);
 
-            // force content type to make SF create a Request with the PUT parameters
-            return $http({ 'url': url, 'data': $httpParamSerializer(parameters), method: 'PUT', headers: {'Content-Type': 'application/x-www-form-urlencoded'} });
+            return await fetch(url, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: new URLSearchParams(parameters)
+            });
         },
 
-        deleteTranslationLocale: function (translation, locale) {
-            var url = translationCfg.url.deleteLocale
-                .replace('-id-', translation._id)
+        deleteTranslationLocale: async function (translationId, locale) {
+            const url = translationCfg.url.deleteLocale
+                .replace('-id-', translationId)
                 .replace('-locale-', locale);
 
-            return $http.delete(url, {
-                params: this.initializeParametersWithCsrf()
+            const parameters = this.initializeParametersWithCsrf();
+
+            return await fetch(url + '?' + new URLSearchParams(parameters), {
+                method: 'DELETE'
             });
         },
 
-        deleteTranslation: function (translation) {
-            return $http.delete(translationCfg.url.delete.replace('-id-', translation._id), {
-                params: this.initializeParametersWithCsrf()
+        deleteTranslation: async function (translationId) {
+            const url = translationCfg.url.delete.replace('-id-', translationId);
+            const parameters = this.initializeParametersWithCsrf();
+
+            return await fetch(url + '?' + new URLSearchParams(parameters), {
+                method: 'DELETE'
             });
         },
 
-        initializeParametersWithCsrf: function(parameters) {
-            var parameters = {};
+        initializeParametersWithCsrf: function() {
+            const parameters = {};
 
-            if(translationCfg.csrfToken ){
+            if (translationCfg.csrfToken) {
                 parameters._token = translationCfg.csrfToken;
             }
 
             return parameters;
         }
     };
-}]);
 
-/**
- * ngTable column definition and parameters builder service.
- */
-app.factory('tableParamsManager', ['ngTableParams', 'translationApiManager', '$location', function (ngTableParams, translationApiManager, $location) {
-    return {
-        columns: [],
-        tableParams: null,
-        defaultOptions: angular.extend( { page: 1, count: 20, filter: {}, sort: {'_id': 'asc'} }, $location.search()),
+    const toggleColSelector = () =>
+    {
+        _showColSelector = !_showColSelector;
 
-        build: function (locales, labels) {
-            this.columns = [
-                { title: 'ID', index: '_id', edit: false, delete: false, filter: false, sortable: true, visible: true },
-                { title: labels.domain, index: '_domain', edit: false, delete: false, filter: {'_domain': 'text'}, sortable: true, visible: true },
-                { title: labels.key, index: '_key', edit: false, delete: true, filter: {'_key': 'text'}, sortable: true, visible: true }
-            ];
+        if (_showColSelector) {
+            document.getElementById('columnsSelector').style.display = 'block';
+        } else {
+            document.getElementById('columnsSelector').style.display = 'none';
+        }
+    }
 
-            for (var key in locales) {
-                var columnDef = { title: locales[key].toUpperCase(), index: locales[key], edit: true, delete: true, filter: {}, sortable: false, visible: true };
-                columnDef['filter'][locales[key]] = 'text';
+    const toggleAllColumns = (checked) =>
+    {
+        document.getElementById('toogle-list').querySelectorAll('[id^="toggle-"]').forEach(input => {
+            input.checked = checked;
+            toggleColumn(input.id.replace('toggle-', ''), checked);
+        });
+    }
 
-                this.columns.push(columnDef);
+    const toggleColumn = (column, checked) =>
+    {
+        _showCol[column] = checked;
+
+        document.getElementById('header-' + column).classList.toggle('col-hide', !checked);
+        document.querySelectorAll('.col-' + column).forEach(element => {
+            element.classList.toggle('col-hide', !checked);
+        });
+
+        if (translationCfg.toggleSimilar) {
+            document.querySelectorAll('[id^="toggle-' + column + '_"]').forEach(input => {
+                _showCol[input.id.replace('toggle-', '')] = checked;
+                input.checked = checked;
+            });
+            document.querySelectorAll('[id^="header-' + column + '_"]').forEach(element => {
+                element.classList.toggle('col-hide', !checked);
+            });
+            document.querySelectorAll('[class^="col-' + column + '_"]').forEach(element => {
+                element.classList.toggle('col-hide', !checked);
+            });
+        }
+    }
+
+    const enableMode = (mode, lexikTranslationId) =>
+    {
+        const locales = translationCfg.locales;
+        const editButton = document.getElementById('editButton-' + lexikTranslationId);
+        const deleteButton = document.getElementById('deleteButton-' + lexikTranslationId);
+        const saveButton = document.getElementById('saveButton-' + lexikTranslationId);
+        const cancelButton = document.getElementById('cancelButton-' + lexikTranslationId);
+
+        if (mode === 'edit') {
+            sharedMessage.reset();
+            editButton.style.display = 'none';
+            deleteButton.style.display = 'none';
+            saveButton.style.display = 'block';
+            cancelButton.style.display = 'block';
+            for (let i = 0; i < locales.length; i++) {
+                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
+                document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
             }
-
-            // grid data
-            var tableData = {
-                total: 0,
-                currentSort: {},
-                currentFilter: {},
-                getData: function($defer, params) {
-                    $location.search(params.url());
-
-                    translationApiManager
-                        .getPage(params, this)
-                        .then(function (response) {
-                            if (response.status === 200) {
-                                params.total(response.data.total);
-                                $defer.resolve(response.data.translations);
-                            }
-                        });
+        } else if (mode === 'view') {
+            editButton.style.display = 'block';
+            deleteButton.style.display = 'block';
+            saveButton.style.display = 'none';
+            cancelButton.style.display = 'none';
+            for (let i = 0; i < locales.length; i++) {
+                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
+                document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
+                document.getElementById('btnDelete-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
+                document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'none';
+            }
+        } else if (mode === 'delete') {
+            sharedMessage.reset();
+            editButton.style.display = 'none';
+            deleteButton.style.display = 'none';
+            cancelButton.style.display = 'block';
+            for (let i = 0; i < locales.length; i++) {
+                if (document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent.trim() !== '') {
+                    document.getElementById('btnDelete-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
+                    document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'block';
                 }
-            };
-
-            this.tableParams = new ngTableParams(this.defaultOptions, tableData);
-        },
-
-        reloadTableData: function () {
-            this.tableParams.reload();
-        },
-
-        getColumnsDefinition: function () {
-            return this.columns;
-        },
-
-        getTableParams: function () {
-            return this.tableParams;
+            }
         }
     };
-}]);
 
-/**
- * Translation grid controller.
- */
-app.controller('TranslationController', [
-    '$scope', '$location', '$anchorScroll', 'sharedMessage', 'tableParamsManager', 'translationApiManager',
-    function ($scope, $location, $anchorScroll, sharedMessage, tableParamsManager, translationApiManager) {
+    const save = (lexikTranslationId) =>
+    {
+        let update = false;
+        const locales = translationCfg.locales;
 
-        $scope.locales = translationCfg.locales;
-        $scope.editType = translationCfg.inputType;
-        $scope.autoCacheClean = translationCfg.autoCacheClean;
-        $scope.labels = translationCfg.label;
-        $scope.hideColumnsSelector = false;
-        $scope.areAllColumnsSelected = true;
-        $scope.profilerTokens = translationCfg.profilerTokens;
-        $scope.sharedMsg = sharedMessage;
-
-        tableParamsManager.build($scope.locales, $scope.labels);
-
-        $scope.columns = tableParamsManager.getColumnsDefinition();
-        $scope.tableParams = tableParamsManager.getTableParams();
-
-        // override default changePage function to scroll to top on change page
-        $scope.tableParams.changePage = function (pageNumber) {
-            $scope.tableParams.page(pageNumber);
-            $location.hash('translation-grid');
-            $anchorScroll();
-        };
-
-        // trigger the grid sorting
-        $scope.sortGrid = function (column) {
-            if (column.sortable) {
-                $scope.tableParams.sorting( column.index, $scope.tableParams.isSortBy(column.index, 'asc') ? 'desc' : 'asc' );
+        for (let i = 0; i < locales.length; i++) {
+            let oldValue = document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent;
+            let newValue = document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).value;
+            if (oldValue !== newValue) {
+                update = true;
+                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent = newValue;
             }
-        };
+        }
+        if (update) {
+            saveEntry(lexikTranslationId);
+        }
 
-        // go to the top of the grid on page change
-        $scope.changePage = function (pageNumber) {
-            $scope.tableParams.page(pageNumber);
-            $location.hash('translation-grid');
-            $anchorScroll();
-        };
+        enableMode('view', lexikTranslationId);
+    }
 
-        // toggle show/hide column with a similar name (if "en" is clicked all "en_XX" columns will be toggled too)
-        $scope.toggleSimilar = function (currentCol) {
-            if (translationCfg.toggleSimilar) {
-                angular.forEach($scope.columns, function (column) {
-                    if ( column.index != currentCol.index && column.index.indexOf(currentCol.index+'_') == 0 ) {
-                        column.visible = !currentCol.visible; // use the negation because it seems the model value has not been refreshed yet.
+    const saveEntry = (lexikTranslationId) =>
+    {
+        let params = {};
+        let saveButton = document.getElementById('saveButton-' + lexikTranslationId);
+        let trElement = saveButton.closest('tr.content');
+        let tdElements = trElement.querySelectorAll('td[class^="col-"]');
+        tdElements.forEach(function (td, index) {
+            let span = td.querySelector('span');
+            let col = td.classList[0].replace('col-', '');
+            params[col] = span.textContent;
+        });
+
+        translationApiManager.updateTranslation(lexikTranslationId, params).then(function (response) {
+            if (response.status === 200) {
+                response.json().then(function (data) {
+                    sharedMessage.show('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
+                });
+            } else {
+                sharedMessage.show('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', lexikTranslationId));
+            }
+        });
+
+    };
+
+    const deleteEntry = (lexikTranslationId, locale) =>
+    {
+        if (confirm(translationCfg.label.deleteConfirm)) {
+            if (locale === null) {
+                translationApiManager.deleteTranslation(lexikTranslationId).then(function (response) {
+                    if (response.status === 200) {
+                        let data = response.json();
+                        sharedMessage.show('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                        reloadGrid();
+                    } else {
+                        sharedMessage.show('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', lexikTranslationId));
+                    }
+                });
+            } else {
+                translationApiManager.deleteTranslationLocale(lexikTranslationId, locale).then(function (response) {
+                    if (response.status === 200) {
+                        let data = response.json();
+                        enableMode('view', lexikTranslationId);
+                        document.getElementById('inputContent-' + lexikTranslationId + '-' + locale).value = '';
+                        document.getElementById('content-' + lexikTranslationId + '-' + locale).innerText = '';
+                        sharedMessage.show('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
+                    } else {
+                        sharedMessage.show('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', lexikTranslationId));
                     }
                 });
             }
-        };
+        }
+    };
 
-        // invalidate translation cache
-        $scope.invalidateCache = function () {
-            translationApiManager
-                .invalidateCache()
-                .then(function (response) {
-                    if(response.status === 200) {
-                        sharedMessage.set('success', 'ok-circle', response.data.message);
-
-                        return;
-                    }
-
-                    sharedMessage.set('danger', 'remove-circle', 'Error');
-                })
-            ;
-        };
-
-        // toggle all columns
-        $scope.toggleAllColumns = function () {
-            angular.forEach($scope.columns, function(column) {
-                column.visible = $scope.areAllColumnsSelected;
-            });
-        };
-}]);
-
-/**
- * Translations source controller.
- */
-app.controller('DataSourceController', [
-    '$scope', 'tableParamsManager', 'translationApiManager',
-    function ($scope, tableParamsManager, translationApiManager) {
-        $scope.selectedToken = null;
-        $scope.defaultSourceClass = 'btn-info';
-        $scope.tokenSourceClass = 'btn-default';
-        $scope.showProfiles = false;
-
-        // use the given profile token as translations source
-        $scope.changeToken = function (selectedToken) {
-            translationApiManager.setToken(selectedToken);
-
-            if ('' != selectedToken) {
-                tableParamsManager.reloadTableData();
-            }
-        };
-
-        $scope.resetSource = function () {
-            $scope.selectedToken = null;
-            $scope.defaultSourceClass = 'btn-info';
-            $scope.tokenSourceClass = 'btn-default';
-            $scope.showProfiles = false;
-
-            translationApiManager.setToken($scope.selectedToken);
-            tableParamsManager.reloadTableData();
-        };
-
-        $scope.useTokenAsSource = function () {
-            $scope.defaultSourceClass = 'btn-default';
-            $scope.tokenSourceClass = 'btn-info';
-            $scope.showProfiles = true;
-
-            if ($scope.profilerTokens.length) {
-                $scope.selectedToken = $scope.profilerTokens[0].token;
-                translationApiManager.setToken($scope.selectedToken);
-                tableParamsManager.reloadTableData();
+    const invalidateCache = () =>
+    {
+        translationApiManager.invalidateCache().then(function (response) {
+            if (response.status === 200) {
+                response.json().then(function (data) {
+                    sharedMessage.show('success', 'ok-circle', data.message);
+                });
             } else {
-                $scope.selectedToken = '';
+                sharedMessage.show('danger', 'remove-circle', 'Error');
+            }
+        });
+    }
+
+    const reloadGrid = () =>
+    {
+        translationApiManager.getPage().then(function (response) {
+            if (response.status === 200) {
+                response.json().then(function (data) {
+                    let table = '';
+                    data.translations.forEach(function (item) {
+                        table += constructHtmlTr(item);
+                    });
+
+                    _totalPages = getMaxPageNumber(data.total);
+                    document.querySelector('.table tbody').innerHTML = table;
+                    document.querySelector('.info-no-translation').style.display = data.total === 0 ? 'block' : 'none';
+                    managePagesChanger();
+                });
+            } else {
+                sharedMessage.show('danger', 'remove-circle', 'Error');
+            }
+        }).catch(error => {
+            console.error('Request failed', error);
+        });
+    };
+
+    const sortColumn = (column, direction) =>
+    {
+        _order = column;
+        _direction = direction;
+
+        reverseNextSortOrder(_order, _direction);
+        reloadGrid();
+    };
+
+    const reverseNextSortOrder = (_order, _direction) =>
+    {
+        let nextSortOrder = _direction === 'asc' ? 'desc' : 'asc';
+        document.getElementById('header-' + _order).setAttribute(
+            'onclick', "TranslationManager.sortColumn('" + _order + "', '" + nextSortOrder + "')"
+        );
+    };
+
+    const changePage = (page) =>
+    {
+        _currentPage = page;
+        reloadGrid();
+    };
+
+    const managePagesChanger = () =>
+    {
+        const pagination = document.querySelector('.pagination');
+
+        if (_totalPages === 0) {
+            pagination.style.display = 'none';
+        } else {
+            pagination.style.display = 'block';
+
+            let startPage = Math.max(_currentPage - 5, 1);
+            let endPage = Math.min(_currentPage + 5, _totalPages);
+
+            let additionalHTML = '<li><a class="prev">&laquo;</a></li>';
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === _currentPage) {
+                    additionalHTML += '<li><a class="page-' + i + ' disabled" href="#">' + i + '</a></li>';
+                } else {
+                    additionalHTML += '<li><a class="page-' + i + '" onclick="TranslationManager.changePage(' + i + ')">' + i + '</a></li>';
+                }
+            }
+            additionalHTML += '<li><a class="next">&raquo;</a></li>';
+
+            pagination.innerHTML = additionalHTML;
+
+            const prev = document.querySelector('.prev');
+            const next = document.querySelector('.next');
+
+            if (_currentPage !== 1) {
+                prev.setAttribute('onclick', "TranslationManager.changePage(" + (_currentPage - 1) + ")");
+            } else {
+                prev.classList.add('disabled');
+            }
+            if (_currentPage !== _totalPages) {
+                next.setAttribute('onclick', "TranslationManager.changePage(" + (_currentPage + 1) + ")");
+            } else {
+                next.classList.add('disabled');
+            }
+        }
+    };
+
+    const getMaxPageNumber = (total) => Math.ceil(total / translationCfg.maxPageNumber);
+
+    const addFilteredValuesToParams = (params) =>
+    {
+        let search = false;
+        let inputColumnsFiltered = document.querySelectorAll('.table input');
+
+        inputColumnsFiltered.forEach(input => {
+            let column = input.getAttribute('id');
+            let filterValue = input.value;
+            if (filterValue.trim() !== '') {
+                search = true;
+                params[column] = filterValue;
+            }
+        });
+
+        if (search) {
+            params['_search'] = true;
+        }
+    };
+
+    const constructHtmlTr = (item) =>
+    {
+        const renderInputElement = (id, locale, value) => {
+            if (translationCfg.inputType === 'textarea') {
+                return `<textarea id="inputContent-${id}-${locale}" name="column.index" class="form-control" style="display: none">${value}</textarea>`;
+            } else {
+                return `<input type="text" id="inputContent-${id}-${locale}" name="column.index" class="form-control" style="display: none" value="${value}">`;
             }
         };
-}]);
 
-/**
- * Directive to switch table row in edit mode.
- */
-app.directive('editableRow', [
-    'translationApiManager', 'tableParamsManager', 'sharedMessage',
-    function (translationApiManager, tableParamsManager, sharedMessage) {
-        return {
-            restrict: 'A',
-            scope: {
-                translation: '=translation',
-                columns: '=columns',
-                editType: '=editType'
-            },
-            template: $('#editable-row-template').html(),
-            link: function ($scope, element, attrs) {
-                $scope.mode = null;
+        return `
+            <tr class="content">
+                <td class="col-_id ${_showCol['_id'] === false ? 'col-hide' : ''}">
+                    <span>${item._id}</span>
+                    <div on="editType">
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-link delete" style="display:none">
+                            <i class="glyphicon glyphicon-remove text-danger"></i>
+                        </button>
+                    </div>
+                </td>
+                <td class="col-_domain ${_showCol['_domain'] === false ? 'col-hide' : ''}">
+                    <span>${item._domain}</span>
+                    <div on="editType">
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-link delete" style="display:none">
+                            <i class="glyphicon glyphicon-remove text-danger"></i>
+                        </button>
+                    </div>
+                </td>
+                <td class="col-_key ${_showCol['_key'] === false ? 'col-hide' : ''}">
+                    <span>${item._key}</span>
+                    <div on="editType">
+                    </div>
+                    <div class="text-center">
+                        <button id="btnKeyDelete-${item._id}" onclick="TranslationManager.deleteEntry(${item._id}, null)" type="button" class="btn btn-link delete" style="display:none">
+                            <i class="glyphicon glyphicon-remove text-danger"></i>
+                        </button>
+                    </div>
+                </td>
+                ${Object.keys(item).filter(key => key !== '_id' && key !== '_domain' && key !== '_key').map(locale => `
+                    <td class="col-${locale} ${_showCol[locale] === false ? 'col-hide' : ''}">
+                        <span id="content-${item._id}-${locale}" class="locale">${escapeHtml(item[locale])}</span>
+                        <div>
+                            ${renderInputElement(item._id, locale, item[locale])}
+                        </div>
+                        <div class="text-center">
+                            <button id="btnDelete-${item._id}-${locale}" onclick="TranslationManager.deleteEntry(${item._id}, '${locale}')" type="button" class="btn btn-link delete" style="display: none">
+                                <i class="glyphicon glyphicon-remove text-danger"></i>
+                            </button>
+                        </div>
+                    </td>
+                `).join('')}
+                <td>
+                    <div class="actions">
+                        <button id="editButton-${item._id}" onclick="TranslationManager.enableMode('edit', ${item._id})" type="button" class="btn btn-primary btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button id="deleteButton-${item._id}" onclick="TranslationManager.enableMode('delete', ${item._id})" type="button" class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        <button id="saveButton-${item._id}" onclick="TranslationManager.save(${item._id})" type="button" class="btn btn-success btn-sm" style="display: none">
+                            <span class="glyphicon glyphicon-saved"></span>
+                        </button>
+                        <button id="cancelButton-${item._id}" onclick="TranslationManager.enableMode('view', ${item._id})" type="button" class="btn btn-warning btn-sm" style="display: none">
+                            <span class="glyphicon glyphicon-ban-circle"></span>
+                        </button>
+                        <div></div>
+                    </div>
+                </td>
+            </tr>`;
+    };
 
-                $scope.enableMode = function (mode) {
-                    $scope.mode = mode;
-                    sharedMessage.reset();
-                };
+    const escapeHtml = (unsafe) =>
+    {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
 
-                $scope.disableMode = function () {
-                    $scope.mode = null;
-                    sharedMessage.reset();
-                };
-
-                $scope.save = function (event, source) {
-                    if ( (source == 'input' || source == 'textarea') && event.which == 27 ) { // escape key
-                        $scope.mode = null;
-
-                    } else if ( source == 'btn-save' || (source == 'input' && event.which == 13) ) { // click btn OR return key
-                        translationApiManager
-                            .updateTranslation($scope.translation)
-                            .then(function (response) {
-                                if (response.status === 200) {
-                                    $scope.mode = null;
-                                    $scope.translation = response.data;
-                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', response.data._key));
-
-                                    return;
-                                }
-
-                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', $scope.translation._key));
-                            });
-                    }
-                };
-
-                $scope.delete = function (column) {
-                    if (!window.confirm('Confirm ?')) {
-                        return;
-                    }
-
-                    if (column.index == '_key') {
-                        translationApiManager
-                            .deleteTranslation($scope.translation)
-                            .then(function (response) {
-                                if (response.status === 200) {
-                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', response.data._key));
-                                    $scope.mode = null;
-                                    tableParamsManager.reloadTableData();
-
-                                    return;
-                                }
-
-                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
-                            });
-                    } else {
-                        translationApiManager
-                            .deleteTranslationLocale($scope.translation, column.index)
-                            .then(function (response) {
-                                if (response.status === 200) {
-                                    sharedMessage.set('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', response.data._key));
-                                    $scope.translation[column.index] = '';
-
-                                    return;
-                                }
-
-                                sharedMessage.set('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', $scope.translation._key));
-                            });
-                    }
-                };
-            }
-        };
-}]);
+    return {
+        init,
+        toggleColSelector,
+        toggleAllColumns,
+        toggleColumn,
+        changePage,
+        sortColumn,
+        enableMode,
+        save,
+        deleteEntry,
+        invalidateCache
+    }
+})();
