@@ -39,13 +39,19 @@ class TranslatorTest extends BaseUnitTestCase
             ], 
             'en' => [
                 ['database', 'DB', 'messages'], 
-                ['database', 'DB', 'superTranslations']], 
+                ['database', 'DB', 'superTranslations']
+            ], 
             'fr' => [
                 ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'superTranslations'],
                 ['database', 'DB', 'superTranslations']
             ]
         ];
-        $this->assertEquals($expected, $translator->dbResources);
+
+        $this->assertEqualsCanonicalizing($expected['en'], $translator->dbResources['en']);
+        $this->assertEqualsCanonicalizing($expected['fr'], $translator->dbResources['fr']);
+        $this->assertEqualsCanonicalizing($expected['de'], $translator->dbResources['de']);
+        $this->assertEqualsCanonicalizing($expected, $translator->dbResources);
     }
 
     /**
@@ -181,6 +187,11 @@ class TranslatorMock extends Translator
 
     public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
     {
+        if(empty( $domain )) {
+           var_dump('Domain is empty in TranslatorMock::addResource');
+           var_dump($format, $resource, $locale);
+           exit;
+        }
         if ('database' === $format) {
             $this->dbResources[$locale][] = [$format, $resource, $domain];
         }

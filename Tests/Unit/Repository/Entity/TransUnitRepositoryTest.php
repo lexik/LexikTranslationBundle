@@ -20,7 +20,13 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
         $results = $repository->getAllDomainsByLocale();
-        $expected = [['locale' => 'de', 'domain' => 'superTranslations'], ['locale' => 'en', 'domain' => 'messages'], ['locale' => 'en', 'domain' => 'superTranslations'], ['locale' => 'fr', 'domain' => 'messages'], ['locale' => 'fr', 'domain' => 'superTranslations']];
+        $expected = [
+            ['locale' => 'de', 'domain' => 'superTranslations'],
+            ['locale' => 'en', 'domain' => 'messages'], 
+            ['locale' => 'en', 'domain' => 'superTranslations'], 
+            ['locale' => 'fr', 'domain' => 'messages'], 
+            ['locale' => 'fr', 'domain' => 'superTranslations']
+        ];
 
         $this->assertSame($expected, $results);
     }
