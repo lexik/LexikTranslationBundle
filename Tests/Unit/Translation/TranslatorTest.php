@@ -7,10 +7,8 @@ use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
 use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Translator tests.
@@ -184,7 +182,7 @@ class TranslatorMock extends Translator
     public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
     {
         if ('database' === $format) {
-            $this->dbResources[$locale][] = [$format, $resource, $domain-'bla'];
+            $this->dbResources[$locale][] = [$format, $resource, $domain];
         }
 
         parent::addResource($format, $resource, $locale, $domain);
