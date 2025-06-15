@@ -9,28 +9,38 @@ use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
 
 /**
  * Translator service class.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translator
+class Translator extends SymfonyTranslator
 {
     public function __construct(
-        private BaseTranslator $baseTranslator,
-        private ContainerInterface $container,
+        protected ContainerInterface $container,
         private MessageFormatter $formatter,
-        private array $loaderIds,
+        protected array $loaderIds,
         private string $defaultLocale,
-        private array $options
+        protected array $options
     ) {
-        $this->baseTranslator = $baseTranslator;
+        
         $this->container = $container;
         $this->formatter = $formatter;
         $this->loaderIds = $loaderIds;
         $this->defaultLocale = $defaultLocale;
         $this->options = $options;
+        parent::__construct(
+            container: $this->container,
+            formatter: $this->formatter,
+            defaultLocale: $this->defaultLocale,
+            loaderIds: $this->loaderIds,
+            options: $this->options,
+            enabledLocales: []
+        );
+        $this->initialize();
     }
 
     /**
@@ -39,7 +49,7 @@ class Translator
     public function addDatabaseResources()
     {
         $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
-        $cache = new ConfigCache($file, $this->options['debug']);
+        $cache = new ConfigCache($file, $this->options['debug'] ?? false);
 
         if (!$cache->isFresh()) {
             $event = new GetDatabaseResourcesEvent();
@@ -52,7 +62,7 @@ class Translator
                 $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
             }
 
-            $this->baseTranslator->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
             $content = sprintf("<?php return %s;", var_export($resources, true));
             $cache->write($content, $metadata);
         } else {
@@ -60,7 +70,7 @@ class Translator
         }
 
         foreach ($resources as $resource) {
-            $this->baseTranslator->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
         }
     }
 
