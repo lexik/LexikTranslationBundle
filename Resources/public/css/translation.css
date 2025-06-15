@@ -23,8 +23,16 @@
     width: 60px;
 }
 
+.col-hide {
+    display: none;
+}
+
 .pagination {
     margin: 0;
+}
+
+.pagination li > a {
+    cursor: pointer;
 }
 
 .table-overview .progress {
@@ -39,4 +47,20 @@ table .actions {
 
 table button.delete {
     padding: 2px 5px;
+}
+
+.disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    text-decoration: none;
+    color: gray !important;
+}
+
+.content div.actions {
+    display: flex;
+    gap: 5px;
+}
+
+.content div.action.action-button {
+    margin: 0;
 }

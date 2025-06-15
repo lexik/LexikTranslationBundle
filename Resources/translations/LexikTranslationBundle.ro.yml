@@ -6,6 +6,7 @@ translations:
     cache_removed:       "Fișierul cache a fost șters"
     new_translation:     "Noua traducere"
     add_translation:     "Adăugați o traducere"
+    confirm_delete:      "Doriți cu adevărat să ștergeți această traducere?"
     save:                "Salvează"
     save_add:            "Salvează și adaugă"
     page_title:          "Traduceri"
