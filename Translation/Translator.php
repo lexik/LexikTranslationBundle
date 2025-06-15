@@ -32,6 +32,11 @@ class Translator extends SymfonyTranslator
         $this->loaderIds = $loaderIds;
         $this->defaultLocale = $defaultLocale;
         $this->options = $options;
+
+        $this->options['resource_files'] = $this->options['resource_files'] ?? [];
+        $this->options['scanned_directories'] = $this->options['scanned_directories'] ?? [];
+        $this->options['cache_vary'] = $this->options['cache_vary'] ?? [];
+        
         parent::__construct(
             container: $this->container,
             formatter: $this->formatter,
