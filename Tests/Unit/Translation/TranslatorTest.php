@@ -137,8 +137,8 @@ class TranslatorTest extends BaseUnitTestCase
         return new TranslatorMock(
             container: $container, 
             formatter: new MessageFormatter(), 
-            loaderIds: $loaderIds, 
             defaultLocale: 'en', 
+            loaderIds: $loaderIds, 
             options: $options
         );
     }

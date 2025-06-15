@@ -22,8 +22,8 @@ class Translator extends SymfonyTranslator
     public function __construct(
         protected ContainerInterface $container,
         private MessageFormatter $formatter,
-        protected array $loaderIds,
         private string $defaultLocale,
+        protected array $loaderIds,
         protected array $options
     ) {
         
