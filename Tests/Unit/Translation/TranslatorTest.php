@@ -44,7 +44,6 @@ class TranslatorTest extends BaseUnitTestCase
             'fr' => [
                 ['database', 'DB', 'messages'], 
                 ['database', 'DB', 'superTranslations'],
-                ['database', 'DB', 'superTranslations']
             ]
         ];
 

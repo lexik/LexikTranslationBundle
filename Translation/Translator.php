@@ -68,10 +68,9 @@ class Translator extends SymfonyTranslator
             $metadata = [];
 
             foreach ($resources as $resource) {
-                $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
+                $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain'] ?? 'messages');
             }
 
-            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
             $content = sprintf("<?php return %s;", var_export($resources, true));
             $cache->write($content, $metadata);
         } else {
@@ -79,7 +78,7 @@ class Translator extends SymfonyTranslator
         }
 
         foreach ($resources as $resource) {
-            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $this->addResource('database', 'DB', $resource['locale'], $resource['domain'] ?? 'messages');
         }
     }
 
