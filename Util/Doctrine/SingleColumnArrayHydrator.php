@@ -14,7 +14,7 @@ class SingleColumnArrayHydrator extends AbstractHydrator
     /**
      * {@inheritdoc}
      */
-    protected function hydrateAllData(): mixed
+    protected function hydrateAllData(): array
     {
         $result = [];
 

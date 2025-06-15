@@ -33,6 +33,7 @@ interface TransUnitManagerInterface
      * @param TransUnitInterface    $transUnit
      * @param string                $locale
      * @param string                $content
+     * @param FileInterface|null    $file
      * @param boolean               $flush
      * @return ?TranslationInterface
      */
