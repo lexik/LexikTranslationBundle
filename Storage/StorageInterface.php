@@ -4,6 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use DateTime;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 
 /**
  * Translation storage interface.
