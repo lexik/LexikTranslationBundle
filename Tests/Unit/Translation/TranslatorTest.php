@@ -22,7 +22,7 @@ class TranslatorTest extends BaseUnitTestCase
     /**
      * @group translator
      */
-    public function testAddDatabaseResources()
+    public function testAddDatabaseResources(): void
     {
         $em = $this->getMockSqliteEntityManager();
         $this->createSchema($em);
@@ -35,14 +35,25 @@ class TranslatorTest extends BaseUnitTestCase
         $translator = $this->createTranslator($em, sys_get_temp_dir());
         $translator->addDatabaseResources();
 
-        $expected = ['de' => [['database', 'DB', 'superTranslations']], 'en' => [['database', 'DB', 'messages'], ['database', 'DB', 'superTranslations']], 'fr' => [['database', 'DB', 'messages'], ['database', 'DB', 'superTranslations']]];
+        $expected = [
+            'de' => [
+                ['database', 'DB', 'superTranslations']
+            ], 
+            'en' => [
+                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'superTranslations']], 
+            'fr' => [
+                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'superTranslations']
+            ]
+        ];
         $this->assertEquals($expected, $translator->dbResources);
     }
 
     /**
      * @group translator
      */
-    public function testRemoveCacheFile()
+    public function testRemoveCacheFile(): void
     {
         $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
@@ -72,7 +83,7 @@ class TranslatorTest extends BaseUnitTestCase
     /**
      * @group translator
      */
-    public function testRemoveLocalesCacheFiles()
+    public function testRemoveLocalesCacheFiles(): void
     {
         $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
@@ -99,7 +110,7 @@ class TranslatorTest extends BaseUnitTestCase
         $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php.meta'));
     }
 
-    protected function createTranslator($em, $cacheDir)
+    protected function createTranslator($em, $cacheDir): TranslatorMock
     {
         $listener = new GetDatabaseResourcesListener($this->getORMStorage($em), 'xxxxx');
 
@@ -109,21 +120,32 @@ class TranslatorTest extends BaseUnitTestCase
             $listener->onGetDatabaseResources(...)
         );
 
-        $baseTranslator = $this->createMock(TranslatorInterface::class);
-        $baseTranslator->method('getLocale')->willReturn('en');
-
         $container = new Container();
         $container->setParameter('kernel.default_locale', 'en');
         $container->set('event_dispatcher', $dispatcher);
         $container->compile();
 
         $loaderIds = [];
-        $options = ['cache_dir' => $cacheDir];
+        $options = [
+            'cache_dir' => $cacheDir,
+            'debug' => true,
+            'resource_files' => [],
+            'cache_vary' => [],
+            'scanned_directories' => [],
+            'enabled_locales' => ['en', 'fr'],
+            'default_locale' => 'en',
+        ];
 
-        return new TranslatorMock($baseTranslator, new MessageFormatter(), 'en', $loaderIds, $options);
+        return new TranslatorMock(
+            container: $container, 
+            formatter: new MessageFormatter(), 
+            loaderIds: $loaderIds, 
+            defaultLocale: 'en', 
+            options: $options
+        );
     }
 
-    protected function createFakeCacheFiles($cacheDir)
+    protected function createFakeCacheFiles($cacheDir): void
     {
         if (!is_dir($cacheDir)) {
             mkdir($cacheDir);
@@ -146,15 +168,23 @@ class TranslatorTest extends BaseUnitTestCase
 class TranslatorMock extends Translator
 {
     public $dbResources = [];
-    public $options = [
+    public array $options = [
         'cache_dir' => '', 
-        'debug' => false
+        'debug' => false,
+        'resource_files' => [],
+        'cache_vary' => [],
+        'scanned_directories' => [],
+        'enabled_locales' => [],
+        'default_locale' => 'en',
+        'loader_ids' => [],
+        'formatter' => null,
+        'container' => null
     ];
 
-    public function addResource($format, $resource, $locale, $domain = 'messages'): void
+    public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
     {
-        if ('database' == $format) {
-            $this->dbResources[$locale][] = [$format, $resource, $domain];
+        if ('database' === $format) {
+            $this->dbResources[$locale][] = [$format, $resource, $domain-'bla'];
         }
 
         parent::addResource($format, $resource, $locale, $domain);
