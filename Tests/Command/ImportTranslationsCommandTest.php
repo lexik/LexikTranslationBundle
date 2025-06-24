@@ -6,7 +6,6 @@ use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
-use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -32,14 +31,14 @@ class ImportTranslationsCommandTest extends WebTestCase
         static::$kernel = static::createKernel();
         static::$kernel->boot();
 
-        static::$application = new Application(static::$kernel);
+        static::$application = new Application(kernel: static::$kernel);
         /** @var EntityManager $em */
-        $em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
-        $emProvider = new SingleManagerProvider($em);
-        $dropCommand = new DropCommand($emProvider);
-        $createCommand = new CreateCommand($emProvider);
+        $em = static::$kernel->getContainer()->get(id: 'doctrine.orm.entity_manager');
+        $emProvider = new SingleManagerProvider(entityManager: $em);
+        $dropCommand = new DropCommand(entityManagerProvider: $emProvider);
+        $createCommand = new CreateCommand(entityManagerProvider: $emProvider);
 
-        static::addDoctrineCommands($dropCommand, $createCommand);
+        static::addDoctrineCommands(dropCommand: $dropCommand, createCommand: $createCommand);
 
         static::rebuildDatabase();
     }
@@ -84,11 +83,12 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     public function testExecute()
     {
+        $container = self::$kernel->getContainer();
         static::$application->add(
-            new ImportTranslationsCommand(
-                self::$kernel->getContainer()->get('translator'),
-                self::$kernel->getContainer()->get(LocaleManagerInterface::class),
-                self::$kernel->getContainer()->get('lexik_translation.importer.file')
+            command: new ImportTranslationsCommand(
+                translator: $container->get('lexik_translation.translator'),
+                localeManager: $container->get(LocaleManagerInterface::class),
+                fileImporter: $container->get('lexik_translation.importer.file')
             )
         );
 
