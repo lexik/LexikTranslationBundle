@@ -3,25 +3,62 @@
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator as BaseTranslator;
+use Symfony\Contracts\Translation\TranslatorInterface as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\Translation\Formatter\MessageFormatter;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
 
 /**
  * Translator service class.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translator extends BaseTranslator
+class Translator extends SymfonyTranslator
 {
+    public function __construct(
+        protected ContainerInterface $container,
+        private MessageFormatter $formatter,
+        private string $defaultLocale,
+        protected array $loaderIds,
+        protected array $options
+    ) {
+        
+        $this->container = $container;
+        $this->formatter = $formatter;
+        $this->loaderIds = $loaderIds;
+        $this->defaultLocale = $defaultLocale;
+        $this->options = $options;
+        $this->resourceLocales = [];
+        $this->resources = [];
+        $this->resourceFiles = [];
+        $this->scannedDirectories = [];
+
+        $this->options['resource_files'] = $this->options['resource_files'] ?? [];
+        $this->options['scanned_directories'] = $this->options['scanned_directories'] ?? [];
+        $this->options['cache_vary'] = $this->options['cache_vary'] ?? [];
+
+        parent::__construct(
+            container: $this->container,
+            formatter: $this->formatter,
+            defaultLocale: $this->defaultLocale,
+            loaderIds: $this->loaderIds,
+            options: $this->options,
+            enabledLocales: []
+        );
+        $this->initialize();
+    }
+
     /**
      * Add all resources available in database.
      */
     public function addDatabaseResources()
     {
         $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
-        $cache = new ConfigCache($file, $this->options['debug']);
+        $cache = new ConfigCache($file, $this->options['debug'] ?? false);
 
         if (!$cache->isFresh()) {
             $event = new GetDatabaseResourcesEvent();
@@ -31,7 +68,7 @@ class Translator extends BaseTranslator
             $metadata = [];
 
             foreach ($resources as $resource) {
-                $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain']);
+                $metadata[] = new DatabaseFreshResource($resource['locale'], $resource['domain'] ?? 'messages');
             }
 
             $content = sprintf("<?php return %s;", var_export($resources, true));
@@ -41,7 +78,7 @@ class Translator extends BaseTranslator
         }
 
         foreach ($resources as $resource) {
-            $this->addResource('database', 'DB', $resource['locale'], $resource['domain']);
+            $this->addResource('database', 'DB', $resource['locale'], $resource['domain'] ?? 'messages');
         }
     }
 
