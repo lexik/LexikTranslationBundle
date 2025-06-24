@@ -21,7 +21,7 @@ class TransUnitData implements FixtureInterface
      * (non-PHPdoc)
      * @see \Doctrine\Common\DataFixtures.FixtureInterface::load()
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         // add files
         $files = [];
