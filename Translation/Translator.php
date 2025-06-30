@@ -19,6 +19,11 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
  */
 class Translator extends SymfonyTranslator
 {
+    protected array $resourceLocales = [];
+    protected array $resources = [];
+    protected array $resourceFiles = [];
+    protected array $scannedDirectories = [];
+
     public function __construct(
         protected ContainerInterface $container,
         private MessageFormatter $formatter,
