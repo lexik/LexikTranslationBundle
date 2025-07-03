@@ -63,6 +63,10 @@
             <argument key="$loaderIds" type="collection"></argument>
             <argument key="$options" type="collection" >
                 <argument key="cache_dir">%kernel.cache_dir%</argument>
+                <argument key="debug">%kernel.debug%</argument>
+                <argument key="resource_files" type="collection" />
+                <argument key="scanned_directories" type="collection" />
+                <argument key="cache_vary" type="collection" />
             </argument>
         </service>
         <service id="lexik_translation.translator" alias="Lexik\Bundle\TranslationBundle\Translation\Translator" public="true"/>

@@ -45,6 +45,8 @@ class Translator extends SymfonyTranslator
         $this->options['resource_files'] = $this->options['resource_files'] ?? [];
         $this->options['scanned_directories'] = $this->options['scanned_directories'] ?? [];
         $this->options['cache_vary'] = $this->options['cache_vary'] ?? [];
+        $this->options['cache_dir'] = $this->options['cache_dir'] ?? sys_get_temp_dir();
+        $this->options['debug'] = $this->options['debug'] ?? false;
 
         parent::__construct(
             container: $this->container,
