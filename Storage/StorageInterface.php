@@ -86,16 +86,16 @@ interface StorageInterface
      * Returns a TransUnit by its id.
      *
      * @param int $id
-     * @return TransUnitInterface
+     * @return TransUnitInterface|null
      */
-    public function getTransUnitById($id): TransUnitInterface;
+    public function getTransUnitById($id): ?TransUnitInterface;
 
     /**
      * Returns a TransUnit by its key and domain.
      *
      * @param string $key
      * @param string $domain
-     * @return TransUnitInterface
+     * @return TransUnitInterface|null
      */
     public function getTransUnitByKeyAndDomain(string $key, string $domain): ?TransUnitInterface;
 
