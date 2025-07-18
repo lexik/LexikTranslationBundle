@@ -119,7 +119,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitById($id): TransUnitInterface
+    public function getTransUnitById($id): ?TransUnitInterface
     {
         return $this->getTransUnitRepository()->findOneById($id);
     }
