@@ -239,17 +239,19 @@ class ImportTranslationsCommand extends Command
             $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
             $finder = $this->findTranslationsFiles($path, $locales, $domains);
             $this->importTranslationFiles($finder);
-        } else {
-            $paths = [
-                $bundle->getPath() . '/translations',
-                $bundle->getPath() . '/Resources/translations',
-            ];
 
-            foreach($paths as $path) {
-    	        $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
-    	        $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
-                $this->importTranslationFiles($finder);
-            }
+            return;
+        }
+
+        $paths = [
+            $bundle->getPath() . '/translations',
+            $bundle->getPath() . '/Resources/translations',
+        ];
+
+        foreach($paths as $path) {
+            $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
+            $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
+            $this->importTranslationFiles($finder);
         }
     }
 
