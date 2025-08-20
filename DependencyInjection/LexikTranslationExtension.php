@@ -274,6 +274,10 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                     $dirs[] = $dir;
                 }
 
+                if (is_dir($dir = dirname($reflection->getFileName(), 2).'/translations')) {
+                    $dirs[] = $dir;
+                }
+
                 if (is_dir($dir = sprintf($overridePath, $bundle))) {
                     $dirs[] = $dir;
                 }
