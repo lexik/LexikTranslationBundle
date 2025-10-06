@@ -49,6 +49,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.storage', $config['storage']);
+        $container->setParameter('lexik_translation.resources_type', $config['resources_registration']['type']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
@@ -315,11 +316,6 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
                     $translator->addMethodCall('addResource', [$format, (string) $file, $locale, $domain]);
                 }
             }
-        }
-
-        // add resources from database
-        if ('all' === $registration['type'] || 'database' === $registration['type']) {
-            $translator->addMethodCall('addDatabaseResources', []);
         }
     }
 }

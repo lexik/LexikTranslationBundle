@@ -1,5 +1,6 @@
 vendor
 composer.lock
+.idea
 
 Tests/app/tmp/
 .phpunit.result.cache
