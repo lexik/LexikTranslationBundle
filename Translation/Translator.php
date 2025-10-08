@@ -104,6 +104,10 @@ class Translator extends SymfonyTranslator
      */
     public function removeCacheFile($locale)
     {
+        if (!file_exists($this->cacheFile)) {
+            return true;
+        }
+
         $localeExploded = explode('_', $locale);
         $finder = new Finder();
         $finder->files()->in($this->options['cache_dir'])->name(sprintf( '/catalogue\.%s.*\.php$/', $localeExploded[0]));

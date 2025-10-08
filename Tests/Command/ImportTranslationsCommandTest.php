@@ -105,15 +105,15 @@ class ImportTranslationsCommandTest extends WebTestCase
             ]
         );
 
-        $resultLines = explode("\n", $commandTester->getDisplay());
+        $resultLines = explode(\PHP_EOL, $commandTester->getDisplay());
 
         $this->assertEquals('# LexikTranslationBundle:', $resultLines[0]);
         $this->assertMatchesRegularExpression('/Using dir (.)+\/translations to lookup translation files/', $resultLines[1]);
         $this->assertEquals('No file to import', $resultLines[2]);
         $this->assertEquals('# LexikTranslationBundle:', $resultLines[3]);
         $this->assertMatchesRegularExpression('/Using dir (.)+\/Resources\/translations to lookup translation files/', $resultLines[4]);
-        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[5]);
-        $this->assertMatchesRegularExpression('/translations\/LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[6]);
+        $this->assertMatchesRegularExpression('/translations\\' . \DIRECTORY_SEPARATOR . 'LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[5]);
+        $this->assertMatchesRegularExpression('/translations\\' . \DIRECTORY_SEPARATOR . 'LexikTranslationBundle\.((fr)|(en))\.yml" \.\.\. 31 translations/', $resultLines[6]);
         $this->assertEquals('Removing translations cache files ...', $resultLines[7]);
     }
 }
