@@ -58,7 +58,9 @@ class Translator extends SymfonyTranslator
 
     protected function loadCatalogue(string $locale): void
     {
-        if (!$this->isResourcesLoaded && ('all' === $this->options['resources_type'] || 'database' === $this->options['resources_type'])) {
+        $resourcesType = $this->options['resources_type'];
+
+        if (!$this->isResourcesLoaded && ('all' === $resourcesType || 'database' === $resourcesType)) {
             $this->addDatabaseResources();
         }
 
