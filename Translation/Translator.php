@@ -3,13 +3,11 @@
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
-use Symfony\Contracts\Translation\TranslatorInterface as BaseTranslator;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Config\ConfigCache;
 use Symfony\Component\Finder\Finder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
 
 /**
@@ -23,6 +21,8 @@ class Translator extends SymfonyTranslator
     protected array $resources = [];
     protected array $resourceFiles = [];
     protected array $scannedDirectories = [];
+    protected string $cacheFile;
+    private bool $isResourcesLoaded = false;
 
     public function __construct(
         protected ContainerInterface $container,
@@ -31,12 +31,6 @@ class Translator extends SymfonyTranslator
         protected array $loaderIds,
         protected array $options
     ) {
-        
-        $this->container = $container;
-        $this->formatter = $formatter;
-        $this->loaderIds = $loaderIds;
-        $this->defaultLocale = $defaultLocale;
-        $this->options = $options;
         $this->resourceLocales = [];
         $this->resources = [];
         $this->resourceFiles = [];
@@ -47,6 +41,9 @@ class Translator extends SymfonyTranslator
         $this->options['cache_vary'] = $this->options['cache_vary'] ?? [];
         $this->options['cache_dir'] = $this->options['cache_dir'] ?? sys_get_temp_dir();
         $this->options['debug'] = $this->options['debug'] ?? false;
+        $this->options['resources_type'] = $this->options['resources_type'] ?? 'all';
+
+        $this->cacheFile = sprintf('%s/database.resources.php', $this->options['cache_dir']);
 
         parent::__construct(
             container: $this->container,
@@ -59,13 +56,23 @@ class Translator extends SymfonyTranslator
         $this->initialize();
     }
 
+    protected function loadCatalogue(string $locale): void
+    {
+        $resourcesType = $this->options['resources_type'];
+
+        if (!$this->isResourcesLoaded && ('all' === $resourcesType || 'database' === $resourcesType)) {
+            $this->addDatabaseResources();
+        }
+
+        parent::loadCatalogue($locale);
+    }
+
     /**
      * Add all resources available in database.
      */
-    public function addDatabaseResources()
+    public function addDatabaseResources(): void
     {
-        $file = sprintf('%s/database.resources.php', $this->options['cache_dir']);
-        $cache = new ConfigCache($file, $this->options['debug'] ?? false);
+        $cache = new ConfigCache($this->cacheFile, $this->options['debug'] ?? false);
 
         if (!$cache->isFresh()) {
             $event = new GetDatabaseResourcesEvent();
@@ -81,12 +88,14 @@ class Translator extends SymfonyTranslator
             $content = sprintf("<?php return %s;", var_export($resources, true));
             $cache->write($content, $metadata);
         } else {
-            $resources = include $file;
+            $resources = include $this->cacheFile;
         }
 
         foreach ($resources as $resource) {
             $this->addResource('database', 'DB', $resource['locale'], $resource['domain'] ?? 'messages');
         }
+
+        $this->isResourcesLoaded = true;
     }
 
     /**
@@ -97,6 +106,10 @@ class Translator extends SymfonyTranslator
      */
     public function removeCacheFile($locale)
     {
+        if (!file_exists($this->cacheFile)) {
+            return true;
+        }
+
         $localeExploded = explode('_', $locale);
         $finder = new Finder();
         $finder->files()->in($this->options['cache_dir'])->name(sprintf( '/catalogue\.%s.*\.php$/', $localeExploded[0]));
@@ -138,6 +151,8 @@ class Translator extends SymfonyTranslator
             $this->invalidateSystemCacheForFile($metadata);
             unlink($metadata);
         }
+
+        $this->isResourcesLoaded = false;
     }
 
     /**

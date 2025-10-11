@@ -52,6 +52,7 @@
         <parameter key="lexik_translation.translator.options" type="collection">
             <parameter key="cache_dir">%kernel.cache_dir%/translations</parameter>
             <parameter key="debug">%kernel.debug%</parameter>
+            <parameter key="resources_type">%lexik_translation.resources_type%</parameter>
         </parameter>
     </parameters>
 
