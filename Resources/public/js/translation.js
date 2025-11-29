@@ -157,9 +157,9 @@ const TranslationManager = (() => {
     {
         _showCol[column] = checked;
 
-        document.getElementById('header-' + column).classList.toggle('col-hide', !checked);
+        document.getElementById('header-' + column).classList.toggle('hide', !checked);
         document.querySelectorAll('.col-' + column).forEach(element => {
-            element.classList.toggle('col-hide', !checked);
+            element.classList.toggle('hide', !checked);
         });
 
         if (translationCfg.toggleSimilar) {
@@ -168,10 +168,10 @@ const TranslationManager = (() => {
                 input.checked = checked;
             });
             document.querySelectorAll('[id^="header-' + column + '_"]').forEach(element => {
-                element.classList.toggle('col-hide', !checked);
+                element.classList.toggle('hide', !checked);
             });
             document.querySelectorAll('[class^="col-' + column + '_"]').forEach(element => {
-                element.classList.toggle('col-hide', !checked);
+                element.classList.toggle('hide', !checked);
             });
         }
     }
@@ -424,7 +424,7 @@ const TranslationManager = (() => {
 
         return `
             <tr class="content">
-                <td class="col-_id ${_showCol['_id'] === false ? 'col-hide' : ''}">
+                <td class="col-_id ${_showCol['_id'] === false ? 'hide' : ''}">
                     <span>${item._id}</span>
                     <div on="editType">
                     </div>
@@ -434,7 +434,7 @@ const TranslationManager = (() => {
                         </button>
                     </div>
                 </td>
-                <td class="col-_domain ${_showCol['_domain'] === false ? 'col-hide' : ''}">
+                <td class="col-_domain ${_showCol['_domain'] === false ? 'hide' : ''}">
                     <span>${item._domain}</span>
                     <div on="editType">
                     </div>
@@ -444,7 +444,7 @@ const TranslationManager = (() => {
                         </button>
                     </div>
                 </td>
-                <td class="col-_key ${_showCol['_key'] === false ? 'col-hide' : ''}">
+                <td class="col-_key ${_showCol['_key'] === false ? 'hide' : ''}">
                     <span>${item._key}</span>
                     <div on="editType">
                     </div>
@@ -455,7 +455,7 @@ const TranslationManager = (() => {
                     </div>
                 </td>
                 ${Object.keys(item).filter(key => key !== '_id' && key !== '_domain' && key !== '_key').map(locale => `
-                    <td class="col-${locale} ${_showCol[locale] === false ? 'col-hide' : ''}">
+                    <td class="col-${locale} ${_showCol[locale] === false ? 'hide' : ''}">
                         <span id="content-${item._id}-${locale}" class="locale">${escapeHtml(item[locale])}</span>
                         <div>
                             ${renderInputElement(item._id, locale, item[locale])}

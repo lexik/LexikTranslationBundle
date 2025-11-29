@@ -21,14 +21,14 @@ use Symfony\Component\HttpKernel\Kernel;
 class AppKernel extends Kernel
 {
     private $testCase;
-    private $rootConfig;
+    private string $rootConfig;
 
     public function __construct($testCase, $debug = true)
     {
         $environment = $testCase;
 
         if (!is_dir(__DIR__ . '/' . $testCase)) {
-            throw new \InvalidArgumentException(sprintf('The test case "%s" does not exist.', $testCase));
+            throw new InvalidArgumentException(sprintf('The test case "%s" does not exist.', $testCase));
         }
         $this->testCase = $testCase;
 
@@ -40,7 +40,7 @@ class AppKernel extends Kernel
                 $rootConfig = __DIR__ . '/' . $testCase . '/' . $rootConfig
             )
         ) {
-            throw new \InvalidArgumentException(sprintf('The root config "%s" does not exist.', $rootConfig));
+            throw new InvalidArgumentException(sprintf('The root config "%s" does not exist.', $rootConfig));
         }
         $this->rootConfig = $rootConfig;
 
@@ -50,13 +50,13 @@ class AppKernel extends Kernel
     public function registerBundles(): iterable
     {
         if (!file_exists($filename = $this->getRootDir() . '/' . $this->testCase . '/bundles.php')) {
-            throw new \RuntimeException(sprintf('The bundles file "%s" does not exist.', $filename));
+            throw new RuntimeException(sprintf('The bundles file "%s" does not exist.', $filename));
         }
 
         return include $filename;
     }
 
-    public function getRootDir()
+    public function getRootDir(): string
     {
         return __DIR__;
     }
@@ -71,17 +71,20 @@ class AppKernel extends Kernel
         return $this->getRootDir() . '/tmp/' . $this->testCase . '/logs';
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    /**
+     * @throws Exception
+     */
+    public function registerContainerConfiguration(LoaderInterface $loader): void
     {
         $loader->load($this->rootConfig);
     }
 
-    public function serialize()
+    public function serialize(): string
     {
         return serialize([$this->testCase, $this->rootConfig, $this->getEnvironment(), $this->isDebug()]);
     }
 
-    public function unserialize($str)
+    public function unserialize($str): void
     {
         call_user_func_array([$this, '__construct'], unserialize($str));
     }
