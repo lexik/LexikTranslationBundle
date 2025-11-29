@@ -155,7 +155,6 @@ const TranslationManager = (() => {
 
     const toggleColumn = (column, checked) =>
     {
-        console.log('toggling column ', column, checked);
         _showCol[column] = checked;
 
         document.getElementById('header-' + column).classList.toggle('hide', !checked);
