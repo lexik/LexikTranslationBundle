@@ -23,7 +23,6 @@
     ],
     "require": {
         "php": "^8.1|^8.2|^8.3|^8.4",
-        "doctrine/doctrine-bundle": "^2.2",
         "doctrine/orm": "^3",
         "monolog/monolog": "^3.2",
         "symfony/asset": "^7.0",
@@ -41,6 +40,7 @@
         "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4|^2.0",
         "doctrine/data-fixtures": "^1.1|^2.0",
+        "doctrine/doctrine-bundle": "^2.2",
         "doctrine/mongodb-odm": "^2.7",
         "doctrine/mongodb-odm-bundle": "^5.0",
         "mikey179/vfsstream": "^1.6",
