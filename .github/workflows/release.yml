@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Build frontend assets
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+      - name: Create release archive
+        run: |
+          mkdir -p release
+          # Exclude development files
+          tar --exclude='.git' \
+              --exclude='node_modules' \
+              --exclude='.vite' \
+              --exclude='assets' \
+              --exclude='.github' \
+              --exclude='Tests' \
+              --exclude='.php_cs' \
+              --exclude='phpunit.xml.dist' \
+              --exclude='vite.config.ts' \
+              --exclude='tsconfig.json' \
+              --exclude='package.json' \
+              --exclude='pnpm-lock.yaml' \
+              --exclude='.npmrc' \
+              -czf release/lexik-translation-bundle-${{ steps.version.outputs.version }}.tar.gz .
+
+      - name: Extract CHANGELOG
+        id: changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            # Extract version section from CHANGELOG
+            VERSION=${{ steps.version.outputs.version }}
+            awk "/^## \[$VERSION\]/,/^## \[/" CHANGELOG.md | sed '$d' > release-notes.md
+          elif [ -f docs/CHANGELOG.md ]; then
+            VERSION=${{ steps.version.outputs.version }}
+            awk "/^## \[$VERSION\]/,/^## \[/" docs/CHANGELOG.md | sed '$d' > release-notes.md
+          else
+            echo "## Release ${{ steps.version.outputs.version }}" > release-notes.md
+            echo "" >> release-notes.md
+            echo "See commit history for changes." >> release-notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release/*.tar.gz
+          body_path: release-notes.md
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

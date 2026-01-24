@@ -1,3 +1,25 @@
+# Stage 1: Build frontend assets
+FROM node:20-alpine AS frontend-builder
+
+# Install pnpm
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json pnpm-lock.yaml* ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source files
+COPY assets/ ./assets/
+COPY vite.config.ts tsconfig.json ./
+
+# Build assets
+RUN pnpm run build
+
+# Stage 2: PHP environment for tests
 FROM php:8.4-cli-bullseye
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
@@ -21,8 +43,13 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
+# Copy all files
 COPY . .
 
+# Copy compiled assets from frontend-builder stage
+COPY --from=frontend-builder /app/Resources/public/ ./Resources/public/
+
+# Instalar dependencias PHP
 RUN composer install --prefer-dist --no-progress
 
 CMD ["composer", "test"]
