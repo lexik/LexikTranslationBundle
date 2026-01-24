@@ -1,6 +1,34 @@
-vendor
-composer.lock
-.idea
+# Node
+node_modules/
+.pnpm-store/
+dist/
 
-Tests/app/tmp/
-.phpunit.result.cache
+# Vite
+.vite/
+
+# Build output (NOT ignored - assets must be committed to repo)
+# Resources/public/js/translation.js - MUST be committed
+# Resources/public/css/translation.css - MUST be committed
+# Note: Assets are compiled before release and must be in the repository
+# so they're available when users install the bundle via Composer
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+.docs/
+.demo/

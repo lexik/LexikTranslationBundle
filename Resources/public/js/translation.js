@@ -1,512 +1,61 @@
-const TranslationManager = (() => {
-
-    let translationCfg = {};
-    let _currentPage = 1;
-    let _totalPages = 0;
-    let _order = 'id';
-    let _direction = 'asc';
-    let _showColSelector = false;
-    let _showCol = {};
-
-    const init = (config) =>
-    {
-        translationCfg = config;
-
-        const debounceTimeouts = {};
-
-        document.addEventListener('DOMContentLoaded', function () {
-            reloadGrid();
-
-            document.querySelectorAll('.input-sm').forEach(input => {
-                input.addEventListener('keyup', function() {
-                    if (debounceTimeouts[this.id]) {
-                        clearTimeout(debounceTimeouts[this.id]);
-                    }
-                    debounceTimeouts[this.id] = setTimeout(() => {
-                        _currentPage = 1;
-                        _order = 'id';
-                        _direction = 'asc';
-                        reloadGrid();
-                    }, 200);
-                });
-            });
-        });
-    };
-
-    const sharedMessage = {
-        element: document.getElementById('sharedMessage'),
-        css: '',
-        icon: '',
-        content: '',
-
-        set: function (css, icon, content) {
-            this.css = css;
-            this.icon = icon;
-            this.content = content;
-        },
-
-        show: function (css, icon, content) {
-            this.set(css, icon, content);
-            this.element.classList.add('label-' + this.css);
-            this.element.innerHTML = '<span><i class="glyphicon glyphicon-' + this.icon + '"></i> ' + this.content + '</span>';
-            this.element.style.display = 'block';
-        },
-
-        reset: function () {
-            this.element.classList.remove('label-' + this.css);
-            this.element.style.display = 'none';
-            this.set('', '', '');
-        }
-    };
-
-    const translationApiManager = {
-        token: null,
-
-        setToken: function (token) {
-            this.token = token;
-        },
-
-        getPage: async function () {
-
-            let parameters = {
-                sidx: _order,
-                sord: _direction,
-                page: _currentPage,
-                rows: translationCfg.maxPageNumber
-            };
-
-            addFilteredValuesToParams(parameters);
-
-            return await fetch(translationCfg.url.list + '?' + new URLSearchParams(parameters));
-        },
-
-        invalidateCache: async function () {
-            const url = translationCfg.url.invalidateCache;
-            const parameters = this.initializeParametersWithCsrf();
-
-            return await fetch(url + '?' + new URLSearchParams(parameters), {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            });
-        },
-
-        updateTranslation: async function (translationId, params) {
-            const url = translationCfg.url.update.replace('-id-', translationId);
-
-            const parameters = this.initializeParametersWithCsrf();
-            Object.assign(parameters, params);
-
-            return await fetch(url, {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                body: new URLSearchParams(parameters)
-            });
-        },
-
-        deleteTranslationLocale: async function (translationId, locale) {
-            const url = translationCfg.url.deleteLocale
-                .replace('-id-', translationId)
-                .replace('-locale-', locale);
-
-            const parameters = this.initializeParametersWithCsrf();
-
-            return await fetch(url + '?' + new URLSearchParams(parameters), {
-                method: 'DELETE'
-            });
-        },
-
-        deleteTranslation: async function (translationId) {
-            const url = translationCfg.url.delete.replace('-id-', translationId);
-            const parameters = this.initializeParametersWithCsrf();
-
-            return await fetch(url + '?' + new URLSearchParams(parameters), {
-                method: 'DELETE'
-            });
-        },
-
-        initializeParametersWithCsrf: function() {
-            const parameters = {};
-
-            if (translationCfg.csrfToken) {
-                parameters._token = translationCfg.csrfToken;
-            }
-
-            return parameters;
-        }
-    };
-
-    const toggleColSelector = () =>
-    {
-        _showColSelector = !_showColSelector;
-
-        if (_showColSelector) {
-            document.getElementById('columnsSelector').style.display = 'block';
-        } else {
-            document.getElementById('columnsSelector').style.display = 'none';
-        }
-    }
-
-    const toggleAllColumns = (checked) =>
-    {
-        document.getElementById('toogle-list').querySelectorAll('[id^="toggle-"]').forEach(input => {
-            input.checked = checked;
-            toggleColumn(input.id.replace('toggle-', ''), checked);
-        });
-    }
-
-    const toggleColumn = (column, checked) =>
-    {
-        _showCol[column] = checked;
-
-        document.getElementById('header-' + column).classList.toggle('hide', !checked);
-        document.querySelectorAll('.col-' + column).forEach(element => {
-            element.classList.toggle('hide', !checked);
-        });
-
-        if (translationCfg.toggleSimilar) {
-            document.querySelectorAll('[id^="toggle-' + column + '_"]').forEach(input => {
-                _showCol[input.id.replace('toggle-', '')] = checked;
-                input.checked = checked;
-            });
-            document.querySelectorAll('[id^="header-' + column + '_"]').forEach(element => {
-                element.classList.toggle('hide', !checked);
-            });
-            document.querySelectorAll('[class^="col-' + column + '_"]').forEach(element => {
-                element.classList.toggle('hide', !checked);
-            });
-        }
-    }
-
-    const enableMode = (mode, lexikTranslationId) =>
-    {
-        const locales = translationCfg.locales;
-        const editButton = document.getElementById('editButton-' + lexikTranslationId);
-        const deleteButton = document.getElementById('deleteButton-' + lexikTranslationId);
-        const saveButton = document.getElementById('saveButton-' + lexikTranslationId);
-        const cancelButton = document.getElementById('cancelButton-' + lexikTranslationId);
-
-        if (mode === 'edit') {
-            sharedMessage.reset();
-            editButton.style.display = 'none';
-            deleteButton.style.display = 'none';
-            saveButton.style.display = 'block';
-            cancelButton.style.display = 'block';
-            for (let i = 0; i < locales.length; i++) {
-                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
-                document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
-            }
-        } else if (mode === 'view') {
-            editButton.style.display = 'block';
-            deleteButton.style.display = 'block';
-            saveButton.style.display = 'none';
-            cancelButton.style.display = 'none';
-            for (let i = 0; i < locales.length; i++) {
-                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
-                document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
-                document.getElementById('btnDelete-' + lexikTranslationId + '-' + locales[i]).style.display = 'none';
-                document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'none';
-            }
-        } else if (mode === 'delete') {
-            sharedMessage.reset();
-            editButton.style.display = 'none';
-            deleteButton.style.display = 'none';
-            cancelButton.style.display = 'block';
-            for (let i = 0; i < locales.length; i++) {
-                if (document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent.trim() !== '') {
-                    document.getElementById('btnDelete-' + lexikTranslationId + '-' + locales[i]).style.display = 'block';
-                    document.getElementById('btnKeyDelete-' + lexikTranslationId).style.display = 'block';
-                }
-            }
-        }
-    };
-
-    const save = (lexikTranslationId) =>
-    {
-        let update = false;
-        const locales = translationCfg.locales;
-
-        for (let i = 0; i < locales.length; i++) {
-            let oldValue = document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent;
-            let newValue = document.getElementById('inputContent-' + lexikTranslationId + '-' + locales[i]).value;
-            if (oldValue !== newValue) {
-                update = true;
-                document.getElementById('content-' + lexikTranslationId + '-' + locales[i]).textContent = newValue;
-            }
-        }
-        if (update) {
-            saveEntry(lexikTranslationId);
-        }
-
-        enableMode('view', lexikTranslationId);
-    }
-
-    const saveEntry = (lexikTranslationId) =>
-    {
-        let params = {};
-        let saveButton = document.getElementById('saveButton-' + lexikTranslationId);
-        let trElement = saveButton.closest('tr.content');
-        let tdElements = trElement.querySelectorAll('td[class^="col-"]');
-        tdElements.forEach(function (td, index) {
-            let span = td.querySelector('span');
-            let col = td.classList[0].replace('col-', '');
-            params[col] = span.textContent;
-        });
-
-        translationApiManager.updateTranslation(lexikTranslationId, params).then(function (response) {
-            if (response.status === 200) {
-                response.json().then(function (data) {
-                    sharedMessage.show('success', 'ok-circle', translationCfg.label.updateSuccess.replace('%id%', data._key));
-                });
-            } else {
-                sharedMessage.show('danger', 'remove-circle', translationCfg.label.updateFail.replace('%id%', lexikTranslationId));
-            }
-        });
-
-    };
-
-    const deleteEntry = (lexikTranslationId, locale) =>
-    {
-        if (confirm(translationCfg.label.deleteConfirm)) {
-            if (locale === null) {
-                translationApiManager.deleteTranslation(lexikTranslationId).then(function (response) {
-                    if (response.status === 200) {
-                        let data = response.json();
-                        sharedMessage.show('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
-                        reloadGrid();
-                    } else {
-                        sharedMessage.show('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', lexikTranslationId));
-                    }
-                });
-            } else {
-                translationApiManager.deleteTranslationLocale(lexikTranslationId, locale).then(function (response) {
-                    if (response.status === 200) {
-                        let data = response.json();
-                        enableMode('view', lexikTranslationId);
-                        document.getElementById('inputContent-' + lexikTranslationId + '-' + locale).value = '';
-                        document.getElementById('content-' + lexikTranslationId + '-' + locale).innerText = '';
-                        sharedMessage.show('success', 'ok-circle', translationCfg.label.deleteSuccess.replace('%id%', data._key));
-                    } else {
-                        sharedMessage.show('danger', 'remove-circle', translationCfg.label.deleteFail.replace('%id%', lexikTranslationId));
-                    }
-                });
-            }
-        }
-    };
-
-    const invalidateCache = () =>
-    {
-        translationApiManager.invalidateCache().then(function (response) {
-            if (response.status === 200) {
-                response.json().then(function (data) {
-                    sharedMessage.show('success', 'ok-circle', data.message);
-                });
-            } else {
-                sharedMessage.show('danger', 'remove-circle', 'Error');
-            }
-        });
-    }
-
-    const reloadGrid = () =>
-    {
-        translationApiManager.getPage().then(function (response) {
-            if (response.status === 200) {
-                response.json().then(function (data) {
-                    let table = '';
-                    data.translations.forEach(function (item) {
-                        table += constructHtmlTr(item);
-                    });
-
-                    _totalPages = getMaxPageNumber(data.total);
-                    document.querySelector('.table tbody').innerHTML = table;
-                    document.querySelector('.info-no-translation').style.display = data.total === 0 ? 'block' : 'none';
-                    managePagesChanger();
-                });
-            } else {
-                sharedMessage.show('danger', 'remove-circle', 'Error');
-            }
-        }).catch(error => {
-            console.error('Request failed', error);
-        });
-    };
-
-    const sortColumn = (column, direction) =>
-    {
-        _order = column;
-        _direction = direction;
-
-        reverseNextSortOrder(_order, _direction);
-        reloadGrid();
-    };
-
-    const reverseNextSortOrder = (_order, _direction) =>
-    {
-        let nextSortOrder = _direction === 'asc' ? 'desc' : 'asc';
-        document.getElementById('header-' + _order).setAttribute(
-            'onclick', "TranslationManager.sortColumn('" + _order + "', '" + nextSortOrder + "')"
-        );
-    };
-
-    const changePage = (page) =>
-    {
-        _currentPage = page;
-        reloadGrid();
-    };
-
-    const managePagesChanger = () =>
-    {
-        const pagination = document.querySelector('.pagination');
-
-        if (_totalPages === 0) {
-            pagination.style.display = 'none';
-        } else {
-            pagination.style.display = 'block';
-
-            let startPage = Math.max(_currentPage - 5, 1);
-            let endPage = Math.min(_currentPage + 5, _totalPages);
-
-            let additionalHTML = '<li><a class="prev">&laquo;</a></li>';
-            for (let i = startPage; i <= endPage; i++) {
-                if (i === _currentPage) {
-                    additionalHTML += '<li><a class="page-' + i + ' disabled" href="#">' + i + '</a></li>';
-                } else {
-                    additionalHTML += '<li><a class="page-' + i + '" onclick="TranslationManager.changePage(' + i + ')">' + i + '</a></li>';
-                }
-            }
-            additionalHTML += '<li><a class="next">&raquo;</a></li>';
-
-            pagination.innerHTML = additionalHTML;
-
-            const prev = document.querySelector('.prev');
-            const next = document.querySelector('.next');
-
-            if (_currentPage !== 1) {
-                prev.setAttribute('onclick', "TranslationManager.changePage(" + (_currentPage - 1) + ")");
-            } else {
-                prev.classList.add('disabled');
-            }
-            if (_currentPage !== _totalPages) {
-                next.setAttribute('onclick', "TranslationManager.changePage(" + (_currentPage + 1) + ")");
-            } else {
-                next.classList.add('disabled');
-            }
-        }
-    };
-
-    const getMaxPageNumber = (total) => Math.ceil(total / translationCfg.maxPageNumber);
-
-    const addFilteredValuesToParams = (params) =>
-    {
-        let search = false;
-        let inputColumnsFiltered = document.querySelectorAll('.table input');
-
-        inputColumnsFiltered.forEach(input => {
-            let column = input.getAttribute('id');
-            let filterValue = input.value;
-            if (filterValue.trim() !== '') {
-                search = true;
-                params[column] = filterValue;
-            }
-        });
-
-        if (search) {
-            params['_search'] = true;
-        }
-    };
-
-    const constructHtmlTr = (item) =>
-    {
-        const renderInputElement = (id, locale, value) => {
-            if (translationCfg.inputType === 'textarea') {
-                return `<textarea id="inputContent-${id}-${locale}" name="column.index" class="form-control" style="display: none">${value}</textarea>`;
-            } else {
-                return `<input type="text" id="inputContent-${id}-${locale}" name="column.index" class="form-control" style="display: none" value="${value}">`;
-            }
-        };
-
-        return `
-            <tr class="content">
-                <td class="col-_id ${_showCol['_id'] === false ? 'hide' : ''}">
-                    <span>${item._id}</span>
-                    <div on="editType">
-                    </div>
-                    <div class="text-center">
-                        <button type="button" class="btn btn-link delete" style="display:none">
-                            <i class="glyphicon glyphicon-remove text-danger"></i>
-                        </button>
-                    </div>
-                </td>
-                <td class="col-_domain ${_showCol['_domain'] === false ? 'hide' : ''}">
-                    <span>${item._domain}</span>
-                    <div on="editType">
-                    </div>
-                    <div class="text-center">
-                        <button type="button" class="btn btn-link delete" style="display:none">
-                            <i class="glyphicon glyphicon-remove text-danger"></i>
-                        </button>
-                    </div>
-                </td>
-                <td class="col-_key ${_showCol['_key'] === false ? 'hide' : ''}">
-                    <span>${item._key}</span>
-                    <div on="editType">
-                    </div>
-                    <div class="text-center">
-                        <button id="btnKeyDelete-${item._id}" onclick="TranslationManager.deleteEntry(${item._id}, null)" type="button" class="btn btn-link delete" style="display:none">
-                            <i class="glyphicon glyphicon-remove text-danger"></i>
-                        </button>
-                    </div>
-                </td>
-                ${Object.keys(item).filter(key => key !== '_id' && key !== '_domain' && key !== '_key').map(locale => `
-                    <td class="col-${locale} ${_showCol[locale] === false ? 'hide' : ''}">
-                        <span id="content-${item._id}-${locale}" class="locale">${escapeHtml(item[locale])}</span>
-                        <div>
-                            ${renderInputElement(item._id, locale, item[locale])}
-                        </div>
-                        <div class="text-center">
-                            <button id="btnDelete-${item._id}-${locale}" onclick="TranslationManager.deleteEntry(${item._id}, '${locale}')" type="button" class="btn btn-link delete" style="display: none">
-                                <i class="glyphicon glyphicon-remove text-danger"></i>
-                            </button>
-                        </div>
-                    </td>
-                `).join('')}
-                <td>
-                    <div class="actions">
-                        <button id="editButton-${item._id}" onclick="TranslationManager.enableMode('edit', ${item._id})" type="button" class="btn btn-primary btn-sm">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button id="deleteButton-${item._id}" onclick="TranslationManager.enableMode('delete', ${item._id})" type="button" class="btn btn-danger btn-sm">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                        <button id="saveButton-${item._id}" onclick="TranslationManager.save(${item._id})" type="button" class="btn btn-success btn-sm" style="display: none">
-                            <span class="glyphicon glyphicon-saved"></span>
-                        </button>
-                        <button id="cancelButton-${item._id}" onclick="TranslationManager.enableMode('view', ${item._id})" type="button" class="btn btn-warning btn-sm" style="display: none">
-                            <span class="glyphicon glyphicon-ban-circle"></span>
-                        </button>
-                        <div></div>
-                    </div>
-                </td>
-            </tr>`;
-    };
-
-    const escapeHtml = (unsafe) =>
-    {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    };
-
-    return {
-        init,
-        toggleColSelector,
-        toggleAllColumns,
-        toggleColumn,
-        changePage,
-        sortColumn,
-        enableMode,
-        save,
-        deleteEntry,
-        invalidateCache
-    }
-})();
+class p{constructor(e){this.config=e,this.csrfToken=e.csrfToken}async getPage(e){const t=new URLSearchParams;return Object.entries(e).forEach(([s,n])=>{t.append(s,String(n))}),fetch(`${this.config.url.list}?${t}`)}async invalidateCache(){const e=this.getCsrfParams(),t=new URLSearchParams;return Object.entries(e).forEach(([s,n])=>{t.append(s,String(n))}),fetch(`${this.config.url.invalidateCache}?${t}`,{headers:{"X-Requested-With":"XMLHttpRequest"}})}async updateTranslation(e,t){const s=this.config.url.update.replace("-id-",String(e)),n=this.getCsrfParams();return Object.assign(n,t),fetch(s,{method:"PUT",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(n)})}async deleteTranslationLocale(e,t){const s=this.config.url.deleteLocale.replace("-id-",String(e)).replace("-locale-",t),n=this.getCsrfParams(),a=new URLSearchParams;return Object.entries(n).forEach(([i,o])=>{a.append(i,String(o))}),fetch(`${s}?${a}`,{method:"DELETE"})}async deleteTranslation(e){const t=this.config.url.delete.replace("-id-",String(e)),s=this.getCsrfParams(),n=new URLSearchParams;return Object.entries(s).forEach(([a,i])=>{n.append(a,String(i))}),fetch(`${t}?${n}`,{method:"DELETE"})}getCsrfParams(){const e={};return this.csrfToken&&(e._token=this.csrfToken),e}}class m{constructor(e="sharedMessage"){this.css="",this.icon="",this.content="",this.element=document.getElementById(e)}set(e,t,s){this.css=e,this.icon=t,this.content=s}show(e,t,s){this.element&&(this.set(e,t,s),this.element.classList.add(`label-${e}`),this.element.innerHTML=`<span><i class="glyphicon glyphicon-${t}"></i> ${s}</span>`,this.element.style.display="block")}reset(){this.element&&(this.element.classList.remove(`label-${this.css}`),this.element.style.display="none",this.set("","",""))}}function h(l){return l.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}function y(l,e,t,s){const n=h(t);return s==="textarea"?`<textarea id="inputContent-${l}-${e}" name="column.index" class="form-control" style="display: none">${n}</textarea>`:`<input type="text" id="inputContent-${l}-${e}" name="column.index" class="form-control" style="display: none" value="${n}">`}function f(l,e,t){const n=Object.keys(l).filter(a=>a!=="_id"&&a!=="_domain"&&a!=="_key").map(a=>`
+        <td class="col-${a} ${e[a]===!1?"hide":""}">
+            <span id="content-${l._id}-${a}" class="locale">${h(String(l[a]||""))}</span>
+            <div>
+                ${y(l._id,a,String(l[a]||""),t.inputType)}
+            </div>
+            <div class="text-center">
+                <button id="btnDelete-${l._id}-${a}" onclick="TranslationManager.deleteEntry(${l._id}, '${a}')" type="button" class="btn btn-link delete" style="display: none">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </button>
+            </div>
+        </td>
+    `).join("");return`
+    <tr class="content">
+        <td class="col-_id ${e._id===!1?"hide":""}">
+            <span>${l._id}</span>
+            <div on="editType"></div>
+            <div class="text-center">
+                <button type="button" class="btn btn-link delete" style="display:none">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </button>
+            </div>
+        </td>
+        <td class="col-_domain ${e._domain===!1?"hide":""}">
+            <span>${l._domain}</span>
+            <div on="editType"></div>
+            <div class="text-center">
+                <button type="button" class="btn btn-link delete" style="display:none">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </button>
+            </div>
+        </td>
+        <td class="col-_key ${e._key===!1?"hide":""}">
+            <span>${l._key}</span>
+            <div on="editType"></div>
+            <div class="text-center">
+                <button id="btnKeyDelete-${l._id}" onclick="TranslationManager.deleteEntry(${l._id}, null)" type="button" class="btn btn-link delete" style="display:none">
+                    <i class="glyphicon glyphicon-remove text-danger"></i>
+                </button>
+            </div>
+        </td>
+        ${n}
+        <td>
+            <div class="actions">
+                <button id="editButton-${l._id}" onclick="TranslationManager.enableMode('edit', ${l._id})" type="button" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                </button>
+                <button id="deleteButton-${l._id}" onclick="TranslationManager.enableMode('delete', ${l._id})" type="button" class="btn btn-danger btn-sm">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </button>
+                <button id="saveButton-${l._id}" onclick="TranslationManager.save(${l._id})" type="button" class="btn btn-success btn-sm" style="display: none">
+                    <span class="glyphicon glyphicon-saved"></span>
+                </button>
+                <button id="cancelButton-${l._id}" onclick="TranslationManager.enableMode('view', ${l._id})" type="button" class="btn btn-warning btn-sm" style="display: none">
+                    <span class="glyphicon glyphicon-ban-circle"></span>
+                </button>
+                <div></div>
+            </div>
+        </td>
+    </tr>
+  `}function b(l,e){return Math.ceil(l/e)}class ${constructor(){this.config=null,this.currentPage=1,this.totalPages=0,this.order="id",this.direction="asc",this.showColSelector=!1,this.showCol={},this.api=null,this.debounceTimeouts={},this.message=new m}init(e){console.log("[TranslationManager] init: Initializing TranslationManager",e),this.config=e,this.api=new p(e),this.showCol={_id:!0,_domain:!0,_key:!0},e.locales.forEach(t=>{this.showCol[t]=!0}),console.log("[TranslationManager] init: DOM readyState:",document.readyState),document.readyState==="loading"?(console.log("[TranslationManager] init: DOM is loading, waiting for DOMContentLoaded"),document.addEventListener("DOMContentLoaded",()=>{console.log("[TranslationManager] init: DOMContentLoaded fired"),this.initializeFilters()})):(console.log("[TranslationManager] init: DOM already loaded, executing immediately"),this.initializeFilters())}initializeFilters(){console.log("[TranslationManager] initializeFilters: Starting filter initialization"),this.waitForInputs(()=>{console.log("[TranslationManager] initializeFilters: Inputs found, applying filters from URL"),this.applyFiltersFromQueryString(),this.setupInputListeners(),console.log("[TranslationManager] initializeFilters: Reloading grid with applied filters"),this.reloadGrid()}),window.addEventListener("popstate",()=>{console.log("[TranslationManager] initializeFilters: Popstate event detected"),this.waitForInputs(()=>{this.applyFiltersFromQueryString(),this.reloadGrid()})})}waitForInputs(e,t=5e3,s=50){console.log("[TranslationManager] waitForInputs: Waiting for filter inputs to be available");const n=Date.now(),a=()=>{const i=document.querySelectorAll(".table .input-sm");console.log(`[TranslationManager] waitForInputs: Found ${i.length} input(s)`),i.length>0?(console.log("[TranslationManager] waitForInputs: Inputs available, executing callback"),e()):Date.now()-n<t?setTimeout(a,s):(console.warn("[TranslationManager] waitForInputs: Timeout waiting for filter inputs to be available."),this.setupInputListeners(),this.reloadGrid())};a()}applyFiltersFromQueryString(){const e=new URLSearchParams(window.location.search);console.log("[TranslationManager] applyFiltersFromQueryString: Current URL search:",window.location.search),console.log("[TranslationManager] applyFiltersFromQueryString: URL params count:",e.toString().split("&").length);let t=0;e.forEach((s,n)=>{if(console.log(`[TranslationManager] applyFiltersFromQueryString: Processing param - key: "${n}", value: "${s}"`),n.startsWith("filter[")&&n.endsWith("]")){const a=n.substring(7,n.length-1);console.log(`[TranslationManager] applyFiltersFromQueryString: Extracted filter key: "${a}"`);const i=document.getElementById(a);if(i){const o=decodeURIComponent(s);console.log(`[TranslationManager] applyFiltersFromQueryString: Setting input "${a}" to "${o}"`),i.value=o,t++}else console.warn(`[TranslationManager] applyFiltersFromQueryString: Input with id "${a}" not found`)}else if(n.startsWith("_")){console.log(`[TranslationManager] applyFiltersFromQueryString: Processing direct param "${n}"`);const a=document.getElementById(n);if(a){const i=decodeURIComponent(s);console.log(`[TranslationManager] applyFiltersFromQueryString: Setting input "${n}" to "${i}"`),a.value=i,t++}else console.warn(`[TranslationManager] applyFiltersFromQueryString: Input with id "${n}" not found`)}else console.log(`[TranslationManager] applyFiltersFromQueryString: Skipping param "${n}" (doesn't match filter pattern)`)}),console.log(`[TranslationManager] applyFiltersFromQueryString: Applied ${t} filter(s) from URL`)}setupInputListeners(){const e=document.querySelector(".table");e&&e.addEventListener("keyup",t=>{const s=t.target;s&&s.classList.contains("input-sm")&&s.id&&(this.debounceTimeouts[s.id]&&clearTimeout(this.debounceTimeouts[s.id]),this.debounceTimeouts[s.id]=window.setTimeout(()=>{this.currentPage=1,this.order="id",this.direction="asc",this.updateURLFromFilters(),this.reloadGrid()},200))})}updateURLFromFilters(){console.log("[TranslationManager] updateURLFromFilters: Updating URL from current filters");const e=new URLSearchParams,t=document.querySelectorAll(".table .input-sm");console.log(`[TranslationManager] updateURLFromFilters: Found ${t.length} input(s)`),t.forEach(n=>{if(n.id&&n.value.trim()!==""){const a=`filter[${n.id}]`;e.set(a,n.value),console.log(`[TranslationManager] updateURLFromFilters: Adding filter - ${a} = "${n.value}"`)}});const s=window.location.pathname+(e.toString()?"?"+e.toString():"");console.log(`[TranslationManager] updateURLFromFilters: New URL: ${s}`),window.history.pushState({path:s},"",s)}toggleColSelector(){this.showColSelector=!this.showColSelector;const e=document.getElementById("columnsSelector");e&&(e.style.display=this.showColSelector?"block":"none")}toggleAllColumns(e){const t=document.getElementById("toogle-list");t&&t.querySelectorAll('[id^="toggle-"]').forEach(s=>{s.checked=e,this.toggleColumn(s.id.replace("toggle-",""),e)})}toggleColumn(e,t){var n;this.showCol[e]=t;const s=document.getElementById(`header-${e}`);s&&s.classList.toggle("hide",!t),document.querySelectorAll(`.col-${e}`).forEach(a=>{a.classList.toggle("hide",!t)}),(n=this.config)!=null&&n.toggleSimilar&&(document.querySelectorAll(`[id^="toggle-${e}_"]`).forEach(a=>{const i=a.id.replace("toggle-","");this.showCol[i]=t,a.checked=t}),document.querySelectorAll(`[id^="header-${e}_"]`).forEach(a=>{a.classList.toggle("hide",!t)}),document.querySelectorAll(`[class^="col-${e}_"]`).forEach(a=>{a.classList.toggle("hide",!t)}))}enableMode(e,t){if(!this.config)return;const s=this.config.locales,n=document.getElementById(`editButton-${t}`),a=document.getElementById(`deleteButton-${t}`),i=document.getElementById(`saveButton-${t}`),o=document.getElementById(`cancelButton-${t}`);e==="edit"?(this.message.reset(),n&&(n.style.display="none"),a&&(a.style.display="none"),i&&(i.style.display="block"),o&&(o.style.display="block"),s.forEach(r=>{const c=document.getElementById(`content-${t}-${r}`),d=document.getElementById(`inputContent-${t}-${r}`);c&&(c.style.display="none"),d&&(d.style.display="block")})):e==="view"?(n&&(n.style.display="block"),a&&(a.style.display="block"),i&&(i.style.display="none"),o&&(o.style.display="none"),s.forEach(r=>{const c=document.getElementById(`content-${t}-${r}`),d=document.getElementById(`inputContent-${t}-${r}`),g=document.getElementById(`btnDelete-${t}-${r}`),u=document.getElementById(`btnKeyDelete-${t}`);c&&(c.style.display="block"),d&&(d.style.display="none"),g&&(g.style.display="none"),u&&(u.style.display="none")})):e==="delete"&&(this.message.reset(),n&&(n.style.display="none"),a&&(a.style.display="none"),o&&(o.style.display="block"),s.forEach(r=>{var u;const c=document.getElementById(`content-${t}-${r}`),d=document.getElementById(`btnDelete-${t}-${r}`),g=document.getElementById(`btnKeyDelete-${t}`);c&&((u=c.textContent)==null?void 0:u.trim())!==""&&(d&&(d.style.display="block"),g&&(g.style.display="block"))}))}save(e){if(!this.config)return;let t=!1;this.config.locales.forEach(n=>{const a=document.getElementById(`content-${e}-${n}`),i=document.getElementById(`inputContent-${e}-${n}`);if(a&&i){const o=a.textContent||"",r=i.value;o!==r&&(t=!0,a.textContent=r)}}),t&&this.saveEntry(e),this.enableMode("view",e)}saveEntry(e){if(!this.api||!this.config)return;const t=document.getElementById(`saveButton-${e}`);if(!t)return;const s=t.closest("tr.content");if(!s)return;const n={};s.querySelectorAll('td[class^="col-"]').forEach(i=>{const o=i.querySelector("span"),r=i.classList[0].replace("col-","");o&&r&&(n[r]=o.textContent||"")}),this.api.updateTranslation(e,n).then(i=>{i.status===200?i.json().then(o=>{this.message.show("success","ok-circle",this.config.label.updateSuccess.replace("%id%",o._key||String(e)))}):this.message.show("danger","remove-circle",this.config.label.updateFail.replace("%id%",String(e)))})}deleteEntry(e,t){!this.api||!this.config||confirm(this.config.label.deleteConfirm)&&(t===null?this.api.deleteTranslation(e).then(s=>{s.status===200?s.json().then(n=>{this.message.show("success","ok-circle",this.config.label.deleteSuccess.replace("%id%",n._key||String(e))),this.reloadGrid()}):this.message.show("danger","remove-circle",this.config.label.deleteFail.replace("%id%",String(e)))}):this.api.deleteTranslationLocale(e,t).then(s=>{s.status===200?s.json().then(n=>{this.enableMode("view",e);const a=document.getElementById(`inputContent-${e}-${t}`),i=document.getElementById(`content-${e}-${t}`);a&&(a.value=""),i&&(i.innerText=""),this.message.show("success","ok-circle",this.config.label.deleteSuccess.replace("%id%",n._key||String(e)))}):this.message.show("danger","remove-circle",this.config.label.deleteFail.replace("%id%",String(e)))}))}invalidateCache(){!this.api||!this.config||this.api.invalidateCache().then(e=>{e.status===200?e.json().then(t=>{this.message.show("success","ok-circle",t.message)}):this.message.show("danger","remove-circle","Error")})}reloadGrid(){if(!this.api||!this.config){console.warn("[TranslationManager] reloadGrid: API or config not available");return}console.log("[TranslationManager] reloadGrid: Reloading grid");const e={sidx:this.order,sord:this.direction,page:this.currentPage,rows:this.config.maxPageNumber};this.addFilteredValuesToParams(e),console.log("[TranslationManager] reloadGrid: Request parameters:",e),this.api.getPage(e).then(t=>{console.log("[TranslationManager] reloadGrid: API response status:",t.status),t.status===200?t.json().then(s=>{let n="";s.translations.forEach(o=>{n+=f(o,this.showCol,this.config)}),this.totalPages=b(s.total,this.config.maxPageNumber);const a=document.querySelector(".table tbody"),i=document.querySelector(".info-no-translation");a&&(a.innerHTML=n),i&&(i.style.display=s.total===0?"block":"none"),this.managePagesChanger()}):this.message.show("danger","remove-circle","Error")}).catch(t=>{console.error("Request failed",t)})}sortColumn(e,t){this.order=e,this.direction=t,this.reverseNextSortOrder(this.order,this.direction),this.reloadGrid()}reverseNextSortOrder(e,t){const s=t==="asc"?"desc":"asc",n=document.getElementById(`header-${e}`);n&&n.setAttribute("onclick",`TranslationManager.sortColumn('${e}', '${s}')`)}changePage(e){this.currentPage=e,this.reloadGrid()}managePagesChanger(){const e=document.querySelector(".pagination");if(e)if(this.totalPages===0)e.style.display="none";else{e.style.display="block";const t=Math.max(this.currentPage-5,1),s=Math.min(this.currentPage+5,this.totalPages);let n='<li><a class="prev">&laquo;</a></li>';for(let o=t;o<=s;o++)o===this.currentPage?n+=`<li><a class="page-${o} disabled" href="#">${o}</a></li>`:n+=`<li><a class="page-${o}" onclick="TranslationManager.changePage(${o})">${o}</a></li>`;n+='<li><a class="next">&raquo;</a></li>',e.innerHTML=n;const a=e.querySelector(".prev"),i=e.querySelector(".next");a&&(this.currentPage!==1?a.setAttribute("onclick",`TranslationManager.changePage(${this.currentPage-1})`):a.classList.add("disabled")),i&&(this.currentPage!==this.totalPages?i.setAttribute("onclick",`TranslationManager.changePage(${this.currentPage+1})`):i.classList.add("disabled"))}}addFilteredValuesToParams(e){console.log("[TranslationManager] addFilteredValuesToParams: Adding filter values to request params");let t=!1;const s=document.querySelectorAll(".table .input-sm");console.log(`[TranslationManager] addFilteredValuesToParams: Found ${s.length} input(s) to process`),s.forEach(n=>{const a=n.getAttribute("id"),i=n.value;if(a&&i.trim()!==""){t=!0;const o=`filter[${a}]`;e[o]=i,console.log(`[TranslationManager] addFilteredValuesToParams: Added filter - ${o} = "${i}"`)}}),t?(e._search=!0,console.log("[TranslationManager] addFilteredValuesToParams: Search mode enabled")):console.log("[TranslationManager] addFilteredValuesToParams: No active filters")}}const S=new $;window.TranslationManager=S;

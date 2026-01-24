@@ -1,0 +1,21 @@
+{
+  "name": "lexik-translation-bundle",
+  "version": "4.0.0",
+  "description": "Frontend assets for LexikTranslationBundle",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@symfony/stimulus-bridge": "^3.2.0",
+    "@types/node": "^20.11.0",
+    "stimulus": "^3.2.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vite-plugin-stimulus-hmr": "^1.0.0"
+  },
+  "dependencies": {}
+}

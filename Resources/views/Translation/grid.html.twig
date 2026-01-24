@@ -23,44 +23,96 @@
 
 {% block lexik_javascript_footer %}
     {{ parent() }}
+    {# Always use production build - not a module, exposes TranslationManager globally #}
     <script src="{{ asset('bundles/lexiktranslation/js/translation.js') }}"></script>
     <script>
-        TranslationManager.init({
-            locales: {{ locales | json_encode | raw }},
-            inputType: '{{ inputType }}',
-            autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
-            profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
-            toggleSimilar: '{{ toggleSimilar }}',
-            csrfToken: '{{ csrf_token('lexik-translation') }}',
-            maxPageNumber: 20,
-            url: {
-                list: '{{ path('lexik_translation_list') }}',
-                listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
-                update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
-                delete: '{{ path('lexik_translation_delete', {'id': '-id-'}) }}',
-                deleteLocale: '{{ path('lexik_translation_delete_locale', {'id': '-id-', 'locale': '-locale-'}) }}',
-                invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
-            },
-            label: {
-                hideCol: '{{ 'translations.show_hide_columns'|trans }}',
-                toggleAllCol: '{{ 'translations.toggle_all_columns'|trans }}',
-                invalidateCache: '{{ 'translations.invalidate_cache'|trans }}',
-                allTranslations: '{{ 'translations.all_translations'|trans }}',
-                profiler: '{{ 'translations.profiler'|trans }}',
-                dataSource: '{{ 'translations.data_source'|trans }}',
-                latestProfiles: '{{ 'translations.latest_profiles'|trans }}',
-                profile: '{{ 'translations.profile'|trans }}',
-                saveRow: '{{ 'translations.save_row'|trans }}',
-                domain: '{{ 'translations.domain'|trans }}',
-                key: '{{ 'translations.key'|trans }}',
-                save: '{{ 'translations.save'|trans }}',
-                updateSuccess: '{{ 'translations.successfully_updated'|trans }}',
-                updateFail: '{{ 'translations.update_failed'|trans }}',
-                deleteConfirm: '{{ ('translations.confirm_delete')|trans|escape('js') }}',
-                deleteSuccess: '{{ 'translations.successfully_deleted'|trans }}',
-                deleteFail: '{{ 'translations.delete_failed'|trans }}',
-                noTranslations: '{{ 'translations.no_translations'|trans }}'
-            }
-        });
+        console.log('[Grid Template] TranslationManager available:', typeof window.TranslationManager !== 'undefined');
+        console.log('[Grid Template] Current URL:', window.location.href);
+        console.log('[Grid Template] URL search params:', window.location.search);
+        
+        // Initialize TranslationManager after module loads
+        if (window.TranslationManager) {
+            console.log('[Grid Template] Initializing TranslationManager with config');
+            TranslationManager.init({
+                locales: {{ locales | json_encode | raw }},
+                inputType: '{{ inputType }}',
+                autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
+                profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
+                toggleSimilar: '{{ toggleSimilar }}',
+                csrfToken: '{{ csrf_token('lexik-translation') }}',
+                maxPageNumber: 20,
+                url: {
+                    list: '{{ path('lexik_translation_list') }}',
+                    listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
+                    update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
+                    delete: '{{ path('lexik_translation_delete', {'id': '-id-'}) }}',
+                    deleteLocale: '{{ path('lexik_translation_delete_locale', {'id': '-id-', 'locale': '-locale-'}) }}',
+                    invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
+                },
+                label: {
+                    hideCol: '{{ 'translations.show_hide_columns'|trans }}',
+                    toggleAllCol: '{{ 'translations.toggle_all_columns'|trans }}',
+                    invalidateCache: '{{ 'translations.invalidate_cache'|trans }}',
+                    allTranslations: '{{ 'translations.all_translations'|trans }}',
+                    profiler: '{{ 'translations.profiler'|trans }}',
+                    dataSource: '{{ 'translations.data_source'|trans }}',
+                    latestProfiles: '{{ 'translations.latest_profiles'|trans }}',
+                    profile: '{{ 'translations.profile'|trans }}',
+                    saveRow: '{{ 'translations.save_row'|trans }}',
+                    domain: '{{ 'translations.domain'|trans }}',
+                    key: '{{ 'translations.key'|trans }}',
+                    save: '{{ 'translations.save'|trans }}',
+                    updateSuccess: '{{ 'translations.successfully_updated'|trans }}',
+                    updateFail: '{{ 'translations.update_failed'|trans }}',
+                    deleteConfirm: '{{ ('translations.confirm_delete')|trans|escape('js') }}',
+                    deleteSuccess: '{{ 'translations.successfully_deleted'|trans }}',
+                    deleteFail: '{{ 'translations.delete_failed'|trans }}',
+                    noTranslations: '{{ 'translations.no_translations'|trans }}'
+                }
+            });
+        } else {
+            // Fallback: wait for module to load
+            window.addEventListener('DOMContentLoaded', function() {
+                if (window.TranslationManager) {
+                    TranslationManager.init({
+                        locales: {{ locales | json_encode | raw }},
+                        inputType: '{{ inputType }}',
+                        autoCacheClean: {{ autoCacheClean ? 'true' : 'false' }},
+                        profilerTokens: {{ tokens is not null ? (tokens | json_encode | raw) : 'null' }},
+                        toggleSimilar: '{{ toggleSimilar }}',
+                        csrfToken: '{{ csrf_token('lexik-translation') }}',
+                        maxPageNumber: 20,
+                        url: {
+                            list: '{{ path('lexik_translation_list') }}',
+                            listByToken: '{{ path('lexik_translation_profiler', {'token': '-token-'}) }}',
+                            update: '{{ path('lexik_translation_update', {'id': '-id-'}) }}',
+                            delete: '{{ path('lexik_translation_delete', {'id': '-id-'}) }}',
+                            deleteLocale: '{{ path('lexik_translation_delete_locale', {'id': '-id-', 'locale': '-locale-'}) }}',
+                            invalidateCache: '{{ path('lexik_translation_invalidate_cache') }}'
+                        },
+                        label: {
+                            hideCol: '{{ 'translations.show_hide_columns'|trans }}',
+                            toggleAllCol: '{{ 'translations.toggle_all_columns'|trans }}',
+                            invalidateCache: '{{ 'translations.invalidate_cache'|trans }}',
+                            allTranslations: '{{ 'translations.all_translations'|trans }}',
+                            profiler: '{{ 'translations.profiler'|trans }}',
+                            dataSource: '{{ 'translations.data_source'|trans }}',
+                            latestProfiles: '{{ 'translations.latest_profiles'|trans }}',
+                            profile: '{{ 'translations.profile'|trans }}',
+                            saveRow: '{{ 'translations.save_row'|trans }}',
+                            domain: '{{ 'translations.domain'|trans }}',
+                            key: '{{ 'translations.key'|trans }}',
+                            save: '{{ 'translations.save'|trans }}',
+                            updateSuccess: '{{ 'translations.successfully_updated'|trans }}',
+                            updateFail: '{{ 'translations.update_failed'|trans }}',
+                            deleteConfirm: '{{ ('translations.confirm_delete')|trans|escape('js') }}',
+                            deleteSuccess: '{{ 'translations.successfully_deleted'|trans }}',
+                            deleteFail: '{{ 'translations.delete_failed'|trans }}',
+                            noTranslations: '{{ 'translations.no_translations'|trans }}'
+                        }
+                    });
+                }
+            });
+        }
     </script>
 {% endblock %}
