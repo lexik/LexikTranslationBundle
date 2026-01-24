@@ -4,15 +4,20 @@ namespace Lexik\Bundle\TranslationBundle\Util\Overview;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Class StatsAggregator
  * @package Lexik\Bundle\TranslationBundle\Util\Overview
  */
+#[AsAlias(id: 'lexik_translation.overview.stats_aggregator', public: true)]
 class StatsAggregator
 {
     public function __construct(
+        #[Autowire(service: 'lexik_translation.translation_storage')]
         private readonly StorageInterface $storage,
+        #[Autowire(service: 'Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface')]
         private readonly LocaleManagerInterface $localeManager,
     ) {
     }

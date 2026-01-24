@@ -16,7 +16,7 @@ class CleanTranslationCacheListener
     public function __construct(
         private readonly StorageInterface $storage,
         private readonly TranslatorInterface $translator,
-        private readonly string$cacheDirectory,
+        private readonly string $cacheDirectory,
         private readonly LocaleManagerInterface $localeManager,
         private readonly int $cacheInterval,
     ) {
@@ -36,7 +36,10 @@ class CleanTranslationCacheListener
                     ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
 
                 if ($finder->count() > 0) {
-                    $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
+                    // Use TranslatorDecorator if available, otherwise skip
+                    if (method_exists($this->translator, 'removeLocalesCacheFiles')) {
+                        $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
+                    }
                 }
             }
         }

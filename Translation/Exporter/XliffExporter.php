@@ -2,11 +2,16 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+
 /**
  * Export translations to a Xliff file.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsTaggedItem('lexik_translation.exporter', alias: 'xlf')]
+#[AsAlias(id: 'lexik_translation.exporter.xliff', public: true)]
 class XliffExporter implements ExporterInterface
 {
     /**

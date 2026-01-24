@@ -5,17 +5,23 @@ namespace Lexik\Bundle\TranslationBundle\Manager;
 use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Class to manage TransUnit entities or documents.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsAlias(id: 'lexik_translation.trans_unit.manager', public: true)]
 class TransUnitManager implements TransUnitManagerInterface
 {
     public function __construct(
+        #[Autowire(service: 'lexik_translation.translation_storage')]
         private readonly StorageInterface $storage,
+        #[Autowire(service: 'lexik_translation.file.manager')]
         private readonly FileManagerInterface $fileManager,
+        #[Autowire('%kernel.project_dir%')]
         private readonly string $kernelRootDir,
     ) {
     }

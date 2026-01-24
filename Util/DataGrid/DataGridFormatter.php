@@ -4,12 +4,15 @@ namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsAlias(id: 'lexik_translation.data_grid.formatter', public: true)]
 class DataGridFormatter
 {
     /**
@@ -17,8 +20,12 @@ class DataGridFormatter
      *
      * @param string $storage
      */
-    public function __construct(protected LocaleManagerInterface $localeManager, protected $storage)
-    {
+    public function __construct(
+        #[Autowire(service: 'Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface')]
+        protected LocaleManagerInterface $localeManager,
+        #[Autowire('%lexik_translation.storage.type%')]
+        protected $storage
+    ) {
     }
 
     /**

@@ -2,11 +2,14 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+
 /**
  * Exporter collector.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsAlias(id: 'lexik_translation.exporter_collector', public: true)]
 class ExporterCollector
 {
     /**

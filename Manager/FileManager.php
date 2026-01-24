@@ -3,6 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Manager for translations files.
@@ -10,6 +12,7 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
  * @author Cédric Girard <c.girard@lexik.fr>
  * @author Nikola Petkanski <nikola@petkanski.com>
  */
+#[AsAlias(id: 'lexik_translation.file.manager')]
 class FileManager implements FileManagerInterface
 {
     /**
@@ -18,7 +21,9 @@ class FileManager implements FileManagerInterface
      * @param string $rootDir
      */
     public function __construct(
+        #[Autowire(service: 'lexik_translation.translation_storage')]
         private readonly StorageInterface $storage,
+        #[Autowire('%kernel.project_dir%')]
         private $rootDir,
     ) {
     }
