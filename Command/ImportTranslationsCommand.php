@@ -6,6 +6,7 @@ use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
 use LogicException;
 use ReflectionClass;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +27,30 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @author Cédric Girard <c.girard@lexik.fr>
  * @author Nikola Petkanski <nikola@petkanski.com>
  */
+#[AsCommand(
+    name: 'lexik:translations:import',
+    description: 'Import all translations from flat files (xliff, yml, php) into the database.',
+    help: <<<'HELP'
+The <info>%command.name%</info> command imports translation files from your project into the database.
+
+By default, the command imports translations from:
+  - Application translation files (<comment>translations/</comment> directory)
+  - Bundle translation files
+  - Component translation files
+
+You can filter the import by locales:
+
+  <info>php %command.full_name% --locales=en,fr</info>
+
+You can also import from a specific path:
+
+  <info>php %command.full_name% --import-path=/path/to/translations</info>
+
+Use <comment>--force</comment> to replace existing translations in the database.
+Use <comment>--merge</comment> to merge translations (keeps the latest updatedAt date).
+Use <comment>--cache-clear</comment> to remove translation cache files after import.
+HELP
+)]
 class ImportTranslationsCommand extends Command
 {
     /**
@@ -48,8 +73,6 @@ class ImportTranslationsCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setName('lexik:translations:import');
-        $this->setDescription('Import all translations from flat files (xliff, yml, php) into the database.');
 
         $this->addOption('cache-clear', 'c', InputOption::VALUE_NONE, 'Remove translations cache files for managed locales.');
         $this->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import, replace database content.');

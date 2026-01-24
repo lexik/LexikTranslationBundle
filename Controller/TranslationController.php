@@ -6,13 +6,14 @@ use Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler;
 use Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
+use Lexik\Bundle\TranslationBundle\Translation\TranslatorDecorator;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator;
 use Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -22,16 +23,14 @@ class TranslationController extends AbstractController
 {
     use CsrfCheckerTrait;
 
-    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly Translator $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?TokenFinder $tokenFinder)
+    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly TranslatorInterface $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?TokenFinder $tokenFinder)
     {
     }
 
     /**
      * Display an overview of the translation status per domain.
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function overviewAction()
+    public function overviewAction(): Response
     {
         $stats = $this->statsAggregator->getStats();
 
@@ -40,10 +39,8 @@ class TranslationController extends AbstractController
 
     /**
      * Display the translation grid.
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function gridAction()
+    public function gridAction(): Response
     {
         $tokens = null;
         if ($this->getParameter('lexik_translation.dev_tools.enable') && $this->tokenFinder !== null) {
@@ -55,12 +52,12 @@ class TranslationController extends AbstractController
 
     /**
      * Remove cache files for managed locales.
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function invalidateCacheAction(Request $request)
+    public function invalidateCacheAction(Request $request): Response
     {
-        $this->lexikTranslator->removeLocalesCacheFiles($this->getManagedLocales());
+        if (method_exists($this->lexikTranslator, 'removeLocalesCacheFiles')) {
+            $this->lexikTranslator->removeLocalesCacheFiles($this->getManagedLocales());
+        }
 
         $message = $this->translator->trans('translations.cache_removed', [], 'LexikTranslationBundle');
 
@@ -77,10 +74,8 @@ class TranslationController extends AbstractController
 
     /**
      * Add a new trans unit with translation for managed locales.
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request): Response
     {
         $form = $this->createForm(TransUnitType::class, $this->transUnitFormHandler->createFormData(), $this->transUnitFormHandler->getFormOptions());
 

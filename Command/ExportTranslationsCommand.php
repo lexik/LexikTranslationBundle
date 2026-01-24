@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Command;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,6 +18,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsCommand(
+    name: 'lexik:translations:export',
+    description: 'Export translations from the database to files.',
+    help: <<<'HELP'
+The <info>%command.name%</info> command exports translations from the database back to translation files.
+
+You can filter the export by locales and domains:
+
+  <info>php %command.full_name% --locales=en,fr --domains=messages</info>
+
+You can also specify a custom export path:
+
+  <info>php %command.full_name% --export-path=/path/to/translations</info>
+
+By default, the command exports all translations. Use <comment>--override</comment> to export only modified translations.
+HELP
+)]
 class ExportTranslationsCommand extends Command
 {
     private InputInterface $input;
@@ -37,8 +55,6 @@ class ExportTranslationsCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setName('lexik:translations:export');
-        $this->setDescription('Export translations from the database to files.');
 
         $this->addOption(
             'locales', 'l', InputOption::VALUE_OPTIONAL,

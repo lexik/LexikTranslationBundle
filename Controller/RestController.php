@@ -28,21 +28,14 @@ class RestController extends AbstractController
     ) {
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function listAction(Request $request)
+    public function listAction(Request $request): JsonResponse
     {
         [$transUnits, $count] = $this->dataGridRequestHandler->getPage($request);
 
         return $this->dataGridFormatter->createListResponse($transUnits, $count);
     }
 
-    /**
-     * @param $token
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function listByProfileAction(Request $request, $token)
+    public function listByProfileAction(Request $request, string $token): JsonResponse
     {
         [$transUnits, $count] = $this->dataGridRequestHandler->getPageByToken($request, $token);
 
@@ -50,12 +43,9 @@ class RestController extends AbstractController
     }
 
     /**
-     * @param integer $id
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, int $id): JsonResponse
     {
         $this->checkCsrf();
 
@@ -65,13 +55,9 @@ class RestController extends AbstractController
     }
 
     /**
-     * @param integer $id
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteAction($id)
+    public function deleteAction(int $id): JsonResponse
     {
         $this->checkCsrf();
 
@@ -87,14 +73,9 @@ class RestController extends AbstractController
     }
 
     /**
-     * @param integer $id
-     * @param string  $locale
-     *
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function deleteTranslationAction($id, $locale)
+    public function deleteTranslationAction(int $id, string $locale): JsonResponse
     {
         $this->checkCsrf();
 

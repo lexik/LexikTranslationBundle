@@ -2,9 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -12,40 +13,39 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[ORM\MappedSuperclass]
 abstract class File
 {
     protected $id;
 
-    /**
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'domain', type: Types::STRING, length: 255)]
+    #[Assert\NotBlank]
     protected string $domain;
 
-    /**
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'locale', type: Types::STRING, length: 10)]
+    #[Assert\NotBlank]
     protected string $locale;
 
-    /**
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'extention', type: Types::STRING, length: 10)]
+    #[Assert\NotBlank]
     protected string $extention;
 
-    /**
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'path', type: Types::STRING, length: 255)]
+    #[Assert\NotBlank]
     protected string $path;
 
-    /**
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'hash', type: Types::STRING, length: 255)]
+    #[Assert\NotBlank]
     protected string $hash;
-
-    protected Collection $translations;
 
     protected $createdAt;
 
     protected $updatedAt;
+
+    /**
+     * @var Collection
+     */
+    protected Collection $translations;
 
     public function __construct()
     {

@@ -4,6 +4,8 @@ namespace Lexik\Bundle\TranslationBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Lexik\Bundle\TranslationBundle\Entity\Translation;
@@ -15,6 +17,7 @@ use DateTime;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[ORM\MappedSuperclass]
 abstract class TransUnit
 {
     /**
@@ -22,18 +25,12 @@ abstract class TransUnit
      */
     protected $id;
 
-    /**
-     * @var string
-     *
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'key_name', type: Types::STRING, length: 255)]
+    #[Assert\NotBlank]
     protected string $key;
 
-    /**
-     * @var string
-     *
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'domain', type: Types::STRING, length: 255)]
+    #[Assert\NotBlank]
     protected string $domain;
 
     /**
@@ -41,14 +38,10 @@ abstract class TransUnit
      */
     protected $translations;
 
-    /**
-     * @var DateTime|string
-     */
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected DateTime|string $createdAt;
 
-    /**
-     * @var DateTime|string
-     */
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected DateTime|string $updatedAt;
 
     /**

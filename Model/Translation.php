@@ -2,6 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 use DateTime;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -10,40 +12,27 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[ORM\MappedSuperclass]
 abstract class Translation
 {
-    /**
-     * @var string
-     *
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(name: 'locale', type: Types::STRING, length: 10)]
+    #[Assert\NotBlank]
     protected $locale;
 
-    /**
-     * @var string
-     *
-     * @Assert\NotBlank(groups={"contentNotBlank"})
-     */
+    #[ORM\Column(name: 'content', type: Types::TEXT, nullable: true)]
+    #[Assert\NotBlank(groups: ['contentNotBlank'])]
     protected $content;
 
-    /**
-     * @var File
-     */
-    protected $file;
-
-    /**
-     * @var DateTime
-     */
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected $createdAt;
 
-    /**
-     * @var DateTime
-     */
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected $updatedAt;
 
     /**
      * @var boolean
      */
+    #[ORM\Column(name: 'modified_manually', type: Types::BOOLEAN, nullable: true)]
     protected $modifiedManually = false;
 
     /**
@@ -87,20 +76,6 @@ abstract class Translation
         return $this->content;
     }
 
-    public function setFile(File $file)
-    {
-        $this->file = $file;
-    }
-
-    /**
-     * Get file
-     *
-     * @return File
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
 
     /**
      * Get createdAt
