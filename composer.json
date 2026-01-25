@@ -70,6 +70,8 @@
         "test": "vendor/bin/phpunit"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+        }
     }
 }
