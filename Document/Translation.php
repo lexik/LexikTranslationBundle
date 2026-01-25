@@ -10,6 +10,19 @@ use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
  */
 class Translation extends TranslationModel implements TranslationInterface
 {
+    // Relationship mapping is defined in XML: Resources/config/doctrine/Translation.mongodb-odm.xml
+    protected $file;
+
+    public function setFile($file): void
+    {
+        $this->file = $file;
+    }
+
+    public function getFile()
+    {
+        return $this->file;
+    }
+
     /**
      * Convert all MongoTimestamp object to time.
      */
