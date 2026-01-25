@@ -38,15 +38,36 @@ class TranslatorPass implements CompilerPassInterface
             }
         }
 
+        // Find the translator service by alias or class name
+        $translatorId = null;
         if ($container->hasDefinition('lexik_translation.translator')) {
+            $translatorId = 'lexik_translation.translator';
+        } elseif ($container->hasAlias('lexik_translation.translator')) {
+            $translatorId = (string) $container->getAlias('lexik_translation.translator');
+        } elseif ($container->hasDefinition('Lexik\Bundle\TranslationBundle\Translation\Translator')) {
+            $translatorId = 'Lexik\Bundle\TranslationBundle\Translation\Translator';
+        }
+
+        if ($translatorId && $container->hasDefinition($translatorId)) {
+            $translatorDef = $container->findDefinition($translatorId);
+            
             if (Kernel::VERSION_ID >= 30300) {
                 $serviceRefs = [...$loadersReferencesById, ...['event_dispatcher' => new Reference('event_dispatcher')]];
 
-                $container->findDefinition('lexik_translation.translator')
-                    ->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs))
-                    ->replaceArgument(3, $loaders);
+                // Use named arguments if available, otherwise use numeric indices
+                if ($translatorDef->getArguments() && array_key_exists('$container', $translatorDef->getArguments())) {
+                    $translatorDef->replaceArgument('$container', ServiceLocatorTagPass::register($container, $serviceRefs));
+                    $translatorDef->replaceArgument('$loaderIds', $loaders);
+                } else {
+                    $translatorDef->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs));
+                    $translatorDef->replaceArgument(3, $loaders);
+                }
             } else {
-                $container->findDefinition('lexik_translation.translator')->replaceArgument(2, $loaders);
+                if ($translatorDef->getArguments() && array_key_exists('$loaderIds', $translatorDef->getArguments())) {
+                    $translatorDef->replaceArgument('$loaderIds', $loaders);
+                } else {
+                    $translatorDef->replaceArgument(2, $loaders);
+                }
             }
         }
 

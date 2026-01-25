@@ -95,7 +95,17 @@ class TransUnitRepository extends DocumentRepository
             }
 
             $domain = $domainGroup['_id'];
-            $locales = \array_merge(...$domainGroup['locales']);
+            // Flatten the locales array - handle both array of arrays and array of strings
+            $locales = [];
+            foreach ($domainGroup['locales'] as $localeItem) {
+                if (\is_array($localeItem)) {
+                    $locales = \array_merge($locales, $localeItem);
+                } else {
+                    $locales[] = $localeItem;
+                }
+            }
+            // Remove duplicates
+            $locales = \array_unique($locales);
 
             foreach ($locales as $locale) {
                 $domainsByLocale[] = [
@@ -244,8 +254,16 @@ class TransUnitRepository extends DocumentRepository
             while ($i < (is_countable($result['translations']) ? count($result['translations']) : 0) && null === $content) {
                 if ($file->getLocale() == $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
-                        $updated = ($result['translations'][$i]['createdAt'] < $result['translations'][$i]['updatedAt']);
-                        $content = $updated ? $result['translations'][$i]['content'] : null;
+                        // Handle MongoDB Timestamp objects - they have a 'sec' property
+                        $createdAt = $result['translations'][$i]['createdAt'] ?? null;
+                        $updatedAt = $result['translations'][$i]['updatedAt'] ?? null;
+                        
+                        if ($createdAt && $updatedAt) {
+                            $createdAtSec = \is_object($createdAt) && \property_exists($createdAt, 'sec') ? $createdAt->sec : $createdAt;
+                            $updatedAtSec = \is_object($updatedAt) && \property_exists($updatedAt, 'sec') ? $updatedAt->sec : $updatedAt;
+                            $updated = ($createdAtSec < $updatedAtSec);
+                            $content = $updated ? $result['translations'][$i]['content'] : null;
+                        }
                     } else {
                         $content = $result['translations'][$i]['content'];
                     }
