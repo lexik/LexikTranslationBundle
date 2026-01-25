@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  lexik_translation_network:
+    driver: bridge
+
 services:
   lexik_translation:
     build: .
@@ -8,14 +12,20 @@ services:
     depends_on:
       - mysql
       - mongo
+    networks:
+      - lexik_translation_network
+    environment:
+      - DOCKER=true
+      - DB_HOST=mysql
+      - MONGO_SERVER=mongodb://admin:secret@mongo:27017/admin
 
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_DATABASE: lexik_translation_test
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    ports:
-      - "3306:3306"
+    networks:
+      - lexik_translation_network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -27,5 +37,5 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: secret
-    ports:
-      - "27017:27017"
+    networks:
+      - lexik_translation_network
