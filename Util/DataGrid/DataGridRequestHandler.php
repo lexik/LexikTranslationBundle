@@ -8,6 +8,8 @@ use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Profiler\Profile;
@@ -18,6 +20,7 @@ use Symfony\Component\Translation\DataCollectorTranslator;
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsAlias(id: 'lexik_translation.data_grid.request_handler', public: true)]
 class DataGridRequestHandler
 {
     /**
@@ -35,8 +38,16 @@ class DataGridRequestHandler
      */
     protected $defaultFileFormat;
 
-    public function __construct(protected TransUnitManagerInterface $transUnitManager, protected FileManagerInterface $fileManager, protected StorageInterface $storage, protected LocaleManagerInterface $localeManager)
-    {
+    public function __construct(
+        #[Autowire(service: 'lexik_translation.trans_unit.manager')]
+        protected TransUnitManagerInterface $transUnitManager,
+        #[Autowire(service: 'lexik_translation.file.manager')]
+        protected FileManagerInterface $fileManager,
+        #[Autowire(service: 'lexik_translation.translation_storage')]
+        protected StorageInterface $storage,
+        #[Autowire(service: 'Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface')]
+        protected LocaleManagerInterface $localeManager
+    ) {
         $this->createMissing = false;
         $this->defaultFileFormat = 'yml';
     }
@@ -250,10 +261,24 @@ class DataGridRequestHandler
 
         array_walk($dirtyParameters, function ($value, $key) use (&$parameters) {
             if ($key != '_search') {
-                $key = trim($key, '_');
-                $value = trim($value, '_');
+                // Handle nested filter arrays: filter[_domain] => ['_domain' => 'value']
+                if ($key === 'filter' && is_array($value)) {
+                    foreach ($value as $filterKey => $filterValue) {
+                        // filterKey might be like '_domain', filterValue is the actual value
+                        $cleanKey = is_string($filterKey) ? trim($filterKey, '_') : $filterKey;
+                        $cleanValue = is_string($filterValue) ? trim($filterValue, '_') : $filterValue;
+                        $parameters[$cleanKey] = $cleanValue;
+                    }
+                } else {
+                    // Handle regular parameters
+                    $cleanKey = is_string($key) ? trim($key, '_') : $key;
+                    $cleanValue = is_string($value) ? trim($value, '_') : $value;
+                    $parameters[$cleanKey] = $cleanValue;
+                }
+            } else {
+                // Keep _search as is
+                $parameters[$key] = $value;
             }
-            $parameters[$key] = $value;
         });
 
         return $parameters;

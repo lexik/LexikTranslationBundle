@@ -7,22 +7,30 @@ use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsAlias(id: 'lexik_translation.form.handler.trans_unit', public: true)]
 class TransUnitFormHandler implements FormHandlerInterface
 {
     /**
      * @param string $rootDir
      */
     public function __construct(
+        #[Autowire(service: 'lexik_translation.trans_unit.manager')]
         protected TransUnitManagerInterface $transUnitManager,
+        #[Autowire(service: 'lexik_translation.file.manager')]
         protected FileManagerInterface $fileManager,
+        #[Autowire(service: 'lexik_translation.translation_storage')]
         protected StorageInterface $storage,
+        #[Autowire(service: 'Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface')]
         protected LocaleManagerInterface $localeManager,
+        #[Autowire('%kernel.project_dir%')]
         protected string $rootDir,
     ) {
     }

@@ -2,11 +2,16 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+
 /**
  * Export translations to a PHP file.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsTaggedItem('lexik_translation.exporter', alias: 'php')]
+#[AsAlias(id: 'lexik_translation.exporter.php')]
 class PhpExporter implements ExporterInterface
 {
     /**

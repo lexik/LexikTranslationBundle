@@ -3,6 +3,9 @@
 namespace Lexik\Bundle\TranslationBundle\Translation\Loader;
 
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Symfony\Component\Translation\MessageCatalogue;
 
@@ -11,12 +14,15 @@ use Symfony\Component\Translation\MessageCatalogue;
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsTaggedItem('translation.loader', alias: 'database')]
+#[AsAlias(id: 'Lexik\Bundle\TranslationBundle\Translation\Loader')]
 class DatabaseLoader implements LoaderInterface
 {
     /**
      * Construct.
      */
     public function __construct(
+        #[Autowire(service: 'lexik_translation.translation_storage')]
         private readonly StorageInterface $storage,
     ) {
     }

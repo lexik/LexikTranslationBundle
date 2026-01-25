@@ -2,6 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Yaml\Dumper;
 
 /**
@@ -10,9 +13,12 @@ use Symfony\Component\Yaml\Dumper;
  * @author Cédric Girard <c.girard@lexik.fr>
  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
  */
+#[AsTaggedItem('lexik_translation.exporter', alias: 'yml')]
+#[AsAlias(id: 'lexik_translation.exporter.yml')]
 class YamlExporter implements ExporterInterface
 {
     public function __construct(
+        #[Autowire('%lexik_translation.exporter.yml.use_tree%')]
         private readonly bool $createTree = false
     ) {
     }

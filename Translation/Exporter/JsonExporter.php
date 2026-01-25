@@ -2,17 +2,24 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Exporter;
 
+use Symfony\Component\DependencyInjection\Attribute\AsAlias;
+use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
 /**
  * Export translations to a Json file.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
+#[AsTaggedItem('lexik_translation.exporter', alias: 'json')]
+#[AsAlias(id: 'lexik_translation.exporter.json', public: true)]
 class JsonExporter implements ExporterInterface
 {
     /**
      * @param bool $hierarchicalFormat
      */
     public function __construct(
+        #[Autowire('%lexik_translation.exporter.json.hierarchical_format%')]
         private $hierarchicalFormat = false
     ) {
     }
