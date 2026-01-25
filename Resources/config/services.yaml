@@ -1,0 +1,266 @@
+parameters:
+    lexik_translation.translator.class: Lexik\Bundle\TranslationBundle\Translation\Translator
+    lexik_translation.loader.database.class: Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader
+    lexik_translation.trans_unit.manager.class: Lexik\Bundle\TranslationBundle\Manager\TransUnitManager
+    lexik_translation.file.manager.class: Lexik\Bundle\TranslationBundle\Manager\FileManager
+    lexik_translation.locale.manager.class: Lexik\Bundle\TranslationBundle\Manager\LocaleManager
+    lexik_translation.importer.file.class: Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter
+    lexik_translation.exporter_collector.class: Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector
+    lexik_translation.exporter.xliff.class: Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter
+    lexik_translation.exporter.json.class: Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter
+    lexik_translation.exporter.yml.class: Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter
+    lexik_translation.exporter.php.class: Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter
+
+    lexik_translation.orm.translation_storage.class: Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage
+    lexik_translation.orm.listener.class: Lexik\Bundle\TranslationBundle\Storage\Listener\DoctrineORMListener
+    lexik_translation.orm.trans_unit.class: Lexik\Bundle\TranslationBundle\Entity\TransUnit
+    lexik_translation.orm.translation.class: Lexik\Bundle\TranslationBundle\Entity\Translation
+    lexik_translation.orm.file.class: Lexik\Bundle\TranslationBundle\Entity\File
+
+    lexik_translation.mongodb.translation_storage.class: Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage
+    lexik_translation.mongodb.trans_unit.class: Lexik\Bundle\TranslationBundle\Document\TransUnit
+    lexik_translation.mongodb.translation.class: Lexik\Bundle\TranslationBundle\Document\Translation
+    lexik_translation.mongodb.file.class: Lexik\Bundle\TranslationBundle\Document\File
+
+    lexik_translation.data_grid.formatter.class: Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter
+    lexik_translation.data_grid.request_handler.class: Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler
+
+    lexik_translation.overview.stats_aggregator.class: Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator
+
+    lexik_translation.form.handler.trans_unit.class: Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler
+
+    lexik_translation.listener.get_database_resources.class: Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener
+    lexik_translation.listener.clean_translation_cache.class: Lexik\Bundle\TranslationBundle\EventDispatcher\CleanTranslationCacheListener
+
+    lexik_translation.token_finder.class: Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder
+
+    lexik_translation.command.import_translations.class: Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand
+    lexik_translation.command.export_translations.class: Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand
+
+    lexik_translation.controller.translation.class: Lexik\Bundle\TranslationBundle\Controller\TranslationController
+    lexik_translation.controller.rest.class: Lexik\Bundle\TranslationBundle\Controller\RestController
+
+    lexik_translation.importer.case_insensitive: false
+    lexik_translation.token_finder.limit: 15
+
+    lexik_translation.translator.options:
+        cache_dir: '%kernel.cache_dir%/translations'
+        debug: '%kernel.debug%'
+        resources_type: '%lexik_translation.resources_type%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # Translator
+    Lexik\Bundle\TranslationBundle\Translation\Translator:
+        arguments:
+            $container: '@service_container'
+            $formatter: '@translator.formatter.default'
+            $defaultLocale: '%kernel.default_locale%'
+            $loaderIds: []
+            $options:
+                cache_dir: '%kernel.cache_dir%'
+                debug: '%kernel.debug%'
+                resource_files: []
+                scanned_directories: []
+                cache_vary: []
+
+    lexik_translation.translator:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Translator
+        public: true
+
+    # TranslatorDecorator alias for backward compatibility
+    Lexik\Bundle\TranslationBundle\Translation\TranslatorDecorator:
+        alias: lexik_translation.translator
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Storage\StorageInterface:
+        alias: lexik_translation.translation_storage
+
+    # Loader
+    Lexik\Bundle\TranslationBundle\Translation\Loader:
+        class: '%lexik_translation.loader.database.class%'
+        arguments:
+            - '@lexik_translation.translation_storage'
+        tags:
+            - { name: translation.loader, alias: database }
+
+    # Managers
+    lexik_translation.trans_unit.manager:
+        class: '%lexik_translation.trans_unit.manager.class%'
+        arguments:
+            - '@lexik_translation.translation_storage'
+            - '@lexik_translation.file.manager'
+            - '%kernel.project_dir%'
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface:
+        alias: lexik_translation.trans_unit.manager
+
+    lexik_translation.file.manager:
+        class: '%lexik_translation.file.manager.class%'
+        arguments:
+            - '@lexik_translation.translation_storage'
+            - '%kernel.project_dir%'
+
+    Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface:
+        alias: lexik_translation.file.manager
+
+    Lexik\Bundle\TranslationBundle\Manager\LocaleManager:
+        class: '%lexik_translation.locale.manager.class%'
+        arguments:
+            - '%lexik_translation.managed_locales%'
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface:
+        alias: Lexik\Bundle\TranslationBundle\Manager\LocaleManager
+        public: true
+
+    # Importer
+    Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter:
+        class: '%lexik_translation.importer.file.class%'
+        arguments:
+            - []  # translation loaders - will be replaced by TranslatorPass
+            - '@lexik_translation.translation_storage'
+            - '@lexik_translation.trans_unit.manager'
+            - '@lexik_translation.file.manager'
+        calls:
+            - [setCaseInsensitiveInsert, ['%lexik_translation.importer.case_insensitive%']]
+
+    lexik_translation.importer.file:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter
+        public: true
+
+    # Exporter
+    Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector:
+        class: '%lexik_translation.exporter_collector.class%'
+
+    lexik_translation.exporter_collector:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter:
+        class: '%lexik_translation.exporter.xliff.class%'
+        tags:
+            - { name: lexik_translation.exporter, alias: xlf }
+
+    lexik_translation.exporter.xliff:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Exporter\XliffExporter
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter:
+        class: '%lexik_translation.exporter.json.class%'
+        arguments:
+            - '%lexik_translation.exporter.json.hierarchical_format%'
+        tags:
+            - { name: lexik_translation.exporter, alias: json }
+
+    lexik_translation.exporter.json:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Exporter\JsonExporter
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter:
+        class: '%lexik_translation.exporter.yml.class%'
+        arguments:
+            - '%lexik_translation.exporter.yml.use_tree%'
+        tags:
+            - { name: lexik_translation.exporter, alias: yml }
+
+    lexik_translation.exporter.yml:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Exporter\YamlExporter
+
+    Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter:
+        class: '%lexik_translation.exporter.php.class%'
+        tags:
+            - { name: lexik_translation.exporter, alias: php }
+
+    lexik_translation.exporter.php:
+        alias: Lexik\Bundle\TranslationBundle\Translation\Exporter\PhpExporter
+
+    # Data grid
+    lexik_translation.data_grid.formatter:
+        class: '%lexik_translation.data_grid.formatter.class%'
+        arguments:
+            - '@Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface'
+            - '%lexik_translation.storage.type%'
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridFormatter:
+        alias: lexik_translation.data_grid.formatter
+
+    lexik_translation.data_grid.request_handler:
+        class: '%lexik_translation.data_grid.request_handler.class%'
+        arguments:
+            - '@lexik_translation.trans_unit.manager'
+            - '@lexik_translation.file.manager'
+            - '@lexik_translation.translation_storage'
+            - '@Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface'
+        calls:
+            - [setCreateMissing, ['%lexik_translation.dev_tools.create_missing%']]
+            - [setDefaultFileFormat, ['%lexik_translation.dev_tools.file_format%']]
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler:
+        alias: lexik_translation.data_grid.request_handler
+
+    # Overview
+    lexik_translation.overview.stats_aggregator:
+        class: '%lexik_translation.overview.stats_aggregator.class%'
+        arguments:
+            - '@lexik_translation.translation_storage'
+            - '@Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface'
+        public: true
+
+    '%lexik_translation.overview.stats_aggregator.class%':
+        alias: lexik_translation.overview.stats_aggregator
+
+    # Form
+    lexik_translation.form.handler.trans_unit:
+        class: '%lexik_translation.form.handler.trans_unit.class%'
+        arguments:
+            $rootDir: '%kernel.project_dir%'
+        autoconfigure: true
+        autowire: true
+        public: true
+
+    Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler:
+        alias: lexik_translation.form.handler.trans_unit
+
+    # Listener
+    Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent:
+        class: '%lexik_translation.listener.get_database_resources.class%'
+        arguments:
+            - '@lexik_translation.translation_storage'
+            - '%lexik_translation.storage.type%'
+        tags:
+            - { name: kernel.event_listener, event: 'Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent', method: onGetDatabaseResources }
+
+    # Commands
+    Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand:
+        class: '%lexik_translation.command.import_translations.class%'
+        autowire: true
+        tags:
+            - { name: console.command }
+
+    Lexik\Bundle\TranslationBundle\Command\ExportTranslationsCommand:
+        class: '%lexik_translation.command.export_translations.class%'
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+        autowire: true
+        tags:
+            - { name: console.command }
+
+    # Controllers
+    Lexik\Bundle\TranslationBundle\Controller\RestController:
+        class: '%lexik_translation.controller.rest.class%'
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    Lexik\Bundle\TranslationBundle\Controller\TranslationController:
+        class: '%lexik_translation.controller.translation.class%'
+        public: true
+        autowire: true
+        autoconfigure: true

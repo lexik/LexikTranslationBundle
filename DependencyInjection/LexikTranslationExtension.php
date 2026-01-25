@@ -2,12 +2,13 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Config\FileLocator;
@@ -41,8 +42,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.yaml');
 
         // set parameters
         sort($config['managed_locales']);
@@ -62,7 +63,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
         $objectManager = $config['storage']['object_manager'] ?? null;
 
-        $this->buildTranslatorDefinition($container);
+        // Translator is now handled via service decoration in services.yaml
+        // buildTranslatorDefinition() is deprecated and no longer needed for Symfony 8
+        // $this->buildTranslatorDefinition($container);
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
         if (true === $config['auto_cache_clean']) {
@@ -162,7 +165,11 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         if (StorageInterface::STORAGE_ORM == $storage) {
             $args = [new Reference('doctrine'), $objectManager ?? 'default'];
 
+            // Create XML driver for backward compatibility
             $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
+            
+            // Create attribute driver for models (MappedSuperclass) that now use PHP attributes
+            $this->createDoctrineAttributeDriver($container, 'lexik_translation.orm.metadata.attribute');
 
             $metadataListener = new Definition();
             $metadataListener->setClass('%lexik_translation.orm.listener.class%');
@@ -210,6 +217,37 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     }
 
     /**
+     * Create an attribute driver for models (MappedSuperclass) that use PHP attributes.
+     *
+     * @param ContainerBuilder $container
+     * @param string           $driverId
+     */
+    protected function createDoctrineAttributeDriver(ContainerBuilder $container, $driverId)
+    {
+        // Calculate bundle path using ReflectionClass to get the actual bundle location
+        // This works even when the bundle is installed via Composer or symlinked
+        $bundleReflection = new \ReflectionClass(\Lexik\Bundle\TranslationBundle\LexikTranslationBundle::class);
+        $bundleDir = dirname($bundleReflection->getFileName());
+        $modelPath = $bundleDir . '/Model';
+        
+        // Try to get realpath, but use the calculated path if it fails
+        $realModelPath = realpath($modelPath);
+        if ($realModelPath) {
+            $modelPath = $realModelPath;
+        }
+        
+        // AttributeDriver constructor expects an array of paths (directories to scan)
+        // It will automatically detect classes with #[ORM\MappedSuperclass] or #[ORM\Entity] attributes
+        $driverDefinition = new Definition(AttributeDriver::class, [
+            [$modelPath]
+        ]);
+        $driverDefinition->setPublic(false);
+        
+        // Always set/override the definition to ensure it exists with correct arguments
+        $container->setDefinition($driverId, $driverDefinition);
+    }
+
+    /**
      * Load dev tools.
      */
     protected function buildDevServicesDefinition(ContainerBuilder $container)
@@ -230,15 +268,23 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      */
     protected function registerTranslatorConfiguration(array $config, ContainerBuilder $container)
     {
-        // use the Lexik translator as default translator service
+        // use the Lexik translator decorator as default translator service
         $alias = $container->setAlias('translator', 'lexik_translation.translator');
 
         if (Kernel::VERSION_ID >= 30400) {
             $alias->setPublic(true);
         }
 
-        $translator = $container->findDefinition('lexik_translation.translator');
-        $translator->addMethodCall('setFallbackLocales', [$config['fallback_locale']]);
+        // Get the inner translator (the actual Symfony translator) for adding resources
+        // The decorator will delegate to it
+        $innerTranslator = $container->hasDefinition('lexik_translation.translator.inner')
+            ? $container->findDefinition('lexik_translation.translator.inner')
+            : $container->findDefinition('translator');
+        
+        $innerTranslator->addMethodCall('setFallbackLocales', [$config['fallback_locale']]);
+        
+        // For adding file resources, we'll add them to the inner translator
+        $translator = $innerTranslator;
 
         $registration = $config['resources_registration'];
 
