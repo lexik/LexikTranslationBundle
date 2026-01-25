@@ -33,6 +33,7 @@
         "symfony/translation": "^7.0",
         "symfony/twig-bundle": "^7.0",
         "symfony/validator": "^7.0",
+        "symfony/var-exporter": "^6.4|^7.0",
         "symfony/yaml": "^7.0"
     },
     "require-dev": {
