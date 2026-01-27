@@ -1,5 +1,3 @@
-version: '3.8'
-
 networks:
   lexik_translation_network:
     driver: bridge
