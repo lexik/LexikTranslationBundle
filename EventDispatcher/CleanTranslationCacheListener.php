@@ -59,8 +59,8 @@ class CleanTranslationCacheListener
             $cache_file = strtr($cache_file, '/', '\\');
             $cache_dir = strtr($cache_dir, '/', '\\');
         }
-        if (!\is_dir($cache_dir)) {
-            \mkdir($cache_dir);
+        if (!\is_dir($cache_dir) && !\mkdir($cache_dir, 0777, true) && !\is_dir($cache_dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $cache_dir));
         }        
         if (!\file_exists($cache_file)) {
             \touch($cache_file);
