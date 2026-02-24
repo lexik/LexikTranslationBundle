@@ -166,8 +166,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             $args = [new Reference('doctrine'), $objectManager ?? 'default'];
 
             // Create XML driver for backward compatibility
-            $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
-            
+            $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', SimplifiedXmlDriver::class);
+
             // Create attribute driver for models (MappedSuperclass) that now use PHP attributes
             $this->createDoctrineAttributeDriver($container, 'lexik_translation.orm.metadata.attribute');
 
@@ -186,8 +186,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         }
 
         $args[] = [
-            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)), 
-            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)), 
+            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
             'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
         ];
 
@@ -208,7 +208,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
     {
         $driverDefinition = new Definition($driverClass, [
-            [realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'], 
+            [realpath(__DIR__.'/../Resources/config/model') => 'Lexik\Bundle\TranslationBundle\Model'],
             SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION, true
         ]);
         $driverDefinition->setPublic(false);
@@ -229,20 +229,20 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $bundleReflection = new \ReflectionClass(\Lexik\Bundle\TranslationBundle\LexikTranslationBundle::class);
         $bundleDir = dirname($bundleReflection->getFileName());
         $modelPath = $bundleDir . '/Model';
-        
+
         // Try to get realpath, but use the calculated path if it fails
         $realModelPath = realpath($modelPath);
         if ($realModelPath) {
             $modelPath = $realModelPath;
         }
-        
+
         // AttributeDriver constructor expects an array of paths (directories to scan)
         // It will automatically detect classes with #[ORM\MappedSuperclass] or #[ORM\Entity] attributes
         $driverDefinition = new Definition(AttributeDriver::class, [
             [$modelPath]
         ]);
         $driverDefinition->setPublic(false);
-        
+
         // Always set/override the definition to ensure it exists with correct arguments
         $container->setDefinition($driverId, $driverDefinition);
     }
@@ -280,9 +280,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $innerTranslator = $container->hasDefinition('lexik_translation.translator.inner')
             ? $container->findDefinition('lexik_translation.translator.inner')
             : $container->findDefinition('translator');
-        
+
         $innerTranslator->addMethodCall('setFallbackLocales', [$config['fallback_locale']]);
-        
+
         // For adding file resources, we'll add them to the inner translator
         $translator = $innerTranslator;
 
