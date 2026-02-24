@@ -88,7 +88,12 @@ class RegisterMappingPass implements CompilerPassInterface
                 }
 
                 // Create XML driver for entities using SimplifiedXmlDriver
-                $entityDriverDefinition = new Definition(SimplifiedXmlDriver::class, [
+                if (class_exists(SimplifiedXmlDriver::class)) {
+                    $xmlDriverClass = SimplifiedXmlDriver::class;
+                } else {
+                    $xmlDriverClass = $container->getParameter('doctrine.orm.metadata.xml.class');
+                }
+                $entityDriverDefinition = new Definition($xmlDriverClass, [
                     [$doctrinePath => 'Lexik\Bundle\TranslationBundle\Entity'],
                     SimplifiedXmlDriver::DEFAULT_FILE_EXTENSION,
                     true
