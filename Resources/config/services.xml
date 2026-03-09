@@ -5,7 +5,6 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="lexik_translation.translator.class">Lexik\Bundle\TranslationBundle\Translation\Translator</parameter>
         <parameter key="lexik_translation.loader.database.class">Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader</parameter>
         <parameter key="lexik_translation.trans_unit.manager.class">Lexik\Bundle\TranslationBundle\Manager\TransUnitManager</parameter>
         <parameter key="lexik_translation.file.manager.class">Lexik\Bundle\TranslationBundle\Manager\FileManager</parameter>
@@ -48,29 +47,28 @@
 
         <parameter key="lexik_translation.importer.case_insensitive">false</parameter>
         <parameter key="lexik_translation.token_finder.limit">15</parameter>
-
-        <parameter key="lexik_translation.translator.options" type="collection">
-            <parameter key="cache_dir">%kernel.cache_dir%/translations</parameter>
-            <parameter key="debug">%kernel.debug%</parameter>
-            <parameter key="resources_type">%lexik_translation.resources_type%</parameter>
-        </parameter>
     </parameters>
 
     <services>
-        <service id="Lexik\Bundle\TranslationBundle\Translation\Translator">
-            <argument key="$container" type="service" id="service_container" />
-            <argument key="$formatter" type="service" id="translator.formatter.default" />
-            <argument key="$defaultLocale" id="%kernel.default_locale%" />
-            <argument key="$loaderIds" type="collection"></argument>
-            <argument key="$options" type="collection" >
-                <argument key="cache_dir">%kernel.cache_dir%</argument>
+        <service id="lexik_translation.translator" class="Lexik\Bundle\TranslationBundle\Translation\Translator" public="true">
+            <argument type="service" id="service_container" />
+            <argument type="service" id="translator.formatter.default" />
+            <argument id="%kernel.default_locale%" />
+            <argument type="collection" />
+            <argument type="collection" >
+                <argument key="cache_dir">%kernel.cache_dir%/translations</argument>
                 <argument key="debug">%kernel.debug%</argument>
                 <argument key="resource_files" type="collection" />
                 <argument key="scanned_directories" type="collection" />
                 <argument key="cache_vary" type="collection" />
+                <argument key="resources_type">%lexik_translation.resources_type%</argument>
             </argument>
+            <call method="setConfigCacheFactory">
+                <argument type="service" id="config_cache_factory" />
+            </call>
+            <tag name="kernel.locale_aware" />
         </service>
-        <service id="lexik_translation.translator" alias="Lexik\Bundle\TranslationBundle\Translation\Translator" public="true"/>
+        <service id="Lexik\Bundle\TranslationBundle\Translation\Translator" alias="lexik_translation.translator" public="true"/>
         <service id="Lexik\Bundle\TranslationBundle\Storage\StorageInterface" alias="lexik_translation.translation_storage" />
 
         <!-- Loader -->

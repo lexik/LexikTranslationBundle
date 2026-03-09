@@ -43,32 +43,34 @@ parameters:
     lexik_translation.importer.case_insensitive: false
     lexik_translation.token_finder.limit: 15
 
-    lexik_translation.translator.options:
-        cache_dir: '%kernel.cache_dir%/translations'
-        debug: '%kernel.debug%'
-        resources_type: '%lexik_translation.resources_type%'
-
 services:
     _defaults:
         autowire: true
         autoconfigure: true
 
     # Translator
-    Lexik\Bundle\TranslationBundle\Translation\Translator:
+    lexik_translation.translator:
+        class: Lexik\Bundle\TranslationBundle\Translation\Translator
         arguments:
             $container: '@service_container'
             $formatter: '@translator.formatter.default'
             $defaultLocale: '%kernel.default_locale%'
             $loaderIds: []
             $options:
-                cache_dir: '%kernel.cache_dir%'
+                cache_dir: '%kernel.cache_dir%/translations'
                 debug: '%kernel.debug%'
                 resource_files: []
                 scanned_directories: []
                 cache_vary: []
+                resources_type: '%lexik_translation.resources_type%'
+        calls:
+            - [setConfigCacheFactory, ['@config_cache_factory']]
+        tags:
+            - { name: kernel.locale_aware }
+        public: true
 
-    lexik_translation.translator:
-        alias: Lexik\Bundle\TranslationBundle\Translation\Translator
+    Lexik\Bundle\TranslationBundle\Translation\Translator:
+        alias: lexik_translation.translator
         public: true
 
     # TranslatorDecorator alias for backward compatibility

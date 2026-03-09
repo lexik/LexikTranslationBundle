@@ -107,17 +107,7 @@ class ImportTranslationsCommand extends Command
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
             $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
-
-            if (Kernel::VERSION_ID < 40000 && null !== $bundle->getParent()) {
-                // due to symfony's bundle inheritance if a bundle has a parent it is fetched first.
-                // so we tell getBundle to NOT fetch the first if a parent is present
-                $bundles = $this->getApplication()->getKernel()->getBundle($bundle->getParent(), false);
-                $bundle = $bundles[1];
-                $this->output->writeln('<info>Using: ' . $bundle->getName() . ' as bundle to lookup translations files for.');
-            }
-
             $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool)$this->input->getOption('globals'));
-
         } else {
             if (!$this->input->getOption('import-path')) {
 

@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Translator compiler pass to automatically pass loader to the other services.
@@ -50,24 +49,16 @@ class TranslatorPass implements CompilerPassInterface
 
         if ($translatorId && $container->hasDefinition($translatorId)) {
             $translatorDef = $container->findDefinition($translatorId);
-            
-            if (Kernel::VERSION_ID >= 30300) {
-                $serviceRefs = [...$loadersReferencesById, ...['event_dispatcher' => new Reference('event_dispatcher')]];
 
-                // Use named arguments if available, otherwise use numeric indices
-                if ($translatorDef->getArguments() && array_key_exists('$container', $translatorDef->getArguments())) {
-                    $translatorDef->replaceArgument('$container', ServiceLocatorTagPass::register($container, $serviceRefs));
-                    $translatorDef->replaceArgument('$loaderIds', $loaders);
-                } else {
-                    $translatorDef->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs));
-                    $translatorDef->replaceArgument(3, $loaders);
-                }
+            $serviceRefs = [...$loadersReferencesById, ...['event_dispatcher' => new Reference('event_dispatcher')]];
+
+            // Use named arguments if available, otherwise use numeric indices
+            if ($translatorDef->getArguments() && array_key_exists('$container', $translatorDef->getArguments())) {
+                $translatorDef->replaceArgument('$container', ServiceLocatorTagPass::register($container, $serviceRefs));
+                $translatorDef->replaceArgument('$loaderIds', $loaders);
             } else {
-                if ($translatorDef->getArguments() && array_key_exists('$loaderIds', $translatorDef->getArguments())) {
-                    $translatorDef->replaceArgument('$loaderIds', $loaders);
-                } else {
-                    $translatorDef->replaceArgument(2, $loaders);
-                }
+                $translatorDef->replaceArgument(0, ServiceLocatorTagPass::register($container, $serviceRefs));
+                $translatorDef->replaceArgument(3, $loaders);
             }
         }
 
