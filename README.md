@@ -33,6 +33,15 @@ Here is a little screen shot of the edition page :)
 
 ![edition page screen](https://github.com/lexik/LexikTranslationBundle/raw/master/Resources/doc/screen/grid.jpg)
 
+Development
+===========
+
+The project provides a **Makefile** for common tasks (tests, static analysis, code style). See **[docs/development.md](docs/development.md)** for:
+
+* How to use the Makefile (requires [GNU Make](https://www.gnu.org/software/make/), usually pre-installed on Linux and macOS).
+* **Cross-platform**: running the same commands on Windows (without Make) using Docker Compose.
+* Cache files (e.g. `.php-cs-fixer.cache`) are listed in `.gitignore` and are not committed; you can remove them locally if needed.
+
 TESTING
 =======
 

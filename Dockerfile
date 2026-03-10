@@ -1,4 +1,4 @@
-FROM php:8.4-cli-bullseye
+FROM php:8.3-cli-bullseye
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
