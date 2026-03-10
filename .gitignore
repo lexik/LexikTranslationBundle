@@ -1,20 +1,20 @@
-# Dependencias de Composer (instaladas con composer install)
+# Composer dependencies (installed with composer install)
 vendor
 
-# Configuración y caché del IDE PhpStorm
+# PhpStorm IDE configuration and cache
 .idea
 
-# Directorio temporal de la aplicación de tests
+# Test application temporary directory
 Tests/app/tmp/
 
-# Caché de resultados de PHPUnit
+# PHPUnit result cache
 .phpunit.result.cache
 
-# Caché de PHP-CS-Fixer
+# PHP-CS-Fixer cache
 .php-cs-fixer.cache
 
-# Documentación generada
+# Generated documentation
 .docs
 
-# Demo o entorno de demostración
+# Demo or demonstration environment
 .demo
