@@ -1,0 +1,18 @@
+parameters:
+    level: 5
+    paths:
+        - Command
+        - Controller
+        - DependencyInjection
+        - Document
+        - Entity
+        - EventDispatcher
+        - Form
+        - Manager
+        - Model
+        - Storage
+        - Translation
+        - Util
+    excludePaths:
+        - vendor
+        - Tests
