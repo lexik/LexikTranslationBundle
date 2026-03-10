@@ -11,7 +11,7 @@ Tests/app/tmp/
 .phpunit.result.cache
 
 # Caché de PHP-CS-Fixer
-#.php-cs-fixer.cache
+.php-cs-fixer.cache
 
 # Documentación generada
 .docs
