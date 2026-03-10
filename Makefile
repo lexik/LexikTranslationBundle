@@ -40,7 +40,7 @@ rector: ensure-up
 	$(DOCKER_RUN) vendor/bin/rector process
 
 cs-fix: ensure-up
-	$(DOCKER_RUN) vendor/bin/php-cs-fixer fix --config=.php_cs
+	$(DOCKER_RUN) vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php
 
 phpstan: ensure-up
 	$(DOCKER_RUN) vendor/bin/phpstan analyse --memory-limit=512M

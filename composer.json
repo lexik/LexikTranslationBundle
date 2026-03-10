@@ -43,12 +43,12 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/mongodb-odm": "^2.7",
         "doctrine/mongodb-odm-bundle": "^5.0",
+        "friendsofphp/php-cs-fixer": "^3.64",
         "mikey179/vfsstream": "^1.6",
         "mongodb/mongodb": "^1.21.0 || ^2.0.0",
-        "phpunit/phpunit": "^9.5|^10.0",
         "phpstan/phpstan": "^2.0",
-        "rector/jack": "^0.2.3",
-        "rector/rector": "^0.14.8|^0.15",
+        "phpunit/phpunit": "^9.5|^10.0",
+        "rector/rector": "^2.0",
         "symfony/var-exporter": "^6.4|^7.0"
     },
     "autoload": {

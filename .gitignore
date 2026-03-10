@@ -1,9 +1,20 @@
+# Dependencias de Composer (instaladas con composer install)
 vendor
-composer.lock
+
+# Configuración y caché del IDE PhpStorm
 .idea
 
+# Directorio temporal de la aplicación de tests
 Tests/app/tmp/
+
+# Caché de resultados de PHPUnit
 .phpunit.result.cache
 
+# Caché de PHP-CS-Fixer
+.php-cs-fixer.cache
+
+# Documentación generada
 .docs
+
+# Demo o entorno de demostración
 .demo
