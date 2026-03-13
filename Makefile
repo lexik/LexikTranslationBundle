@@ -7,7 +7,7 @@ DOCKER_RUN = docker compose run --rm lexik_translation
 help:
 	@echo "LexikTranslationBundle - Available commands:"
 	@echo ""
-	@echo "  make up           Start services in the background"
+	@echo "  make up          Start services in the background"
 	@echo "  make ensure-up   Start services and install dependencies (composer)"
 	@echo "  make down        Stop and remove containers"
 	@echo "  make build       Build Docker images"
