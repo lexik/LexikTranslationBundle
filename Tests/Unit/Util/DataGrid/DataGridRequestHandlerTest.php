@@ -133,7 +133,6 @@ class DataGridRequestHandlerTest extends BaseUnitTestCase
     {
         $class = new \ReflectionClass(DataGridRequestHandler::class);
         $method = $class->getMethod($name);
-        $method->setAccessible(true);
 
         return $method;
     }

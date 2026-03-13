@@ -9,14 +9,21 @@ use Symfony\Component\Finder\Finder;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Component\Translation\TranslatorBagInterface;
 
 /**
- * Translator service class.
+ * Translator service class that decorates Symfony's Translator.
+ *
+ * Uses composition instead of inheritance to be compatible with Symfony 8
+ * where the Translator class is final.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translator extends SymfonyTranslator
+class Translator implements TranslatorInterface, LocaleAwareInterface, TranslatorBagInterface
 {
+    private SymfonyTranslator $translator;
     protected array $resourceLocales = [];
     protected array $resources = [];
     protected array $resourceFiles = [];
@@ -24,10 +31,13 @@ class Translator extends SymfonyTranslator
     protected string $cacheFile;
     private bool $isResourcesLoaded = false;
 
+    /** @var array For tracking database resources (mainly for testing) */
+    public array $dbResources = [];
+
     public function __construct(
         protected ContainerInterface $container,
-        private MessageFormatter $formatter,
-        private string $defaultLocale,
+        MessageFormatter $formatter,
+        string $defaultLocale,
         protected array $loaderIds,
         protected array $options
     ) {
@@ -45,26 +55,84 @@ class Translator extends SymfonyTranslator
 
         $this->cacheFile = sprintf('%s/database.resources.php', $this->options['cache_dir']);
 
-        parent::__construct(
+        // Filter out custom options that Symfony translator doesn't recognize
+        // Only pass valid Symfony translator options
+        $symfonyOptions = [
+            'cache_dir' => $this->options['cache_dir'],
+            'debug' => $this->options['debug'],
+        ];
+
+        // Add other valid Symfony options if they exist
+        $validSymfonyOptions = ['cache_dir', 'debug', 'resource_files', 'scanned_directories', 'cache_vary'];
+        foreach ($validSymfonyOptions as $key) {
+            if (isset($this->options[$key])) {
+                $symfonyOptions[$key] = $this->options[$key];
+            }
+        }
+
+        // Create the inner Symfony translator
+        $this->translator = new SymfonyTranslator(
             container: $this->container,
-            formatter: $this->formatter,
-            defaultLocale: $this->defaultLocale,
+            formatter: $formatter,
+            defaultLocale: $defaultLocale,
             loaderIds: $this->loaderIds,
-            options: $this->options,
+            options: $symfonyOptions,
             enabledLocales: []
         );
-        $this->initialize();
     }
 
-    protected function loadCatalogue(string $locale): void
+    /**
+     * {@inheritdoc}
+     */
+    public function trans(?string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
-        $resourcesType = $this->options['resources_type'];
+        $this->loadDatabaseResourcesIfNeeded();
+        return $this->translator->trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLocale(): string
+    {
+        return $this->translator->getLocale();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLocale(string $locale): void
+    {
+        $this->translator->setLocale($locale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCatalogue(?string $locale = null): \Symfony\Component\Translation\MessageCatalogueInterface
+    {
+        $this->loadDatabaseResourcesIfNeeded();
+        return $this->translator->getCatalogue($locale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCatalogues(): array
+    {
+        return $this->translator->getCatalogues();
+    }
+
+    /**
+     * Load database resources if needed.
+     */
+    private function loadDatabaseResourcesIfNeeded(): void
+    {
+        $resourcesType = $this->options['resources_type'] ?? 'all';
 
         if (!$this->isResourcesLoaded && ('all' === $resourcesType || 'database' === $resourcesType)) {
             $this->addDatabaseResources();
         }
-
-        parent::loadCatalogue($locale);
     }
 
     /**
@@ -91,8 +159,17 @@ class Translator extends SymfonyTranslator
             $resources = include $this->cacheFile;
         }
 
+        // Use reflection to access the addResource method on the inner translator
+        $reflection = new \ReflectionClass($this->translator);
+        $addResourceMethod = $reflection->getMethod('addResource');
+
         foreach ($resources as $resource) {
-            $this->addResource('database', 'DB', $resource['locale'], $resource['domain'] ?? 'messages');
+            $locale = $resource['locale'];
+            $domain = $resource['domain'] ?? 'messages';
+            $addResourceMethod->invoke($this->translator, 'database', 'DB', $locale, $domain);
+
+            // Track for testing purposes
+            $this->dbResources[$locale][] = ['database', 'DB', $domain];
         }
 
         $this->isResourcesLoaded = true;
@@ -218,5 +295,48 @@ class Translator extends SymfonyTranslator
         }
 
         return $loader;
+    }
+
+    /**
+     * Set fallback locales.
+     */
+    public function setFallbackLocales(array $locales): void
+    {
+        $this->translator->setFallbackLocales($locales);
+    }
+
+    /**
+     * Get fallback locales.
+     */
+    public function getFallbackLocales(): array
+    {
+        return $this->translator->getFallbackLocales();
+    }
+
+    /**
+     * Warms up the cache.
+     */
+    public function warmUp(string $cacheDir): array
+    {
+        return $this->translator->warmUp($cacheDir);
+    }
+
+    /**
+     * Set config cache factory.
+     */
+    public function setConfigCacheFactory(\Symfony\Component\Config\ConfigCacheFactoryInterface $configCacheFactory): void
+    {
+        $this->translator->setConfigCacheFactory($configCacheFactory);
+    }
+
+    /**
+     * Add resource to the inner translator.
+     */
+    public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
+    {
+        // Use reflection to access the protected addResource method
+        $reflection = new \ReflectionClass($this->translator);
+        $addResourceMethod = $reflection->getMethod('addResource');
+        $addResourceMethod->invoke($this->translator, $format, $resource, $locale, $domain);
     }
 }

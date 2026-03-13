@@ -124,7 +124,12 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
             $args = [new Reference('doctrine'), $objectManager ?? 'default'];
 
             // Create XML driver for backward compatibility
-            $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', '%doctrine.orm.metadata.xml.class%');
+            if (class_exists(SimplifiedXmlDriver::class)) {
+                $xmlDriverClass = SimplifiedXmlDriver::class;
+            } else {
+                $xmlDriverClass = $container->getParameter('doctrine.orm.metadata.xml.class');
+            }
+            $this->createDoctrineMappingDriver($container, 'lexik_translation.orm.metadata.xml', $xmlDriverClass);
 
             // Create attribute driver for models (MappedSuperclass) that now use PHP attributes
             $this->createDoctrineAttributeDriver($container, 'lexik_translation.orm.metadata.attribute');
@@ -144,8 +149,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         }
 
         $args[] = [
-            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)), 
-            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)), 
+            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+            'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
             'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
         ];
 
