@@ -36,13 +36,13 @@ class TranslatorTest extends BaseUnitTestCase
         $expected = [
             'de' => [
                 ['database', 'DB', 'superTranslations']
-            ], 
+            ],
             'en' => [
-                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'messages'],
                 ['database', 'DB', 'superTranslations']
-            ], 
+            ],
             'fr' => [
-                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'messages'],
                 ['database', 'DB', 'superTranslations'],
             ]
         ];
@@ -140,10 +140,10 @@ class TranslatorTest extends BaseUnitTestCase
         ];
 
         return new TranslatorMock(
-            container: $container, 
-            formatter: new MessageFormatter(), 
-            defaultLocale: 'en', 
-            loaderIds: $loaderIds, 
+            container: $container,
+            formatter: new MessageFormatter(),
+            defaultLocale: 'en',
+            loaderIds: $loaderIds,
             options: $options
         );
     }
@@ -170,9 +170,9 @@ class TranslatorTest extends BaseUnitTestCase
 
 class TranslatorMock extends Translator
 {
-    public $dbResources = [];
+    public array $dbResources = [];
     public array $options = [
-        'cache_dir' => '', 
+        'cache_dir' => '',
         'debug' => false,
         'resource_files' => [],
         'cache_vary' => [],
