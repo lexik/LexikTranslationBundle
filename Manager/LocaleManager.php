@@ -8,17 +8,14 @@ namespace Lexik\Bundle\TranslationBundle\Manager;
 class LocaleManager implements LocaleManagerInterface
 {
     /**
-     * Constructor
+     * @param list<string> $managedLocales
      */
     public function __construct(
         protected array $managedLocales
     ) {
     }
 
-    /**
-     * @return array
-     */
-    public function getLocales()
+    public function getLocales(): array
     {
         return $this->managedLocales;
     }
