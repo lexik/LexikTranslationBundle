@@ -40,9 +40,9 @@ class Configuration implements ConfigurationInterface
                 ->end()
 
                 ->arrayNode('fallback_locale')
-                    ->isRequired()
-                    ->requiresAtLeastOneElement()
+                    ->setDeprecated('lexik/translation-bundle', '8.0', 'The "%node%" option is deprecated. Use "framework.translator.fallbacks" instead.')
                     ->prototype('scalar')->end()
+                    ->defaultValue([])
                     ->beforeNormalization()
                         ->ifString()
                         ->then(fn($value) => [$value])
@@ -50,9 +50,9 @@ class Configuration implements ConfigurationInterface
                 ->end()
 
                 ->arrayNode('managed_locales')
-                    ->isRequired()
-                    ->requiresAtLeastOneElement()
+                    ->info('Locales managed in the translation grid. If not set, falls back to "framework.enabled_locales".')
                     ->prototype('scalar')->end()
+                    ->defaultValue([])
                 ->end()
 
                 ->scalarNode('grid_input_type')

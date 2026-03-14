@@ -3,60 +3,90 @@
 namespace Lexik\Bundle\TranslationBundle\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
-use Symfony\Component\Translation\Loader\LoaderInterface;
-use Symfony\Component\Config\ConfigCache;
-use Symfony\Component\Finder\Finder;
+
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Symfony\Component\Translation\Formatter\MessageFormatter;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator as SymfonyTranslator;
+use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Config\ConfigCache;
+use Symfony\Component\Config\ConfigCacheFactoryInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Translation\Loader\LoaderInterface;
+use Symfony\Component\Translation\MessageCatalogueInterface;
+use Symfony\Contracts\Translation\TranslatableInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Translator service class.
+ * Decorator for Symfony Translator service to add database translation resources.
+ *
+ * This decorator wraps the original translator service and adds functionality
+ * to load translations from the database. It implements TranslatorInterface
+ * to maintain compatibility with Symfony 8 where Translator is final.
  *
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class Translator extends SymfonyTranslator
+class Translator implements TranslatorInterface
 {
-    protected array $resourceLocales = [];
-    protected array $resources = [];
-    protected array $resourceFiles = [];
-    protected array $scannedDirectories = [];
-    protected string $cacheFile;
     private bool $isResourcesLoaded = false;
+    private string $cacheFile;
 
     public function __construct(
-        protected ContainerInterface $container,
-        private MessageFormatter $formatter,
-        private string $defaultLocale,
-        protected array $loaderIds,
-        protected array $options
+        private $translator,
+        private readonly ContainerInterface $container,
+        private readonly array $loaderIds,
+        private array $options
     ) {
-        $this->resourceLocales = [];
-        $this->resources = [];
-        $this->resourceFiles = [];
-        $this->scannedDirectories = [];
-
-        $this->options['resource_files'] = $this->options['resource_files'] ?? [];
-        $this->options['scanned_directories'] = $this->options['scanned_directories'] ?? [];
-        $this->options['cache_vary'] = $this->options['cache_vary'] ?? [];
         $this->options['cache_dir'] = $this->options['cache_dir'] ?? sys_get_temp_dir();
         $this->options['debug'] = $this->options['debug'] ?? false;
         $this->options['resources_type'] = $this->options['resources_type'] ?? 'all';
-
         $this->cacheFile = sprintf('%s/database.resources.php', $this->options['cache_dir']);
-
-        parent::__construct(
-            container: $this->container,
-            formatter: $this->formatter,
-            defaultLocale: $this->defaultLocale,
-            loaderIds: $this->loaderIds,
-            options: $this->options,
-            enabledLocales: []
-        );
-        $this->initialize();
     }
 
-    protected function loadCatalogue(string $locale): void
+    public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory): void
+    {
+        $this->translator->setConfigCacheFactory($configCacheFactory);
+    }
+
+    public function addLoader(string $format, LoaderInterface $loader): void
+    {
+        $this->translator->addLoader($format, $loader);
+    }
+
+    public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
+    {
+        $this->translator->addResource($format, $resource, $locale, $domain);
+    }
+
+    public function setLocale(string $locale): void
+    {
+        $this->translator->setLocale($locale);
+    }
+
+    public function getLocale(): string
+    {
+        return $this->translator->getLocale();
+    }
+
+    public function setFallbackLocales(array $locales): void
+    {
+        $this->translator->setFallbackLocales($locales);
+    }
+
+    public function getFallbackLocales(): array
+    {
+        return $this->translator->getFallbackLocales();
+    }
+
+    public function addGlobalParameter(string $id, string|int|float|TranslatableInterface $value): void
+    {
+        $this->translator->addGlobalParameter($id, $value);
+    }
+
+    public function getGlobalParameters(): array
+    {
+        return $this->translator->getGlobalParameters();
+    }
+
+    public function trans(?string $id, array $parameters = [], ?string $domain = null, ?string $locale = null): string
     {
         $resourcesType = $this->options['resources_type'];
 
@@ -64,11 +94,29 @@ class Translator extends SymfonyTranslator
             $this->addDatabaseResources();
         }
 
-        parent::loadCatalogue($locale);
+        return $this->translator->trans($id, $parameters, $domain, $locale);
+    }
+
+    public function getCatalogue(?string $locale = null): MessageCatalogueInterface
+    {
+        return $this->translator->getCatalogue($locale);
+    }
+
+    public function getCatalogues(): array
+    {
+        return $this->translator->getCatalogues();
+    }
+
+    public function warmUp(string $cacheDir, ?string $buildDir = null): array
+    {
+        return $this->translator->warmUp($cacheDir, $buildDir);
     }
 
     /**
      * Add all resources available in database.
+     * 
+     * This method is called by DatabaseResourcesListener to register
+     * database translation resources with the translator.
      */
     public function addDatabaseResources(): void
     {
@@ -100,11 +148,8 @@ class Translator extends SymfonyTranslator
 
     /**
      * Remove the cache file corresponding to the given locale.
-     *
-     * @param string $locale
-     * @return boolean
      */
-    public function removeCacheFile($locale)
+    public function removeCacheFile(string $locale): bool
     {
         if (!file_exists($this->cacheFile)) {
             return true;
@@ -133,7 +178,7 @@ class Translator extends SymfonyTranslator
     /**
      * Remove the cache file corresponding to each given locale.
      */
-    public function removeLocalesCacheFiles(array $locales)
+    public function removeLocalesCacheFiles(array $locales): void
     {
         foreach ($locales as $locale) {
             $this->removeCacheFile($locale);
@@ -156,17 +201,15 @@ class Translator extends SymfonyTranslator
     }
 
     /**
-     * @param string $path
-     *
      * @throws \RuntimeException
      */
-    protected function invalidateSystemCacheForFile($path)
+    protected function invalidateSystemCacheForFile(string $path): void
     {
         if (ini_get('apc.enabled') && function_exists('apc_delete_file')) {
             if (apc_exists($path) && !apc_delete_file($path)) {
                 throw new \RuntimeException(sprintf('Failed to clear APC Cache for file %s', $path));
             }
-        } elseif ('cli' === php_sapi_name() ? ini_get('opcache.enable_cli') : ini_get('opcache.enable')) {
+        } elseif ('cli' === PHP_SAPI ? ini_get('opcache.enable_cli') : ini_get('opcache.enable')) {
             if (function_exists("opcache_invalidate") && !opcache_invalidate($path, true)) {
                 throw new \RuntimeException(sprintf('Failed to clear OPCache for file %s', $path));
             }
@@ -178,11 +221,11 @@ class Translator extends SymfonyTranslator
      *
      * @return array
      */
-    public function getFormats()
+    public function getFormats(): array
     {
         $allFormats = [];
 
-        foreach ($this->loaderIds as $id => $formats) {
+        foreach ($this->loaderIds as $formats) {
             foreach ($formats as $format) {
                 if ('database' !== $format) {
                     $allFormats[] = $format;
@@ -196,18 +239,17 @@ class Translator extends SymfonyTranslator
     /**
      * Returns a loader according to the given format.
      *
-     * @param string $format
-     * @throws \RuntimeException
-     * @return LoaderInterface
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    public function getLoader($format)
+    public function getLoader(string $format): LoaderInterface
     {
         $loader = null;
         $i = 0;
         $ids = array_keys($this->loaderIds);
 
         while ($i < count($ids) && null === $loader) {
-            if (in_array($format, $this->loaderIds[$ids[$i]])) {
+            if (\in_array($format, $this->loaderIds[ $ids[ $i ] ], true)) {
                 $loader = $this->container->get($ids[$i]);
             }
             $i++;

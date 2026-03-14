@@ -6,7 +6,6 @@ use Lexik\Bundle\TranslationBundle\Form\Handler\TransUnitFormHandler;
 use Lexik\Bundle\TranslationBundle\Form\Type\TransUnitType;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Translation\TranslatorDecorator;
 use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator;
 use Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder;
@@ -23,8 +22,14 @@ class TranslationController extends AbstractController
 {
     use CsrfCheckerTrait;
 
-    public function __construct(private readonly StorageInterface $translationStorage, private readonly StatsAggregator $statsAggregator, private readonly TransUnitFormHandler $transUnitFormHandler, private readonly TranslatorInterface $lexikTranslator, private readonly TranslatorInterface $translator, private readonly LocaleManagerInterface $localeManager, private readonly ?TokenFinder $tokenFinder)
-    {
+    public function __construct(
+        private readonly StorageInterface $translationStorage,
+        private readonly StatsAggregator $statsAggregator,
+        private readonly TransUnitFormHandler $transUnitFormHandler,
+        private readonly TranslatorInterface $translator,
+        private readonly LocaleManagerInterface $localeManager,
+        private readonly ?TokenFinder $tokenFinder
+    ) {
     }
 
     /**
@@ -34,7 +39,13 @@ class TranslationController extends AbstractController
     {
         $stats = $this->statsAggregator->getStats();
 
-        return $this->render('@LexikTranslation/Translation/overview.html.twig', ['layout'         => $this->getParameter('lexik_translation.base_layout'), 'locales'        => $this->getManagedLocales(), 'domains'        => $this->translationStorage->getTransUnitDomains(), 'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(), 'stats'          => $stats]);
+        return $this->render('@LexikTranslation/Translation/overview.html.twig', [
+            'layout'         => $this->getParameter('lexik_translation.base_layout'),
+            'locales'        => $this->getManagedLocales(),
+            'domains'        => $this->translationStorage->getTransUnitDomains(),
+            'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(),
+            'stats'          => $stats,
+        ]);
     }
 
     /**
@@ -47,7 +58,14 @@ class TranslationController extends AbstractController
             $tokens = $this->tokenFinder->find();
         }
 
-        return $this->render('@LexikTranslation/Translation/grid.html.twig', ['layout'         => $this->getParameter('lexik_translation.base_layout'), 'inputType'      => $this->getParameter('lexik_translation.grid_input_type'), 'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'), 'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'), 'locales'        => $this->getManagedLocales(), 'tokens'         => $tokens]);
+        return $this->render('@LexikTranslation/Translation/grid.html.twig', [
+            'layout'         => $this->getParameter('lexik_translation.base_layout'),
+            'inputType'      => $this->getParameter('lexik_translation.grid_input_type'),
+            'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'),
+            'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'),
+            'locales'        => $this->getManagedLocales(),
+            'tokens'         => $tokens,
+        ]);
     }
 
     /**
@@ -55,8 +73,8 @@ class TranslationController extends AbstractController
      */
     public function invalidateCacheAction(Request $request): Response
     {
-        if (method_exists($this->lexikTranslator, 'removeLocalesCacheFiles')) {
-            $this->lexikTranslator->removeLocalesCacheFiles($this->getManagedLocales());
+        if (method_exists($this->translator, 'removeLocalesCacheFiles')) {
+            $this->translator->removeLocalesCacheFiles($this->getManagedLocales());
         }
 
         $message = $this->translator->trans('translations.cache_removed', [], 'LexikTranslationBundle');
@@ -94,10 +112,8 @@ class TranslationController extends AbstractController
 
     /**
      * Returns managed locales.
-     *
-     * @return array
      */
-    protected function getManagedLocales()
+    protected function getManagedLocales(): array
     {
         return $this->localeManager->getLocales();
     }

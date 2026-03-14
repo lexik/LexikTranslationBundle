@@ -51,10 +51,11 @@ services:
     # Translator
     lexik_translation.translator:
         class: Lexik\Bundle\TranslationBundle\Translation\Translator
+        decorates: 'translator'
+        decoration_on_invalid: ignore
         arguments:
+            $translator: '@.inner'
             $container: '@service_container'
-            $formatter: '@translator.formatter.default'
-            $defaultLocale: '%kernel.default_locale%'
             $loaderIds: []
             $options:
                 cache_dir: '%kernel.cache_dir%/translations'
@@ -63,18 +64,9 @@ services:
                 scanned_directories: []
                 cache_vary: []
                 resources_type: '%lexik_translation.resources_type%'
-        calls:
-            - [setConfigCacheFactory, ['@config_cache_factory']]
-        tags:
-            - { name: kernel.locale_aware }
         public: true
 
     Lexik\Bundle\TranslationBundle\Translation\Translator:
-        alias: lexik_translation.translator
-        public: true
-
-    # TranslatorDecorator alias for backward compatibility
-    Lexik\Bundle\TranslationBundle\Translation\TranslatorDecorator:
         alias: lexik_translation.translator
         public: true
 
@@ -82,7 +74,7 @@ services:
         alias: lexik_translation.translation_storage
 
     # Loader
-    Lexik\Bundle\TranslationBundle\Translation\Loader:
+    Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader:
         class: '%lexik_translation.loader.database.class%'
         arguments:
             - '@lexik_translation.translation_storage'
