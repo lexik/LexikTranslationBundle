@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-use Rector\CodeQuality\Rector\Class_\InlineConstructorDefaultToPropertyRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\LevelSetList;
 
-return static function (RectorConfig $rectorConfig): void {
-    $rectorConfig->paths([
+return RectorConfig::configure()
+    ->withPaths([
         __DIR__ . '/Command',
         __DIR__ . '/Controller',
         __DIR__ . '/DependencyInjection',
@@ -21,13 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
         __DIR__ . '/Tests',
         __DIR__ . '/Translation',
         __DIR__ . '/Util',
+    ])
+    ->withSets([
+        LevelSetList::UP_TO_PHP_81,
     ]);
-
-    // register a single rule
-    //$rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
-
-    // define sets of rules
-    $rectorConfig->sets([
-        LevelSetList::UP_TO_PHP_81
-    ]);
-};

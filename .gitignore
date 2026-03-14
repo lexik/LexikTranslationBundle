@@ -1,6 +1,20 @@
+# Composer dependencies (installed with composer install)
 vendor
-composer.lock
+
+# PhpStorm IDE configuration and cache
 .idea
 
+# Test application temporary directory
 Tests/app/tmp/
+
+# PHPUnit result cache
 .phpunit.result.cache
+
+# PHP-CS-Fixer cache
+.php-cs-fixer.cache
+
+# Generated documentation
+.docs
+
+# Demo or demonstration environment
+.demo

@@ -23,12 +23,17 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       mongo:
-        image: library/mongo:4.0
+        image: mongo:4.4
         ports:
           - 27017:27017
         env:
           MONGO_INITDB_ROOT_USERNAME: admin
           MONGO_INITDB_ROOT_PASSWORD: secret
+        options: >-
+          --health-cmd "mongo mongodb://admin:secret@localhost:27017/admin --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     strategy:
       matrix:

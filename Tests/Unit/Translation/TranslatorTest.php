@@ -36,13 +36,13 @@ class TranslatorTest extends BaseUnitTestCase
         $expected = [
             'de' => [
                 ['database', 'DB', 'superTranslations']
-            ], 
+            ],
             'en' => [
-                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'messages'],
                 ['database', 'DB', 'superTranslations']
-            ], 
+            ],
             'fr' => [
-                ['database', 'DB', 'messages'], 
+                ['database', 'DB', 'messages'],
                 ['database', 'DB', 'superTranslations'],
             ]
         ];

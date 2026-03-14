@@ -14,8 +14,15 @@ const TranslationManager = (() => {
 
         const debounceTimeouts = {};
 
-        document.addEventListener('DOMContentLoaded', function () {
-            reloadGrid();
+        const initializeGrid = () => {
+            // Small delay to ensure DOM is fully ready
+            setTimeout(() => {
+                // Read filter parameters from URL (query string or hash) and apply them
+                parseUrlFilters().then((hasFilters) => {
+                    // Reload grid with filters applied
+                    reloadGrid();
+                });
+            }, 100);
 
             document.querySelectorAll('.input-sm').forEach(input => {
                 input.addEventListener('keyup', function() {
@@ -26,11 +33,22 @@ const TranslationManager = (() => {
                         _currentPage = 1;
                         _order = 'id';
                         _direction = 'asc';
+                        // Update URL with current filter values
+                        updateUrlWithFilters();
+                        // Reload grid
                         reloadGrid();
                     }, 200);
                 });
             });
-        });
+        };
+
+        // Check if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeGrid);
+        } else {
+            // DOM is already loaded, execute immediately
+            initializeGrid();
+        }
     };
 
     const sharedMessage = {
@@ -392,6 +410,108 @@ const TranslationManager = (() => {
     };
 
     const getMaxPageNumber = (total) => Math.ceil(total / translationCfg.maxPageNumber);
+
+    const parseUrlFilters = () =>
+    {
+        return new Promise((resolve) => {
+            let hasFilters = false;
+            const filterPromises = [];
+            
+            // First, try to parse from query string (?filter[_domain]=validators)
+            const queryString = window.location.search;
+            let params = null;
+            
+            if (queryString) {
+                params = new URLSearchParams(queryString.substring(1)); // Remove '?'
+            } else {
+                // Fallback to hash fragment (#!?filter[_domain]=validators)
+                const hash = window.location.hash;
+                if (hash && hash.startsWith('#!?')) {
+                    params = new URLSearchParams(hash.substring(3)); // Remove '#!?'
+                }
+            }
+            
+            if (!params) {
+                resolve(false);
+                return;
+            }
+            
+            // Process filter parameters
+            params.forEach((value, key) => {
+                if (key.startsWith('filter[') && key.endsWith(']')) {
+                    // Extract column name from filter[column]
+                    const column = key.substring(7, key.length - 1);
+                    // Map column names to input IDs (e.g., _domain -> __domain)
+                    // Note: locales keep their original name (en, es, etc.)
+                    let inputId = column;
+                    if (column === '_domain') {
+                        inputId = '__domain';
+                    }
+                    // _key and locales use their column name as input ID
+                    
+                    // Wait for input to be available
+                    const filterPromise = new Promise((filterResolve) => {
+                        const trySetFilter = (attempts = 0) => {
+                            const input = document.getElementById(inputId);
+                            if (input) {
+                                input.value = decodeURIComponent(value);
+                                hasFilters = true;
+                                filterResolve();
+                            } else if (attempts < 10) {
+                                // Retry up to 10 times with 50ms delay
+                                setTimeout(() => trySetFilter(attempts + 1), 50);
+                            } else {
+                                // Give up after 10 attempts
+                                filterResolve();
+                            }
+                        };
+                        trySetFilter();
+                    });
+                    
+                    filterPromises.push(filterPromise);
+                }
+            });
+            
+            // Wait for all filters to be applied
+            if (filterPromises.length > 0) {
+                Promise.all(filterPromises).then(() => {
+                    resolve(hasFilters);
+                });
+            } else {
+                resolve(false);
+            }
+        });
+    };
+
+    const updateUrlWithFilters = () =>
+    {
+        const params = new URLSearchParams();
+        let hasFilters = false;
+        
+        document.querySelectorAll('.table input').forEach(input => {
+            const column = input.getAttribute('id');
+            const filterValue = input.value.trim();
+            if (filterValue !== '') {
+                // Map input IDs back to column names for URL
+                // Note: locales (en, es, etc.) and _key keep their input ID as column name
+                let urlColumn = column;
+                if (column === '__domain') {
+                    urlColumn = '_domain';
+                }
+                // For other columns (locales, _key), use the input ID directly
+                params.set(`filter[${urlColumn}]`, filterValue);
+                hasFilters = true;
+            }
+        });
+        
+        // Update URL without reloading the page
+        if (window.history && window.history.replaceState) {
+            const newUrl = hasFilters 
+                ? window.location.pathname + '?' + params.toString()
+                : window.location.pathname;
+            window.history.replaceState(null, '', newUrl);
+        }
+    };
 
     const addFilteredValuesToParams = (params) =>
     {

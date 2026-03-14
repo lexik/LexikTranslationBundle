@@ -28,6 +28,7 @@
         "symfony/asset": "^7.0|^8.0",
         "symfony/form": "^7.0|^8.0",
         "symfony/framework-bundle": "^7.0|^8.0",
+        "symfony/orm-pack": "^2.7",
         "symfony/security-csrf": "^7.0|^8.0",
         "symfony/translation": "^7.0|^8.0",
         "symfony/twig-bundle": "^7.0|^8.0",
@@ -43,12 +44,13 @@
         "doctrine/doctrine-bundle": "^2.2",
         "doctrine/mongodb-odm": "^2.7",
         "doctrine/mongodb-odm-bundle": "^5.0",
+        "friendsofphp/php-cs-fixer": "^3.64",
         "mikey179/vfsstream": "^1.6",
         "mongodb/mongodb": "^1.21.0 || ^2.0.0",
+        "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^9.5|^10.0",
-        "rector/jack": "^0.2.3",
-        "rector/rector": "^0.14.8|^0.15",
-        "symfony/var-exporter": "^6.4|^7.0"
+        "rector/rector": "*",
+        "symfony/var-exporter": "^7.0"
     },
     "autoload": {
         "psr-4": {
@@ -70,6 +72,10 @@
         "test": "vendor/bin/phpunit"
     },
     "config": {
+        "platform": {
+            "php": "8.2.0",
+            "ext-mongodb": "2.1.4"
+        },
         "sort-packages": true
     }
 }
