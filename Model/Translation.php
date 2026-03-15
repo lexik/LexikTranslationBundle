@@ -30,7 +30,7 @@ abstract class Translation
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected $updatedAt;
 
-    #[ORM\Column(name: 'modified_manually', type: Types::BOOLEAN, nullable: true)]
+    #[ORM\Column(name: 'modified_manually', type: Types::BOOLEAN, options: ['default' => false])]
     protected bool $modifiedManually = false;
 
     protected FileInterface $file;
