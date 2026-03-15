@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Command;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
+use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -164,15 +165,10 @@ class ExportTranslationsCommand extends Command
 
     /**
      * If the output file exists we merge existing translations with those from the database.
-     *
-     * @param FileInterface $file
-     * @param string        $outputFile
-     * @param array         $translations
-     * @return array
      */
-    protected function mergeExistingTranslations($file, $outputFile, $translations)
+    protected function mergeExistingTranslations(FileInterface $file, string $outputFile, array $translations): array
     {
-        if (file_exists($outputFile)) {
+        if (file_exists($outputFile) && method_exists($this->translator, 'getLoader')) {
             $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
             $loader = $this->translator->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());

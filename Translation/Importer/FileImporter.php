@@ -123,10 +123,7 @@ class FileImporter
 
         $this->storage->flush();
 
-        // clear only Lexik entities
-        foreach (['file', 'trans_unit', 'translation'] as $name) {
-            $this->storage->clear($this->storage->getModelClass($name));
-        }
+        $this->storage->clear();
 
         return $imported;
     }

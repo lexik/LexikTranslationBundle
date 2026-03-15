@@ -12,10 +12,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Validator\Validation;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -53,13 +54,13 @@ HELP
 )]
 class ImportTranslationsCommand extends Command
 {
-    /**
-     * @param TranslatorInterface $translator
-     */
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly LocaleManagerInterface $localeManager,
         private readonly FileImporter $fileImporter,
+        private readonly KernelInterface $kernel,
+        #[Autowire('%kernel.project_dir%')]
+        private readonly string $projectDir,
     ) {
         parent::__construct();
     }
@@ -106,7 +107,7 @@ class ImportTranslationsCommand extends Command
 
         $bundleName = $this->input->getArgument('bundle');
         if ($bundleName) {
-            $bundle = $this->getApplication()->getKernel()->getBundle($bundleName);
+            $bundle = $this->kernel->getBundle($bundleName);
             $this->importBundleTranslationFiles($bundle, $locales, $domains, (bool)$this->input->getOption('globals'));
         } else {
             if (!$this->input->getOption('import-path')) {
@@ -141,7 +142,7 @@ class ImportTranslationsCommand extends Command
             $this->importTranslationFilesFromPath($importPath, $locales, $domains);
         }
 
-        if ($this->input->getOption('cache-clear')) {
+        if ($this->input->getOption('cache-clear') && method_exists($this->translator, 'removeLocalesCacheFiles')) {
             $this->output->writeln('<info>Removing translations cache files ...</info>');
             $this->translator->removeLocalesCacheFiles($locales);
         }
@@ -203,14 +204,10 @@ class ImportTranslationsCommand extends Command
     /**
      * Imports application translation files.
      */
-    protected function importAppTranslationFiles(array $locales, array $domains)
+    protected function importAppTranslationFiles(array $locales, array $domains): void
     {
-        if (Kernel::MAJOR_VERSION >= 4) {
-            $translationPath = $this->getApplication()->getKernel()->getProjectDir() . '/translations';
-            $finder = $this->findTranslationsFiles($translationPath, $locales, $domains, false);
-        } else {
-            $finder = $this->findTranslationsFiles($this->getApplication()->getKernel()->getRootDir(), $locales, $domains);
-        }
+        $translationPath = $this->projectDir . '/translations';
+        $finder = $this->findTranslationsFiles($translationPath, $locales, $domains, false);
         $this->importTranslationFiles($finder);
     }
 
@@ -221,7 +218,7 @@ class ImportTranslationsCommand extends Command
      */
     protected function importBundlesTranslationFiles(array $locales, array $domains, $global = false)
     {
-        $bundles = $this->getApplication()->getKernel()->getBundles();
+        $bundles = $this->kernel->getBundles();
 
         foreach ($bundles as $bundle) {
             $this->importBundleTranslationFiles($bundle, $locales, $domains, $global);
@@ -230,20 +227,11 @@ class ImportTranslationsCommand extends Command
 
     /**
      * Imports translation files form the specific bundles.
-     *
-     * @param array   $locales
-     * @param array   $domains
-     * @param boolean $global
      */
-    protected function importBundleTranslationFiles(BundleInterface $bundle, $locales, $domains, $global = false)
+    protected function importBundleTranslationFiles(BundleInterface $bundle, array $locales, array $domains, bool $global = false): void
     {
         if ($global) {
-            $kernel = $this->getApplication()->getKernel();
-            if (Kernel::MAJOR_VERSION >= 4) {
-                $path = $kernel->getProjectDir() . '/app';
-            } else {
-                $path = $kernel->getRootDir();
-            }
+            $path = $this->projectDir . '/app';
 
             $path .= '/Resources/' . $bundle->getName() . '/translations';
 
@@ -270,10 +258,8 @@ class ImportTranslationsCommand extends Command
 
     /**
      * Imports some translations files.
-     *
-     * @param Finder $finder
      */
-    protected function importTranslationFiles($finder)
+    protected function importTranslationFiles(?Finder $finder): void
     {
         if (!$finder instanceof Finder) {
             $this->output->writeln('No file to import');
@@ -297,20 +283,17 @@ class ImportTranslationsCommand extends Command
 
     /**
      * Return a Finder object if $path has a Resources/translations folder.
-     *
-     * @param string $path
-     * @return Finder
      */
-    protected function findTranslationsFiles($path, array $locales, array $domains, $autocompletePath = true)
+    protected function findTranslationsFiles(string $path, array $locales, array $domains, $autocompletePath = true): ?Finder
     {
         $finder = null;
 
-        if (preg_match('#^win#i', PHP_OS)) {
+        if (0 === stripos(PHP_OS_FAMILY, "win")) {
             $path = preg_replace('#' . preg_quote(DIRECTORY_SEPARATOR, '#') . '#', '/', $path);
         }
 
         if (true === $autocompletePath) {
-            $dir = (str_starts_with((string) $path, $this->getApplication()->getKernel()->getProjectDir() . '/Resources')) ? $path : $path . '/Resources/translations';
+            $dir = (str_starts_with((string) $path, $this->projectDir . '/Resources')) ? $path : $path . '/Resources/translations';
         } else {
             $dir = $path;
         }
@@ -327,12 +310,9 @@ class ImportTranslationsCommand extends Command
         return (null !== $finder && $finder->count() > 0) ? $finder : null;
     }
 
-    /**
-     * @return string
-     */
-    protected function getFileNamePattern(array $locales, array $domains)
+    protected function getFileNamePattern(array $locales, array $domains): string
     {
-        $formats = $this->translator->getFormats();
+        $formats = method_exists($this->translator, 'getFormats') ? $this->translator->getFormats() : [];
 
         if (count($domains)) {
             $regex = sprintf('/((%s)\.(%s)\.(%s))/', implode('|', $domains), implode('|', $locales), implode('|', $formats));

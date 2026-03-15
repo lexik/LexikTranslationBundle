@@ -48,12 +48,15 @@ interface TransUnitManagerInterface
      * @param boolean               $merge
      * @return TranslationInterface
      */
-    public function updateTranslation(TransUnitInterface $transUnit, $locale, $content, $flush = false, bool $merge = false): ?TranslationInterface;
+    public function updateTranslation(TransUnitInterface $transUnit, string $locale, $content, bool $flush = false, bool $merge = false): ?TranslationInterface;
 
     /**
-     * Update the content of each translations for the given trans unit.
-     *
-     * @param boolean               $flush
+     * Update the content of each translation for the given trans unit.
      */
     public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, bool $flush = false): void;
+
+    public function delete(TransUnitInterface $transUnit): bool;
+
+    public function deleteTranslation(TransUnitInterface $transUnit, string $locale): bool;
+
 }

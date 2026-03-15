@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 
@@ -11,25 +12,13 @@ use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 class Translation extends TranslationModel implements TranslationInterface
 {
     // Relationship mapping is defined in XML: Resources/config/doctrine/Translation.mongodb-odm.xml
-    protected $file;
-
-    public function setFile($file): void
-    {
-        $this->file = $file;
-    }
-
-    public function getFile()
-    {
-        return $this->file;
-    }
+    protected FileInterface $file;
 
     /**
-     * Convert all MongoTimestamp object to time.
+     * @deprecated No longer needed since the legacy mongo extension is no longer supported.
      */
     public function convertMongoTimestamp(): void
     {
-        $this->createdAt = ($this->createdAt instanceof \MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;
-        $this->updatedAt = ($this->updatedAt instanceof \MongoTimestamp) ? $this->updatedAt->sec : $this->updatedAt;
     }
 
     /**

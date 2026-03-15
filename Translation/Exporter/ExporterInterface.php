@@ -11,18 +11,11 @@ interface ExporterInterface
 {
     /**
      * Export translations in to the given file.
-     *
-     * @param string $file
-     * @param array $translations
-     * @return boolean
      */
-    public function export($file, $translations);
+    public function export(string $file, array $translations): bool;
 
     /**
      * Returns true if this exporter support the given format.
-     *
-     * @param string $format
-     * @return boolean
      */
-    public function support($format);
+    public function support(string $format): bool;
 }

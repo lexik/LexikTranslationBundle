@@ -20,7 +20,7 @@ class YamlExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($file, $translations)
+    public function export(string $file, array $translations): bool
     {
         if ($this->createTree) {
             $result = $this->createMultiArray($translations);
@@ -122,8 +122,8 @@ class YamlExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function support($format)
+    public function support(string $format): bool
     {
-        return ('yml' == $format || 'yaml' == $format);
+        return ('yml' === $format || 'yaml' === $format);
     }
 }

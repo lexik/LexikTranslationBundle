@@ -12,20 +12,12 @@ interface FileManagerInterface
 {
     /**
      * Create a new file.
-     *
-     * @param string $name
-     * @param string $path
-     * @return File
      */
-    public function create($name, $path, $flush = false);
+    public function create(string $name, string $path, bool $flush = false): FileInterface;
 
     /**
      * Returns a translation file according to the given name and path.
      * If path is null, app/Resources/translations will be used as default path.
-     *
-     * @param string $name
-     * @param string $path
-     * @return File
      */
-    public function getFor($name, $path = null);
+    public function getFor(string $name, ?string $path = null): FileInterface;
 }

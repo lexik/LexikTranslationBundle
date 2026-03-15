@@ -88,7 +88,9 @@ class ImportTranslationsCommandTest extends WebTestCase
             command: new ImportTranslationsCommand(
                 translator: $container->get('lexik_translation.translator'),
                 localeManager: $container->get(LocaleManagerInterface::class),
-                fileImporter: $container->get('lexik_translation.importer.file')
+                fileImporter: $container->get('lexik_translation.importer.file'),
+                kernel: static::$kernel,
+                projectDir: $container->getParameter('kernel.project_dir')
             )
         );
 

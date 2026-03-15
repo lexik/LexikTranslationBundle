@@ -20,7 +20,7 @@ class JsonExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($file, $translations)
+    public function export(string $file, array $translations): bool
     {
         $bytes = file_put_contents($file, json_encode($this->hierarchicalFormat ? $this->hierarchicalFormat($translations) : $translations, JSON_PRETTY_PRINT));
 
@@ -30,9 +30,9 @@ class JsonExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function support($format)
+    public function support(string $format): bool
     {
-        return ('json' == $format);
+        return ('json' === $format);
     }
 
     /**

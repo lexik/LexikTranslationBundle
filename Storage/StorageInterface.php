@@ -42,10 +42,8 @@ interface StorageInterface
 
     /**
      * Clear managed objects.
-     *
-     * @param string $entityName
      */
-    public function clear($entityName = null);
+    public function clear(): void;
 
     /**
      * Returns the class's namespace according to the given name.

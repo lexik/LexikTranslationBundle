@@ -2,6 +2,7 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
@@ -23,12 +24,10 @@ class TransUnit extends TransUnitModel implements TransUnitInterface
 
     // translations property is inherited from TransUnitModel
     // Relationship mapping is defined in XML: Resources/config/doctrine/TransUnit.orm.xml
-    protected $translations;
+    protected Collection $translations;
 
     /**
      * Add translations
-     *
-     * @param \Lexik\Bundle\TranslationBundle\Entity\Translation $translations
      */
     public function addTranslation(DocumentTranslation|Translation $translation): void
     {

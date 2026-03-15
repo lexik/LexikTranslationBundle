@@ -10,6 +10,7 @@ use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -17,8 +18,6 @@ use Symfony\Component\HttpFoundation\Request;
 class RestController extends AbstractController
 {
     use CsrfCheckerTrait;
-
-    private $csrfTokenManager;
 
     public function __construct(
         private readonly DataGridRequestHandler $dataGridRequestHandler,
@@ -43,7 +42,7 @@ class RestController extends AbstractController
     }
 
     /**
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
     public function updateAction(Request $request, int $id): JsonResponse
     {
@@ -55,7 +54,7 @@ class RestController extends AbstractController
     }
 
     /**
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
     public function deleteAction(int $id): JsonResponse
     {
@@ -73,7 +72,7 @@ class RestController extends AbstractController
     }
 
     /**
-     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @throws NotFoundHttpException
      */
     public function deleteTranslationAction(int $id, string $locale): JsonResponse
     {

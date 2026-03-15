@@ -63,7 +63,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.exporter.json.hierarchical_format', $config['exporter']['json_hierarchical_format']);
         $container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
 
-        $objectManager = $config['storage']['object_manager'] ?? null;
+        $objectManager = $config['storage']['object_manager'] ?? 'default';
 
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
@@ -117,12 +117,12 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      * @param string           $objectManager
      * @throws \RuntimeException
      */
-    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager): void
+    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, string $objectManager): void
     {
         $container->setParameter('lexik_translation.storage.type', $storage);
 
-        if (StorageInterface::STORAGE_ORM == $storage) {
-            $args = [new Reference('doctrine'), $objectManager ?? 'default'];
+        if (StorageInterface::STORAGE_ORM === $storage) {
+            $args = [new Reference('doctrine'), $objectManager];
 
             // Create XML driver for backward compatibility
             if (class_exists(SimplifiedXmlDriver::class)) {
@@ -141,8 +141,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
             $container->setDefinition('lexik_translation.orm.listener', $metadataListener);
 
-        } elseif (StorageInterface::STORAGE_MONGODB == $storage) {
-            $args = [new Reference('doctrine_mongodb'), $objectManager ?? 'default'];
+        } elseif (StorageInterface::STORAGE_MONGODB === $storage) {
+            $args = [new Reference('doctrine_mongodb'), $objectManager];
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
         } else {

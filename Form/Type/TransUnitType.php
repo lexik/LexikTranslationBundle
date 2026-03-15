@@ -20,7 +20,7 @@ class TransUnitType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('key', TextType::class, ['label' => 'translations.key']);
         $builder->add('domain', ChoiceType::class, ['label'   => 'translations.domain', 'choices' => array_merge(
@@ -35,7 +35,7 @@ class TransUnitType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class'         => null, 'default_domain'     => ['messages'], 'domains'            => [], 'translation_class'  => null, 'translation_domain' => 'LexikTranslationBundle']);
     }
@@ -43,7 +43,7 @@ class TransUnitType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->getBlockPrefix();
     }
@@ -51,7 +51,7 @@ class TransUnitType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return 'lxk_trans_unit';
     }
