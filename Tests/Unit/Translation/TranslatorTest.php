@@ -4,11 +4,11 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
+use Lexik\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Translator tests.
@@ -26,8 +26,8 @@ class TranslatorTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        if (file_exists(sys_get_temp_dir().'/database.resources.php')) {
-            unlink(sys_get_temp_dir().'/database.resources.php');
+        if (file_exists(sys_get_temp_dir() . '/database.resources.php')) {
+            unlink(sys_get_temp_dir() . '/database.resources.php');
         }
 
         $translator = $this->createTranslator($em, sys_get_temp_dir());
@@ -58,29 +58,29 @@ class TranslatorTest extends BaseUnitTestCase
      */
     public function testRemoveCacheFile(): void
     {
-        $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
+        $cacheDir = __DIR__ . '/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
         $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir);
 
         // remove locale 'fr'
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php.meta'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
+        $this->assertFileExists($cacheDir . '/catalogue.fr.php');
+        $this->assertFileExists($cacheDir . '/catalogue.fr.php.meta');
+        $this->assertFileExists($cacheDir . '/catalogue.fr_FR.php');
+        $this->assertFileExists($cacheDir . '/catalogue.fr_FR.php.meta');
 
         $translator->removeCacheFile('fr');
 
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php.meta'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr.php.meta');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr_FR.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr_FR.php.meta');
 
         // remove locale 'en'
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php.meta'));
+        $this->assertFileExists($cacheDir . '/catalogue.en.php');
+        $this->assertFileExists($cacheDir . '/catalogue.en.php.meta');
         $translator->removeCacheFile('en');
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php.meta'));
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.en.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.en.php.meta');
     }
 
     /**
@@ -88,29 +88,29 @@ class TranslatorTest extends BaseUnitTestCase
      */
     public function testRemoveLocalesCacheFiles(): void
     {
-        $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
+        $cacheDir = __DIR__ . '/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
         $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir);
 
-        $this->assertTrue(file_exists($cacheDir.'/database.resources.php'));
-        $this->assertTrue(file_exists($cacheDir.'/database.resources.php.meta'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr.php.meta'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php'));
-        $this->assertTrue(file_exists($cacheDir.'/catalogue.en.php.meta'));
+        $this->assertFileExists($cacheDir . '/database.resources.php');
+        $this->assertFileExists($cacheDir . '/database.resources.php.meta');
+        $this->assertFileExists($cacheDir . '/catalogue.fr.php');
+        $this->assertFileExists($cacheDir . '/catalogue.fr.php.meta');
+        $this->assertFileExists($cacheDir . '/catalogue.fr_FR.php');
+        $this->assertFileExists($cacheDir . '/catalogue.fr_FR.php.meta');
+        $this->assertFileExists($cacheDir . '/catalogue.en.php');
+        $this->assertFileExists($cacheDir . '/catalogue.en.php.meta');
 
         $translator->removeLocalesCacheFiles(['fr', 'en']);
 
-        $this->assertFalse(file_exists($cacheDir.'/database.resources.php'));
-        $this->assertFalse(file_exists($cacheDir.'/database.resources.php.meta'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr.php.meta'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.fr_FR.php.meta'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php'));
-        $this->assertFalse(file_exists($cacheDir.'/catalogue.en.php.meta'));
+        $this->assertFileDoesNotExist($cacheDir . '/database.resources.php');
+        $this->assertFileDoesNotExist($cacheDir . '/database.resources.php.meta');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr.php.meta');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr_FR.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.fr_FR.php.meta');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.en.php');
+        $this->assertFileDoesNotExist($cacheDir . '/catalogue.en.php.meta');
     }
 
     protected function createTranslator($em, $cacheDir): TranslatorMock
@@ -128,22 +128,18 @@ class TranslatorTest extends BaseUnitTestCase
         $container->set('event_dispatcher', $dispatcher);
         $container->compile();
 
-        $loaderIds = [];
+        $innerTranslator = new \Symfony\Component\Translation\Translator('en', new MessageFormatter());
+
         $options = [
             'cache_dir' => $cacheDir,
             'debug' => true,
-            'resource_files' => [],
-            'cache_vary' => [],
-            'scanned_directories' => [],
-            'enabled_locales' => ['en', 'fr'],
-            'default_locale' => 'en',
+            'resources_type' => 'all',
         ];
 
         return new TranslatorMock(
+            translator: $innerTranslator,
             container: $container,
-            formatter: new MessageFormatter(),
-            defaultLocale: 'en',
-            loaderIds: $loaderIds,
+            loaderIds: [],
             options: $options
         );
     }
@@ -154,43 +150,26 @@ class TranslatorTest extends BaseUnitTestCase
             mkdir($cacheDir);
         }
 
-        touch($cacheDir.'/catalogue.fr.php');
-        touch($cacheDir.'/catalogue.fr.php.meta');
+        touch($cacheDir . '/catalogue.fr.php');
+        touch($cacheDir . '/catalogue.fr.php.meta');
 
-        touch($cacheDir.'/catalogue.fr_FR.php');
-        touch($cacheDir.'/catalogue.fr_FR.php.meta');
+        touch($cacheDir . '/catalogue.fr_FR.php');
+        touch($cacheDir . '/catalogue.fr_FR.php.meta');
 
-        touch($cacheDir.'/catalogue.en.php');
-        touch($cacheDir.'/catalogue.en.php.meta');
+        touch($cacheDir . '/catalogue.en.php');
+        touch($cacheDir . '/catalogue.en.php.meta');
 
-        touch($cacheDir.'/database.resources.php');
-        touch($cacheDir.'/database.resources.php.meta');
+        touch($cacheDir . '/database.resources.php');
+        touch($cacheDir . '/database.resources.php.meta');
     }
 }
 
 class TranslatorMock extends Translator
 {
     public array $dbResources = [];
-    public array $options = [
-        'cache_dir' => '',
-        'debug' => false,
-        'resource_files' => [],
-        'cache_vary' => [],
-        'scanned_directories' => [],
-        'enabled_locales' => [],
-        'default_locale' => 'en',
-        'loader_ids' => [],
-        'formatter' => null,
-        'container' => null
-    ];
 
     public function addResource(string $format, mixed $resource, string $locale, ?string $domain = null): void
     {
-        if(empty( $domain )) {
-           var_dump('Domain is empty in TranslatorMock::addResource');
-           var_dump($format, $resource, $locale);
-           exit;
-        }
         if ('database' === $format) {
             $this->dbResources[$locale][] = [$format, $resource, $domain];
         }

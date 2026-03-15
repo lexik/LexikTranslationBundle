@@ -12,7 +12,7 @@ class XliffExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($file, $translations)
+    public function export(string $file, array $translations): bool
     {
         $dom = $this->createXmlDocument();
 
@@ -39,9 +39,9 @@ class XliffExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function support($format)
+    public function support(string $format): bool
     {
-        return ('xlf' == $format || 'xliff' == $format);
+        return ('xlf' === $format || 'xliff' === $format);
     }
 
     /**
@@ -49,7 +49,7 @@ class XliffExporter implements ExporterInterface
      *
      * @return \DOMDocument
      */
-    protected function createXmlDocument()
+    protected function createXmlDocument(): \DOMDocument
     {
         $dom = new \DOMDocument('1.0', 'utf-8');
         $dom->formatOutput = true;
@@ -59,11 +59,9 @@ class XliffExporter implements ExporterInterface
 
     /**
      * Add root nodes to a document.
-     *
-     * @param string|null $targetLanguage
-     * @return \DOMElement
+     * @throws \DOMException
      */
-    protected function addRootNodes(\DOMDocument $dom, $targetLanguage = null)
+    protected function addRootNodes(\DOMDocument $dom, ?string $targetLanguage = null): \DOMElement
     {
         $xliff = $dom->appendChild($dom->createElement('xliff'));
         $xliff->appendChild(new \DOMAttr('xmlns', 'urn:oasis:names:tc:xliff:document:1.2'));
@@ -78,28 +76,26 @@ class XliffExporter implements ExporterInterface
             $fileNode->appendChild(new \DOMAttr('target-language', $targetLanguage));
         }
 
-        $bodyNode =  $fileNode->appendChild($dom->createElement('body'));
+        $body = $dom->createElement('body');
+        $fileNode->appendChild($body);
 
-        return $bodyNode;
+        return $body;
     }
 
     /**
      * Create a new trans-unit node.
      *
-     * @param int $id
-     * @param string $key
-     * @param string $value
-     * @return \DOMElement
+     * @throws \DOMException
      */
-    protected function createTranslationNode(\DOMDocument $dom, $id, $key, $value)
+    protected function createTranslationNode(\DOMDocument $dom, int $id, string $key, string $value): \DOMElement
     {
         $translationNode = $dom->createElement('trans-unit');
-        $translationNode->appendChild(new \DOMAttr('id', $id));
-        
+        $translationNode->appendChild(new \DOMAttr('id', (string) $id));
+
         /**
          * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html#approved
          */
-        if ($value != '') {
+        if ($value !== '') {
             $translationNode->appendChild(new \DOMAttr('approved', 'yes'));
         }
 

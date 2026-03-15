@@ -2,15 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
-use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
-use DateTime;
 
 /**
  * This class represent a trans unit which contain translations for a given domain and key.
@@ -34,9 +34,9 @@ abstract class TransUnit
     protected string $domain;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var Collection
      */
-    protected $translations;
+    protected Collection $translations;
 
     #[ORM\Column(name: 'created_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected DateTime|string $createdAt;
@@ -105,8 +105,6 @@ abstract class TransUnit
 
     /**
      * Add translations
-     *
-     * @param Translation $translations
      */
     public function addTranslation(DocumentTranslation|Translation $translation): void
     {
@@ -115,8 +113,6 @@ abstract class TransUnit
 
     /**
      * Remove translations
-     *
-     * @param Translation $translations
      */
     public function removeTranslation(DocumentTranslation|Translation $translation): void
     {
@@ -125,10 +121,8 @@ abstract class TransUnit
 
     /**
      * Get translations
-     *
-     * @return \Doctrine\Common\Collections\Collection
      */
-    public function getTranslations(): array|Collection
+    public function getTranslations(): Collection
     {
         return $this->translations;
     }
@@ -146,13 +140,11 @@ abstract class TransUnit
 
     /**
      * Return the content of translation for the given locale.
-     *
-     * @param string $locale
      */
     public function getTranslation(string $locale): ?TranslationInterface
     {
         foreach ($this->getTranslations() as $translation) {
-            if ($translation->getLocale() == $locale) {
+            if ($translation->getLocale() === $locale) {
                 return $translation;
             }
         }
@@ -173,9 +165,9 @@ abstract class TransUnit
     }
 
     /**
-     * Return transaltions with  not blank content.
+     * Return translations with  not blank content.
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function filterNotBlankTranslations(): Collection
     {

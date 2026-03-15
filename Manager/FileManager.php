@@ -12,21 +12,16 @@ use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
  */
 class FileManager implements FileManagerInterface
 {
-    /**
-     * Construct.
-     *
-     * @param string $rootDir
-     */
     public function __construct(
         private readonly StorageInterface $storage,
-        private $rootDir,
+        private readonly string $rootDir,
     ) {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFor($name, $path = null)
+    public function getFor(string $name, ?string $path = null): FileInterface
     {
         if (null === $path) {
             $path = sprintf('%s/Resources/translations', $this->rootDir);
@@ -42,7 +37,7 @@ class FileManager implements FileManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function create($name, $path, $flush = false)
+    public function create(string $name, string $path, bool $flush = false): FileInterface
     {
         $path = $this->getFileRelativePath($path);
 
@@ -64,23 +59,16 @@ class FileManager implements FileManagerInterface
 
     /**
      * Returns the has for the given file.
-     *
-     * @param string $name
-     * @param string $relativePath
-     * @return string
      */
-    protected function generateHash($name, $relativePath)
+    protected function generateHash(string $name, string $relativePath): string
     {
         return md5($relativePath . DIRECTORY_SEPARATOR . $name);
     }
 
     /**
      * Returns the relative according to the kernel.root_dir value.
-     *
-     * @param string $filePath
-     * @return string
      */
-    protected function getFileRelativePath($filePath)
+    protected function getFileRelativePath(string $filePath): string
     {
         $commonParts = [];
 
@@ -98,7 +86,7 @@ class FileManager implements FileManagerInterface
 
         $i = 0;
         while ($i < count($rootDirParts)) {
-            if (isset($rootDirParts[$i], $filePathParts[$i]) && $rootDirParts[$i] == $filePathParts[$i]) {
+            if (isset($rootDirParts[$i], $filePathParts[$i]) && $rootDirParts[$i] === $filePathParts[$i]) {
                 $commonParts[] = $rootDirParts[$i];
             }
             $i++;

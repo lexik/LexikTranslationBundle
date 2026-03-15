@@ -2,14 +2,14 @@
 
 namespace Lexik\Bundle\TranslationBundle\Translation\Importer;
 
-use Symfony\Component\Finder\SplFileInfo;
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
-use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Import a translation file into the database.
@@ -123,10 +123,7 @@ class FileImporter
 
         $this->storage->flush();
 
-        // clear only Lexik entities
-        foreach (['file', 'trans_unit', 'translation'] as $name) {
-            $this->storage->clear($this->storage->getModelClass($name));
-        }
+        $this->storage->clear();
 
         return $imported;
     }

@@ -2,13 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Driver\PDO\SQLite\Driver as SQLiteDriver;
-use Doctrine\DBAL\Exception\ConnectionException;
-use Doctrine\DBAL\Schema\DefaultSchemaManagerFactory;
-use Doctrine\ORM\Configuration;
-use Doctrine\ORM\EntityManager;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Doctrine ORM storage class.
@@ -19,58 +14,22 @@ class DoctrineORMStorage extends AbstractDoctrineStorage
 {
     /**
      * Returns true if translation tables exist.
-     *
-     * @return boolean
      */
-    public function translationsTablesExist()
+    public function translationsTablesExist(): bool
     {
         /** @var EntityManager $em */
         $em = $this->getManager();
-        $connection = $em->getConnection();
 
-        // listDatabases() is not available for SQLite
-        if (!$connection->getDriver() instanceof SQLiteDriver) {
-            // init a tmp connection without dbname/path/url in case it does not exist yet
-            $params = $connection->getParams();
-            if (isset($params['master'])) {
-                $params = $params['master'];
-            }
+        try {
+            $tables = [
+                $em->getClassMetadata($this->getModelClass('trans_unit'))->getTableName(),
+                $em->getClassMetadata($this->getModelClass('translation'))->getTableName(),
+            ];
 
-            unset($params['dbname'], $params['path'], $params['url']);
-
-            try {
-                $configuration = new Configuration();
-                if (class_exists(DefaultSchemaManagerFactory::class)) {
-                    $configuration->setSchemaManagerFactory(new DefaultSchemaManagerFactory());
-                }
-
-                $tmpConnection = DriverManager::getConnection($params, $configuration);
-                $schemaManager = method_exists($tmpConnection, 'createSchemaManager')
-                    ? $tmpConnection->createSchemaManager()
-                    : $tmpConnection->getSchemaManager();
-
-                $dbExists = in_array($connection->getDatabase(), $schemaManager->listDatabases());
-                $tmpConnection->close();
-            } catch (ConnectionException|\Exception) {
-                $dbExists = false;
-            }
-
-            if (!$dbExists) {
-                return false;
-            }
+            return $em->getConnection()->createSchemaManager()->tablesExist($tables);
+        } catch (\Exception) {
+            return false;
         }
-
-        // checks tables exist
-        $tables = [
-            $em->getClassMetadata($this->getModelClass('trans_unit'))->getTableName(),
-            $em->getClassMetadata($this->getModelClass('translation'))->getTableName(),
-        ];
-
-        $schemaManager = method_exists($connection, 'createSchemaManager')
-            ? $connection->createSchemaManager()
-            : $connection->getSchemaManager();
-
-        return $schemaManager->tablesExist($tables);
     }
 
     /**

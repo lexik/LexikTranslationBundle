@@ -57,16 +57,24 @@ class ExportTranslationsCommand extends Command
     {
 
         $this->addOption(
-            'locales', 'l', InputOption::VALUE_OPTIONAL,
-            'Only export files for given locales. e.g. "--locales=en,de"', null
+            'locales',
+            'l',
+            InputOption::VALUE_OPTIONAL,
+            'Only export files for given locales. e.g. "--locales=en,de"',
+            null
         );
         $this->addOption(
-            'domains', 'd', InputOption::VALUE_OPTIONAL,
-            'Only export files for given domains. e.g. "--domains=messages,validators"', null
+            'domains',
+            'd',
+            InputOption::VALUE_OPTIONAL,
+            'Only export files for given domains. e.g. "--domains=messages,validators"',
+            null
         );
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
         $this->addOption(
-            'override', 'o', InputOption::VALUE_NONE,
+            'override',
+            'o',
+            InputOption::VALUE_NONE,
             'Only export modified phrases (app/Resources/translations are exported fully anyway)'
         );
         $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');
@@ -164,15 +172,10 @@ class ExportTranslationsCommand extends Command
 
     /**
      * If the output file exists we merge existing translations with those from the database.
-     *
-     * @param FileInterface $file
-     * @param string        $outputFile
-     * @param array         $translations
-     * @return array
      */
-    protected function mergeExistingTranslations($file, $outputFile, $translations)
+    protected function mergeExistingTranslations(FileInterface $file, string $outputFile, array $translations): array
     {
-        if (file_exists($outputFile)) {
+        if (file_exists($outputFile) && method_exists($this->translator, 'getLoader')) {
             $extension = pathinfo($outputFile, PATHINFO_EXTENSION);
             $loader = $this->translator->getLoader($extension);
             $messageCatalogue = $loader->load($outputFile, $file->getLocale(), $file->getDomain());

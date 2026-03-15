@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
-use Doctrine\ORM\EntityRepository;
 use Datetime;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Repository for Translation entity.

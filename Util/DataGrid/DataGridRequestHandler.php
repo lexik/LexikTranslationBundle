@@ -2,9 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
-use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
@@ -152,12 +153,8 @@ class DataGridRequestHandler
 
     /**
      * Updates a trans unit from the request.
-     *
-     * @param integer $id
-     * @throws NotFoundHttpException
-     * @return \Lexik\Bundle\TranslationBundle\Model\TransUnit
      */
-    public function updateFromRequest($id, Request $request)
+    public function updateFromRequest(int $id, Request $request): TransUnitInterface
     {
         $transUnit = $this->storage->getTransUnitById($id);
 
@@ -203,7 +200,7 @@ class DataGridRequestHandler
             if (count($filters) > 0) {
                 $end = count($transUnits);
 
-                for ($i=0; $i<$end; $i++) {
+                for ($i = 0; $i < $end; $i++) {
                     $match = true;
 
                     foreach ($filters as $column => $str) {

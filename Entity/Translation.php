@@ -2,14 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use DateTime;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
-use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use DateTime;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -23,17 +24,7 @@ class Translation extends TranslationModel implements TranslationInterface
     // Relationship mappings are defined in XML: Resources/config/doctrine/Translation.orm.xml
     protected $transUnit;
 
-    protected $file;
-
-    public function setFile($file): void
-    {
-        $this->file = $file;
-    }
-
-    public function getFile()
-    {
-        return $this->file;
-    }
+    protected FileInterface $file;
 
     // modifiedManually is inherited from TranslationModel
 
@@ -73,7 +64,7 @@ class Translation extends TranslationModel implements TranslationInterface
     #[PrePersist]
     public function prePersist(): void
     {
-        $now             = new DateTime("now");
+        $now = new DateTime("now");
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }

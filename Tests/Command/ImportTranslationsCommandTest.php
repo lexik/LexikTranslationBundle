@@ -2,17 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
-use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
-use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Tester\CommandTester;
-use Lexik\Bundle\TranslationBundle\Command\ImportTranslationsCommand;
 
 /**
  * Test the translations import command, with option and arguments
@@ -48,8 +46,8 @@ class ImportTranslationsCommandTest extends WebTestCase
      */
     private static function addDoctrineCommands(DropCommand $dropCommand, CreateCommand $createCommand)
     {
-        static::$application->add($dropCommand);
-        static::$application->add($createCommand);
+        static::$application->addCommand($dropCommand);
+        static::$application->addCommand($createCommand);
     }
 
     /**
@@ -81,27 +79,18 @@ class ImportTranslationsCommandTest extends WebTestCase
      *
      * @group command
      */
-    public function testExecute()
+    public function testExecute(): void
     {
-        $container = self::$kernel->getContainer();
-        static::$application->add(
-            command: new ImportTranslationsCommand(
-                translator: $container->get('lexik_translation.translator'),
-                localeManager: $container->get(LocaleManagerInterface::class),
-                fileImporter: $container->get('lexik_translation.importer.file')
-            )
-        );
-
         $command = static::$application->find("lexik:translations:import");
 
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [
-                'command'       => $command->getName(),
-                'bundle'        => 'LexikTranslationBundle',
+                'command' => $command->getName(),
+                'bundle' => 'LexikTranslationBundle',
                 '--cache-clear' => true,
-                '--force'       => true,
-                '--locales'     => ['en', 'fr'],
+                '--force' => true,
+                '--locales' => ['en', 'fr'],
             ]
         );
 

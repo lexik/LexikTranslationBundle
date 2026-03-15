@@ -52,13 +52,29 @@ Configuration
 
 #### Minimum configuration
 
-You must at least define the fallback locale(s) as for the `framework.translator` node, and define all locales you will manage.
+The bundle decorates the Symfony Translator service instead of extending it. This means the bundle now leverages the standard Symfony translator configuration. As a result, `fallback_locale` and `managed_locales` are no longer required:
+
+- `fallback_locale` is **deprecated**. Use `framework.translator.fallbacks` instead.
+- `managed_locales` is now **optional**. If not set, it falls back to `framework.enabled_locales`.
+
+**Minimal setup** — the bundle works with no specific configuration if your `framework` config already defines `enabled_locales` and `translator.fallbacks`:
 
 ```yml
-# app/config/config.yml
+# config/packages/framework.yaml
+framework:
+    default_locale: en
+    enabled_locales: [en, fr, de]
+    translator:
+        fallbacks: [en]
+```
+
+**Legacy setup** — for backward compatibility, you can still use the bundle's own options. They will override the framework values:
+
+```yml
+# config/packages/lexik_translation.yaml
 lexik_translation:
-    fallback_locale: [en]         # (required) default locale(s) to use
-    managed_locales: [en, fr, de] # (required) locales that the bundle has to manage
+    fallback_locale: [en]         # (deprecated) use framework.translator.fallbacks instead
+    managed_locales: [en, fr, de] # (optional) falls back to framework.enabled_locales
 ```
 
 #### Additional configuration options

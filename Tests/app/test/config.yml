@@ -4,9 +4,12 @@ imports:
 framework:
     fragments: ~
     secret: afasfsf
+    default_locale: 'en'
+    enabled_locales: ['en', 'pl', 'de', 'sv']
     translator:
         enabled: true
+        fallbacks: ['en']
 
-lexik_translation:
-    fallback_locale: en
-    managed_locales: [en, pl, de, sv]
+#lexik_translation:
+#    fallback_locale: en
+#    managed_locales: [en, pl, de, sv]
