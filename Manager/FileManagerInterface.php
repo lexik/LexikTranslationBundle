@@ -3,6 +3,7 @@
 namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Entity\File;
+
 /**
  * File manager interface.
  *

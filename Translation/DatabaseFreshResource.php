@@ -11,7 +11,6 @@ use Symfony\Component\Config\Resource\SelfCheckingResourceInterface;
  */
 class DatabaseFreshResource implements SelfCheckingResourceInterface, \Stringable
 {
-
     public function __construct(
         private readonly string $locale,
         private readonly string $domain,

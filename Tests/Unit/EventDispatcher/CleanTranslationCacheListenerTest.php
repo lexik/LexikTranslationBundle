@@ -2,16 +2,16 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\EventDispatcher;
 
-use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\EventDispatcher\CleanTranslationCacheListener;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\MessageSelector;
-use Symfony\Component\Finder\Finder;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\Translation\MessageSelector;
 
 /**
  * Unit test for CleanTranslationCacheListener class
@@ -20,7 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CleanTranslationCacheListenerTest extends TestCase
 {
-
     private $tempDir;
 
     public function setUp(): void
@@ -32,7 +31,7 @@ class CleanTranslationCacheListenerTest extends TestCase
     {
         $request = Request::create('/');
 
-        $date = new \DateTime;
+        $date = new \DateTime();
 
         if (!\file_exists($this->tempDir)) {
             \mkdir($this->tempDir);
@@ -49,7 +48,7 @@ class CleanTranslationCacheListenerTest extends TestCase
 
         $container = $this->getMock(ContainerInterface::class);
 
-        $translator = $this->getMock(Translator::class, [], [$container, new MessageSelector]);
+        $translator = $this->getMock(Translator::class, [], [$container, new MessageSelector()]);
 
         $translator->expects($this->any())->method('removeLocalesCacheFiles')->will($this->returnValue(true));
 

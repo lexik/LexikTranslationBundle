@@ -99,10 +99,14 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $this->assertEquals(3, $repository->count(['locales' => ['fr', 'de'], 'filters' => ['_search' => false, 'key' => 'good']]));
         $this->assertEquals(1, $repository->count(['locales' => ['fr', 'de'], 'filters' => ['_search' => true, 'key' => 'good']]));
         $this->assertEquals(1, $repository->count(['locales' => ['en', 'de'], 'filters' => ['_search' => true, 'domain' => 'super']]));
-        $this->assertEquals(1,
-            $repository->count(['locales' => ['en', 'fr', 'de'], 'filters' => ['_search' => true, 'key' => 'hel', 'domain' => 'uper']]));
-        $this->assertEquals(2,
-            $repository->count(['locales' => ['en', 'de'], 'filters' => ['_search' => true, 'key' => 'say', 'domain' => 'ssa']]));
+        $this->assertEquals(
+            1,
+            $repository->count(['locales' => ['en', 'fr', 'de'], 'filters' => ['_search' => true, 'key' => 'hel', 'domain' => 'uper']])
+        );
+        $this->assertEquals(
+            2,
+            $repository->count(['locales' => ['en', 'de'], 'filters' => ['_search' => true, 'key' => 'say', 'domain' => 'ssa']])
+        );
     }
 
     /**
@@ -140,8 +144,12 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         ];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(['fr', 'de'], 10, 1,
-            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess']);
+        $result = $repository->getTransUnitList(
+            ['fr', 'de'],
+            10,
+            1,
+            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess']
+        );
         $expected = [
             [
                 'key' => 'key.say_wtf',
@@ -160,8 +168,12 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         ];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(['fr', 'de'], 10, 1,
-            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess', 'key' => 'oo']);
+        $result = $repository->getTransUnitList(
+            ['fr', 'de'],
+            10,
+            1,
+            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'domain' => 'mess', 'key' => 'oo']
+        );
         $expected = [
             [
                 'key' => 'key.say_goodbye',
@@ -173,8 +185,12 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         ];
         $this->assertSameTransUnit($expected, $result);
 
-        $result = $repository->getTransUnitList(['fr', 'en'], 10, 1,
-            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu']);
+        $result = $repository->getTransUnitList(
+            ['fr', 'en'],
+            10,
+            1,
+            ['sidx' => 'key', 'sord' => 'DESC', '_search' => true, 'fr' => 'alu']
+        );
         $expected = [
             [
                 'key' => 'key.say_hello',

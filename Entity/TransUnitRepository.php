@@ -2,10 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityRepository;
 
 /**
  * Repository for TransUnit entity.

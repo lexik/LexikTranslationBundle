@@ -2,16 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
 use Doctrine\ORM\Mapping\PreUpdate;
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
-use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use DateTime;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>

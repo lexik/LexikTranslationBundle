@@ -16,10 +16,10 @@ class PhpExporterTest extends TestCase
 
     public function tearDown(): void
     {
-        $outFile = __DIR__.$this->outFileName;
+        $outFile = __DIR__ . $this->outFileName;
 
-        if (file_exists(__DIR__.$this->outFileName)) {
-            unlink(__DIR__.$this->outFileName);
+        if (file_exists(__DIR__ . $this->outFileName)) {
+            unlink(__DIR__ . $this->outFileName);
         }
     }
 
@@ -28,7 +28,7 @@ class PhpExporterTest extends TestCase
      */
     public function testExport()
     {
-        $outFile = __DIR__.$this->outFileName;
+        $outFile = __DIR__ . $this->outFileName;
 
         $exporter = new PhpExporter();
 

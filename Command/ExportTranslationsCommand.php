@@ -5,7 +5,6 @@ namespace Lexik\Bundle\TranslationBundle\Command;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -58,16 +57,24 @@ class ExportTranslationsCommand extends Command
     {
 
         $this->addOption(
-            'locales', 'l', InputOption::VALUE_OPTIONAL,
-            'Only export files for given locales. e.g. "--locales=en,de"', null
+            'locales',
+            'l',
+            InputOption::VALUE_OPTIONAL,
+            'Only export files for given locales. e.g. "--locales=en,de"',
+            null
         );
         $this->addOption(
-            'domains', 'd', InputOption::VALUE_OPTIONAL,
-            'Only export files for given domains. e.g. "--domains=messages,validators"', null
+            'domains',
+            'd',
+            InputOption::VALUE_OPTIONAL,
+            'Only export files for given domains. e.g. "--domains=messages,validators"',
+            null
         );
         $this->addOption('format', 'f', InputOption::VALUE_OPTIONAL, 'Force the output format.', null);
         $this->addOption(
-            'override', 'o', InputOption::VALUE_NONE,
+            'override',
+            'o',
+            InputOption::VALUE_NONE,
             'Only export modified phrases (app/Resources/translations are exported fully anyway)'
         );
         $this->addOption('export-path', 'p', InputOption::VALUE_REQUIRED, 'Export files to given path.');

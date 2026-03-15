@@ -91,7 +91,7 @@ class XliffExporter implements ExporterInterface
     {
         $translationNode = $dom->createElement('trans-unit');
         $translationNode->appendChild(new \DOMAttr('id', (string) $id));
-        
+
         /**
          * @see http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html#approved
          */

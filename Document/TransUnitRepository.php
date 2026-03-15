@@ -256,7 +256,7 @@ class TransUnitRepository extends DocumentRepository
                         // Handle MongoDB Timestamp objects - they have a 'sec' property
                         $createdAt = $result['translations'][$i]['createdAt'] ?? null;
                         $updatedAt = $result['translations'][$i]['updatedAt'] ?? null;
-                        
+
                         if ($createdAt && $updatedAt) {
                             $createdAtSec = \is_object($createdAt) && \property_exists($createdAt, 'sec') ? $createdAt->sec : $createdAt;
                             $updatedAtSec = \is_object($updatedAt) && \property_exists($updatedAt, 'sec') ? $updatedAt->sec : $updatedAt;

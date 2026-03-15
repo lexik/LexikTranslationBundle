@@ -4,9 +4,9 @@ namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 
 use Lexik\Bundle\TranslationBundle\Translation\Exporter\ExporterCollector;
 use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**

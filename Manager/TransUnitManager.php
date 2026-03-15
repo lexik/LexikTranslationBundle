@@ -66,7 +66,7 @@ class TransUnitManager implements TransUnitManagerInterface
         $content,
         ?FileInterface $file = null,
         bool $flush = false
-    ): ?TranslationInterface{
+    ): ?TranslationInterface {
         $translation = null;
         if (!$transUnit->hasTranslation(locale: $locale)) {
             $class = $this->storage->getModelClass(name: 'translation');
@@ -136,7 +136,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * {@inheritdoc}
      */
-    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false): void   
+    public function updateTranslationsContent(TransUnitInterface $transUnit, array $translations, $flush = false): void
     {
         foreach ($translations as $locale => $content) {
             if (!empty($content)) {

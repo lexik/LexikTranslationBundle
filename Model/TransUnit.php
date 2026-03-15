@@ -2,15 +2,15 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
-use Doctrine\Common\Collections\Collection;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
+use Lexik\Bundle\TranslationBundle\Entity\Translation;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
-use Lexik\Bundle\TranslationBundle\Entity\Translation;
-use Lexik\Bundle\TranslationBundle\Document\Translation as DocumentTranslation;
-use DateTime;
 
 /**
  * This class represent a trans unit which contain translations for a given domain and key.

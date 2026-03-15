@@ -5,10 +5,10 @@ namespace Lexik\Bundle\TranslationBundle\DependencyInjection\Compiler;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
  * Doctrine metadata pass to add a driver to load model class mapping.
@@ -26,7 +26,7 @@ class RegisterMappingPass implements CompilerPassInterface
 
         $name = empty($storage['object_manager']) ? 'default' : $storage['object_manager'];
 
-        $ormDriverId     = sprintf('doctrine.orm.%s_metadata_driver', $name);
+        $ormDriverId = sprintf('doctrine.orm.%s_metadata_driver', $name);
         $mongodbDriverId = sprintf('doctrine_mongodb.odm.%s_metadata_driver', $name);
 
         if (StorageInterface::STORAGE_ORM == $storage['type'] && $container->hasDefinition($ormDriverId)) {

@@ -3,9 +3,9 @@
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -23,7 +23,7 @@ class DataGridFormatter
      */
     public function createListResponse(array $transUnits, int $total): JsonResponse
     {
-        return new JsonResponse(['translations' => $this->format($transUnits), 'total'        => $total]);
+        return new JsonResponse(['translations' => $this->format($transUnits), 'total' => $total]);
     }
 
     /**
@@ -60,9 +60,9 @@ class DataGridFormatter
         }
 
         $formatted = [
-            '_id'     => $transUnit['id'],
+            '_id' => $transUnit['id'],
             '_domain' => $transUnit['domain'],
-            '_key'    => $transUnit['key'],
+            '_key' => $transUnit['key'],
         ];
 
         // add locales in the same order as in managed_locales param
@@ -86,14 +86,14 @@ class DataGridFormatter
     protected function toArray(TransUnitInterface $transUnit): array
     {
         $data = [
-            'id'           => $transUnit->getId(),
-            'domain'       => $transUnit->getDomain(),
-            'key'          => $transUnit->getKey(),
+            'id' => $transUnit->getId(),
+            'domain' => $transUnit->getDomain(),
+            'key' => $transUnit->getKey(),
             'translations' => [],
         ];
 
         foreach ($transUnit->getTranslations() as $translation) {
-            $data['translations'][] = ['locale'  => $translation->getLocale(), 'content' => $translation->getContent()];
+            $data['translations'][] = ['locale' => $translation->getLocale(), 'content' => $translation->getContent()];
         }
 
         return $data;

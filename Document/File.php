@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
 use DateTime;
+use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>

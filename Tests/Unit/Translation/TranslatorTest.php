@@ -4,11 +4,11 @@ namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation;
 
 use Lexik\Bundle\TranslationBundle\EventDispatcher\Event\GetDatabaseResourcesEvent;
 use Lexik\Bundle\TranslationBundle\EventDispatcher\GetDatabaseResourcesListener;
-use Lexik\Bundle\TranslationBundle\Translation\Translator;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
+use Lexik\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Translation\Formatter\MessageFormatter;
-use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Translator tests.
@@ -26,8 +26,8 @@ class TranslatorTest extends BaseUnitTestCase
         $this->createSchema($em);
         $this->loadFixtures($em);
 
-        if (file_exists(sys_get_temp_dir().'/database.resources.php')) {
-            unlink(sys_get_temp_dir().'/database.resources.php');
+        if (file_exists(sys_get_temp_dir() . '/database.resources.php')) {
+            unlink(sys_get_temp_dir() . '/database.resources.php');
         }
 
         $translator = $this->createTranslator($em, sys_get_temp_dir());
@@ -58,7 +58,7 @@ class TranslatorTest extends BaseUnitTestCase
      */
     public function testRemoveCacheFile(): void
     {
-        $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
+        $cacheDir = __DIR__ . '/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
         $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir);
 
@@ -88,7 +88,7 @@ class TranslatorTest extends BaseUnitTestCase
      */
     public function testRemoveLocalesCacheFiles(): void
     {
-        $cacheDir = __DIR__.'/../../../vendor/test_cache_dir';
+        $cacheDir = __DIR__ . '/../../../vendor/test_cache_dir';
         $this->createFakeCacheFiles($cacheDir);
         $translator = $this->createTranslator($this->getMockSqliteEntityManager(), $cacheDir);
 
@@ -150,17 +150,17 @@ class TranslatorTest extends BaseUnitTestCase
             mkdir($cacheDir);
         }
 
-        touch($cacheDir.'/catalogue.fr.php');
-        touch($cacheDir.'/catalogue.fr.php.meta');
+        touch($cacheDir . '/catalogue.fr.php');
+        touch($cacheDir . '/catalogue.fr.php.meta');
 
-        touch($cacheDir.'/catalogue.fr_FR.php');
-        touch($cacheDir.'/catalogue.fr_FR.php.meta');
+        touch($cacheDir . '/catalogue.fr_FR.php');
+        touch($cacheDir . '/catalogue.fr_FR.php.meta');
 
-        touch($cacheDir.'/catalogue.en.php');
-        touch($cacheDir.'/catalogue.en.php.meta');
+        touch($cacheDir . '/catalogue.en.php');
+        touch($cacheDir . '/catalogue.en.php.meta');
 
-        touch($cacheDir.'/database.resources.php');
-        touch($cacheDir.'/database.resources.php.meta');
+        touch($cacheDir . '/database.resources.php');
+        touch($cacheDir . '/database.resources.php.meta');
     }
 }
 

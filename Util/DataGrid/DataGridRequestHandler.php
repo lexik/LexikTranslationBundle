@@ -2,9 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\DataGrid;
 
+use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
-use Lexik\Bundle\TranslationBundle\Document\TransUnit as TransUnitDocument;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Model\TransUnit;
@@ -200,7 +200,7 @@ class DataGridRequestHandler
             if (count($filters) > 0) {
                 $end = count($transUnits);
 
-                for ($i=0; $i<$end; $i++) {
+                for ($i = 0; $i < $end; $i++) {
                     $match = true;
 
                     foreach ($filters as $column => $str) {

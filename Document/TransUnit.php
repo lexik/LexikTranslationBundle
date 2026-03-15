@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
