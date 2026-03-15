@@ -182,8 +182,8 @@ class ImportTranslationsCommand extends Command
     protected function importComponentTranslationFiles(array $locales, array $domains)
     {
         $classes = [
-            Validation::class              => '/Resources/translations',
-            Form::class                    => '/Resources/translations',
+            Validation::class => '/Resources/translations',
+            Form::class => '/Resources/translations',
             AuthenticationException::class => '/../Resources/translations',
         ];
 
@@ -249,7 +249,7 @@ class ImportTranslationsCommand extends Command
             $bundle->getPath() . '/Resources/translations',
         ];
 
-        foreach($paths as $path) {
+        foreach ($paths as $path) {
             $this->output->writeln(sprintf('<info># %s:</info>', $bundle->getName()));
             $finder = $this->findTranslationsFiles($path, $locales, $domains, false);
             $this->importTranslationFiles($finder);

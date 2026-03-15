@@ -2,10 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Form\Handler;
 
-use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,8 +41,8 @@ class TransUnitFormHandler implements FormHandlerInterface
     public function getFormOptions()
     {
         return [
-            'domains'           => $this->storage->getTransUnitDomains(),
-            'data_class'        => $this->storage->getModelClass('trans_unit'),
+            'domains' => $this->storage->getTransUnitDomains(),
+            'data_class' => $this->storage->getModelClass('trans_unit'),
             'translation_class' => $this->storage->getModelClass('translation'),
         ];
     }

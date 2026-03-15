@@ -3,12 +3,12 @@
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
-use Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository;
-use Lexik\Bundle\TranslationBundle\Entity\FileRepository;
 use Lexik\Bundle\TranslationBundle\Document\FileRepository as DocumentFileRepository;
 use Lexik\Bundle\TranslationBundle\Document\TransUnitRepository as DocumentTransUnitRepository;
+use Lexik\Bundle\TranslationBundle\Entity\FileRepository;
+use Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Common doctrine storage logic.
@@ -135,7 +135,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
         $key = mb_substr($key, 0, 255, 'UTF-8');
 
         $fields = [
-            'key'    => $key,
+            'key' => $key,
             'domain' => $domain,
         ];
 

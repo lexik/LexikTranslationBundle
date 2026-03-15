@@ -22,9 +22,9 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $results = $repository->getAllDomainsByLocale();
         $expected = [
             ['locale' => 'de', 'domain' => 'superTranslations'],
-            ['locale' => 'en', 'domain' => 'messages'], 
-            ['locale' => 'en', 'domain' => 'superTranslations'], 
-            ['locale' => 'fr', 'domain' => 'messages'], 
+            ['locale' => 'en', 'domain' => 'messages'],
+            ['locale' => 'en', 'domain' => 'superTranslations'],
+            ['locale' => 'fr', 'domain' => 'messages'],
             ['locale' => 'fr', 'domain' => 'superTranslations']
         ];
 
@@ -124,11 +124,11 @@ class TransUnitRepositoryTest extends BaseUnitTestCase
         $em = $this->loadDatabase();
         $repository = $em->getRepository(self::ENTITY_TRANS_UNIT_CLASS);
 
-        $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(['domain'    => 'messages', 'locale'    => 'fr', 'extention' => 'yml']);
+        $file = $em->getRepository(self::ENTITY_FILE_CLASS)->findOneBy(['domain' => 'messages', 'locale' => 'fr', 'extention' => 'yml']);
         $this->assertInstanceOf(self::ENTITY_FILE_CLASS, $file);
 
         $result = $repository->getTranslationsForFile($file, false);
-        $expected = ['key.say_goodbye' => 'au revoir', 'key.say_wtf'     => 'c\'est quoi ce bordel !?!'];
+        $expected = ['key.say_goodbye' => 'au revoir', 'key.say_wtf' => 'c\'est quoi ce bordel !?!'];
         $this->assertEquals($expected, $result);
 
         // update a translation and then get translations with onlyUpdated = true

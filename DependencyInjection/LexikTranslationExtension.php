@@ -2,21 +2,21 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
-use Lexik\Bundle\TranslationBundle\LexikTranslationBundle;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
+use Lexik\Bundle\TranslationBundle\LexikTranslationBundle;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -36,7 +36,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
         // Resolve managed_locales: fallback to framework.enabled_locales if not set
@@ -90,7 +90,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $listener->addArgument(new Reference(LocaleManagerInterface::class));
         $listener->addArgument($cacheInterval);
 
-        $listener->addTag('kernel.event_listener', ['event'  => 'kernel.request', 'method' => 'onKernelRequest']);
+        $listener->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'onKernelRequest']);
 
         $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
@@ -150,9 +150,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         }
 
         $args[] = [
-            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+            'trans_unit' => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
             'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
-            'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
+            'file' => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
         ];
 
         $storageDefinition = new Definition();

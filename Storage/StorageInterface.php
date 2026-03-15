@@ -2,9 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use DateTime;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 
 /**
  * Translation storage interface.
@@ -16,7 +16,7 @@ interface StorageInterface
     /**
      * All the available config storage types.
      */
-    public const STORAGE_ORM     = 'orm';
+    public const STORAGE_ORM = 'orm';
     public const STORAGE_MONGODB = 'mongodb';
 
     /**
@@ -120,7 +120,7 @@ interface StorageInterface
      *
      * @return int
      */
-    public function countTransUnits(?array $locales = null,  ?array $filters = null): int;
+    public function countTransUnits(?array $locales = null, ?array $filters = null): int;
 
     /**
      * Returns all translations for the given file.

@@ -2,12 +2,12 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Command;
 
-use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider\SingleManagerProvider;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -86,11 +86,11 @@ class ImportTranslationsCommandTest extends WebTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute(
             [
-                'command'       => $command->getName(),
-                'bundle'        => 'LexikTranslationBundle',
+                'command' => $command->getName(),
+                'bundle' => 'LexikTranslationBundle',
                 '--cache-clear' => true,
-                '--force'       => true,
-                '--locales'     => ['en', 'fr'],
+                '--force' => true,
+                '--locales' => ['en', 'fr'],
             ]
         );
 

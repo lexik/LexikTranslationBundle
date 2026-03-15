@@ -4,8 +4,8 @@ namespace Lexik\Bundle\TranslationBundle\EventDispatcher;
 
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -32,8 +32,8 @@ class CleanTranslationCacheListener
 
                 $finder = new Finder();
                 $finder->files()
-                    ->in($this->cacheDirectory.'/translations')
-                    ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
+                    ->in($this->cacheDirectory . '/translations')
+                    ->date('< ' . $lastUpdateTime->format('Y-m-d H:i:s'));
 
                 if ($finder->count() > 0 && method_exists($this->translator, 'removeLocalesCacheFiles')) {
                     $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
@@ -53,15 +53,15 @@ class CleanTranslationCacheListener
             return true;
         }
 
-        $cache_file = $this->cacheDirectory.'/translations/cache_timestamp';
-        $cache_dir  =$this->cacheDirectory.'/translations';
+        $cache_file = $this->cacheDirectory . '/translations/cache_timestamp';
+        $cache_dir = $this->cacheDirectory . '/translations';
         if ('\\' === DIRECTORY_SEPARATOR) {
             $cache_file = strtr($cache_file, '/', '\\');
             $cache_dir = strtr($cache_dir, '/', '\\');
         }
         if (!\is_dir($cache_dir) && !\mkdir($cache_dir, 0777, true) && !\is_dir($cache_dir)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $cache_dir));
-        }        
+        }
         if (!\file_exists($cache_file)) {
             \touch($cache_file);
             return true;
@@ -77,7 +77,7 @@ class CleanTranslationCacheListener
 
     private function checkCacheFolder()
     {
-        if (!is_dir($dirName = $this->cacheDirectory.'/translations') && !mkdir($dirName) && !is_dir($dirName)) {
+        if (!is_dir($dirName = $this->cacheDirectory . '/translations') && !mkdir($dirName) && !is_dir($dirName)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dirName));
         }
     }

@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Util\Csrf;
 
-use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Csrf\CsrfTokenManager;
 use Symfony\Contracts\Service\Attribute\Required;
 
 /**

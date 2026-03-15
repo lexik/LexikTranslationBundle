@@ -3,8 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
-use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
+use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>

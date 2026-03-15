@@ -41,11 +41,11 @@ class TranslationController extends AbstractController
         $stats = $this->statsAggregator->getStats();
 
         return $this->render('@LexikTranslation/Translation/overview.html.twig', [
-            'layout'         => $this->getParameter('lexik_translation.base_layout'),
-            'locales'        => $this->getManagedLocales(),
-            'domains'        => $this->translationStorage->getTransUnitDomains(),
-            'latestTrans'    => $this->translationStorage->getLatestUpdatedAt(),
-            'stats'          => $stats,
+            'layout' => $this->getParameter('lexik_translation.base_layout'),
+            'locales' => $this->getManagedLocales(),
+            'domains' => $this->translationStorage->getTransUnitDomains(),
+            'latestTrans' => $this->translationStorage->getLatestUpdatedAt(),
+            'stats' => $stats,
         ]);
     }
 
@@ -60,12 +60,12 @@ class TranslationController extends AbstractController
         }
 
         return $this->render('@LexikTranslation/Translation/grid.html.twig', [
-            'layout'         => $this->getParameter('lexik_translation.base_layout'),
-            'inputType'      => $this->getParameter('lexik_translation.grid_input_type'),
+            'layout' => $this->getParameter('lexik_translation.base_layout'),
+            'inputType' => $this->getParameter('lexik_translation.grid_input_type'),
             'autoCacheClean' => $this->getParameter('lexik_translation.auto_cache_clean'),
-            'toggleSimilar'  => $this->getParameter('lexik_translation.grid_toggle_similar'),
-            'locales'        => $this->getManagedLocales(),
-            'tokens'         => $tokens,
+            'toggleSimilar' => $this->getParameter('lexik_translation.grid_toggle_similar'),
+            'locales' => $this->getManagedLocales(),
+            'tokens' => $tokens,
         ]);
     }
 
@@ -110,7 +110,7 @@ class TranslationController extends AbstractController
             return $this->redirect($this->generateUrl($redirectUrl));
         }
 
-        return $this->render('@LexikTranslation/Translation/new.html.twig', ['layout' => $this->getParameter('lexik_translation.base_layout'), 'form'   => $form->createView()]);
+        return $this->render('@LexikTranslation/Translation/new.html.twig', ['layout' => $this->getParameter('lexik_translation.base_layout'), 'form' => $form->createView()]);
     }
 
     /**

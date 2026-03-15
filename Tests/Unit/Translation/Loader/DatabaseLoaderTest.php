@@ -3,8 +3,8 @@
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Loader;
 
 use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
-use Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
+use Lexik\Bundle\TranslationBundle\Translation\Loader\DatabaseLoader;
 use Symfony\Component\Translation\MessageCatalogue;
 
 /**
@@ -31,7 +31,7 @@ class DatabaseLoaderTest extends BaseUnitTestCase
         $this->assertEquals('it', $catalogue->getLocale());
 
         $catalogue = $loader->load(null, 'fr');
-        $expectedTranslations = ['messages' => ['key.say_goodbye' => 'au revoir', 'key.say_wtf'     => 'c\'est quoi ce bordel !?!']];
+        $expectedTranslations = ['messages' => ['key.say_goodbye' => 'au revoir', 'key.say_wtf' => 'c\'est quoi ce bordel !?!']];
         $this->assertInstanceOf(MessageCatalogue::class, $catalogue);
         $this->assertEquals($expectedTranslations, $catalogue->all());
         $this->assertEquals('fr', $catalogue->getLocale());

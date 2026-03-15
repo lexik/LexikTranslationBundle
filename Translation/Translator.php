@@ -114,7 +114,7 @@ class Translator implements TranslatorInterface
 
     /**
      * Add all resources available in database.
-     * 
+     *
      * This method is called by DatabaseResourcesListener to register
      * database translation resources with the translator.
      */
@@ -157,7 +157,7 @@ class Translator implements TranslatorInterface
 
         $localeExploded = explode('_', $locale);
         $finder = new Finder();
-        $finder->files()->in($this->options['cache_dir'])->name(sprintf( '/catalogue\.%s.*\.php$/', $localeExploded[0]));
+        $finder->files()->in($this->options['cache_dir'])->name(sprintf('/catalogue\.%s.*\.php$/', $localeExploded[0]));
         $deleted = true;
         foreach ($finder as $file) {
 
@@ -165,7 +165,7 @@ class Translator implements TranslatorInterface
             $this->invalidateSystemCacheForFile($path);
             $deleted = unlink($path);
 
-            $metadata = $path.'.meta';
+            $metadata = $path . '.meta';
             if (file_exists($metadata)) {
                 $this->invalidateSystemCacheForFile($metadata);
                 unlink($metadata);
@@ -191,7 +191,7 @@ class Translator implements TranslatorInterface
             unlink($file);
         }
 
-        $metadata = $file.'.meta';
+        $metadata = $file . '.meta';
         if (file_exists($metadata)) {
             $this->invalidateSystemCacheForFile($metadata);
             unlink($metadata);

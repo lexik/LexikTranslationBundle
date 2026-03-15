@@ -2,8 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Storage;
 
-use Doctrine\ORM\EntityManager;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Doctrine ORM storage class.

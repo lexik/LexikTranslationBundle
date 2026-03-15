@@ -2,9 +2,9 @@
 
 namespace Lexik\Bundle\TranslationBundle\Model;
 
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use DateTime;
 use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -71,7 +71,6 @@ abstract class Translation
     {
         return $this->content;
     }
-
 
     /**
      * Get createdAt
