@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "php": "^8.1|^8.2|^8.3|^8.4",
+        "php": "^8.2|^8.3|^8.4",
         "doctrine/orm": "^3",
         "monolog/monolog": "^3.2",
         "symfony/asset": "^7.0|^8.0",
@@ -41,7 +41,7 @@
         "doctrine/annotations": "^2",
         "doctrine/cache": "^1.4|^2.0",
         "doctrine/data-fixtures": "^1.1|^2.0",
-        "doctrine/doctrine-bundle": "^2.2",
+        "doctrine/doctrine-bundle": "^2.2 || ^3.0",
         "doctrine/mongodb-odm": "^2.7",
         "doctrine/mongodb-odm-bundle": "^5.0",
         "friendsofphp/php-cs-fixer": "^3.64",
@@ -73,7 +73,6 @@
     },
     "config": {
         "platform": {
-            "php": "8.2.0",
             "ext-mongodb": "2.1.4"
         },
         "sort-packages": true
