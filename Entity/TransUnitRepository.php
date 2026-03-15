@@ -2,11 +2,10 @@
 
 namespace Lexik\Bundle\TranslationBundle\Entity;
 
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Lexik\Bundle\TranslationBundle\Util\Doctrine\SingleColumnArrayHydrator;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
-use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
 
 /**
  * Repository for TransUnit entity.
@@ -17,10 +16,8 @@ class TransUnitRepository extends EntityRepository
 {
     /**
      * Returns all domain available in database.
-     *
-     * @return array
      */
-    public function getAllDomainsByLocale()
+    public function getAllDomainsByLocale(): array
     {
         return $this->createQueryBuilder('tu')
             ->select('te.locale, tu.domain')
@@ -34,10 +31,8 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Returns all domains for each locale.
-     *
-     * @return array
      */
-    public function getAllByLocaleAndDomain($locale, $domain): mixed
+    public function getAllByLocaleAndDomain(string $locale, string $domain): array
     {
         return $this->createQueryBuilder('tu')
             ->select('tu, te')
@@ -68,12 +63,8 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Returns some trans units with their translations.
-     *
-     * @param int   $rows
-     * @param int   $page
-     * @return array
      */
-    public function getTransUnitList(?array $locales = null, $rows = 20, $page = 1, ?array $filters = null): mixed
+    public function getTransUnitList(?array $locales = null, int $rows = 20, int $page = 1, ?array $filters = null): array
     {
         $this->loadCustomHydrator();
 
@@ -130,10 +121,7 @@ class TransUnitRepository extends EntityRepository
         return (int) $builder->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * @return array
-     */
-    public function countByDomains(): mixed
+    public function countByDomains(): array
     {
         return $this->createQueryBuilder('tu')
             ->select('COUNT(DISTINCT tu.id) AS number, tu.domain')
@@ -144,11 +132,8 @@ class TransUnitRepository extends EntityRepository
 
     /**
      * Returns all translations for the given file.
-     *
-     * @param boolean   $onlyUpdated
-     * @return array
      */
-    public function getTranslationsForFile(ModelFile $file, $onlyUpdated): array
+    public function getTranslationsForFile(FileInterface $file, bool $onlyUpdated): array
     {
         $builder = $this->createQueryBuilder('tu')
             ->select('tu.key, te.content')

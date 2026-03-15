@@ -35,7 +35,7 @@ class CleanTranslationCacheListener
                     ->in($this->cacheDirectory.'/translations')
                     ->date('< '.$lastUpdateTime->format('Y-m-d H:i:s'));
 
-                if ($finder->count() > 0) {
+                if ($finder->count() > 0 && method_exists($this->translator, 'removeLocalesCacheFiles')) {
                     $this->translator->removeLocalesCacheFiles($this->localeManager->getLocales());
                 }
             }

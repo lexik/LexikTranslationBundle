@@ -4,7 +4,6 @@ namespace Lexik\Bundle\TranslationBundle\Manager;
 
 use Lexik\Bundle\TranslationBundle\Model\Translation;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Lexik\Bundle\TranslationBundle\Storage\PropelStorage;
 
 /**
  * Class to manage TransUnit entities or documents.
@@ -103,15 +102,15 @@ class TransUnitManager implements TransUnitManagerInterface
         $found = false;
 
         while ($i < $end && !$found) {
-            $found = ($transUnit->getTranslations()->get($i)->getLocale() == $locale);
+            $found = ($transUnit->getTranslations()->get($i)->getLocale() === $locale);
             $i++;
         }
 
         if ($found) {
-            /* @var Translation $translation */
+            /* @var TranslationInterface $translation */
             $translation = $transUnit->getTranslations()->get($i - 1);
             if ($merge) {
-                if ($translation->isModifiedManually() || $translation->getContent() == $content) {
+                if ($translation->isModifiedManually() || $translation->getContent() === $content) {
                     return null;
                 }
 
@@ -125,10 +124,6 @@ class TransUnitManager implements TransUnitManagerInterface
             }
 
             $translation->setContent($content);
-        }
-
-        if (null !== $translation && $this->storage instanceof PropelStorage) {
-            $this->storage->persist($translation);
         }
 
         if ($flush) {
@@ -153,11 +148,8 @@ class TransUnitManager implements TransUnitManagerInterface
                     $originalContent = $translation->getContent();
                     $translation = $this->updateTranslation($transUnit, $locale, $content);
 
-                    $contentUpdated = ($translation->getContent() != $originalContent);
+                    $contentUpdated = ($translation->getContent() !== $originalContent);
 
-                    if ($this->storage instanceof PropelStorage) {
-                        $this->storage->persist($transUnit);
-                    }
                 } else {
                     //We need to get a proper file for this translation
                     $file = $this->getTranslationFile($transUnit, $locale);
@@ -178,7 +170,7 @@ class TransUnitManager implements TransUnitManagerInterface
     /**
      * Get the proper File for this TransUnit and locale
      */
-    public function getTranslationFile(TransUnitInterface &$transUnit, string $locale)
+    public function getTranslationFile(TransUnitInterface $transUnit, string $locale)
     {
         $file = null;
         foreach ($transUnit->getTranslations() as $translation) {
@@ -197,10 +189,7 @@ class TransUnitManager implements TransUnitManagerInterface
         return $file;
     }
 
-    /**
-     * @return bool
-     */
-    public function delete(TransUnitInterface $transUnit)
+    public function delete(TransUnitInterface $transUnit): bool
     {
         try {
             $this->storage->remove($transUnit);
@@ -213,11 +202,7 @@ class TransUnitManager implements TransUnitManagerInterface
         }
     }
 
-    /**
-     * @param string $locale
-     * @return bool
-     */
-    public function deleteTranslation(TransUnitInterface $transUnit, $locale)
+    public function deleteTranslation(TransUnitInterface $transUnit, string $locale): bool
     {
         try {
             $translation = $transUnit->getTranslation($locale);

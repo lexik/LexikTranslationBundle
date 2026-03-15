@@ -5,6 +5,7 @@ namespace Lexik\Bundle\TranslationBundle\Model;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use DateTime;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -17,7 +18,7 @@ abstract class Translation
 {
     #[ORM\Column(name: 'locale', type: Types::STRING, length: 10)]
     #[Assert\NotBlank]
-    protected $locale;
+    protected string $locale;
 
     #[ORM\Column(name: 'content', type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(groups: ['contentNotBlank'])]
@@ -29,18 +30,15 @@ abstract class Translation
     #[ORM\Column(name: 'updated_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected $updatedAt;
 
-    /**
-     * @var boolean
-     */
     #[ORM\Column(name: 'modified_manually', type: Types::BOOLEAN, nullable: true)]
-    protected $modifiedManually = false;
+    protected bool $modifiedManually = false;
+
+    protected FileInterface $file;
 
     /**
      * Set locale
-     *
-     * @param string $locale
      */
-    public function setLocale($locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
         $this->content = '';
@@ -48,10 +46,8 @@ abstract class Translation
 
     /**
      * Get locale
-     *
-     * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -97,19 +93,23 @@ abstract class Translation
         return $this->updatedAt;
     }
 
-    /**
-     * @return bool
-     */
-    public function isModifiedManually()
+    public function isModifiedManually(): bool
     {
         return $this->modifiedManually;
     }
 
-    /**
-     * @param bool $modifiedManually
-     */
-    public function setModifiedManually($modifiedManually)
+    public function setModifiedManually(bool $modifiedManually): void
     {
         $this->modifiedManually = $modifiedManually;
+    }
+
+    public function setFile(FileInterface $file): void
+    {
+        $this->file = $file;
+    }
+
+    public function getFile(): FileInterface
+    {
+        return $this->file;
     }
 }

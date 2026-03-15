@@ -8,6 +8,7 @@ use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
 use Lexik\Bundle\TranslationBundle\Entity\TransUnitRepository;
 use Lexik\Bundle\TranslationBundle\Entity\FileRepository;
 use Lexik\Bundle\TranslationBundle\Document\FileRepository as DocumentFileRepository;
+use Lexik\Bundle\TranslationBundle\Document\TransUnitRepository as DocumentTransUnitRepository;
 
 /**
  * Common doctrine storage logic.
@@ -30,22 +31,24 @@ abstract class AbstractDoctrineStorage implements StorageInterface
 
     /**
      * Returns the TransUnit repository.
-     *
-     * @return object
      */
-    protected function getTransUnitRepository(): TransUnitRepository
+    protected function getTransUnitRepository(): TransUnitRepository|DocumentTransUnitRepository
     {
-        return $this->getManager()->getRepository($this->classes['trans_unit']);
+        /** @var TransUnitRepository|DocumentTransUnitRepository $repository */
+        $repository = $this->getManager()->getRepository($this->classes['trans_unit']);
+
+        return $repository;
     }
 
     /**
      * Returns the File repository.
-     *
-     * @return object
      */
     protected function getFileRepository(): FileRepository|DocumentFileRepository
     {
-        return $this->getManager()->getRepository($this->classes['file']);
+        /** @var FileRepository|DocumentFileRepository $repository */
+        $repository = $this->getManager()->getRepository($this->classes['file']);
+
+        return $repository;
     }
 
     /**
@@ -75,9 +78,9 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function clear($entityName = null): void
+    public function clear(): void
     {
-        $this->getManager()->clear($entityName);
+        $this->getManager()->clear();
     }
 
     /**
@@ -121,15 +124,11 @@ abstract class AbstractDoctrineStorage implements StorageInterface
      */
     public function getTransUnitById($id): ?TransUnitInterface
     {
-        return $this->getTransUnitRepository()->findOneById($id);
+        return $this->getTransUnitRepository()->find($id);
     }
 
     /**
      * Returns a TransUnit by its key and domain.
-     *
-     * @param string $key
-     * @param string $domain
-     * @return TransUnitInterface
      */
     public function getTransUnitByKeyAndDomain(string $key, string $domain): ?TransUnitInterface
     {
@@ -146,7 +145,7 @@ abstract class AbstractDoctrineStorage implements StorageInterface
     /**
      * {@inheritdoc}
      */
-    public function getTransUnitDomainsByLocale()
+    public function getTransUnitDomainsByLocale(): array
     {
         return $this->getTransUnitRepository()->getAllDomainsByLocale();
     }

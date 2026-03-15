@@ -12,7 +12,7 @@ class PhpExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function export($file, $translations)
+    public function export(string $file, array $translations): bool
     {
         $phpContent = sprintf("<?php\nreturn %s;", var_export($translations, true));
 
@@ -24,8 +24,8 @@ class PhpExporter implements ExporterInterface
     /**
      * {@inheritdoc}
      */
-    public function support($format)
+    public function support(string $format): bool
     {
-        return ('php' == $format);
+        return ('php' === $format);
     }
 }

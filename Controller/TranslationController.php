@@ -10,6 +10,7 @@ use Lexik\Bundle\TranslationBundle\Util\Csrf\CsrfCheckerTrait;
 use Lexik\Bundle\TranslationBundle\Util\Overview\StatsAggregator;
 use Lexik\Bundle\TranslationBundle\Util\Profiler\TokenFinder;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\SubmitButton;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -85,7 +86,7 @@ class TranslationController extends AbstractController
             return new JsonResponse(['message' => $message]);
         }
 
-        $request->getSession()->getFlashBag()->add('success', $message);
+        $this->addFlash('success', $message);
 
         return $this->redirect($this->generateUrl('lexik_translation_grid'));
     }
@@ -100,9 +101,11 @@ class TranslationController extends AbstractController
         if ($this->transUnitFormHandler->process($form, $request)) {
             $message = $this->translator->trans('translations.successfully_added', [], 'LexikTranslationBundle');
 
-            $request->getSession()->getFlashBag()->add('success', $message);
+            $this->addFlash('success', $message);
 
-            $redirectUrl = $form->get('save_add')->isClicked() ? 'lexik_translation_new' : 'lexik_translation_grid';
+            /** @var SubmitButton $btn */
+            $btn = $form->get('save_add');
+            $redirectUrl = $btn->isClicked() ? 'lexik_translation_new' : 'lexik_translation_grid';
 
             return $this->redirect($this->generateUrl($redirectUrl));
         }
