@@ -25,6 +25,7 @@ class TranslatorPass implements CompilerPassInterface
         $this->processEnabledLocales($container);
         $this->processFallbacksLocales($container);
 
+        $this->processCacheDir($container);
         $this->processRessources($container);
 
         // loaders
@@ -112,6 +113,19 @@ class TranslatorPass implements CompilerPassInterface
             }
             $translator = $container->findDefinition('translator.default');
             $translator->replaceArgument(5, $enabledLocales);
+        }
+    }
+
+    private function processCacheDir(ContainerBuilder $container): void
+    {
+        $translator = $container->findDefinition('translator.default');
+        $options = $translator->getArgument(4);
+        $cacheDir = $options['cache_dir'] ?? null;
+        if (null !== $cacheDir) {
+            $translatorDef = $container->findDefinition('lexik_translation.translator');
+            $defaultOptions = $translatorDef->getArgument('$options');
+            $defaultOptions['cache_dir'] = $cacheDir;
+            $translatorDef->replaceArgument('$options', $defaultOptions);
         }
     }
 }

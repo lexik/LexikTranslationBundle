@@ -60,9 +60,6 @@ services:
             $options:
                 cache_dir: '%kernel.cache_dir%/translations'
                 debug: '%kernel.debug%'
-                resource_files: []
-                scanned_directories: []
-                cache_vary: []
                 resources_type: '%lexik_translation.resources_type%'
         public: true
 
