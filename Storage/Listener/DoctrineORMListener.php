@@ -25,9 +25,18 @@ class DoctrineORMListener
         foreach ($metadata->getFieldNames() as $name) {
             $fieldMapping = $metadata->getFieldMapping($name);
 
-            if (isset($fieldMapping['type']) && 'string' === $fieldMapping['type']) {
-                $fieldMapping['length'] = 191;
-                $metadata->fieldMappings[$name] = $fieldMapping;
+            if (\is_array($fieldMapping)) {
+                // Doctrine ORM 2.x / legacy array mapping
+                if (isset($fieldMapping['type']) && 'string' === $fieldMapping['type']) {
+                    $fieldMapping['length'] = 191;
+                    $metadata->fieldMappings[$name] = $fieldMapping;
+                }
+            } else {
+                // Doctrine ORM 3+: FieldMapping object — avoid deprecated ArrayAccess (removed in ORM 4.0)
+                if ('string' === $fieldMapping->type) {
+                    $fieldMapping->length = 191;
+                    $metadata->fieldMappings[$name] = $fieldMapping;
+                }
             }
         }
     }
