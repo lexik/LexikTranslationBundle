@@ -31,12 +31,14 @@ class DoctrineORMListener
                     $fieldMapping['length'] = 191;
                     $metadata->fieldMappings[$name] = $fieldMapping;
                 }
-            } else {
-                // Doctrine ORM 3+: FieldMapping object — avoid deprecated ArrayAccess (removed in ORM 4.0)
-                if ('string' === $fieldMapping->type) {
-                    $fieldMapping->length = 191;
-                    $metadata->fieldMappings[$name] = $fieldMapping;
-                }
+
+                continue;
+            }
+
+            // Doctrine ORM 3+: FieldMapping object — avoid deprecated ArrayAccess (removed in ORM 4.0)
+            if ('string' === $fieldMapping->type) {
+                $fieldMapping->length = 191;
+                $metadata->fieldMappings[$name] = $fieldMapping;
             }
         }
     }
