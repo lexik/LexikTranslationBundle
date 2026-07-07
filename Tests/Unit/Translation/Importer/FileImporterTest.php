@@ -2,13 +2,13 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Translation\Importer;
 
-use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
 use Lexik\Bundle\TranslationBundle\Manager\FileManager;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Lexik\Bundle\TranslationBundle\Translation\Importer\FileImporter;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 /**
  * FileImporter tests.
@@ -37,7 +37,7 @@ class FileImporterTest extends BaseUnitTestCase
         $this->assertDatabaseEntries($em, 0);
 
         // import files
-        $files = [new SplFileInfo(__DIR__.'/../../../Fixtures/test.en.yml', '', ''), new SplFileInfo(__DIR__.'/../../../Fixtures/test.fr.php', '', '')];
+        $files = [new SplFileInfo(__DIR__ . '/../../../Fixtures/test.en.yml', '', ''), new SplFileInfo(__DIR__ . '/../../../Fixtures/test.fr.php', '', '')];
 
         foreach ($files as $file) {
             $importer->import($file);

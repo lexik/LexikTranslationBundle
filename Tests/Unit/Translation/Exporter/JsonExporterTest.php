@@ -16,8 +16,8 @@ class JsonExporterTest extends TestCase
 
     public function tearDown(): void
     {
-        if (file_exists(__DIR__.$this->outFileName)) {
-            unlink(__DIR__.$this->outFileName);
+        if (file_exists(__DIR__ . $this->outFileName)) {
+            unlink(__DIR__ . $this->outFileName);
         }
     }
 
@@ -26,7 +26,7 @@ class JsonExporterTest extends TestCase
      */
     public function testExport()
     {
-        $outFile = __DIR__.$this->outFileName;
+        $outFile = __DIR__ . $this->outFileName;
 
         $exporter = new JsonExporter();
 

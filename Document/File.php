@@ -2,18 +2,14 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
-use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use DateTime;
+use Lexik\Bundle\TranslationBundle\Model\File as FileModel;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
  */
-class File extends FileModel implements FileInterface
+class File extends FileModel
 {
-    /**
-     * {@inheritdoc}
-     */
     public function prePersist(): void
     {
         $now = new DateTime("now");
@@ -22,9 +18,6 @@ class File extends FileModel implements FileInterface
         $this->updatedAt = $now->format('U');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preUpdate(): void
     {
         $now = new DateTime("now");

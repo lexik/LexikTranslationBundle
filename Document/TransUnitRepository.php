@@ -4,7 +4,7 @@ namespace Lexik\Bundle\TranslationBundle\Document;
 
 use Doctrine\ODM\MongoDB\Query\Builder;
 use Doctrine\ODM\MongoDB\Repository\DocumentRepository;
-use Lexik\Bundle\TranslationBundle\Model\File as ModelFile;
+use Lexik\Bundle\TranslationBundle\Manager\FileInterface;
 use MongoDB\BSON\ObjectId;
 use MongoDB\BSON\Regex;
 
@@ -17,10 +17,8 @@ class TransUnitRepository extends DocumentRepository
 {
     /**
      * Returns all domain available in database.
-     *
-     * @return array
      */
-    public function getAllDomains()
+    public function getAllDomains(): array
     {
         $results = $this->createQueryBuilder()
                         ->distinct('domain')
@@ -115,7 +113,7 @@ class TransUnitRepository extends DocumentRepository
             }
         }
 
-        usort($domainsByLocale, function ($a, $b) {
+        usort($domainsByLocale, static function ($a, $b) {
             $result = strcmp((string) $a['locale'], (string) $b['locale']);
             if (0 === $result) {
                 $result = strcmp((string) $a['domain'], (string) $b['domain']);
@@ -133,7 +131,7 @@ class TransUnitRepository extends DocumentRepository
      * @param string $domain
      * @return array
      */
-    public function getAllByLocaleAndDomain($locale, $domain)
+    public function getAllByLocaleAndDomain(string $locale, string $domain): array
     {
         $results = $this->createQueryBuilder()
                         ->hydrate(false)
@@ -148,7 +146,7 @@ class TransUnitRepository extends DocumentRepository
             $i = 0;
             $index = null;
             while ($i < $item['translations'] && null === $index) {
-                if ($item['translations'][$i]['locale'] == $locale) {
+                if ($item['translations'][$i]['locale'] === $locale) {
                     $index = $i;
                 }
                 $i++;
@@ -216,10 +214,14 @@ class TransUnitRepository extends DocumentRepository
 
     /**
      * Count the number of trans unit.
+     * @param array<string, mixed> $criteria
      */
-    public function count(?array $locales = null, ?array $filters = null): int
+    public function count(array $criteria = []): int
     {
         $builder = $this->createQueryBuilder();
+
+        $filters = $criteria['filters'] ?? null;
+        $locales = $criteria['locales'] ?? null;
 
         $this->addTransUnitFilters($builder, $filters);
         $this->addTranslationFilter($builder, $locales, $filters);
@@ -233,11 +235,8 @@ class TransUnitRepository extends DocumentRepository
 
     /**
      * Returns all translations for the given file.
-     *
-     * @param boolean   $onlyUpdated
-     * @return array
      */
-    public function getTranslationsForFile(ModelFile $file, $onlyUpdated)
+    public function getTranslationsForFile(FileInterface $file, bool $onlyUpdated): array
     {
         $builder = $this->createQueryBuilder()
                         ->hydrate(false)
@@ -252,12 +251,12 @@ class TransUnitRepository extends DocumentRepository
             $content = null;
             $i = 0;
             while ($i < (is_countable($result['translations']) ? count($result['translations']) : 0) && null === $content) {
-                if ($file->getLocale() == $result['translations'][$i]['locale']) {
+                if ($file->getLocale() === $result['translations'][$i]['locale']) {
                     if ($onlyUpdated) {
                         // Handle MongoDB Timestamp objects - they have a 'sec' property
                         $createdAt = $result['translations'][$i]['createdAt'] ?? null;
                         $updatedAt = $result['translations'][$i]['updatedAt'] ?? null;
-                        
+
                         if ($createdAt && $updatedAt) {
                             $createdAtSec = \is_object($createdAt) && \property_exists($createdAt, 'sec') ? $createdAt->sec : $createdAt;
                             $updatedAtSec = \is_object($updatedAt) && \property_exists($updatedAt, 'sec') ? $updatedAt->sec : $updatedAt;
@@ -282,7 +281,7 @@ class TransUnitRepository extends DocumentRepository
     /**
      * Add conditions according to given filters.
      */
-    protected function addTransUnitFilters(Builder $builder, ?array $filters = null)
+    protected function addTransUnitFilters(Builder $builder, ?array $filters = null): void
     {
         if (isset($filters['_search']) && $filters['_search']) {
             if (!empty($filters['domain'])) {
@@ -341,71 +340,53 @@ class TransUnitRepository extends DocumentRepository
                        ->getQuery()
                        ->getSingleResult();
 
-        if (!isset($result['translations'], $result['translations'][0])) {
+        if (!isset($result['translations'][0])) {
             return null;
         }
 
         return new \DateTime(date('Y-m-d H:i:s', $result['translations'][0]['updated_at']->sec));
     }
 
-    /**
-     * @return array
-     */
-    public function countByDomains()
+    public function countByDomains(): array
     {
-        $reduce = <<<FCT
-function (obj, prev) {
-    if (typeof(prev.count) == 'undefined') { prev.count = {}; }
+        $aggregationBuilder = $this->createAggregationBuilder();
+        $results = $aggregationBuilder
+            ->group()
+                ->field('_id')->expression('$domain')
+                ->field('number')->sum(1)
+            ->execute();
 
-    if (!prev.count.hasOwnProperty(obj.domain)) {
-        prev.count[obj.domain] = 1;
-    } else {
-        prev.count[obj.domain]++;
-    }
-}
-FCT;
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[] = [
+                'domain' => $row['_id'],
+                'number' => $row['number'],
+            ];
+        }
 
-        $results = $this->createQueryBuilder()
-                        ->group([],
-                            []) // @todo: group and reduce won't work anymore, but this method seems to be untested
-                        ->reduce($reduce)
-                        ->hydrate(false)
-                        ->getQuery()
-                        ->execute();
-
-        return $results[0]['count'] ?? [];
+        return $counts;
     }
 
-    /**
-     * @param string $domain
-     * @return array
-     */
-    public function countTranslationsByLocales($domain)
+    public function countTranslationsByLocales(string $domain): array
     {
-        $reduce = <<<FCT
-function (obj, prev) {
-    if (typeof(prev.count) == 'undefined') { prev.count = {}; }
+        $aggregationBuilder = $this->createAggregationBuilder();
+        $results = $aggregationBuilder
+            ->match()
+                ->field('domain')->equals($domain)
+            ->unwind('$translations')
+            ->group()
+                ->field('_id')->expression('$translations.locale')
+                ->field('number')->sum(1)
+            ->execute();
 
-    if (obj.translations) {
-        obj.translations.forEach(function (translation) {
-            if (!prev.count.hasOwnProperty(translation.locale)) {
-                prev.count[translation.locale] = 1;
-            } else {
-                prev.count[translation.locale]++;
-            }
-        });
-    }
-}
-FCT;
+        $counts = [];
+        foreach ($results as $row) {
+            $counts[] = [
+                'locale' => $row['_id'],
+                'number' => $row['number'],
+            ];
+        }
 
-        $results = $this->createQueryBuilder()
-                        ->field('domain')->equals($domain)
-                        ->group([], []) // @todo: won't work, untested
-                        ->reduce($reduce)
-                        ->hydrate(false)
-                        ->getQuery()
-                        ->execute();
-
-        return $results[0]['count'] ?? [];
+        return $counts;
     }
 }

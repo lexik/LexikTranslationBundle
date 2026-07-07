@@ -3,11 +3,11 @@
 namespace Lexik\Bundle\TranslationBundle\Storage\Listener;
 
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
-use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class DoctrineORMListener
 {
-    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
+    public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
         $params = $eventArgs->getEntityManager()->getConnection()->getParams();
 
@@ -15,10 +15,10 @@ class DoctrineORMListener
             return;
         }
 
-        /** @var ClassMetadataInfo $metadata */
+        /** @var ClassMetadata $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
-        if (!str_contains((string) $metadata->getName(), 'TranslationBundle')) {
+        if (!str_contains($metadata->getName(), 'TranslationBundle')) {
             return;
         }
 

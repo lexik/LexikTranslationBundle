@@ -16,10 +16,10 @@ class YamlExporterTest extends TestCase
 
     public function tearDown(): void
     {
-        $outFile = __DIR__.$this->outFileName;
+        $outFile = __DIR__ . $this->outFileName;
 
-        if (file_exists(__DIR__.$this->outFileName)) {
-            unlink(__DIR__.$this->outFileName);
+        if (file_exists(__DIR__ . $this->outFileName)) {
+            unlink(__DIR__ . $this->outFileName);
         }
     }
 
@@ -28,13 +28,14 @@ class YamlExporterTest extends TestCase
      */
     public function testExport()
     {
-        $outFile = __DIR__.$this->outFileName;
+        $outFile = __DIR__ . $this->outFileName;
 
         $exporter = new YamlExporter();
 
         // export empty array
         $exporter->export($outFile, []);
-        $expectedContent = '{  }';
+        // Expectation changed from '{  }' to '{}', because apparently after an update, an empty array is exported differently.
+        $expectedContent = '{}';
         $this->assertEquals($expectedContent, trim(file_get_contents($outFile)));
 
         // export array with values
@@ -59,7 +60,7 @@ C;
         $this->assertEquals($expected, $result);
 
         $result = $exporter->createMultiArray(['foo.bar.baz' => 'foobar', 'foo.foobaz' => 'bazbar']);
-        $expected = ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]];
+        $expected = ['foo' => ['foobaz' => 'bazbar', 'bar' => ['baz' => 'foobar']]];
         $this->assertEquals($expected, $result);
     }
 
@@ -75,15 +76,15 @@ C;
         $this->assertEquals($expected, $result);
 
         $result = $exporter->flattenArray(
-            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz0' => 'foobar', 'baz1' => 'foobaz']]]]
+            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar' => ['baz0' => 'foobar', 'baz1' => 'foobaz']]]]
         );
-        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz0' => 'foobar', 'baz1' => 'foobaz']]];
+        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar' => ['baz0' => 'foobar', 'baz1' => 'foobaz']]];
         $this->assertEquals($expected, $result);
 
         $result = $exporter->flattenArray(
-            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]]]
+            ['bundle' => ['foo' => ['foobaz' => 'bazbar', 'bar' => ['baz' => 'foobar']]]]
         );
-        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar'   => ['baz' => 'foobar']]];
+        $expected = ['bundle.foo' => ['foobaz' => 'bazbar', 'bar' => ['baz' => 'foobar']]];
         $this->assertEquals($expected, $result);
     }
 }

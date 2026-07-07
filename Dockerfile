@@ -1,4 +1,4 @@
-FROM php:8.3-cli-bullseye
+FROM php:8.4-cli-bullseye
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -20,9 +20,5 @@ RUN pecl install mongodb \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
-
-COPY . .
-
-RUN composer install --prefer-dist --no-progress
 
 CMD ["composer", "test"]

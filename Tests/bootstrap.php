@@ -1,4 +1,5 @@
 <?php
+
 /*
  * The defaults are used in CI for the github action.
  *
@@ -22,8 +23,8 @@ if (getenv('DOCKER') === 'true') {
     define("MONGO_SERVER", getenv("MONGO_SERVER") ?: "mongodb://admin:secret@127.0.0.1:27017/admin");
 }
 
-if (file_exists($file = __DIR__.'/autoload.php')) {
+if (file_exists($file = __DIR__ . '/autoload.php')) {
     require_once $file;
-} elseif (file_exists($file = __DIR__.'/autoload.php.dist')) {
+} elseif (file_exists($file = __DIR__ . '/autoload.php.dist')) {
     require_once $file;
 }

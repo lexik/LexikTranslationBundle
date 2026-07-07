@@ -52,7 +52,7 @@ class FileRepositoryTest extends BaseUnitTestCase
     {
         $i = 0;
         foreach ($result as $file) {
-            $this->assertEquals($expected[$i], $file->getPath().'/'.$file->getName());
+            $this->assertEquals($expected[$i], $file->getPath() . '/' . $file->getName());
             $i++;
         }
     }

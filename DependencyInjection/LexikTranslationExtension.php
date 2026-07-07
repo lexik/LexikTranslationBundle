@@ -2,26 +2,21 @@
 
 namespace Lexik\Bundle\TranslationBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
+use Lexik\Bundle\TranslationBundle\LexikTranslationBundle;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManagerInterface;
 use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Resource\DirectoryResource;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Parameter;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\HttpKernel\Kernel;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * This is the class that loads and manages your bundle configuration
@@ -41,15 +36,23 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $configuration = new Configuration();
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yaml');
 
-        // set parameters
-        sort($config['managed_locales']);
-        $container->setParameter('lexik_translation.managed_locales', $config['managed_locales']);
+        // Resolve managed_locales: fallback to framework.enabled_locales if not set
+        $managedLocales = $config['managed_locales'];
+        if (empty($managedLocales)) {
+            $managedLocales = $container->hasParameter('kernel.enabled_locales')
+                ? $container->getParameter('kernel.enabled_locales')
+                : [];
+        }
+        sort($managedLocales);
+
+        $container->setParameter('lexik_translation.managed_locales', $managedLocales);
         $container->setParameter('lexik_translation.fallback_locale', $config['fallback_locale']);
         $container->setParameter('lexik_translation.storage', $config['storage']);
         $container->setParameter('lexik_translation.resources_type', $config['resources_registration']['type']);
+        $container->setParameter('lexik_translation.managed_locales_only', $config['resources_registration']['managed_locales_only']);
         $container->setParameter('lexik_translation.base_layout', $config['base_layout']);
         $container->setParameter('lexik_translation.grid_input_type', $config['grid_input_type']);
         $container->setParameter('lexik_translation.grid_toggle_similar', $config['grid_toggle_similar']);
@@ -60,7 +63,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $container->setParameter('lexik_translation.exporter.json.hierarchical_format', $config['exporter']['json_hierarchical_format']);
         $container->setParameter('lexik_translation.exporter.yml.use_tree', $config['exporter']['use_yml_tree']);
 
-        $objectManager = $config['storage']['object_manager'] ?? null;
+        $objectManager = $config['storage']['object_manager'] ?? 'default';
 
         $this->buildTranslationStorageDefinition($container, $config['storage']['type'], $objectManager);
 
@@ -71,14 +74,12 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         if (true === $config['dev_tools']['enable']) {
             $this->buildDevServicesDefinition($container);
         }
-
-        $this->registerTranslatorConfiguration($config, $container);
     }
 
     /**
      * @param int $cacheInterval
      */
-    public function buildCacheCleanListenerDefinition(ContainerBuilder $container, $cacheInterval)
+    public function buildCacheCleanListenerDefinition(ContainerBuilder $container, $cacheInterval): void
     {
         $listener = new Definition();
         $listener->setClass('%lexik_translation.listener.clean_translation_cache.class%');
@@ -89,7 +90,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $listener->addArgument(new Reference(LocaleManagerInterface::class));
         $listener->addArgument($cacheInterval);
 
-        $listener->addTag('kernel.event_listener', ['event'  => 'kernel.request', 'method' => 'onKernelRequest']);
+        $listener->addTag('kernel.event_listener', ['event' => 'kernel.request', 'method' => 'onKernelRequest']);
 
         $container->setDefinition('lexik_translation.listener.clean_translation_cache', $listener);
     }
@@ -116,12 +117,12 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      * @param string           $objectManager
      * @throws \RuntimeException
      */
-    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, $objectManager)
+    protected function buildTranslationStorageDefinition(ContainerBuilder $container, $storage, string $objectManager): void
     {
         $container->setParameter('lexik_translation.storage.type', $storage);
 
-        if (StorageInterface::STORAGE_ORM == $storage) {
-            $args = [new Reference('doctrine'), $objectManager ?? 'default'];
+        if (StorageInterface::STORAGE_ORM === $storage) {
+            $args = [new Reference('doctrine'), $objectManager];
 
             // Create XML driver for backward compatibility
             if (class_exists(SimplifiedXmlDriver::class)) {
@@ -140,8 +141,8 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
 
             $container->setDefinition('lexik_translation.orm.listener', $metadataListener);
 
-        } elseif (StorageInterface::STORAGE_MONGODB == $storage) {
-            $args = [new Reference('doctrine_mongodb'), $objectManager ?? 'default'];
+        } elseif (StorageInterface::STORAGE_MONGODB === $storage) {
+            $args = [new Reference('doctrine_mongodb'), $objectManager];
 
             $this->createDoctrineMappingDriver($container, 'lexik_translation.mongodb.metadata.xml', '%doctrine_mongodb.odm.metadata.xml.class%');
         } else {
@@ -149,9 +150,9 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         }
 
         $args[] = [
-            'trans_unit'  => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
+            'trans_unit' => new Parameter(sprintf('lexik_translation.%s.trans_unit.class', $storage)),
             'translation' => new Parameter(sprintf('lexik_translation.%s.translation.class', $storage)),
-            'file'        => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
+            'file' => new Parameter(sprintf('lexik_translation.%s.file.class', $storage))
         ];
 
         $storageDefinition = new Definition();
@@ -168,7 +169,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      * @param string           $driverId
      * @param string           $driverClass
      */
-    protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass)
+    protected function createDoctrineMappingDriver(ContainerBuilder $container, $driverId, $driverClass): void
     {
         $driverDefinition = new Definition($driverClass, [
             [dirname(__DIR__) . '/Resources/config/model' => 'Lexik\Bundle\TranslationBundle\Model'],
@@ -185,11 +186,11 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
      * @param ContainerBuilder $container
      * @param string           $driverId
      */
-    protected function createDoctrineAttributeDriver(ContainerBuilder $container, $driverId)
+    protected function createDoctrineAttributeDriver(ContainerBuilder $container, $driverId): void
     {
         // Calculate bundle path using ReflectionClass to get the actual bundle location
         // This works even when the bundle is installed via Composer or symlinked
-        $bundleReflection = new \ReflectionClass(\Lexik\Bundle\TranslationBundle\LexikTranslationBundle::class);
+        $bundleReflection = new \ReflectionClass(LexikTranslationBundle::class);
         $bundleDir = dirname($bundleReflection->getFileName());
         $modelPath = $bundleDir . '/Model';
 
@@ -213,7 +214,7 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
     /**
      * Load dev tools.
      */
-    protected function buildDevServicesDefinition(ContainerBuilder $container)
+    protected function buildDevServicesDefinition(ContainerBuilder $container): void
     {
         $container
             ->getDefinition('lexik_translation.data_grid.request_handler')
@@ -224,104 +225,5 @@ class LexikTranslationExtension extends Extension implements PrependExtensionInt
         $tokenFinderDefinition->setArguments([new Reference('profiler'), new Parameter('lexik_translation.token_finder.limit')]);
 
         $container->setDefinition($container->getParameter('lexik_translation.token_finder.class'), $tokenFinderDefinition);
-    }
-
-    /**
-     * Register the "lexik_translation.translator" service configuration.
-     */
-    protected function registerTranslatorConfiguration(array $config, ContainerBuilder $container)
-    {
-        // use the Lexik translator decorator as default translator service
-        $alias = $container->setAlias('translator', 'lexik_translation.translator');
-        $alias->setPublic(true);
-
-        // Get the inner translator (the actual Symfony translator) for adding resources
-        // The decorator will delegate to it
-        $innerTranslator = $container->hasDefinition('lexik_translation.translator.inner')
-            ? $container->findDefinition('lexik_translation.translator.inner')
-            : $container->findDefinition('translator');
-
-        $innerTranslator->addMethodCall('setFallbackLocales', [$config['fallback_locale']]);
-
-        // For adding file resources, we'll add them to the inner translator
-        $translator = $innerTranslator;
-
-        $registration = $config['resources_registration'];
-
-        // Discover translation directories
-        if ('all' === $registration['type'] || 'files' === $registration['type']) {
-            $dirs = [];
-
-            if (class_exists(Validation::class)) {
-                $r = new \ReflectionClass(Validation::class);
-
-                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
-            }
-
-            if (class_exists(Form::class)) {
-                $r = new \ReflectionClass(Form::class);
-
-                $dirs[] = dirname($r->getFilename()).'/Resources/translations';
-            }
-
-            if (class_exists(AuthenticationException::class)) {
-                $r = new \ReflectionClass(AuthenticationException::class);
-
-                if (is_dir($dir = dirname($r->getFilename()).'/../Resources/translations')) {
-                    $dirs[] = $dir;
-                }
-            }
-
-            $overridePath = $container->getParameter('kernel.project_dir').'/Resources/%s/translations';
-
-            foreach ($container->getParameter('kernel.bundles') as $bundle => $class) {
-                $reflection = new \ReflectionClass($class);
-
-                if (is_dir($dir = dirname($reflection->getFilename()).'/Resources/translations')) {
-                    $dirs[] = $dir;
-                }
-
-                if (is_dir($dir = dirname($reflection->getFileName(), 2).'/translations')) {
-                    $dirs[] = $dir;
-                }
-
-                if (is_dir($dir = sprintf($overridePath, $bundle))) {
-                    $dirs[] = $dir;
-                }
-            }
-
-            if (is_dir($dir = $container->getParameter('kernel.project_dir').'/Resources/translations')) {
-                $dirs[] = $dir;
-            }
-
-            if (Kernel::MAJOR_VERSION >= 4 && is_dir($dir = $container->getParameter('kernel.project_dir').'/translations')) {
-                $dirs[] = $dir;
-            }
-
-            // Register translation resources
-            if (count($dirs) > 0) {
-                foreach ($dirs as $dir) {
-                    $container->addResource(new DirectoryResource($dir));
-                }
-
-                $finder = Finder::create();
-                $finder->files();
-
-                if (true === $registration['managed_locales_only']) {
-                    // only look for managed locales
-                    $finder->name(sprintf('/(.*\.(%s)\.\w+$)/', implode('|', $config['managed_locales'])));
-                } else {
-                    $finder->filter(fn(\SplFileInfo $file) => 2 === substr_count($file->getBasename(), '.') && preg_match('/\.\w+$/', $file->getBasename()));
-                }
-
-                $finder->in($dirs);
-
-                foreach ($finder as $file) {
-                    // filename is domain.locale.format
-                    [$domain, $locale, $format] = explode('.', $file->getBasename(), 3);
-                    $translator->addMethodCall('addResource', [$format, (string) $file, $locale, $domain]);
-                }
-            }
-        }
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Lexik\Bundle\TranslationBundle\Document;
 
-use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitInterface;
-use MongoTimestamp;
+use Lexik\Bundle\TranslationBundle\Model\TransUnit as TransUnitModel;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>
@@ -12,16 +11,10 @@ use MongoTimestamp;
 class TransUnit extends TransUnitModel implements TransUnitInterface
 {
     /**
-     * Convert all MongoTimestamp object to time.
+     * @deprecated No longer needed since the legacy mongo extension is no longer supported.
      */
     public function convertMongoTimestamp(): void
     {
-        $this->createdAt = ($this->createdAt instanceof MongoTimestamp) ? $this->createdAt->sec : $this->createdAt;
-        $this->updatedAt = ($this->updatedAt instanceof MongoTimestamp) ? $this->updatedAt->sec : $this->updatedAt;
-
-        foreach ($this->getTranslations() as $translation) {
-            $translation->convertMongoTimestamp();
-        }
     }
 
     /**

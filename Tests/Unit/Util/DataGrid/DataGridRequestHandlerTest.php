@@ -2,13 +2,12 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit\Util\DataGrid;
 
-use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
 use Lexik\Bundle\TranslationBundle\Manager\FileManagerInterface;
-use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Manager\LocaleManager;
+use Lexik\Bundle\TranslationBundle\Manager\TransUnitManager;
+use Lexik\Bundle\TranslationBundle\Storage\StorageInterface;
 use Lexik\Bundle\TranslationBundle\Tests\Unit\BaseUnitTestCase;
 use Lexik\Bundle\TranslationBundle\Util\DataGrid\DataGridRequestHandler;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Cédric Girard <c.girard@lexik.fr>

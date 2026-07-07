@@ -2,23 +2,23 @@
 
 namespace Lexik\Bundle\TranslationBundle\Tests\Unit;
 
-use Doctrine\DBAL\DriverManager;
-use Doctrine\ODM\MongoDB\Mapping\Driver\SimplifiedXmlDriver as XmlDriver;
 use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
 use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
+use Doctrine\ODM\MongoDB\Mapping\Driver\SimplifiedXmlDriver as XmlDriver;
 use Doctrine\ODM\MongoDB\MongoDBException;
 use Doctrine\ODM\MongoDB\SchemaManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadataFactory as DoctrineClassMetadataFactory;
 use Doctrine\ORM\Mapping\Driver\SimplifiedXmlDriver;
-use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\ORMSetup as Setup;
+use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Persistence\ObjectManager;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineMongoDBStorage;
 use Lexik\Bundle\TranslationBundle\Storage\DoctrineORMStorage;
@@ -37,13 +37,13 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
  */
 abstract class BaseUnitTestCase extends TestCase
 {
-    final const ENTITY_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
-    final const ENTITY_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';
-    final const ENTITY_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Entity\File';
+    final public const ENTITY_TRANS_UNIT_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\TransUnit';
+    final public const ENTITY_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\Translation';
+    final public const ENTITY_FILE_CLASS = 'Lexik\Bundle\TranslationBundle\Entity\File';
 
-    final const DOCUMENT_TRANS_UNIT_CLASS  = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
-    final const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
-    final const DOCUMENT_FILE_CLASS        = 'Lexik\Bundle\TranslationBundle\Document\File';
+    final public const DOCUMENT_TRANS_UNIT_CLASS = 'Lexik\Bundle\TranslationBundle\Document\TransUnit';
+    final public const DOCUMENT_TRANSLATION_CLASS = 'Lexik\Bundle\TranslationBundle\Document\Translation';
+    final public const DOCUMENT_FILE_CLASS = 'Lexik\Bundle\TranslationBundle\Document\File';
 
     /**
      * Create a storage class form doctrine ORM.
@@ -55,9 +55,9 @@ abstract class BaseUnitTestCase extends TestCase
         $registryMock = $this->getDoctrineRegistryMock($em);
 
         $storage = new DoctrineORMStorage($registryMock, 'default', [
-            'trans_unit'  => self::ENTITY_TRANS_UNIT_CLASS,
+            'trans_unit' => self::ENTITY_TRANS_UNIT_CLASS,
             'translation' => self::ENTITY_TRANSLATION_CLASS,
-            'file'        => self::ENTITY_FILE_CLASS,
+            'file' => self::ENTITY_FILE_CLASS,
         ]);
 
         return $storage;
@@ -71,9 +71,9 @@ abstract class BaseUnitTestCase extends TestCase
         $registryMock = $this->getDoctrineRegistryMock($dm);
 
         $storage = new DoctrineMongoDBStorage($registryMock, 'default', [
-            'trans_unit'  => self::DOCUMENT_TRANS_UNIT_CLASS,
+            'trans_unit' => self::DOCUMENT_TRANS_UNIT_CLASS,
             'translation' => self::DOCUMENT_TRANSLATION_CLASS,
-            'file'        => self::DOCUMENT_FILE_CLASS,
+            'file' => self::DOCUMENT_FILE_CLASS,
         ]);
 
         return $storage;
@@ -152,7 +152,7 @@ abstract class BaseUnitTestCase extends TestCase
         // xml driver
         $xmlDriver = new SimplifiedXmlDriver(
             [
-                __DIR__ . '/../../Resources/config/model'    => 'Lexik\Bundle\TranslationBundle\Model',
+                __DIR__ . '/../../Resources/config/model' => 'Lexik\Bundle\TranslationBundle\Model',
                 __DIR__ . '/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Entity',
             ]
         );
@@ -161,7 +161,10 @@ abstract class BaseUnitTestCase extends TestCase
             [
                 __DIR__ . '/../../Model',
                 __DIR__ . '/../../Entity',
-            ], false, null, null
+            ],
+            false,
+            null,
+            null
         );
 
         $config->setMetadataDriverImpl($xmlDriver);
@@ -201,7 +204,7 @@ abstract class BaseUnitTestCase extends TestCase
     protected function getMockMongoDbDocumentManager(): DocumentManager
     {
         $prefixes = [
-            __DIR__ . '/../../Resources/config/model'    => 'Lexik\Bundle\TranslationBundle\Model',
+            __DIR__ . '/../../Resources/config/model' => 'Lexik\Bundle\TranslationBundle\Model',
             __DIR__ . '/../../Resources/config/doctrine' => 'Lexik\Bundle\TranslationBundle\Document',
         ];
         $xmlDriver = new XmlDriver($prefixes);
@@ -224,14 +227,13 @@ abstract class BaseUnitTestCase extends TestCase
         $server = MONGO_SERVER;
         $driverOptions = [
             'typeMap' => [
-                'root'     => 'array',
+                'root' => 'array',
                 'document' => 'array',
             ],
         ];
         $conn = new Client($server, [], $driverOptions);
 
         $dm = DocumentManager::create($conn, $config);
-
 
         return $dm;
     }

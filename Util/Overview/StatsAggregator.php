@@ -32,9 +32,9 @@ class StatsAggregator
             foreach ($this->localeManager->getLocales() as $locale) {
                 $localeCount = $byLocale[$locale] ?? 0;
 
-                $stats[$domain][$locale] = ['keys'       => $total,
+                $stats[$domain][$locale] = ['keys' => $total,
                                             'translated' => $localeCount,
-                                            'completed'  => ($total > 0) ? floor(($localeCount / $total) * 100) : 0,
+                                            'completed' => ($total > 0) ? floor(($localeCount / $total) * 100) : 0,
                 ];
             }
         }
