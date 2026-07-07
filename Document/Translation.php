@@ -12,7 +12,7 @@ use Lexik\Bundle\TranslationBundle\Model\Translation as TranslationModel;
 class Translation extends TranslationModel implements TranslationInterface
 {
     // Relationship mapping is defined in XML: Resources/config/doctrine/Translation.mongodb-odm.xml
-    protected FileInterface $file;
+    protected ?FileInterface $file = null;
 
     /**
      * @deprecated No longer needed since the legacy mongo extension is no longer supported.

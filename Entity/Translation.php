@@ -24,7 +24,7 @@ class Translation extends TranslationModel implements TranslationInterface
     // Relationship mappings are defined in XML: Resources/config/doctrine/Translation.orm.xml
     protected $transUnit;
 
-    protected FileInterface $file;
+    protected ?FileInterface $file = null;
 
     // modifiedManually is inherited from TranslationModel
 

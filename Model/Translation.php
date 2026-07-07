@@ -33,7 +33,7 @@ abstract class Translation
     #[ORM\Column(name: 'modified_manually', type: Types::BOOLEAN, options: ['default' => false])]
     protected bool $modifiedManually = false;
 
-    protected FileInterface $file;
+    protected ?FileInterface $file = null;
 
     /**
      * Set locale
@@ -107,7 +107,7 @@ abstract class Translation
         $this->file = $file;
     }
 
-    public function getFile(): FileInterface
+    public function getFile(): ?FileInterface
     {
         return $this->file;
     }
