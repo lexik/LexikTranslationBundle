@@ -34,7 +34,8 @@ class YamlExporterTest extends TestCase
 
         // export empty array
         $exporter->export($outFile, []);
-        $expectedContent = '{  }';
+        // Expectation changed from '{  }' to '{}', because apparently after an update, an empty array is exported differently.
+        $expectedContent = '{}';
         $this->assertEquals($expectedContent, trim(file_get_contents($outFile)));
 
         // export array with values
